@@ -1,0 +1,38 @@
+@import url(https://fonts.googleapis.com/css?family=Acme);
+@import url(https://fonts.googleapis.com/css?family=Cantarell);
+@import url(palette.less);
+@import url(ui/hud.less);
+@import url(scene/scene.less);
+
+/* pathological edge case */
+
+noscript { display: none }
+
+@media not screen {
+    #hud { display: none }
+    noscript { display: block }
+}
+
+/* massively reset everything; it's a game, not a document. */
+
+* { margin: 0; padding: 0; border: 0 }
+
+/* https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Advanced_styling_for_HTML_forms */
+select, option {
+  -webkit-appearance : none; /* To gain control over the appearance on WebKit/Chromium */
+  -moz-appearance : none; /* To gain control over the appearance on Gecko */
+
+  /* To gain control over the appearance on Trident (IE); 
+     Note that it also works on Gecko and has partial effects on WebKit */  
+  background : none;
+}
+
+/* blech */
+
+html {
+    background-color: black; color: @green; font-family: fixed; overflow: hidden;
+}
+
+body {
+    overflow: hidden;
+}

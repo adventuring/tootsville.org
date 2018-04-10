@@ -1,0 +1,168 @@
+#!/bin/bash
+echo "Ensuring that a sane version of SBCL is available"
+
+# The reason for rejecting the current SBCL
+bad=
+
+# See if SBCL exists and has ASDF 3.1+
+if ! which sbcl
+then
+    echo "No ‘sbcl’ executable found on PATH" >&2
+    echo PATH=$PATH
+    bad='no SBCL found on PATH'
+else
+    if ! sbcl --noinform \
+         --no-userinit \
+         --non-interactive \
+         --eval "(require 'asdf)" \
+         --eval '
+(progn (if (find :asdf3.1 *features*)
+           (print "*FEATURES* has :ASDF3.1")
+           (sb-ext:exit :code 1))
+       (if (asdf::version<= "3.1" (asdf:asdf-version))
+           (print "ASDF-VERSION is OK")
+           (sb-ext:exit :code 2))
+       (print "SBCL/ASDF Seems passable"))'
+    then
+        bad='ASDF too old (<3.1)'
+        echo "ASDF is older than v3.1" >&2
+    fi
+fi
+
+# If everything is all right, get out of here.
+if [ "x$bad" = "x" ]
+then
+    echo "✓ SBCL seems OK"
+    sbcl --no-userinit --non-interactive \
+         --eval "(require 'asdf)" \
+         --eval '(format t "~&ASDF version is ~a" (asdf:asdf-version))'
+    if ! [ "$(realpath sbcl)" = "$(realpath) bin/sbcl" ]
+    then
+        ln -sf $(which sbcl) bin/sbcl
+    fi
+    exit 0
+fi
+
+# Bad (old) or missing SBCL
+echo "✗ SBCL is not usable ($bad). Going to have to update." >&2
+mkdir -p src/lib/sbcl
+pushd src/lib/sbcl
+echo "Downloading SBCL source tree"
+curl -L --retry 10 -s https://sourceforge.net/projects/sbcl/files/latest/download?source=files | tar jxf - || exit 10
+
+cd $(echo sbcl-1.*/)
+if ! [ -f install.sh ]
+then
+    echo "Archive might not have extracted correctly. Can't find install.sh" >&2
+    echo "Found myself in $(pwd)"
+    ls -l
+    exit 13
+fi
+
+if which sbcl
+then
+    crosscompiler=sbcl --no-userinit
+elif which lisp
+then
+ # Hopefully it's CMUCL.
+ crosscompiler=lisp -batch -noinit
+else
+ echo "Can't find any compiler to use to bootstrap" >&2
+ echo "Now, we're going to try to pull in a Debian package with SBCL …"
+ curl -L -p $( \
+               curl -L -p https://packages.debian.org/jessie/amd64/sbcl/download | \
+                   grep -E 'href="http.*pool/main/s/sbcl/sbcl.*amd64.deb' | \
+                   cut -d\" -f2 | shuf | tail -n 1 ) \
+      > sbcl.latest.jessie.amd64.deb
+ mkdir -p 'sbcl.debian/'
+ pushd 'sbcl.debian'
+ ar p ../../sbcl.latest.jessie.amd64.deb data.tar.xz | \
+     tar Jxf - && \
+     rm ../../sbcl.latest.jessie.amd64.deb
+ 
+ sbcl_bin=$(realpath "$(pwd)"/usr/bin/sbcl)
+ if ! [ -x "$sbcl_bin" ]
+ then
+     echo "Can't find SBCL bin; expected $sbcl_bin" >&2
+     ls -lR
+     exit 16
+ fi
+ sbcl_core=$(realpath "$(pwd)"/usr/lib/sbcl/sbcl.core)
+ if ! [ -f $sbcl_core ]
+ then
+     echo "Can't find SBCL core; expected $sbcl_core" >&2
+     ls -lR
+     exit 17
+ fi
+ popd
+ echo '#!/bin/bash' > bin/sbcl
+ chmod +x bin/sbcl
+ echo 'exec "'$sbcl_bin'" --core "'$sbcl_core'" "$@"' >> bin/sbcl
+ echo "Hopefully that will get us to bootstrapping …"
+ if ! bin/sbcl --non-interactive --eval '(princ "Hello, World")' | \
+         grep -q -E '^Hello, World$'
+ then
+     echo "SBCL for bootstrapping won't run here" >&2
+     exit 18
+ fi
+ crosscompiler="\"$sbcl_bin\" --no-userinit"
+fi
+
+echo "Performing bootstrap build with «$crosscompiler»"
+root="$(pwd)"/build
+mkdir -p "$root"
+
+if ! sh make.sh --xc-host="$crosscompiler" --prefix="$root"
+then
+    echo "Unable to build" >&2
+    exit 14
+fi
+
+echo "Testing new SBCL build"
+( cd tests && sh ./run-tests.sh ) || exit 21
+
+echo "Installing to $root"
+INSTALL_ROOT="$root" sh install.sh
+popd
+
+sbcl_bin="$root"/bin/sbcl
+if ! [ -x "$sbcl_bin" ]
+then
+    echo "Can't find SBCL bin; expected $sbcl_bin" >&2
+    ls -lR "$root"
+    exit 18
+fi
+sbcl_core="$root"/lib/sbcl/sbcl.core
+if ! [ -f $sbcl_core ]
+then
+    echo "Can't find SBCL core; expected $sbcl_core" >&2
+    ls -lR "$root"
+    exit 19
+fi
+
+echo "Setting bin/sbcl"
+rm -f bin/sbcl
+echo '#!/bin/bash' > bin/sbcl
+chmod +x bin/sbcl
+echo 'exec "'$sbcl_bin'" --core "'$sbcl_core'" "$@"' >> bin/sbcl
+
+echo " ✓ Done"
+
+if bin/sbcl --noinform \
+     --no-userinit \
+     --non-interactive \
+     --eval "(require 'asdf)" \
+     --eval '
+(progn (if (find :asdf3.1 *features*)
+           (print "*FEATURES* has :ASDF3.1")
+           (sb-ext:exit :code 1))
+       (if (asdf::version<= "3.1" (asdf:asdf-version))
+           (print "ASDF-VERSION is OK")
+           (sb-ext:exit :code 2))
+       (print "SBCL/ASDF Seems passable"))'
+then
+    echo " ✓ New SBCL is OK"
+else
+    echo "✗ New SBCL does not work"
+    exit 18
+fi

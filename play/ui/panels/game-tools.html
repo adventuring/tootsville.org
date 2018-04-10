@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <body>
+    <b> This is a panel loaded by the UI. </b>
+    <div id="game-tools">
+      <div id="toolbox-mobile-phone" onclick="showHUDPanel('mobile');"
+           class="menu-like">
+        <i class="fa fa-mobile-alt fa-2x fa-fw"></i> L.R. Mobile
+      </div>
+      <div id="mobile-phone-info"><i class="fas fa-spin fa-spinner"></i></div>
+      <div id="toolbox-contacts" onclick="showHUDPanel('contacts');"
+                class="menu-like">
+        <i class="fa fa-address-card fa-fw"></i>
+        Contacts
+      </div>
+      <hr>
+      <div id="toolbox-wallet" onclick="closeHUDPanel();">
+        <span id="wallet-icon">👛 Wallet:</span>
+        <div id="wallet-peanuts">
+          <span id="wallet-peanuts-icon">🥜</span> <!-- peanut emoji -->
+          <span id="wallet-peanuts-label">peanuts: &nbsp; </span>
+          <span id="wallet-peanuts-display"><i class="fas fa-spin fa-spinner"></i></span>
+        </div>
+        <div id="wallet-fairy-dust">
+          <span id="wallet-fairy-dust-icon">⁂</span>
+          <span id="wallet-fairy-dust-label">fairy dust: &nbsp; </span>
+          <span id="wallet-fairy-dust-display"><i class="fas fa-spin fa-spinner"></i></span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{% extends "layouts/blank.html" %}
+{% block title %}Tootsbook News{% endblock %}
+{% block body %}
+
+<h1> <small>Latest News from</small> Tootsbook </h1>
+
+<dl class="headlines">
+  {% for story in headlines %}
+
+  <dt><a href="{{ story.link }}">{{ story.title }}</a></dt>
+  <dd>{{ story.description }}</dd>
+
+
+  {% endfor %}
+</dl>
+
+<h2>
+  <small>Catch up on all the latest news at</small>
+  <a href="https://www.tootsbook.com/tootsbook/">Tootsbook</a>
+</h2>
+
+<p id="footer">
+  Headlines last updated {{ updated }}. More recent posts may not appear
+  here immediately.
+</p>
+
+{% endblock %}

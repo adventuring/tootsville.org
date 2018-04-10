@@ -1,0 +1,140 @@
+#!/bin/bash
+
+function echobig {
+    if which figlet &> /dev/null
+    then
+        echo "[1m"
+        figlet -t -f big $*
+        echo ""
+        echo $*
+        echo "[0m"
+    else
+        echo $*
+    fi
+}
+
+LOCAL_USERNAME=`whoami`
+REVISION=`git log -n 1 --pretty=format:"%H"`
+if which finger &>/dev/null
+then
+   REALNAME=$(finger $LOCAL_USERNAME | perl -ne 'if (/Name: (.*)[\t\n]/) { print $1; exit }')
+fi
+if [ "x$REALNAME" = "x" ]
+then
+    REALNAME=$(grep ^$LOCAL_USERNAME: /etc/passwd | cut -d: -f5 | cut -d, -f1)
+fi
+if [ "x$REALNAME" = "x" ]
+then
+    REALNAME=$LOCAL_USERNAME
+fi
+
+echo "Deploy cluster: $1"
+echo "Initiated by $LOCAL_USERNAME@$(hostname) ($REALNAME)"
+date
+rm -fr .tmp.*
+if [ "$1" = tootsville.org ]
+then
+    echo "That seems dangerous/stupid. Let's not."
+    exit 1
+fi
+if [ "x$1" = x ]
+then
+    echo "Cluster name required"
+    exit 2
+fi
+
+cluster=$1
+
+cd "$(dirname $0)"/../
+
+
+echobig Deploying to
+echobig $cluster
+
+echobig $(date +%Y-%m-%d\ %H:%M:%S)
+
+echobig Running builds
+make all || exit 3
+
+bin/make-all-htaccess || exit 4
+
+##########
+
+echobig Pre-deploy front-ends
+for host in play login
+do
+    echo "Pre-deployment for $host.$cluster:"
+    # safe place to copy in
+    echo "rm -fr $host.$cluster.prior-deploy; \
+rm -fr $host.$cluster.before-deploy ; \
+mv -u $host.$cluster.new $host.$cluster.prior-deploy ; \
+cp -a $host.$cluster $host.$cluster.new; \
+cd $host.$cluster.new;" >> .tmp.$host.preamble
+    # copy in most files
+    mkdir .tmp.$host
+    rsync -essh --exclude='*~' --exclude='*#' -ar \
+          $host/* .tmp.$host/
+    # each host copies error pages
+    rsync -essh --exclude='*~' --exclude='*#'  -ar \
+          www/error .tmp.$host/
+    # .htaccess generated above
+    cp htaccess.all/$host.$cluster.htaccess .tmp.$host/.htaccess
+    # Google auth linking
+    mkdir -p .tmp.$host/.well-known
+    cp include/well-known.assetlinks.json .tmp.$host/.well-known/assetlinks.json || exit 5
+    ( cd .tmp.$host ; \
+      shar -C xz -g 9 -M -Q -q -x \
+           -o ../.tmp.$host.shar \
+           -n "$host.$cluster $REVISION" \
+           -s "$LOCAL_USERNAME ($REALNAME)" \
+           * )
+    cat .tmp.$host.preamble .tmp.$host.shar* | ssh $host.$cluster
+    rm -r .tmp.$host*
+    echo "done pre-deploying $host.$cluster static files"
+    echo ""
+done
+
+##########
+
+echobig Pre-deploy back-ends
+for host in users gossip world
+do
+    # .htaccess generated above
+    scp htaccess.all/$host.$cluster.htaccess $host.$cluster:$host.$cluster.new/.htaccess
+    # Google auth linking
+    scp include/well-known.assetlinks.json $host.$cluster:$host.$cluster.new/.well-known/assetlinks.json
+
+    # update sources and compile
+    rsync -essh -r servers $host.$cluster:
+    ssh $host.$cluster make -C servers Tootsville test
+done
+
+##########
+
+echobig Switching Roots
+for host in play login
+do (
+    ssh $host.$cluster "mv $host.$cluster $host.$cluster.before-deploy && mv $host.$cluster.new $host.$cluster"
+    )&
+done
+for host in users gossip world
+do (
+    ssh $host.$cluster "cp /usr/local/bin/Tootsville -f /usr/local/bin/Tootsville.prior; \
+cp servers/Tootsville /usr/local/bin/; \
+cp $host.$cluster.htaccess /var/www/$host.$cluster/.htaccess; \
+mkdir -p /var/www/$host.$cluster/.well-known; \
+cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
+    )&
+done
+
+##########
+
+echobig Notifying Rollbar
+ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
+ENVIRONMENT=$cluster
+
+curl https://api.rollbar.com/api/1/deploy/ \
+  -F access_token=$ACCESS_TOKEN \
+  -F environment=$ENVIRONMENT \
+  -F revision=$REVISION \
+  -F local_username=$LOCAL_USERNAME

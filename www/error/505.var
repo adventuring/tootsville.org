@@ -1,0 +1,8 @@
+URI: 505
+
+URI: 505.shtml
+Content-Type: text/html;charset=utf-8
+Content-Language: en; qs=1.0
+
+URI: 505.json
+Content-Type: application/json;charset=utf-8

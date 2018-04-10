@@ -1,0 +1,75 @@
+# Temp files
+tmp.*
+*.tmp
+tmp?
+temp-*
+
+# Log files
+*.log
+
+# Unix/Emacs style backups and temp files
+*~
+.#*
+*#
+
+# Generic backup files
+*.bak
+
+# Git originals from conflicts or merges
+*.orig
+
+# Vi swap files
+*.swp
+
+# Buildapp crashes can leave these lying around
+dumper*.lisp
+
+# JOE crash file
+DEADJOE
+
+# Slime FASLs in place
+*.fasl
+
+# Deployment packages
+dist/*
+
+# Editor working files — Emacs
+.emacs.desktop
+.emacs.desktop.lock
+
+# Eclipse project files
+.settings
+.workspace
+
+# Build temp files
+build/
+js/*.js
+js/*.map
+css/*.css
+
+# Compilation target
+Tootsville
+Tootsville.new
+
+# Compiled CSS files from LESS sources
+static/css/*.css
+
+# Compiled Javascript and source-map files
+static/js/*.js
+static/js/*.map
+
+# Cordova build artefacts
+node_modules/
+cordova/plugins/
+cordova/platforms/
+
+# Set up as a symlink or compiled locally
+bin/buildapp
+bin/sbcl
+
+# Ignore generated documentation
+doc/**
+
+# Bootstrap files for loading Quicklisp
+quicklisp.lisp
+quicklisp.lisp.asc

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <body>
+    <b> This is a panel loaded by the UI. </b>
+    <div id="control-panel">
+
+      <!-- Volume controls and Mute -->
+      <div id="control-panel-volume">
+        <i id="mute-icon" class="fas fa-fw fa-volume-off" 
+           onclick="volumeMute()"></i>
+        &nbsp;
+        <i class="fas fa-volume-down fa-fw" onclick="volumeDown()"></i>
+        <input type="range" id="volume-slider" min="0" max="100"
+               value="50" disabled
+               step="10" onchange="setVolume(this.value)">
+        <i class="fas fa-volume-up fa-fw" onclick="volumeUp()"></i>
+      </div>
+      
+      <hr>
+
+      <!-- Features -->
+      
+      <div>
+        <input type="checkbox" id="fullscreen-toggle"
+               onChange="closeHUDPanel();setFullscreen(this.checked);">
+        <label id="control-panel-fullscreen" for="fullscreen-toggle">
+          Fullscreen
+        </label>
+      </div>
+      <div id="control-panel-gamepad" 
+           onclick="showHUDPanel('gamepad')">
+        <i class="fas fa-gamepad"></i>
+        Gamepad
+      </div>
+
+      <!-- Help -->
+      
+      <div id="control-panel-help" onclick="showHUDPanel('help');">
+        <i class="fas fa-life-ring fa-fw"></i>
+        Help
+      </div>
+
+      <div id="control-panel-get-firefox"
+           onclick="closeHUDPanel();window.open('https://getfirefox.com/','get-firefox')">
+        <a href="https://getfirefox.com/" target="get-firefox">
+          <i class="fab fa-firefox fa-fw"></i> Get Firefox
+          <i class="fas fa-window-restore footnote-marker"></i>
+        </a>
+      </div>
+
+      <!-- Account/Character -->
+      
+      <hr>
+
+      <div id="control-panel-account" onclick="closeHUDPanel();accountSettings()">
+        <i class="fas fa-user fa-fw"></i>
+        Account Settings
+        <i class="fas fa-window-restore footnote-marker"></i>
+      </div>
+      <div id="control-panel-switch-toots" onclick="closeHUDPanel();switchToots()">
+        <i class="fas fa-arrows-alt-h fa-fw"></i>
+        Switch Toots
+      </div>
+      <div id="control-panel-sign-out" onclick="closeHUDPanel();signOut()">
+        <i class="fas fa-sign-out-alt fa-fw"></i>
+        Quit
+      </div>
+    </div>
+  </body>
+</html>

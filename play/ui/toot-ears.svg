@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="62.020206mm"
+   height="38.302097mm"
+   viewBox="0 0 62.020206 38.302097"
+   version="1.1"
+  >
+  <defs/>
+  <style>
+    .svg-green-fill {
+    fill:#7ac142;
+    fill-opacity:1;
+    }
+    .svg-yellow-fill {
+    fill:#7ac142;
+    fill-opacity:1;
+    }
+    .svg-dotted-outline {
+    stroke:#000;
+    stroke-width:4;
+    stroke-linecap:butt;
+    stroke-linejoin:miter;
+    stroke-miterlimit:4;
+    stroke-dasharray:4, 4;
+    stroke-dashoffset:0;
+    stroke-opacity:1;
+    }
+    .svg-solid-outline {
+    stroke:#000;
+    stroke-width:4;
+    stroke-linecap:butt;
+    stroke-linejoin:miter;
+    stroke-miterlimit:4;
+    stroke-dasharray:1;
+    stroke-dashoffset:0;
+    stroke-opacity:1;
+    }
+  </style>
+  <g class="svg-yellow-fill svg-dotted-outline"
+     transform="matrix(0.26458333,0,0,0.26458333,-439.08134,-3.2234353)">
+    <ellipse cx="1162.4132"
+             cy="1275.8701"
+             rx="51.164822"
+             ry="72.767738"
+             transform="rotate(-45)" />
+    <ellipse cx="-1349.8361"
+             cy="-1236.3792"
+             rx="51.164822"
+             ry="72.767738"
+             transform="matrix(-0.70710678,-0.70710678,-0.70710678,0.70710678,0,0)"/>
+    <circle cx="1775.2915"
+            cy="84.774109"
+            r="70.38192"/>
+  </g>
+</svg>

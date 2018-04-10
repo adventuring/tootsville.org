@@ -1,3 +1,4 @@
+# Lisp fast load files
 *.FASL
 *.fasl
 *.lisp-temp
@@ -15,3 +16,16 @@
 *.sx32fsl
 *.wx64fsl
 *.wx32fsl
+
+# Junk, temp, backup files
+*~
+*#
+.#*
+*.tmp
+*.orig
+
+# Output files
+dist/
+htaccess.all
+servers/Tootsville
+servers/Tootsville.new

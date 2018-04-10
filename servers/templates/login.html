@@ -1,0 +1,382 @@
+{% extends "layouts/default.html" %}
+{% block title %}{% if debug %}Preview — Play Now (test build){% else %}Play Now{% endif %}{% endblock %}
+{% block overlay %}
+
+<script language='javascript'>
+  window.serverInfo = { 'url': "{{ server-url }}",
+  'iceServers':[{'url': 'stun:stun.l.google.com:19302'},
+  {'url': 'stun:23.21.150.121'}]};
+</script>
+
+
+<label id="help-check-label" for="help-check">
+  <i class="fa fa-life-ring" aria-hidden="true"></i>
+  Help
+</label>
+
+<!-- Help overlay should immediately follow the check box -->
+<input type="checkbox" id="help-check" name="help-check">
+<div id="help-overlay">
+  <h1>Need Help?</h1>
+  <ul class="speech-balloons">
+    <li> <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/">What
+        is <q>Tootsville</q>?</a> </li>
+    <li> <a
+           href="https://www.tootsbook.com/tootsbook/">What's
+        new here?</a> </li>
+    <li class="not-logged-in"> <a
+                                 href="https://tootsville.adventuring.click/form/display-bug">The
+        sign-in screen looks messed-up.</a> </li>
+    <li class="not-logged-in">
+      <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Under_13_Sign_In">I'm
+        under 13. How can I get permission to play?</a>
+    <li class="not-logged-in">
+      <a
+        href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Log_in_troubleshooting">I'm
+        having trouble signing in.</a> </li>
+    <li>  <a href="https://myaccount.google.com/">I  want  to change  my
+        Google account password or settings.</a> </li>
+    <li>  <a href="https://accounts.google.com/SignUp">I'm  13 years  or
+        older, and I don't have a Google account.</a> </li>
+    <li> <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Game_Controls">How
+        do I control the game?</a> </li>
+    <li class="logged-in">
+      <a
+        href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Troubleshooting">I
+        am having trouble with the game.</a> </li>
+    <li class="logged-in"> <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Lag">What
+        is Lag?</a> </li>
+    <li><a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Minimum_requirements">What
+        are the minimum requirements for my computer?</a> </li>
+  </ul>
+</div>
+
+<!-- Log in (Sign in) Overlay (keep check box right before it) -->
+<input type="checkbox" id="coppa-sign-in" name="coppa-sign-in">
+<div id="login-overlay">
+  <h1><img src="https://jumbo.tootsville.adventuring.click/Assets/Icons/tootsville-logo.svg"
+           alt="Tootsville">
+    <span class="play-now">{% if debug %}Preview{% else %}Play Now{% endif %}</span></h1>
+
+  <section id="under-13">
+
+    <h2> Under&nbsp;13 Sign-In </h2>
+
+    <p> Your parent or guardian must
+      <a
+        href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Sign_in_with_a_Child_Account"
+        >create your account</a> first. </p>
+
+
+    <label id="coppa-sign-in-label" for="coppa-sign-in">
+      <div id="coppa-sign-in-button"> Sign In </div>
+    </label>
+
+  </section>
+
+  <!-- ** -->
+
+  <section id="over-13">
+
+    <h2> Ages&nbsp;13+ Sign-In</h2>
+
+    <section id="google-sign-in-box" class="sign-in-box">
+      <center>
+        <h4><i class="fa fa-google-plus"></i> &nbsp; Google Account Sign-in</h4>
+        <div class="g-signin2"
+             data-onsuccess="gotGoogleSignIn"></div>
+      </center>
+    </section>
+
+    <section id="facebook-sign-in-box" class="sign-in-box">
+      <center>
+        <h4><i  class="fa  fa-facebook"></i>   &nbsp;  Facebook  Account
+          Sign-in </h4>
+        <li> may not work yet </ld>
+        <div class="fb-login-button" data-max-rows="1"
+             data-size="large" data-show-faces="true"
+             data-onlogin="gotFacebookSignin"></div>
+      </center>
+    </section>
+
+    <p class="bottom">
+      Sign  in above  if  it's  your first  time,  or you're  returning.
+      After  you  sign in,  you  can  create a  <em>Toot</em>  character
+      for   yourself.  If   you're  over   18,  you   can  also   create
+      a <em>Toot</em> character for your child.
+    </p>
+
+  </section>
+
+  <!-- ** -->
+
+  <section id="login-info">
+
+    <h2> About Tootsville </h2>
+
+    <p> Visit <a target="tootsvilleorg"
+                 href="https://www.tootsville.org/">Tootsville.org</a>  to
+      discover  the  world of  Tootsville.  Read  all about  it
+      in <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/"
+            target="wiki-wiki">the Wiki-Wiki</a>. </p>
+
+    <p> <a href="https://www.tootsbook.com/tootsbook/"
+           target="tootsbook">Tootsbook</a> has  news and blog  posts that
+      you might find interesting. Check out the
+      <a href="https://www.tootsbook.com/tootsbook/category/herd/"
+         target="tootsbook">Herd  Events</a> for  social events  happening
+      inside the game world, or
+      <a href="https://www.tootsbook.com/tootsbook/category/tootanga/"
+         target="tootsbook">Tootangan Gazette</a>  articles to learn
+      more about the game world. </p>
+
+    <ul class="rules">
+
+      {% if debug %}
+      <li> <h5 class="debug"> This is a Preview (test) build! </h5>
+        Lots  of stuff  will probably  not work  right here.  You should
+        check                                                  out
+        the <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Pre-Release_Warning">Pre-Release</a>
+        info. </li>
+      {% endif %}
+
+
+      <li> Every player must follow the
+        <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Core:TOS"
+           target="tos">Terms of Service</a>. </li>
+
+      <li> We protect your
+        <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Core:Privacy"
+           target="privacy">privacy</a> in
+        meaningful ways. </li>
+
+      <li><a href="version">About this game</a> (Tech. info and credits)</li>
+
+    </ul>
+
+  </section>
+
+</div>
+<!-- End of log in (sign in) overlay -->
+<!-- COPPA overlay should immediately follow it -->
+<div id="login-overlay-coppa">
+  <h1><img src="https://jumbo.tootsville.adventuring.click/Assets/Icons/tootsville-logo.svg"
+           alt="Tootsville">
+    <span class="play-now">{% if debug %}Preview{% else %}Play Now{% endif %}</span></h1>
+
+  <div class="hint">
+    {% if debug %}
+    <h5 class="debug"> This is a Preview (test) build! </h5>
+    <p> Lots  of stuff  will probably  not work  right here.  You should
+      check out the <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Pre-Release_Warning">Pre-Release</a> info. </p>
+    {% endif %}
+
+    <h5>Hey, Parents!</h5>  <p> Your child  can play in  Tootsville with
+      whatever supervision  or assistance you  prefer. You will  need to
+      set up  your own  account, and  give them  permission to  sign in,
+      until they're at least 13 years old. </p>
+    <p>     If      you     have     not     set      up     a     Child
+      account, <label  for="coppa-sign-in"><u>Click here</u></label> and
+      sign in (as an adult) to set them up. They will need to know their
+      Toot's name and the three-symbol secret code to sign in. </p>
+    <p> <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Parents">We
+        have information for parents and  guardians here</a> if you want
+      to learn more. </p>
+    <p>                                                       Tootsville
+      is <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Really_free">really
+        free</a>  and open  to  all ages  and skill  levels.  There is  no
+      violence,  and   no  directed   advertisements.  Made   with  love
+      by <a
+           href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/CIWTA">volunteers</a>.
+    </p>
+  </div>
+
+  <form id="coppa-form">
+
+    <div>
+      <label for="coppa-toot-name">
+        What is your Toot's name?
+      </label>
+      <input type="text" name="coppa-toot-name" id="coppa-toot-name"
+             size="32" maxlength="32"
+             minlength="4"
+             mozactionhint="next"
+             autocapitalize="words"
+             autocomplete="username"
+             autocorrect="off"
+             inputmode="verbatim"
+             title="Toot's name"
+             pattern="^[A-Za-z][A-Za-z]*(-[A-Za-z]+)*[0-9]{0,4}$"
+             required="t"
+             spellcheck="false"
+             x-moz-errormessage="Your  Toot name  has to  be typed  just
+                                 like your parent or guardian spelled it"
+             >
+    </div>
+
+    <div>
+      <label>
+        What is your secret code?
+      </label>
+      <fieldset class="five-across">
+        <input type="radio" name="coppa-pass-a" value="coppa-pass-heart" id="coppa-pass-heart">
+        <label for="coppa-pass-heart">
+          ♥
+        </label>
+        <input type="radio" name="coppa-pass-a" value="coppa-pass-plus" id="coppa-pass-plus">
+        <label for="coppa-pass-plus">
+          ➕
+        </label>
+        <input type="radio" name="coppa-pass-a" value="coppa-pass-smile" id="coppa-pass-smile">
+        <label for="coppa-pass-smile">
+          ☺
+        </label>
+        <input type="radio" name="coppa-pass-a" value="coppa-pass-circled-x" id="coppa-pass-circled-x">
+        <label for="coppa-pass-circled-x">
+          ⮾
+        </label>
+        <input type="radio" name="coppa-pass-a" value="coppa-pass-office" id="coppa-pass-office">
+        <label for="coppa-pass-office">
+          🏢
+        </label>
+      </fieldset>
+      <fieldset class="five-across">
+        <input type="radio" name="coppa-pass-b" value="coppa-pass-star" id="coppa-pass-star">
+        <label for="coppa-pass-star">
+          ★
+        </label>
+        <input type="radio" name="coppa-pass-b" value="coppa-pass-tu" id="coppa-pass-tu">
+        <label for="coppa-pass-tu">
+          ツ
+        </label>
+        <input type="radio" name="coppa-pass-b" value="coppa-pass-at" id="coppa-pass-at">
+        <label for="coppa-pass-at">
+          @
+        </label>
+        <input type="radio" name="coppa-pass-b" value="coppa-pass-elephant" id="coppa-pass-elephant">
+        <label for="coppa-pass-elephant">
+          🐘
+        </label>
+        <input type="radio" name="coppa-pass-b" value="coppa-pass-gold" id="coppa-pass-gold">
+        <label for="coppa-pass-gold">
+          🜚
+        </label>
+      </fieldset>
+      <fieldset class="five-across">
+        <input type="radio" name="coppa-pass-c" value="coppa-pass-1" id="coppa-pass-1">
+        <label for="coppa-pass-1">
+          1
+        </label>
+        <input type="radio" name="coppa-pass-c" value="coppa-pass-2" id="coppa-pass-2">
+        <label for="coppa-pass-2">
+          2
+        </label>
+        <input type="radio" name="coppa-pass-c" value="coppa-pass-3" id="coppa-pass-3">
+        <label for="coppa-pass-3">
+          3
+        </label>
+        <input type="radio" name="coppa-pass-c" value="coppa-pass-4" id="coppa-pass-4">
+        <label for="coppa-pass-4">
+          4
+        </label>
+        <input type="radio" name="coppa-pass-c" value="coppa-pass-5" id="coppa-pass-5">
+        <label for="coppa-pass-5">
+          5
+        </label>
+      </fieldset>
+    </div>
+
+    <div>
+      Then click here:
+      <button
+        onclick="call_lisp('LOGIN:START-COPPA-LOGIN')"
+        > Let's Make Some Noise! </button>
+    </div>
+
+  </form>
+
+  <label for="coppa-sign-in" id="coppa-back-out">
+    <span class="speech-balloon">I'm 13 years old, or older</span>
+  </label>
+</div>
+
+<div id="game-welcome">
+  <h1> Welcome </h1>
+  <section id="welcome-signin">
+
+    <center>
+      <button onClick="romance.signInToGame()">Join Game</button>
+      <button onClick="romance.quit()">Quit</button>
+    </center>
+
+    <hr>
+    
+    <div class="sign-in-box">
+
+      <div id="google-signed-in">
+        <h4><i class="fa fa-google-plus"></i> &nbsp; Signed In with Google </h4>
+        <img id="welcome-photo" align="middle">
+        <span id="welcome-name"></span>
+        <p> Manage your account <a target="oauthAccountManager"
+                                   href="https://myaccount.google.com/">at Google.com</a> </p>
+        <center>
+          <button onclick="romance.quitFromGoogle();">Sign out</button>
+        </center>
+      </div>
+      <div id="google-not-signed-in">
+        <h4><i  class="fa  fa-google-plus"></i>  &nbsp;  Google  Account
+          Sign-In</h4>
+        <center  style="min-height: 2em">
+          &nbsp; <div class="g-signin2" data-onsuccess="romance.gotGoogleSignIn"></div>
+        </center>
+      </div>
+    </div>
+
+    <hr>
+    
+    <div class="sign-in-box">
+      <div id="facebook-signed-in">
+        <h4><i class="fa fa-facebook"></i> &nbsp; Signed in with Facebook </h4>
+        <img id="facebook-photo" align="middle">
+        <span id="facebook-name"></span>
+        <p>Manage your account <a target="oauthAccountManager"
+                                  href="https://facebook.com/">at Facebook.com</a> </p>
+
+        <center>
+          <div class="fb-login-button" data-max-rows="1"
+               data-size="lagre" data-show-faces="true"
+               data-onlogin="gotFacebookSignin"></div>
+          <button onclick="romance.quitFromFacebook();">Sign Out</button>
+        </center>
+      </div>
+      <div id="facebook-not-signed-in">
+        <h4><i  class="fa  fa-facebook"></i>   &nbsp;  Facebook  Account
+          Sign-In</h4>
+        <li> may not work yet </ld>
+        <center style="min-height: 2em">
+          <div class="fb-login-button" data-max-rows="1"
+               data-size="large" data-show-faces="true"
+               data-onlogin="gotFacebookSignin"></div>
+        </center>
+      </div>
+    </div>
+
+    <hr>
+    
+    <h4> Child Accounts </h4>
+    <p>
+      <a   href="http://wikiwiki.tootsville.adventuring.click/wikiwiki/Builder:Child_Account_Creation"
+           target="apologyChild">Child Account creation is not available</a></p>
+  </section>
+  <section id="welcome-news">
+    <iframe src="/news"></iframe>
+  </section>
+</div>
+
+<div id="too-tiny">
+  Too tiny! Resize the window to play! <br>
+  <small>(Is this your whole screen? I'm sorry ☹)</small>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,53 @@
+#!/bin/bash -xe
+make assets
+
+rsync -essh -rv static src templates \
+      tootsville.asd *.lisp \
+      .htaccess robots.txt \
+      tootsville.adventuring.click:tootsville.adventuring.click/
+
+rsync -essh -rv tootsville.org/error \
+      tootsville.adventuring.click:tootsville.adventuring.click/
+
+make tootsville.cgi
+
+scp tootsville.asd Makefile app.lisp tootsville.adventuring.click:tootsville.adventuring.click/
+rsync -essh -v bin/* tootsville.adventuring.click:tootsville.adventuring.click/bin/
+
+for build_try in 1 2 3
+do
+    ssh tootsville.adventuring.click make -C tootsville.adventuring.click tootsville.cgi || (
+        echo " Build attempt failed: try $build_try of 3."
+        sleep 30
+    )
+done
+
+rsync -essh -rv tootsville.org tootsvilleorg@tootsville.org:
+
+until curl https://tootsville.adventuring.click/version.txt 2>/dev/null | \
+        grep -E "^Build-Date:\s+$( date +%Y-%m-%d | sed -e s/-0/-/g )"
+do
+	echo "New version not yet running (FastCGI cache?)"
+	sleep 30 
+done
+
+# Notify Rollbar of the deployment
+curl https://api.rollbar.com/api/1/deploy/ \
+     -F access_token=f6f4ae4d08dd415799a1ef2122fff0b0 \
+     -F environment=$(./tootsville.cgi version-info product) \
+     -F revision=$(git log -n 1 --pretty=format:"%H") \
+     -F version=$(./tootsville.cgi version-info version) \
+     -F local_username="$(whoami)%$(hostname)"
+
+# Provide Source Maps to Rollbar
+# curl https://api.rollbar.com/api/1/sourcemap \
+#   -F access_token=aaaabbbbccccddddeeeeffff00001111 \
+#   -F version=version_string_here \
+#   -F minified_url=http://example.com/static/js/example.min.js \
+#   -F source_map=@static/js/example.min.map \
+#   -F static/js/site.js=@static/js/site.js \
+#   -F static/js/util.js=@static/js/util.js
+
+git tag -s server-push-$(date +%Y-%m-%d-%H%M) HEAD \
+    -m "Pushed to server from $(who am i)@$(hostname) at $(date); $(git status -s -uno)"
+

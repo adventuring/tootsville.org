@@ -1,0 +1,18 @@
+#!/bin/sh
+
+mkdir -p "$(dirname $0)"/../htaccess.all/
+rm -r "$(dirname $0)"/../htaccess.all/*
+cd "$(dirname $0)"/../htaccess.all/
+    for cluster in tootsville.org tootsville.ga ; do
+        echo '{' >> $cluster.cluster.json
+        for host in play gossip world login users ; do
+            sed ../htaccess.base -e s/@@HOST@@/$host/g \
+                -e s/@@CLUSTER@@/$cluster/g \
+                | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
+                       > $host.$cluster.htaccess
+            echo "\"$host\": \"$host.$cluster\"," >> $cluster.cluster.json
+        done
+    done
+    echo '"productionP":true,"testP":false}' >> tootsville.org.cluster.json
+    echo '"productionP":false,"testP":true}' >> tootsville.ga.cluster.json
+

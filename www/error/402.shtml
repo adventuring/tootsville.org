@@ -1,0 +1,7 @@
+<!--#include file="error-header.htmlf"-->
+
+<h1> 402: Payment Required </h1>
+
+<p> The requested resource cannot be accessed without payment. </p>
+
+<a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Error_402">(Learn More…)</a> <!--#include file="error-footer.htmlf"-->
