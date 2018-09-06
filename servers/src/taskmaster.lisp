@@ -12,7 +12,7 @@
   ((thread-pool :accessor taskmaster-thread-pool))
   (:default-initargs
    :worker-thread-name-format "Web Worker ~a")
-  (:documentation 
+  (:documentation
    "A taskmaster that uses a thread pool to dispatch incoming requests."))
 
 (defconstant +threads-per-core+ 1
@@ -20,10 +20,10 @@
 
 (defconstant +max-queue-size-for-thread-pool+ #x100)
 
-(declaim (type (integer (0) *) +threads-per-core+))
+(declaim (type (rational (0)) +threads-per-core+))
 
 (defun name-all-threads-idle (taskmaster)
-  (loop for thread in (slot-value 
+  (loop for thread in (slot-value
                        (slot-value (taskmaster-thread-pool taskmaster)
                                    'cl-threadpool::threads)
                        'cl-threadpool::threads)
@@ -37,7 +37,7 @@
        (ignore-errors 
         (funcall (coerce (intern "CONNECTION-INFO" :swank) 'function)))))
 
-(defmethod initialize-instance :after ((taskmaster thread-pool-taskmaster) 
+(defmethod initialize-instance :after ((taskmaster thread-pool-taskmaster)
                                        &rest initargs)
   (declare (ignore initargs))
   (setf (taskmaster-thread-pool taskmaster)
@@ -55,15 +55,15 @@
     (setf (taskmaster-thread-pool taskmaster) nil)
     ;; Haven't actually seen any errors, but seems wise to be safe here,
     ;; since we're about to lose the only reference to it.
-    (ignore-errors (cl-threadpool:stop pool))) 
+    (ignore-errors (cl-threadpool:stop pool)))
   (call-next-method))
 
 (def-memoized-function cores*threads-per-core (cores)
-  (declare (type (integer 0 #.(expt 2 15)) +threads-per-core+ cores)) 
+  (declare (type (integer 0 #.(expt 2 15)) +threads-per-core+ cores))
   (the (unsigned-byte 63) (* (the (unsigned-byte 15) +threads-per-core+)
                              (the (unsigned-byte 15) cores))))
 
-(defmethod taskmaster-max-thread-count ((taskmaster thread-pool-taskmaster)) 
+(defmethod taskmaster-max-thread-count ((taskmaster thread-pool-taskmaster))
   (cores*threads-per-core (org.star-hope.machine:processor-count)))
 
 (defmethod taskmaster-thread-count ((taskmaster thread-pool-taskmaster))
@@ -78,7 +78,7 @@
 
 (defmacro with-mulligan-handlers ((name mulligan) &body body)
   `(handler-bind
-       ((error 
+       ((error
           (lambda (condition)
             (verbose:fatal '(:thread-pool-worker)
                            "Error signalled: worker ~a: ~:(~a~)~%~a"
@@ -107,7 +107,7 @@
         (mulligan (gensym "MULLIGAN-")))
     `(tagbody ,restart-top
         (let ((,mulligan *mulligans*))
-          (restart-bind 
+          (restart-bind
               ((restart (lambda () (go ,restart-top))
                         :report-function (lambda (s)
                                            (princ (concatenate 'string "Restart " ,name) s)))
@@ -129,10 +129,10 @@
         (thread-name (gensym "THREAD-NAME-")))
     `(lambda ()
        (let* ((,idle-name (thread-name (current-thread)))
-              (,thread-name ,name)) 
+              (,thread-name ,name))
          (setf (sb-thread:thread-name (current-thread)) ,thread-name)
          (unwind-protect
-              (with-pool-thread-restarts (,thread-name) 
+              (with-pool-thread-restarts (,thread-name)
                 (verbose:info '(:threadpool-worker) "~a working" ,thread-name)
                 ,@body)
            (verbose:info '(:threadpool-worker) "~a done" ,thread-name)
@@ -142,13 +142,13 @@
 
 (defun client-as-string (socket)
   "A helper function which returns the client's address and port as a
-   string and tries to act robustly in the presence of network problems.
+ string and tries to act robustly in the presence of network problems.
 
 This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
   (format nil "~a port ~d (local: ~a port ~d)"
-          (usocket::host-to-hostname (usocket:get-peer-address socket)) 
+          (usocket::host-to-hostname (usocket:get-peer-address socket))
           (usocket:get-peer-port socket)
-          (usocket::host-to-hostname (usocket:get-local-address socket)) 
+          (usocket::host-to-hostname (usocket:get-local-address socket))
           (usocket:get-local-port socket)))
 
 (defun make-thread-name (taskmaster socket)
@@ -158,8 +158,8 @@ This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
 (defun handle-incoming-connection% (taskmaster socket)
   (hunchentoot::increment-taskmaster-accept-count taskmaster)
   (handler-bind
-      ((cl-threadpool:threadpool-error 
-         (lambda (cond) 
+      ((cl-threadpool:threadpool-error
+         (lambda (cond)
            (verbose:fatal '(:threadpool-worker) "Thread pool error: ~a" cond)
            (too-many-taskmaster-requests taskmaster socket)
            (hunchentoot::send-service-unavailable-reply taskmaster socket))))
@@ -167,7 +167,7 @@ This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
 
 (defun safe-client-as-string (socket)
   (handler-bind
-      ((usocket:bad-file-descriptor-error 
+      ((usocket:bad-file-descriptor-error
          (lambda (c) (declare (ignore c))
            "Disconnected Client")))
     (client-as-string socket)))
@@ -175,7 +175,7 @@ This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
 (defmethod handle-incoming-connection ((taskmaster thread-pool-taskmaster)
                                        socket)
   (handler-bind
-      ((error 
+      ((error
          (lambda (cond)
            ;; need  to  bind  *ACCEPTOR*  so that  LOG-MESSAGE*  can  do
            ;; its work.
@@ -187,7 +187,7 @@ This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
 new incoming connection ~a: ~a"
                            (safe-client-as-string socket)
                            cond)))))
-    (cl-threadpool:add-job (taskmaster-thread-pool taskmaster) 
+    (cl-threadpool:add-job (taskmaster-thread-pool taskmaster)
                            (named-thread-pool-runner
                                (:name (make-thread-name taskmaster socket))
                              (handle-incoming-connection% taskmaster socket)))))
@@ -202,12 +202,12 @@ Tried to start a thread named ~a with ~s"
   (declare (optimize (speed 1)))
   (verbose:info '(:taskmaster-acceptor) "Starting acceptor thread for ~a" taskmaster)
   (setf (hunchentoot::acceptor-process taskmaster)
-        (make-thread 
-         (lambda () 
+        (make-thread
+         (lambda ()
            (accept-connections (taskmaster-acceptor taskmaster)))
          :name (format nil "Hunchentoot Listening on ~
 ~:[all interfaces~;~:*Address ~a~], ~
 Port ~d"
                        (acceptor-address (taskmaster-acceptor taskmaster))
-                       
+
                        (the (integer 1 65534) (acceptor-port (taskmaster-acceptor taskmaster)))))))

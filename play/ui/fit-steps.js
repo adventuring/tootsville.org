@@ -23,7 +23,7 @@ Tootsville.ui.googleFit = {
             { Authorization: "Bearer " + Tootsville.googleOAuthToken }
         ).then(
             (success) => {
-                // no op for now
+                // XXX no op for now
             }, (fail) => {
                 deniedSteps(fail);
             });

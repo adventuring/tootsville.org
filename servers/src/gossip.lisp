@@ -42,16 +42,16 @@
       (first found)
       (with-connection (:members)
         (or (datafly:retrieve-one (sxql:select (:*)
-                                               :from :users
-                                               :where '(:= :google-token token))
-                          :as 'user)
+                                    :from :users
+                                    :where '(:= :google-token token))
+                                  :as 'user)
             (progn
               (datafly:execute (sxql:insert-into :users
-                                                 :google-token token))
+                                 :google-token token))
               (datafly:retrieve-one (sxql:select (:*)
-                                                 :from :users
-                                                 :where '(:= :id (:last_insert_id)))
-                            :as 'user)))))))
+                                      :from :users
+                                      :where '(:= :id (:last_insert_id)))
+                                    :as 'user)))))))
 
 (defun request-param-value (param)
   (hunchentoot:parameter param))
@@ -80,12 +80,12 @@
   (format nil "~a" object))
 
 (defun user-info (&optional (user *user*))
-  (gossipnet-update-client user)
-  (let ((partial 
-         (list :id (user-id *user*)
-               :toots (map 'list #'toot-info (player-toots))
-               :offers (map 'list #'stringify (active-sdp-offers *user*)))))
-    (if-let (answer (user-sdp-answer user))
+  (gossipnet-update-client)
+  (let ((partial
+          (list :id (user-id *user*)
+                :toots (map 'list #'toot-info (player-toots))
+                :offers (map 'list #'stringify (active-sdp-offers *user*)))))
+    (if-let (answer (user-sdp-answer *user*))
       (append (list :answer answer) partial)
       partial)))
 
@@ -102,7 +102,7 @@
 (defmacro with-user (() &body body)
   `(let ((*user* (find-user-from-session)))
      (unless *user*
-       (return-from endpoint 
+       (return-from endpoint
          (list 403 nil *403.JSON-BYTES*)))
      ,@body))
 

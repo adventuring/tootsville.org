@@ -1,5 +1,5 @@
 Tootsville.wardrobe = {
-
+    
     don: function(item) {
         /* TODO */
     },
@@ -34,6 +34,14 @@ Tootsville.wardrobe = {
                 }
             ]
         } };
+    },
+
+    signExchange: function(exchangePacket) {
+        exchangePacket.signedBy[Tootsville.charName] = {
+            when: performance.now(),
+            sign: 'TODO'
+        };
+        return exchangePacket;
     },
 
     finalizeExchange: function(exchangePacket) {

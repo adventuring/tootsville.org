@@ -392,4 +392,3 @@ and so that all levels share the same orthography.")
       (apply #'notify ,level message* keys))))
 
 (map nil #'make-level-notifier *valid-notifier-levels*)
-

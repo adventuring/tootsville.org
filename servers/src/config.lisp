@@ -8,8 +8,8 @@
 (defconfig :common
     `(:databases ((:maindb :sqlite3 :database-name ":memory:"))
       :on-error-mail (:from-name "Tootsville Support"
-                                            :from-address "support@tootsville.org"
-                                            :to-address "support@tootsville.org"
+                      :from-address "support@tootsville.org"
+                      :to-address "support@tootsville.org"
                       :smtp-server "localhost"
                       :subject-prefix "Error")))
 
@@ -56,9 +56,9 @@
   (:method ((collection null) key more-keys)
     (values))
   (:method :around (collection key (more-keys cons))
-           (extract-key-path% (call-next-method)
-                              (first more-keys)
-                              (rest more-keys))))
+    (extract-key-path% (call-next-method)
+                       (first more-keys)
+                       (rest more-keys))))
 
 (defun extract-key-path (collection key &rest more-keys)
   (extract-key-path% collection key more-keys))
@@ -91,13 +91,13 @@
       (ecase *developmentp*
         (:devel t)
         (:prod nil))
-      (let ((developmentp 
-             (let ((hostname (machine-instance)))
-               (or (search hostname "tootsville.ga")
-                   (search hostname "dev.")
-                   (search hostname "-dev")
-                   (search hostname ".ga'")
-                   (not (search hostname "tootsville"))))))
+      (let ((developmentp
+              (let ((hostname (machine-instance)))
+                (or (search hostname "tootsville.ga")
+                    (search hostname "dev.")
+                    (search hostname "-dev")
+                    (search hostname ".ga'")
+                    (not (search hostname "tootsville"))))))
         (setf *developmentp* (if developmentp
                                  :devel
                                  :prod))

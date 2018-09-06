@@ -50,6 +50,4 @@
      alt="Tootsville">
    <img src="https://jumbo.tootsville.adventuring.click/Assets/Avatars/Quicksilver/Assets/toot-engineer.svg" id="builder-toot">
 
-     <small> This is  <tt><!--#echo var="HTTP_HOST"--></tt> on <tt><!--#echo
-     var="SERVER_NAME"--></tt>. </small>
      

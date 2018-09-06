@@ -6,5 +6,5 @@
 (unless (find-package :sb-rotate-byte)
   (load #p"SYS:CONTRIB;**;sb-rotate-byte.fasl.NEWEST"))
 (when (and (find-package :ql)
-           (not (find-package :swank)))
+           (not (find-package "SWANK")))
   (funcall (find-symbol "QUICKLOAD" :ql) :swank))

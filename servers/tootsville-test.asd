@@ -4,7 +4,7 @@
 (in-package :tootsville-test-asd)
 
 (defsystem tootsville-test
-  :author "Bruce-Robert Pocock <BRPocock@star-hope.org>"
+  :author "Bruce-Robert Pocock <BRFennPocock@star-hope.org>"
   :license ""
   :depends-on (:tootsville
                :prove)

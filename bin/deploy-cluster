@@ -27,7 +27,7 @@ if [ "x$REALNAME" = "x" ]
 then
     REALNAME=$LOCAL_USERNAME
 fi
-
+   
 echo "Deploy cluster: $1"
 echo "Initiated by $LOCAL_USERNAME@$(hostname) ($REALNAME)"
 date
@@ -66,8 +66,8 @@ do
     echo "Pre-deployment for $host.$cluster:"
     # safe place to copy in
     echo "rm -fr $host.$cluster.prior-deploy; \
-rm -fr $host.$cluster.before-deploy ; \
-mv -u $host.$cluster.new $host.$cluster.prior-deploy ; \
+rm -fr $host.$cluster.before-deploy; \
+mv -u $host.$cluster.new $host.$cluster.prior-deploy; \
 cp -a $host.$cluster $host.$cluster.new; \
 cd $host.$cluster.new;" >> .tmp.$host.preamble
     # copy in most files
@@ -100,13 +100,13 @@ echobig Pre-deploy back-ends
 for host in users gossip world
 do
     # .htaccess generated above
-    scp htaccess.all/$host.$cluster.htaccess $host.$cluster:$host.$cluster.new/.htaccess
+    scp htaccess.all/$host.$cluster.htaccess $host.$cluster: || exit 6
     # Google auth linking
-    scp include/well-known.assetlinks.json $host.$cluster:$host.$cluster.new/.well-known/assetlinks.json
+    scp include/well-known.assetlinks.json $host.$cluster: || exit 6
 
     # update sources and compile
-    rsync -essh -r servers $host.$cluster:
-    ssh $host.$cluster make -C servers Tootsville test
+    rsync -essh -Car servers $host.$cluster: || exit 6
+    ssh $host.$cluster make -C servers Tootsville test || exit 6
 done
 
 ##########

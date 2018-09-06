@@ -33,7 +33,7 @@
   `(with-output-to-string (s)
      (let ((*standard-output* s)
            (*error-output* s)
-           (*trace-output* s)) 
+           (*trace-output* s))
        ,@body)))
 
 (defmacro with-maintenance-times ((task-name task-string
@@ -67,7 +67,7 @@
 (defmacro define-maintenance-task (label (name start-delay finish-delay)
                                    &body body)
   `(defendpoint (:post ,(concatenate 'string
-                     "/maintenance/"
+                                     "/maintenance/"
                                      (string-downcase label)))
      nil
      (with-maintenance-times (,label

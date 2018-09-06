@@ -24,27 +24,6 @@ is, of course, a subseq of \".json\" as well.)"
         (search "application/x-json" accept)
         (search ".js" (hunchentoot:request-uri*)))))
 
-(defun redirect-to/html-body (uri)
-  "Returns an octet array that gives a simple redirection link.
-
-This is  a silly  legacy thing  for ancient  browsers that  don't follow
-a  3xx   redirection  or  want   to  display  something   while  they're
-redirecting. In  real life, it's  rarely encountered by a  real browser,
-but sometimes caught by tools like curl or wget with certain settings."
-  (flexi-streams:string-to-octets
-   (concatenate 'string
-                "<!DOCTYPE html><html><title>Redirect</title><a href="
-                (string #\quotation_mark)
-                uri
-                (string #\quotation_mark)
-                ">Redirected to "
-                uri
-                "</a></html>")))
-
-
-;;; Default route
-
-(defroute route-/ "/" () (redirect-to "https://www.tootsville.org/"))
 
 
 
@@ -52,9 +31,6 @@ but sometimes caught by tools like curl or wget with certain settings."
   ()
   (:documentation "Signals that a feature has not been inmplemented yet"))
 
-(define-constant +application/json+ "application/json"
-  :test 'equal
-  :documentation "The string application/json, since we use it so often.")
 
 
 ;; Error pages — Legacy CAVEMAN2 handler …
@@ -81,8 +57,7 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
                             (t 501))))
          (unless (<= 300 code-number 599)
            (setf code-number 501))
-         (redirect-to (format nil "https://www.tootsville.org/error/~d.shtml"
-                              code-number))))))
+         (redirect-to (format nil "https://www.tootsville.org/error/~d.shtml" code-number))))))
 
 
 
@@ -233,12 +208,12 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
           '(flexi-streams:string-to-octets content :external-format :utf-8))))
 
 (eval-when (:compile-toplevel :execute :load-toplevel)
-(defun add-charset (content-type)
-  (if (member content-type
-              '("text/plain" "text/html" "application/json")
-              :test 'equal)
-      (format nil "~a;charset=utf-8" content-type)
-      content-type))
+  (defun add-charset (content-type)
+    (if (member content-type
+                '("text/plain" "text/html" "application/json")
+                :test 'equal)
+        (format nil "~a;charset=utf-8" content-type)
+        content-type))
 
   (defun constituentp (ch)
     (let ((cc (char-code (char-upcase ch))))
@@ -246,19 +221,6 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
           (<= (char-code #\A) cc (char-code #\Z))
           (<= (char-code #\0) cc (char-code #\9))
           (find ch "-/!?." :test #'char=))))
-
-  (defun make-endpoint-function-name (method uri accept-type)
-    (intern (string-upcase
-             (format nil "ENDPOINT-~a-~a~@[->~a~]"
-                                method
-                     (remove-if-not #'constituentp uri)
-                                (cond
-                                  ((null accept-type) nil)
-                                  ((consp accept-type) 
-                        (format nil "~{~a~^/~}"
-                                (mapcar #'name-for-content-type accept-type)))
-                                  ((stringp accept-type)
-                        (name-for-content-type accept-type)))))))
 
   (defun make-endpoint-function-name (method uri accept-type)
     (intern (string-upcase

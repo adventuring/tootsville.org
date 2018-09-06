@@ -2,7 +2,7 @@
 
 
 
-(defclass tootsville-restas-acceptor (restas:restas-acceptor) 
+(defclass tootsville-restas-acceptor (restas:restas-acceptor)
   ((hunchentoot::taskmaster
     :initform (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
   (:default-initargs
@@ -29,14 +29,14 @@
     (flet ((not-found-if-null (thing)
              (unless thing
                (setf (hunchentoot:return-code*)
-                     hunchentoot:+http-not-found+) 
-               (hunchentoot:abort-request-handler)))) 
+                     hunchentoot:+http-not-found+)
+               (hunchentoot:abort-request-handler))))
       (not-found-if-null vhost)
-      (multiple-value-bind (route bindings) 
+      (multiple-value-bind (route bindings)
           (routes:match (slot-value vhost 'restas::mapper)
-            (hunchentoot:request-uri*)) 
+            (hunchentoot:request-uri*))
         (unless route
-          (break "404, no match for requested URI ~s in ~s" 
+          (break "404, no match for requested URI ~s in ~s"
                  (hunchentoot:request-uri*) vhost))
         (not-found-if-null route)
         (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
@@ -58,7 +58,7 @@ HOST is an address of a live interface; PORT may be a port number.
 
 The server will  be started running on port  5000 on local-loopback-only
 addresses  (127.0.0.1  and  ::1).  If an  existing  server  is  running,
-a restart will be presented to allow you to kill it (RESTART-SERVER)." 
+a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
@@ -144,11 +144,11 @@ help — print this
 
 (defparameter *compiled* :never
   "A string representing the (fairly  precise) time at which the program
-  was compiled.")
+ was compiled.")
 
 (defparameter *build-date* :never
   "A string representing  the year, month, and day at  which the program
-  was compiled.")
+ was compiled.")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setf *compiled* (with-output-to-string (s)
@@ -166,9 +166,9 @@ help — print this
     (funcall (intern "REPL" (find-package :prepl)))))
 
 (defun start-swank (&optional (port 46046))
-  "Starts a SWANK server." 
+  "Starts a SWANK server."
   (asdf:load-system :swank)
-  (format *trace-output* 
+  (format *trace-output*
           "~&Started Swank listener on port ~d"
           (funcall (intern "CREATE-SERVER"
                            (find-package :swank))
@@ -202,9 +202,9 @@ Note that DECLT  is not usually compiled into the  binary by default, so
 this  may  have  to  download  DECLT  and/or  its  dependencies  through
 Quicklisp when called."
   (format *trace-output* "~& Writing documentation…")
-  
+
   (ql:quickload :net.didierverna.declt)
-  (let ((source-dir (asdf:component-pathname (asdf:find-system :tootsville)))) 
+  (let ((source-dir (asdf:component-pathname (asdf:find-system :tootsville))))
     (inform-declt-of-agplv3)
     (ensure-directories-exist (merge-pathnames #p"doc/" source-dir))
     (funcall (intern "DECLT" (find-package :net.didierverna.declt))
@@ -307,7 +307,7 @@ Hopefully you've already tested the changes?"
 
 (defun daemonize ()
   "Daemonize the process"
-  (set-up-for-daemon/start-logging) 
+  (set-up-for-daemon/start-logging)
   (start-swank))
 
 (defun start-production (&key port)
@@ -328,12 +328,12 @@ version-page query locally."
            (cond ((minusp (decf retries))
                   (error "Failed POST: Can't connect to local server ~
 (after retries)~%~a" c))
-                 (t (format *error-output*
-                            "~&~a~%Hmm, maybe we need to wait ~
+ (t (format *error-output*
+ "~&~a~%Hmm, maybe we need to wait ~
 a moment and try that again.~%" c)
-                    (force-output *error-output*)
-                    (sleep 1)
-                    (go retry-post))))))))
+ (force-output *error-output*)
+ (sleep 1)
+ (go retry-post))))))))
 
 (defun power-on-self-test (&key (exitp t))
   "Perform some sanity checking as a part of testing.
@@ -420,7 +420,7 @@ a verb (case-insensitive) from the hard-coded table in this function."
     (:repl (start-repl))
     (:version (print *compiled*))
     (:swank (start-swank)
-     (start-repl)) 
+     (start-repl))
     (:write-docs (write-docs))
     (:version-info (version-info-report (nthcdr 2 argv)))
     (otherwise (print-help))))

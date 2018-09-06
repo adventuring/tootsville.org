@@ -8,12 +8,6 @@ clean:
 	rm play/play.js
 	rm login/login.js
 
-clean:
-	$(MAKE) -C servers clean
-	find . -name \*~ -exec rm {} \;
-	rm play/play.js
-	rm login/login.js
-
 servers:	servers/Tootsville
 
 servers/Tootsville:	$(shell find servers -name \*.lisp -o -name \*.asd)

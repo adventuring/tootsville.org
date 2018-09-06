@@ -31,17 +31,6 @@
 (defmethod jonathan.encode:%to-json ((pathname pathname))
   (jonathan.encode:%to-json
    `(:is-a "pathname"
-<<<<<<< HEAD
-           :host ,(typecase (pathname-host pathname)
-                    (sb-impl::unix-host (machine-instance))
-                    (t (princ-to-string (pathname-host pathname)))) 
-           :device ,(pathname-device pathname)
-           :directory ,(uiop:split-string (pathname-directory pathname) 
-                                          :separator "/")
-           :name ,(pathname-name pathname)
-           :version ,(pathname-version pathname)
-           :type ,(pathname-type pathname))))
-=======
      :host ,(typecase (pathname-host pathname)
               (sb-impl::unix-host (machine-instance))
               (t (princ-to-string (pathname-host pathname))))
@@ -51,7 +40,6 @@
      :name ,(pathname-name pathname)
      :version ,(pathname-version pathname)
      :type ,(pathname-type pathname))))
->>>>>>> 850e070... reformat; merge cleanups
 
 (defmethod jonathan.encode:%to-json ((function function))
   (let ((name (nth-value 2 (function-lambda-expression #'jonathan.encode:%to-json))))
@@ -80,7 +68,7 @@
 
 (defun present-error-to-client (condition env)
   (let ((backtrace (with-output-to-string (stream)
-                     (write-string 
+                     (write-string
                       (print-backtrace condition
                                        :output nil)
                       stream))))
@@ -90,19 +78,13 @@
                         :condition condition
                         :env env)))))
 
-(defun middleware (app) 
+(defun middleware (app)
   (lambda (env)
     (tagbody do-over
-       (restart-bind 
+       (restart-bind
            ((retry-request
-<<<<<<< HEAD
-             (lambda ()
-               (go do-over))))
-         (handler-bind 
-=======
               (lambda ()
                 (go do-over))))
          (handler-bind
->>>>>>> 850e070... reformat; merge cleanups
              ((error (lambda (c) (present-error-to-client c env))))
            (funcall app))))))

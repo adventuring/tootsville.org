@@ -11,14 +11,14 @@
 (in-package :tootsville-asd)
 
 (defsystem tootsville
-  :version "0.3.4"
+  :version "0.3.3"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
   :bug-tracker "https://github.com/ciwta/tootsville.org/issues"
   :description
   "The server software monolith for REST services of Tootsville.org"
   :long-description
-  "The REST services for Tootsville.org, while running on several
+  "The  REST  services  for  Tootsville.org, while  running  on  several
 hostnames, are  handled from  a proxied HTTP  server. This  provides the
 REST services for the front-end."
   :depends-on (
@@ -45,19 +45,19 @@ REST services for the front-end."
      (:file "taskmaster" :depends-on ("machine" "config"))
      (:file "main" :depends-on ("config" "view" "db" "web" "package" "taskmaster"))
      (:file "db-player" :depends-on ("db" "package"))
-             (:file "web" :depends-on ("config" "view" "db-player" "errors" "package"))
-
+     (:file "web" :depends-on ("view" "db-player" "errors" "config" "package"))
+     
      (:file "login" :depends-on ("web"))
-             (:file "errors" :depends-on ("config" "package"))
+     (:file "errors" :depends-on ("package"))
      (:file "version" :depends-on ("web"))
      (:file "redirect" :depends-on ("web" "version"))
      (:file "maintenance" :depends-on ("web"))
      (:file "meta-game" :depends-on ("web"))
-
+     
      (:file "gossip" :depends-on ("web"))
      (:file "users" :depends-on ("web"))
      (:file "world" :depends-on ("web"))
-
+     
      (:file "view" :depends-on ("config"))
      (:file "db" :depends-on ("config"))
      (:file "config" :depends-on ("package"))

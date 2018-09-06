@@ -31,5 +31,5 @@
 (defun init ()
   (log "—~—
 Romance Ⅱ Game System
-Copyright © 2016,2017,2018 Bruce-Robert Pocock
+Copyright © 2016,2017 Bruce-Robert Pocock
 —~—"))

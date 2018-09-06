@@ -39,6 +39,10 @@ Tootsville.Avatars.UltraTootBuilder = {
         proxyHead.setParent(modelRoot);
         proxyBody.setParent(modelRoot);
     },
+    importUltraToot: function(finish, meshes, foo, bar) {
+        // TODO: private
+        var modelRoot = new BABYLON.TransformNode('UltraToot', Tootsville.tank.scene, true);
+     },
     addMeshesToModelRoot: function(meshes) {
         try {
             if (meshes.length == 0) {
@@ -55,7 +59,14 @@ Tootsville.Avatars.UltraTootBuilder = {
             }
         } catch (e) {
             Tootsville.warn("Error importing UltraToot: " + e.toString());
+            console.warn(e);
             addProxyToot(modelRoot);
+        }
+        modelRoot.position.y = -Infinity;
+        Tootsville.tank.scene.addTransformNode(modelRoot); // TODO: is this necessary?
+        Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
+        finish(Tootsville.Avatars.UltraTootBuilder.model);
+        return;
         }
     },
     importUltraToot: function(finish, meshes, foo, bar) {
@@ -63,11 +74,11 @@ Tootsville.Avatars.UltraTootBuilder = {
         try {
             var modelRoot = new BABYLON.TransformNode('UltraToot', Tootsville.tank.scene, true);
             Tootsville.Avatars.addMeshesToModelRoot(meshes, modelRoot);
-        modelRoot.position.y = -Infinity;
-        Tootsville.tank.scene.addTransformNode(modelRoot); // TODO: is this necessary?
-        Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
-        finish(Tootsville.Avatars.UltraTootBuilder.model);
-        return;
+            modelRoot.position.y = -Infinity;
+            Tootsville.tank.scene.addTransformNode(modelRoot); // TODO: is this necessary?
+            Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
+            finish(Tootsville.Avatars.UltraTootBuilder.model);
+            return;
         } catch (e) {
             Tootsville.error("Error in importUltraToots: ", e);
         }

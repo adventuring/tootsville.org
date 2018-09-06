@@ -1,3 +1,7 @@
+window.onGoogleYoloLoad = function() {
+    Tootsville.login.startSignIn();
+    Tootsville.login.googleYoloSignIn();
+}
 window.addEventListener('load', () => {
     navigator.serviceWorker.register('./worker.js');
     Tootsville.hud.refreshEquipment();

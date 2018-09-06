@@ -47,13 +47,8 @@ using `FIND-PLAYER-OR-DIE' and bind *PLAYER*"
                   (mapcar (lambda (toot) (getf toot :name)) (player-toots))
                   :test #'string-equal)))
 
-<<<<<<< HEAD
-(defendpoint (:get "/users/me" "application/json") 
-  (with-player () 
-=======
 (defendpoint (:get "/users/me" "application/json")
   (with-player ()
->>>>>>> 850e070... reformat; merge cleanups
     (list 200 nil
           (list :hello "Hello, new user"
                 :fake "This is a totes fake response"
@@ -83,41 +78,6 @@ using `FIND-PLAYER-OR-DIE' and bind *PLAYER*"
 
 (defun player-toots (&optional (player *player*))
   (declare (ignore player))
-<<<<<<< HEAD
-                (list
-                 (list :name "Zap"
-                       :note "These are still fake Toots for testing"
-                       :avatar "UltraToot"
-                       :base-color "violet"
-                       :pattern "lightning"
-                       :pattern-color "yellow"
-                       :highlight-color "yellow"
-                       :child-p nil
-                       :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil (3-days-ago)))
-                 (list :name "Flora"
-                       :note "This an an example of a child's Toot
-appearing on a parent's account."
-                       :avatar "UltraToot"
-                       :base-color "pink"
-                       :pattern "flowers"
-                       :pattern-color "white"
-                       :highlight-color "yellow"
-                       :child-p t
-                       :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil (2-days-ago)))
-                 (list :name "Moo"
-                       :note ""
-                       :avatar "UltraToot"
-                       :base-color "white"
-                       :pattern "moo"
-                       :pattern-color "black"
-                       :highlight-color "black"
-                       :child-p nil
-                       :sensitive-p nil
-=======
   (list
    (list :name "Zap"
          :note "These are still fake Toots for testing"
@@ -151,7 +111,6 @@ appearing on a parent's account."
          :highlight-color "black"
          :child-p nil
          :sensitive-p nil
->>>>>>> 850e070... reformat; merge cleanups
          :last-seen (local-time:format-timestring
                      nil
                      (yesterday)))))
@@ -172,13 +131,8 @@ appearing on a parent's account."
     (assert-my-character toot-name)
     (list 200 nil (toot-info (find-toot-by-name toot-name)))))
 
-<<<<<<< HEAD
-(defendpoint (post "/users/me/toots" "application/json") 
-  (with-player () 
-=======
 (defendpoint (post "/users/me/toots" "application/json")
   (with-player ()
->>>>>>> 850e070... reformat; merge cleanups
     (error 'unimplemented)))
 
 (defendpoint (delete "/users/me/toots/:toot-name" "application/json")
@@ -193,17 +147,6 @@ appearing on a parent's account."
           `(:last-modified ,(header-time))
           (if-let (toot (find-toot-by-name toot-name))
             (toot-info toot)
-<<<<<<< HEAD
-          `(:is-a "toot"
-                  :name ,(string-capitalize toot-name)
-                  :avatar "ultraToot"
-                  :child-p nil
-                  :sensitive-p t
-                  :online-p t
-                  :last-seen ,(local-time:format-timestring 
-                               nil (local-time:now))
-                              :exists-p "maybe?")))))
-=======
             `(:is-a "toot"
               :name ,(string-capitalize toot-name)
               :avatar "ultraToot"
@@ -213,4 +156,3 @@ appearing on a parent's account."
               :last-seen ,(local-time:format-timestring
                            nil (local-time:now))
               :exists-p "maybe?")))))
->>>>>>> 850e070... reformat; merge cleanups

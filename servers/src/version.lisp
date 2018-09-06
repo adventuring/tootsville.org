@@ -46,23 +46,23 @@ in HTTP headers and such."
     (or (year<-universal-time (file-write-date file))
         0))
 
-(defun map-asdf-files (function module)
-  (check-type function function)
+  (defun map-asdf-files (function module)
+    (check-type function function)
     (check-type module asdf/component:module)
-  (mapcan (lambda (child)
-	    (etypecase child
-		       (asdf/component:module (map-asdf-files function child))
-		       (asdf/component:file-component
-			(list (funcall function
-				       (slot-value child 'asdf/component::absolute-pathname))))))
+    (mapcan (lambda (child)
+              (etypecase child
+                (asdf/component:module (map-asdf-files function child))
+                (asdf/component:file-component
+                 (list (funcall function
+                                (slot-value child 'asdf/component::absolute-pathname))))))
             (asdf:component-children module)))
 
-(defun romance-ii-copyright-latest ()
-  (if (boundp '*romance-ii-copyright-latest*)
-      *romance-ii-copyright-latest*
-      (setf *romance-ii-copyright-latest*
+  (defun romance-ii-copyright-latest ()
+    (if (boundp '*romance-ii-copyright-latest*)
+        *romance-ii-copyright-latest*
+        (setf *romance-ii-copyright-latest*
               (apply #'max (map-asdf-files #'file-write-year
-					(asdf:find-system :tootsville))))))
+                                           (asdf:find-system :tootsville))))))
   (romance-ii-copyright-latest))
 
 (defun version-info-list ()
@@ -94,14 +94,14 @@ in HTTP headers and such."
                (list :request (list :name (hunchentoot:local-addr*)
                                     :port (hunchentoot:local-port*)
                                     :protocol (hunchentoot:server-protocol*)))))
-    
+
     (when hunchentoot:*acceptor*
       (appendf
        basics
        (list :acceptor
              (list :class (string-capitalize
-                                             (class-name
-                                              (class-of hunchentoot:*acceptor*)))
+                           (class-name
+                            (class-of hunchentoot:*acceptor*)))
                    :name (hunchentoot:acceptor-name hunchentoot:*acceptor*)
                    :port (hunchentoot:acceptor-port hunchentoot:*acceptor*)
                    :address (hunchentoot:acceptor-address hunchentoot:*acceptor*)))))
@@ -110,7 +110,7 @@ in HTTP headers and such."
 (defendpoint (:get "/version" "application/json")
   (list 200 nil (plist-alist (version-info-list))))
 
-(defendpoint (:get "/version" "text/plain") 
+(defendpoint (:get "/version" "text/plain")
   (list 200 nil (version-info-report-string '(:*))))
 
 (defendpoint (:get "/version/:param" "text/plain")
