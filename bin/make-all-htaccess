@@ -1,12 +1,12 @@
 #!/bin/sh
 
-mkdir -p "$(dirname $0)"/../htaccess.all/
-rm -r "$(dirname $0)"/../htaccess.all/*
-cd "$(dirname $0)"/../htaccess.all/
+mkdir -p "$(dirname $0)"/../dist/htaccess.all/
+rm -fr "$(dirname $0)"/../dist/htaccess.all/*
+cd "$(dirname $0)"/../dist/htaccess.all/
     for cluster in tootsville.org tootsville.ga ; do
         echo '{' >> $cluster.cluster.json
-        for host in play gossip world login users ; do
-            sed ../htaccess.base -e s/@@HOST@@/$host/g \
+        for host in play gossip world users ; do
+            sed ../../htaccess.base -e s/@@HOST@@/$host/g \
                 -e s/@@CLUSTER@@/$cluster/g \
                 | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
                        > $host.$cluster.htaccess

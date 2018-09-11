@@ -61,38 +61,36 @@ bin/make-all-htaccess || exit 4
 ##########
 
 echobig Pre-deploy front-ends
-for host in play login
-do
-    echo "Pre-deployment for $host.$cluster:"
+
+    echo "Pre-deployment for play.$cluster:"
     # safe place to copy in
-    echo "rm -fr $host.$cluster.prior-deploy; \
-rm -fr $host.$cluster.before-deploy; \
-mv -u $host.$cluster.new $host.$cluster.prior-deploy; \
-cp -a $host.$cluster $host.$cluster.new; \
-cd $host.$cluster.new;" >> .tmp.$host.preamble
+    echo "rm -fr play.$cluster.prior-deploy && \
+rm -fr play.$cluster.before-deploy && \
+mv -u play.$cluster.new play.$cluster.prior-deploy ; \
+cp -a play.$cluster play.$cluster.new && \
+cd play.$cluster.new;" >> dist/play.preamble
     # copy in most files
-    mkdir .tmp.$host
+    mkdir -p dist/play
     rsync -essh --exclude='*~' --exclude='*#' -ar \
-          $host/* .tmp.$host/
+          play/* dist/play/
     # each host copies error pages
     rsync -essh --exclude='*~' --exclude='*#'  -ar \
-          www/error .tmp.$host/
+          www/error dist/play/
     # .htaccess generated above
-    cp htaccess.all/$host.$cluster.htaccess .tmp.$host/.htaccess
+    cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
     # Google auth linking
-    mkdir -p .tmp.$host/.well-known
-    cp include/well-known.assetlinks.json .tmp.$host/.well-known/assetlinks.json || exit 5
-    ( cd .tmp.$host ; \
+    ### mkdir -p dist/play/.well-known
+    ### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
+    ( cd dist/ ; \
       shar -C xz -g 9 -M -Q -q -x \
-           -o ../.tmp.$host.shar \
-           -n "$host.$cluster $REVISION" \
+           -o play.shar \
+           -n "play.$cluster $REVISION" \
            -s "$LOCAL_USERNAME ($REALNAME)" \
-           * )
-    cat .tmp.$host.preamble .tmp.$host.shar* | ssh $host.$cluster
-    rm -r .tmp.$host*
-    echo "done pre-deploying $host.$cluster static files"
+           play/ )
+    cat dist/play.preamble dist/play.shar* | ssh play.$cluster
+    rm -r dist/play
+    echo "done pre-deploying play.$cluster static files"
     echo ""
-done
 
 ##########
 
@@ -100,7 +98,7 @@ echobig Pre-deploy back-ends
 for host in users gossip world
 do
     # .htaccess generated above
-    scp htaccess.all/$host.$cluster.htaccess $host.$cluster: || exit 6
+    scp dist/htaccess.all/$host.$cluster.htaccess $host.$cluster: || exit 6
     # Google auth linking
     scp include/well-known.assetlinks.json $host.$cluster: || exit 6
 
@@ -112,18 +110,16 @@ done
 ##########
 
 echobig Switching Roots
-for host in play login
-do (
-    ssh $host.$cluster "mv $host.$cluster $host.$cluster.before-deploy && mv $host.$cluster.new $host.$cluster"
-    )&
-done
+(
+    ssh play.$cluster "mv play.$cluster play.$cluster.before-deploy && mv play.$cluster.new play.$cluster"
+)&
 for host in users gossip world
 do (
     ssh $host.$cluster "cp /usr/local/bin/Tootsville -f /usr/local/bin/Tootsville.prior; \
 cp servers/Tootsville /usr/local/bin/; \
 cp $host.$cluster.htaccess /var/www/$host.$cluster/.htaccess; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
-cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
+# cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
     )&
 done
 

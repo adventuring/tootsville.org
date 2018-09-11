@@ -47,9 +47,14 @@ RedirectMatch ^/directory/(.*)$ https://gossip.@@CLUSTER@@/directory/$1
 RedirectMatch ^/(form.*)$ https://tootsville.adventuring.click/$1
 RedirectMatch ^/gossip/(.*)$ https://gossip.@@CLUSTER@@/gossip/$1
 RedirectMatch ^/help/(.*)$ https://wikiwiki.tootsville.adventuring.click/wikiwiki/Help_$1
-RedirectMatch ^/login/(.*)$ https://login.@@CLUSTER@@/login/$1
+RedirectMatch ^/indira/(.*)$ https://world.@@CLUSTER@@/world/$1
+RedirectMatch ^/login/(.*)$ https://play.@@CLUSTER@@/play/?login/$1
 RedirectMatch ^/members/(.*)$ https://members.tootsbook.com/members/$1
 RedirectMatch ^/play/(.*)$ https://play.@@CLUSTER@@/play/$1
+RedirectMatch ^/play-now(.*)$ https://play.@@CLUSTER@@/play/
+RedirectMatch ^/playnow(.*)$ https://play.@@CLUSTER@@/play/
+RedirectMatch ^/PlayNow(.*)$ https://play.@@CLUSTER@@/play/
+RedirectMatch ^/playNow(.*)$ https://play.@@CLUSTER@@/play/
 RedirectMatch ^/(quiz.*)$ https://tootsville.adventuring.click/$1
 RedirectMatch ^/tootsbook/(.*)$ https://www.tootsbook.com/tootsbook/$1
 RedirectMatch ^/toots/(.*)$ https://users.@@CLUSTER@@/toots/$1
@@ -57,7 +62,6 @@ RedirectMatch ^/users/(.*)$ https://users.@@CLUSTER@@/users/$1
 RedirectMatch ^/wiki/(.*)$ https://wikiwiki.tootsville.adventuring.click/wikiwiki/$1
 RedirectMatch ^/wikiwiki/(.*)$ https://wikiwiki.tootsville.adventuring.click/wikiwiki/$1
 RedirectMatch ^/world/(.*)$ https://world.@@CLUSTER@@/world/$1
-RedirectMatch ^/([Pp][Ll][Aa][Yy].*) https://play.@@CLUSTER@@/play?play-now/$1
 
 # Error Documents for all defined error codes.
 ErrorDocument 400 /error/400
