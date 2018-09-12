@@ -140,5 +140,16 @@ doc:	doc/tootsville.txt \
 	doc/tootsville.pdf \
 	doc/tootsville.html.tar.gz
 
+all-docs: \
+	doc/tootsville.html.tar.gz	\
+	doc/tootsville.html.tar.Z	\
+	doc/tootsville.html.tar.bz2	\
+	doc/tootsville.html.tar.xz	\
+	doc/tootsville.html.zip	\
+	doc/tootsville.ps	\
+	doc/tootsville.pdf	\
+	doc/tootsville.txt 	\
+	doc/tootsville.info
+
 doc/tootsville.texi:	Tootsville
 	./Tootsville write-docs
