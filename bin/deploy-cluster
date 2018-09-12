@@ -150,6 +150,8 @@ else
     git tag v$VERSION
 fi
 
+git push origin
+
 ##########
 
 echobig Deployed $VERSION to $cluster
