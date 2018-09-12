@@ -8,3 +8,4 @@
 (when (and (find-package :ql)
            (not (find-package "SWANK")))
   (funcall (find-symbol "QUICKLOAD" :ql) :swank))
+(pushnew :verbose-no-init *features*)

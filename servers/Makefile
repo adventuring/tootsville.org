@@ -83,7 +83,6 @@ Tootsville.new:	tootsville.asd quicklisp-manifest.tmp bin/buildapp
 		--load "src/setup.lisp" \
 		--load tootsville.asd \
 		--load-system tootsville \
-		--eval '(map nil (lambda (th) (when (equalp (bt:thread-name th) "verbose-thread") (bt:destroy-thread th))) (bt:all-threads))' \
 		--entry tootsville:entry
 	echo $(pwd)/tootsville.asd >> quicklisp-manifest.tmp
 
