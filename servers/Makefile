@@ -153,3 +153,7 @@ all-docs: \
 
 doc/tootsville.texi:	Tootsville
 	./Tootsville write-docs
+
+install:	tootsville.service Tootsville
+	cp Tootsville /usr/local/bin/
+	cp tootsville.service /usr/lib/systemd/user/

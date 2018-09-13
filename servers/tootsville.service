@@ -3,7 +3,7 @@ Description=The Tootsville HTTP REST Server
 After=network.target remote-fs.target nss-lookup.target httpd-init.service
 
 [Service]
-Type=forking
+Type=simple
 Environment=LANG=C
 
 ExecStart=/usr/local/bin/Tootsville daemon
