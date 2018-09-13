@@ -11,7 +11,7 @@ clean:
 servers:	servers/Tootsville
 
 servers/Tootsville:	$(shell find servers -name \*.lisp -o -name \*.asd)
-	$(MAKE) -C servers all
+	$(MAKE) -C servers Tootsville
 
 ####################
 
