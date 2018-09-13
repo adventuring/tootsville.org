@@ -71,10 +71,10 @@ cp -a play.$cluster play.$cluster.new && \
 cd play.$cluster.new;" >> dist/play.preamble
     # copy in most files
     mkdir -p dist/play
-    rsync -essh --exclude='*~' --exclude='*#' -ar \
+    rsync --exclude='*~' --exclude='*#' -ar \
           play/* dist/play/
     # each host copies error pages
-    rsync -essh --exclude='*~' --exclude='*#'  -ar \
+    rsync --exclude='*~' --exclude='*#'  -ar \
           www/error dist/play/
     # .htaccess generated above
     cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
