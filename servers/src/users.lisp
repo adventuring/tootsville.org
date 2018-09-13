@@ -1,8 +1,6 @@
 (in-package :tootsville)
 (syntax:use-syntax :annot)
 
-(defvar *player* nil)
-
 (defun potential-toot-name-character-p (c)
   (and (characterp c)
        (or (alphanumericp c)
@@ -21,9 +19,8 @@
   `(and string (satisfies potential-toot-name-p)))
 
 (defun find-player-or-die ()
-  "Ensure that a recognized player is connected.
-Establish necessary dynamics to represent them."
-  '(t "tester"))
+  "Ensure that a recognized player is connected."
+  (find-user-from-session :if-not-exists :error))
 
 (defvar *403.json-bytes*
   (flexi-streams:string-to-octets "{\"error\":\"player-not-found\",
@@ -32,20 +29,27 @@ Establish necessary dynamics to represent them."
 
 (defmacro with-player (() &body body)
   "Ensure that a recognized player is connected
-using `FIND-PLAYER-OR-DIE' and bind *PLAYER*"
-  `(multiple-value-bind  (foundp *player*)
+using `FIND-PLAYER-OR-DIE' and bind *USER*"
+  `(multiple-value-bind  (foundp *user*)
        (find-player-or-die)
      (cond (foundp
             ,@body)
            (t (return-from endpoint
                 (list 403 nil *403.json-bytes*))))))
 
-(defun assert-my-character (toot-name)
-  "Signal a security error if TOOT-NAME is not owned by the active player."
+(define-condition not-your-toot-error (error)
+  ((name :initarg name :accessor which-toot-is-not-yours))
+  (:report (lambda (c s)
+             (format s "You do not have a Toot named “~a.”" 
+                     (which-toot-is-not-yours c)))))
+
+(defun assert-my-character (toot-name &optional (user *user*))
+  "Signal a security error if TOOT-NAME is not owned by USER"
   (check-type toot-name toot-name)
-  (assert (member toot-name
-                  (mapcar (lambda (toot) (getf toot :name)) (player-toots))
-                  :test #'string-equal)))
+  (unless (find toot-name
+                (mapcar (rcurry #'getf :name) (player-toots user))
+                :test #'string-equal)
+    (error 'not-your-toot-error :name toot-name)))
 
 (defendpoint (:get "/users/me" "application/json")
   (with-player ()
@@ -76,7 +80,7 @@ using `FIND-PLAYER-OR-DIE' and bind *PLAYER*"
 (defun toot-info (toot)
   (append toot (list :is-a "toot")))
 
-(defun player-toots (&optional (player *player*))
+(defun player-toots (&optional (player *user*))
   (declare (ignore player))
   (list
    (list :name "Zap"

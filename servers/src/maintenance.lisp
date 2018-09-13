@@ -6,17 +6,6 @@
 (defendpoint (:get "/maintenance/" "text/plain")
   (list 401 nil "You are not the boss of me."))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun pretty-time (seconds)
-    (cond
-      ((< seconds 90)
-       (format nil "~d second~:p" seconds))
-      ((< seconds (* 90 60))
-       (format nil "~d minutes" (round seconds 60)))
-      ((< seconds (* 36 60 60))
-       (format nil "~d hours" (round seconds (* 60 60))))
-      (t (format nil "~d days" (round seconds (* 24 60 60)))))))
-
 (defmacro with-continuable-errors-skipped (&body body)
   `(handler-case
        (progn ,@body)
@@ -37,24 +26,24 @@
        ,@body)))
 
 (defmacro with-maintenance-times ((task-name task-string
-                                   start-delay finish-delay)
+                                             start-delay finish-delay)
                                   &body body)
   (let ((task-sym (make-keyword (string task-name)))
         (task-start-sym (make-keyword (concatenate 'string (string task-name)
                                                    (string :-started)))))
     `(block nil
-       (setf (getf (response-headers *response*) :content-type)
-             "text/plain;charset=utf-8")
        (when-let (last (getf *maintenance-tasks-performed* ,task-sym))
          (when (> last (- (get-universal-time) ,finish-delay))
            (return
-             ,(format nil "Task “~a” was performed less than ~a ago."
-                      task-string (pretty-time (eval finish-delay))))))
+             (list 420 ()
+                   ,(format nil "Task “~a” was performed less than ~a ago."
+                            task-string (human-duration (eval finish-delay)))))))
        (when-let (last (getf *maintenance-tasks-performed* ,task-start-sym))
          (when (> last (- (get-universal-time) ,start-delay))
            (return
-             ,(format nil "Task “~a” was started less than ~a ago."
-                      task-string (pretty-time (eval start-delay))))))
+             (list 420 ()
+                   ,(format nil "Task “~a” was started less than ~a ago."
+                            task-string (human-duration (eval start-delay)))))))
        (prog2
            (setf (getf *maintenance-tasks-performed* ,task-start-sym)
                  (get-universal-time))
@@ -70,13 +59,14 @@
                                      "/maintenance/"
                                      (string-downcase label)))
      nil
+     (verbose:info :maintenance
+                   ,(format nil "Maintenance request: ~a (~a)" label name))
      (with-maintenance-times (,label
-                              ,name
-                              ,start-delay ,finish-delay)
-       ,@body)))
+                              ,name ,start-delay ,finish-delay)
+       (list 200 () (progn ,@body)))))
 
 (define-maintenance-task quicklisp-update
-    ("Updating the Quicklisp distribution"
+    ("Updating the Quicklisp client and distributions"
      (* 20 60) (* 24 60 60))
   (ql:update-client)
   (ql:update-all-dists))
@@ -87,12 +77,24 @@
   (locally (declare #+sbcl (sb-ext:muffle-conditions style-warning))
     (asdf:load-system :tootsville)))
 
+(defvar *compilation* (make-string-output-stream))
+
 (define-maintenance-task buildapp
     ("Recompiling Tootsville executable"
      (* 20 60) (* 3 60 60))
   (uiop:chdir (asdf:system-relative-pathname :tootsville "./"))
+  (setf *compilation* (make-string-output-stream))
+  (format *compilation* "Running “make Tootsville” to rebuild executable.
+Build starting at: ~a" (now))
   (uiop:run-program "make Tootsville"
-                    :output :string :error-output :output))
+                    :output *compilation* :error-output :output))
+
+(define-maintenance-task buildapp/status
+    ("Checking on the last BuildApp request" 10 10)
+  (let ((s (get-output-stream-string *compilation*)))
+    (if (plusp (length s))
+        s
+        "(No output.)")))
 
 (define-maintenance-task reload-jscl
     ("Recompiling jscl.js"

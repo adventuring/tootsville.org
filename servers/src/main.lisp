@@ -17,6 +17,14 @@
   (setf (slot-value acceptor 'hunchentoot::taskmaster)
         (make-instance ' thread-pool-taskmaster:thread-pool-taskmaster)))
 
+(defun not-found-if-null (thing)
+  "If THING is null, then abort with a 404 Not Found."
+  (unless thing
+    (setf (hunchentoot:return-code*)
+          hunchentoot:+http-not-found+)
+    (hunchentoot:abort-request-handler))
+  thing)
+
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor tootsville-restas-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
@@ -26,21 +34,16 @@
     (when (and (not vhost) restas:*default-host-redirect*)
       (hunchentoot:redirect (hunchentoot:request-uri*)
                             :host restas:*default-host-redirect*))
-    (flet ((not-found-if-null (thing)
-             (unless thing
-               (setf (hunchentoot:return-code*)
-                     hunchentoot:+http-not-found+)
-               (hunchentoot:abort-request-handler))))
-      (not-found-if-null vhost)
-      (multiple-value-bind (route bindings)
-          (routes:match (slot-value vhost 'restas::mapper)
-            (hunchentoot:request-uri*))
-        (unless route
-          (break "404, no match for requested URI ~s in ~s"
-                 (hunchentoot:request-uri*) vhost))
-        (not-found-if-null route)
-        (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
-          (restas:process-route route bindings))))))
+    (not-found-if-null vhost)
+    (multiple-value-bind (route bindings)
+        (routes:match (slot-value vhost 'restas::mapper)
+          (hunchentoot:request-uri*))
+      (unless route
+        (break "404, no match for requested URI ~s in ~s"
+               (hunchentoot:request-uri*) vhost))
+      (not-found-if-null route)
+      (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
+        (restas:process-route route bindings)))))
 (defun find-acceptor (host port)
     "Find an active Acceptor running on the given HOST address and PORT"
     (dolist (acceptor restas::*acceptors*)
@@ -152,10 +155,9 @@ help — print this
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setf *compiled* (with-output-to-string (s)
-                     (print-object (local-time:now) s))
-        *build-date* (local-time:format-timestring
-                      nil (local-time:now)
-                      :format '(:year #\- :month #\- :day))))
+                     (print-object (now) s))
+        *build-date* (format-timestring nil (now)
+                                        :format '(:year #\- :month #\- :day))))
 
 (defun start-repl ()
   "Starts a PREPL REPL."
@@ -326,7 +328,8 @@ Hopefully you've already tested the changes?"
   (start :port port)
   (start-swank)
   (loop
-     (format *trace-output* "~&//* Still Alive")
+     (format *trace-output* "~&//* Still Alive (~a)" (now))
+     (force-output *trace-output*)
      (sleep 90))) 
 
 (defun post/read-version-page (port)

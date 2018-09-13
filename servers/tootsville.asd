@@ -40,8 +40,9 @@ REST services for the front-end."
   :components
   ((:module "src"
             :components
-            ((:file "package")
+            ((:file "package" :depends-on ("utils"))
              (:file "machine")
+             (:file "utils")
              (:file "taskmaster" :depends-on ("machine" "config"))
              (:file "main" :depends-on ("config" "view" "db" "web" "package" "taskmaster"))
              (:file "db-player" :depends-on ("db" "package"))

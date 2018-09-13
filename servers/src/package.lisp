@@ -2,7 +2,7 @@
 (in-package :cl-user)
 (restas:define-module tootsville
   (:documentation  "Let's make some noise!")
-  (:use :alexandria :cl)
+  (:use :alexandria :cl :local-time :org.star-hope.utils)
   (:import-from :split-sequence :split-sequence)
   (:import-from #:envy
                 #:config-env-var
