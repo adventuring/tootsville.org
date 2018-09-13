@@ -119,5 +119,4 @@ REST services for the front-end."
                        (:file "webrepl" :depends-on ("package"))
                        (:file "world/events" :depends-on ("package"))
                        (:file "xhr" :depends-on ("package")))))))
-  :description "tootsville"
   :in-order-to ((test-op (load-op tootsville-test))))
