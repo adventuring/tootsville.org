@@ -5,14 +5,6 @@
 
 (in-package #:org.star-hope.machine)
 
-(defun range-size (numeric-range-string)
-  (if (find #\- numeric-range-string)
-      (destructuring-bind (start end) 
-          (uiop:split-string numeric-range-string
-                             :separator "-")
-        (1+ (- (parse-integer end) (parse-integer start))))
-      1))
-
 (def-memoized-function processor-count ()
   "Number of processor (cores) available."
   #+linux
@@ -22,8 +14,8 @@
                             :if-does-not-exist :error)
       (let ((count 0))
         (loop for set = (read-line online nil nil)
-              while set
-              do (incf count (range-size set)))
+           while set
+           do (incf count (range-size set)))
         (the (integer 1 2000) count))))
   #-linux
   (error "I don't have code to check this on non-Linux hosts"))

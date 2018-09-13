@@ -1,0 +1,66 @@
+(cl:in-package :cl-user)
+(defpackage org.star-hope.utils
+  (:use :cl :alexandria)
+  (:export
+   
+   #:stringify
+   #:extreme
+   #:human-duration
+   #:range-size
+   
+   ))
+(in-package :org.star-hope.utils)
+
+
+
+;;; Painfully simple function-compositions
+
+(defun stringify (object)
+  (format nil "~a" object))
+
+(defun extreme (function list)
+  (reduce (lambda (a b)
+            (if (funcall function a b) a b))
+          list))
+
+
+;;; Human-friendly formats in and output
+
+(defun range-size (numeric-range-string)
+  "Count the length of a range of numbers separated by -"
+  (if (find #\- numeric-range-string)
+      (destructuring-bind (start end) 
+          (uiop:split-string numeric-range-string
+                             :separator "-")
+        (1+ (- (parse-integer end) (parse-integer start))))
+      1))
+
+(defun human-duration (seconds)
+  (cond
+    ((< seconds 90)
+     (format nil "~d second~:p" seconds))
+    ((< seconds (* 90 60))
+     (format nil "~d minutes" (round seconds 60)))
+    ((< seconds (* 3 24 60 60))
+     (format nil "~d hours" (round seconds (* 60 60))))
+    ((< seconds (* 6 7 24 60 60))
+     (format nil "~d days" (round seconds (* 24 60 60))))
+    ((< seconds (* 75 7 24 60 60))
+     (format nil "~d weeks" (round seconds (* 7 24 60 60))))
+    (t (format nil "~d years" (round seconds (* 365.2489 24 60 60))))))
+
+
+
+;;; Obscure compiler features?
+
+#+sbcl
+(sb-alien:define-alien-routine ("disable_lossage_handler" disable-sbcl-ldb)
+    sb-alien:void)
+#+sbcl
+(sb-alien:define-alien-routine ("enable_lossage_handler" enable-sbcl-ldb)
+                               sb-alien:void)
+
+#-sbcl
+(defun disable-sbcl-ldb ())
+#-sbcl
+(defun enable-sbcl-ldb ())
