@@ -143,8 +143,8 @@ echobig Notifying Rollbar
 ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 ENVIRONMENT=$cluster
 
-VERSION=$(server/Tootsville version-info version)
-COMPILED=$(server/Tootsville version-info compiled)
+VERSION=$(servers/Tootsville version-info version)
+COMPILED=$(servers/Tootsville version-info compiled)
 
 curl https://api.rollbar.com/api/1/deploy/ \
   -F access_token=$ACCESS_TOKEN \
