@@ -312,8 +312,11 @@ Hopefully you've already tested the changes?"
 
 (defun start-production (&key port)
   "Start a Hunchentoot  server via `START' and daemonize with Swank"
+  (start :port port)
   (daemonize)
-  (start :port port))
+  (loop
+    (format *trace-output* "~&//* Still Alive")
+    (sleep 90))) 
 
 (defun post/read-version-page (port)
   "Power-On-Self-Test:  Checks  that  the  server  can  respond  to  the
