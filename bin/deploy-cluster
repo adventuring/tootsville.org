@@ -103,7 +103,9 @@ do
     ### scp include/well-known.assetlinks.json $host.$cluster: || exit 6
 
     # update sources and compile
-    rsync -essh -zar --delete servers $host.$cluster: || exit 6
+    rsync -essh -zar --delete servers \
+        --exclude \*~ --exclude \*.tmp \
+        $host.$cluster: || exit 6
     ssh $host.$cluster make -C servers Tootsville test || exit 6
 done
 
