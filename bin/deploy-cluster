@@ -103,10 +103,22 @@ do
     ### scp include/well-known.assetlinks.json $host.$cluster: || exit 6
 
     # update sources and compile
-    rsync -essh -Car servers $host.$cluster: || exit 6
+    rsync -essh -zar --delete servers $host.$cluster: || exit 6
     ssh $host.$cluster make -C servers Tootsville test || exit 6
 done
 
+##########
+
+echobig Quicklisp update
+for host in users gossip world
+do
+    ssh $host.$cluster \
+    	sbcl --non-interactive \
+    	--no-inform \
+    	--eval '(ql:update-client)' \
+    	--eval '(ql:update-all-dists)' \
+    	--quit
+done
 ##########
 
 echobig Switching Roots
