@@ -15,22 +15,26 @@
   (:documentation
    "A taskmaster that uses a thread pool to dispatch incoming requests."))
 
-(defconstant +threads-per-core+ 1
+(defconstant +threads-per-core+ 2
   "Must be an (UNSIGNED-BYTE 15) and non-zero. 2 seems nice?")
+
+(defconstant +single-core-threads+ 4
+  "More threads than otherwise expected on a single-core machine.")
 
 (defconstant +max-queue-size-for-thread-pool+ #x100)
 
-(declaim (type (rational (0)) +threads-per-core+))
+(declaim (type (integer (0) (#. (expt 2 15))) +threads-per-core+))
+(declaim (type (integer (0) (#. (expt 2 15))) +single-core-threads+))
 
 (defun name-all-threads-idle (taskmaster)
   (loop for thread in (slot-value
                        (slot-value (taskmaster-thread-pool taskmaster)
                                    'cl-threadpool::threads)
                        'cl-threadpool::threads)
-        for i fixnum from 1
-        with count = (taskmaster-max-thread-count taskmaster)
-        do (setf (sb-thread:thread-name thread)
-                 (format nil "Idle Web Worker (#~d of ~d)" i count))))
+     for i fixnum from 1
+     with count = (taskmaster-max-thread-count taskmaster)
+     do (setf (sb-thread:thread-name thread)
+              (format nil "Idle Web Worker (#~d of ~d)" i count))))
 
 (defun swank-connected-p ()
   (and (find-package "SWANK")
@@ -60,8 +64,10 @@
 
 (def-memoized-function cores*threads-per-core (cores)
   (declare (type (integer 0 #.(expt 2 15)) +threads-per-core+ cores))
-  (the (unsigned-byte 63) (* (the (unsigned-byte 15) +threads-per-core+)
-                             (the (unsigned-byte 15) cores))))
+  (if (= 1 cores)
+      +single-core-threads+
+      (the (unsigned-byte 63) (* (the (unsigned-byte 15) +threads-per-core+)
+                                 (the (unsigned-byte 15) cores)))))
 
 (defmethod taskmaster-max-thread-count ((taskmaster thread-pool-taskmaster))
   (cores*threads-per-core (org.star-hope.machine:processor-count)))
