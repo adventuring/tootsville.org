@@ -33,6 +33,8 @@ Within this repository are the five main, "internal" components.
 The Login application manages user sign-up, character selection, and the
 like from the front-end. It interacts mostly with the Users service.
 
+* This has been merged into Play.
+
 ### Play
 
 The Play application is the "in-game" Javascript application that presents
@@ -48,18 +50,20 @@ information, and is used by both Login and Play.
 The Gossip application is a directory service used to initiate the Gossipnet
 connections between players (by Play).
 
-### Indira
+### World
 
-The Indira application quiesces and burgeons areas of the game world and
+The World application quiesces and burgeons  areas of the game world and
 provides conflict resolution of user action lists.
 
 ## Operations
 
-Deployment is spelled out in the bin/deploy-cluster script. In general, the
-front-end Javascript applications are compiled down, compressed, and sent
-off to their respective ("dumb," static) servers. 
+Deployment is spelled out in  the bin/deploy-cluster script. In general,
+the front-end Javascript applications are compiled down, compressed, and
+sent off to their respective ("dumb," static) servers.
 
-The back-end application systems each run a respective copy of the monolithic Tootsville executable.
-This is a single executable compiled from the same Common Lisp sources on
-each host (to ensure CPU-OS-Compiler-Library match-ups and avoid surprises).
+The  back-end application  systems each  run  a respective  copy of  the
+monolithic Tootsville  executable. This is a  single executable compiled
+from   the  same   Common  Lisp   sources  on   each  host   (to  ensure
+CPU-OS-Compiler-Library match-ups, allow  compile-time optimizations for
+the host configuration, and avoid surprises).
 
