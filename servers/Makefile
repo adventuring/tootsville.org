@@ -23,7 +23,7 @@ deploy-dev:	bin
 	rsync -C -r -essh . whitney-dev:servers/
 	ssh whitney-dev make -C servers Tootsville
 	ssh whitney-dev servers/Tootsville check | grep "Passed POST"
-	ssh whitney-dev mv --backup=t servers/Tootsville /usr/local/bin
+	ssh whitney-dev mv --backup=simple servers/Tootsville /usr/local/bin
 
 clean:
 	-rm -f Tootsville Tootsville.new \
@@ -74,7 +74,7 @@ bin/buildapp:	deps
 
 Tootsville:	Tootsville.new
 	./Tootsville.new check
-	mv --backup=t Tootsville.new Tootsville
+	mv --backup=simple Tootsville.new Tootsville
 
 Tootsville.new:	tootsville.asd quicklisp-manifest.tmp bin/buildapp
 	bin/buildapp --output Tootsville.new \
