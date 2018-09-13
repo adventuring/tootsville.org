@@ -6,9 +6,12 @@
 (in-package #:org.star-hope.machine)
 
 (defun range-size (numeric-range-string)
-  (destructuring-bind (start end) (uiop:split-string numeric-range-string
-                                                     :separator "-")
-    (1+ (- (parse-integer end) (parse-integer start)))))
+  (if (find #\- numeric-range-string)
+      (destructuring-bind (start end) 
+          (uiop:split-string numeric-range-string
+                             :separator "-")
+        (1+ (- (parse-integer end) (parse-integer start))))
+      1))
 
 (def-memoized-function processor-count ()
   "Number of processor (cores) available."
