@@ -68,34 +68,34 @@ in HTTP headers and such."
 (defun version-info-list ()
   (ensure-site-name)
   (let ((basics
-          (list :product (romance-ii-program-name)
-                :version (romance-ii-program-version)
-                :copyright (format nil "© ~d Bruce-Robert Pocock"
-                                   (romance-ii-copyright-latest))
-                :environment (list :configuration (cond ((developmentp) "development")
-                                                        ((productionp) "production")
-                                                        (t "unknown"))
-                                   :developmentp (developmentp)
-                                   :productionp (productionp))
-                :machine (list :version (unembarassing (machine-version))
-                               :type (machine-type)
-                               :instance (string-capitalize (machine-instance)))
-                :site (list :short-name (short-site-name)
-                            :long-name (long-site-name))
-                :lisp (list :type (lisp-implementation-type)
-                            :version (lisp-implementation-version))
-                :software (list :type (software-type)
-                                :version (software-version))
-                :copyright-latest (romance-ii-copyright-latest)
-                :build-date tootsville::*build-date*
-                :compiled tootsville::*compiled*)))
-    (when hunchentoot:*request*
+         (list :product (romance-ii-program-name)
+               :version (romance-ii-program-version)
+               :copyright (format nil "© ~d Bruce-Robert Pocock"
+                                  (romance-ii-copyright-latest))
+               :environment (list :configuration (cond ((developmentp) "development")
+                                                       ((productionp) "production")
+                                                       (t "unknown"))
+                                  :developmentp (developmentp)
+                                  :productionp (productionp))
+               :machine (list :version (unembarassing (machine-version))
+                              :type (machine-type)
+                              :instance (string-capitalize (machine-instance)))
+               :site (list :short-name (short-site-name)
+                           :long-name (long-site-name))
+               :lisp (list :type (lisp-implementation-type)
+                           :version (lisp-implementation-version))
+               :software (list :type (software-type)
+                               :version (software-version))
+               :copyright-latest (romance-ii-copyright-latest)
+               :build-date tootsville::*build-date*
+               :compiled tootsville::*compiled*)))
+    (when (and (boundp 'hunchentoot:*request*) hunchentoot:*request*)
       (appendf basics
                (list :request (list :name (hunchentoot:local-addr*)
                                     :port (hunchentoot:local-port*)
                                     :protocol (hunchentoot:server-protocol*)))))
-
-    (when hunchentoot:*acceptor*
+    
+    (when (and (boundp 'hunchentoot:*acceptor*) hunchentoot:*acceptor*)
       (appendf
        basics
        (list :acceptor

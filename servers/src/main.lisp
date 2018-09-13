@@ -1,15 +1,15 @@
 (in-package :tootsville)
 
-
+
 
 (defclass tootsville-restas-acceptor (restas:restas-acceptor)
   ((hunchentoot::taskmaster
     :initform (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
   (:default-initargs
    :request-class 'restas::restas-request
-   :error-template-directory (config :templates :errors)
-   :access-log-destination (config :log :access)
-   :message-log-destination (config :log :message)))
+    :error-template-directory (config :templates :errors)
+    :access-log-destination (config :log :access)
+    :message-log-destination (config :log :message)))
 
 (defmethod initialize-instance :after
     ((acceptor tootsville-restas-acceptor) &rest initargs)
@@ -168,7 +168,7 @@ help — print this
 (defun start-swank (&optional (port 46046))
   "Starts a SWANK server."
   (asdf:load-system :swank)
-  (format *trace-output*
+  (v:info :swank
           "~&Started Swank listener on port ~d"
           (funcall (intern "CREATE-SERVER"
                            (find-package :swank))
@@ -277,6 +277,11 @@ Hopefully you've already tested the changes?"
           "~%Error-Output: Tootsville daemon started at ~a"
           (local-time:format-rfc3339-timestring nil (local-time:now))))
 
+(defun greeting/daemon/log-output ()
+  (v:info :logging
+          "~%Log-Output: Tootsville daemon started at ~a"
+          (local-time:format-rfc3339-timestring nil (local-time:now))))
+
 (defun greeting/daemon/standard-output ()
   (format t "~%Standard-Output: Tootsville daemon started at ~a"
           (local-time:format-rfc3339-timestring nil (local-time:now))))
@@ -289,6 +294,10 @@ Hopefully you've already tested the changes?"
 (defun set-up-for-daemon/standard-output (log-dir)
   (setf *standard-output* (open-log-file (standard-log-file log-dir)))
   (greeting/daemon/standard-output))
+
+(defun set-up-for-daemon/log-output (log-dir)
+  (v:output-here (open-log-file (log-log-file log-dir)))
+  (greeting/daemon/log-output))
 
 (defun set-up-for-daemon/error-output (log-dir)
   (setf *error-output* (open-log-file (error-log-file log-dir)))
@@ -331,12 +340,12 @@ version-page query locally."
            (cond ((minusp (decf retries))
                   (error "Failed POST: Can't connect to local server ~
 (after retries)~%~a" c))
- (t (format *error-output*
- "~&~a~%Hmm, maybe we need to wait ~
+                 (t (format *error-output*
+                            "~&~a~%Hmm, maybe we need to wait ~
 a moment and try that again.~%" c)
- (force-output *error-output*)
- (sleep 1)
- (go retry-post))))))))
+                    (force-output *error-output*)
+                    (sleep 1)
+                    (go retry-post))))))))
 
 (defun power-on-self-test (&key (exitp t))
   "Perform some sanity checking as a part of testing.
@@ -376,6 +385,15 @@ Licensed under the terms of the GNU Affero General Public License, version 3~%~%
           (romance-ii-copyright-latest))
   (finish-output *query-io*))
 
+(defun banner/log ()
+  (v:info :startup
+          "~&~|
+Tootsville Ⅴ
+Copyright © ~d, Bruce-Robert Pocock
+Licensed under the terms of the GNU Affero General Public License, version 3~%~%"
+          (romance-ii-copyright-latest))
+  (finish-output *query-io*))
+
 (defun banner/standard-output ()
   (format t "~&~|~%~a (© ~d)" (tootsville::romance-ii-program-name/version)
           (romance-ii-copyright-latest))
@@ -392,6 +410,7 @@ Licensed under the terms of the GNU Affero General Public License, version 3~%~%
           (local-time:format-timestring nil (local-time:now))))
 
 (defun banner ()
+  (banner/log)
   (banner/query-io)
   (banner/standard-output)
   (banner/error-output)

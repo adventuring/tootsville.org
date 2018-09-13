@@ -1,4 +1,8 @@
 (format t "~3& Tootsville Ⅴ Setup~3&")
+(unless (find-package :quicklisp)
+  (load (merge-pathnames (make-pathname :directory '(:relative "quicklisp")
+                                        :name "setup" :type "lisp")
+                         (user-homedir-pathname))))
 (ignore-errors (require 'sb-introspect))
 (unless (find-package :sb-introspect)
   (load #p"SYS:CONTRIB;**;sb-introspect.fasl.NEWEST"))
@@ -8,3 +12,4 @@
 (when (and (find-package :ql)
            (not (find-package "SWANK")))
   (funcall (find-symbol "QUICKLOAD" :ql) :swank))
+(pushnew :verbose-no-init *features*)

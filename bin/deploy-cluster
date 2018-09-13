@@ -100,7 +100,7 @@ do
     # .htaccess generated above
     scp dist/htaccess.all/$host.$cluster.htaccess $host.$cluster: || exit 6
     # Google auth linking
-    scp include/well-known.assetlinks.json $host.$cluster: || exit 6
+    ### scp include/well-known.assetlinks.json $host.$cluster: || exit 6
 
     # update sources and compile
     rsync -essh -Car servers $host.$cluster: || exit 6
@@ -119,7 +119,7 @@ do (
 cp servers/Tootsville /usr/local/bin/; \
 cp $host.$cluster.htaccess /var/www/$host.$cluster/.htaccess; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
-# cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
+### cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
     )&
 done
 
@@ -129,8 +129,30 @@ echobig Notifying Rollbar
 ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 ENVIRONMENT=$cluster
 
+VERSION=$(server/Tootsville version-info version)
+COMPILED=$(server/Tootsville version-info compiled)
+
 curl https://api.rollbar.com/api/1/deploy/ \
   -F access_token=$ACCESS_TOKEN \
   -F environment=$ENVIRONMENT \
   -F revision=$REVISION \
+  -F comment="v $VERSION built $COMPILED" \
   -F local_username=$LOCAL_USERNAME
+
+##########
+
+echobig Tagging Git
+
+if git rev-parse v$VERSION
+then
+   git tag v$VERSION$COMPILED
+else
+    git tag v$VERSION
+fi
+
+git push origin
+
+##########
+
+echobig Deployed $VERSION to $cluster
+    

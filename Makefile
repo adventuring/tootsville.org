@@ -19,11 +19,11 @@ worker:	dist/worker.js
 
 dist/worker.js:	play/worker.js
 	mkdir -p dist/
-	closure-compiler --create_source_map worker/worker.map \
+	closure-compiler --create_source_map dist/worker.map \
 		--language_out ECMASCRIPT5_STRICT \
-		--source_map_location_mapping 'worker/|/worker/' \
+		--source_map_location_mapping 'play/|/play/' \
 		$< > $@
-	echo '//# sourceMappingURL=/worker/worker.map' >> worker/worker.js
+	echo '//# sourceMappingURL=/play/worker.map' >> dist/worker.js
 
 ####################
 
