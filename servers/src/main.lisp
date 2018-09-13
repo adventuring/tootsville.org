@@ -267,10 +267,15 @@ Hopefully you've already tested the changes?"
                                   :type "log")
                    log-dir))
 
+(defun verbose-log-file (log-dir)
+  (merge-pathnames (make-pathname :name "Tootsville.verbose"
+                                  :type "log")
+                   log-dir))
+
 (defun open-log-file (pathname)
   (open pathname :direction :output
-                 :if-exists :append
-                 :if-does-not-exist :create))
+        :if-exists :append
+        :if-does-not-exist :create))
 
 (defun greeting/daemon/error-output ()
   (format *error-output*
@@ -296,7 +301,7 @@ Hopefully you've already tested the changes?"
   (greeting/daemon/standard-output))
 
 (defun set-up-for-daemon/log-output (log-dir)
-  (v:output-here (open-log-file (log-log-file log-dir)))
+  (v:output-here (open-log-file (verbose-log-file log-dir)))
   (greeting/daemon/log-output))
 
 (defun set-up-for-daemon/error-output (log-dir)
@@ -310,22 +315,19 @@ Hopefully you've already tested the changes?"
 (defun set-up-for-daemon/start-logging ()
   (let ((log-dir (find-log-dir)))
     (ensure-directories-exist log-dir)
+    (set-up-for-daemon/log-output log-dir)
     (set-up-for-daemon/standard-output log-dir)
     (set-up-for-daemon/error-output log-dir)
     (set-up-for-daemon/trace-output log-dir)))
 
-(defun daemonize ()
-  "Daemonize the process"
-  (set-up-for-daemon/start-logging)
-  (start-swank))
-
 (defun start-production (&key port)
   "Start a Hunchentoot  server via `START' and daemonize with Swank"
+  (set-up-for-daemon/start-logging)
   (start :port port)
-  (daemonize)
+  (start-swank)
   (loop
-    (format *trace-output* "~&//* Still Alive")
-    (sleep 90))) 
+     (format *trace-output* "~&//* Still Alive")
+     (sleep 90))) 
 
 (defun post/read-version-page (port)
   "Power-On-Self-Test:  Checks  that  the  server  can  respond  to  the
