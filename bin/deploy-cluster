@@ -94,6 +94,19 @@ cd play.$cluster.new;" >> dist/play.preamble
 
 ##########
 
+echobig Quicklisp update
+for host in users gossip world
+do
+    ssh $host.$cluster \
+    	sbcl --non-interactive \
+    	--no-inform \
+    	--eval '(ql:update-client)' \
+    	--eval '(ql:update-all-dists)' \
+    	--quit
+done
+
+##########
+
 echobig Pre-deploy back-ends
 for host in users gossip world
 do
@@ -111,27 +124,15 @@ done
 
 ##########
 
-echobig Quicklisp update
-for host in users gossip world
-do
-    ssh $host.$cluster \
-    	sbcl --non-interactive \
-    	--no-inform \
-    	--eval '(ql:update-client)' \
-    	--eval '(ql:update-all-dists)' \
-    	--quit
-done
-##########
-
 echobig Switching Roots
 (
     ssh play.$cluster "mv play.$cluster play.$cluster.before-deploy && mv play.$cluster.new play.$cluster"
 )&
 for host in users gossip world
 do (
-    ssh $host.$cluster "cp /usr/local/bin/Tootsville -f /usr/local/bin/Tootsville.prior; \
-cp servers/Tootsville /usr/local/bin/; \
+    ssh $host.$cluster "cp servers/Tootsville --backup=simple /usr/local/bin/; \
 cp $host.$cluster.htaccess /var/www/$host.$cluster/.htaccess; \
+cp servers/tootsville.service /usr/lib/systemd/user/; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
 ### cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
     )&
