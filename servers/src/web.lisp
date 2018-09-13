@@ -1,6 +1,6 @@
 (in-package :tootsville)
 
-
+
 
 (defun accepts-content-type-p (content-type)
   "Does the current Hunchentoot request Accept: CONTENT-TYPE?"
