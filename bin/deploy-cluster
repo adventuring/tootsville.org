@@ -157,7 +157,7 @@ curl https://api.rollbar.com/api/1/deploy/ \
 
 echobig Tagging Git
 
-if git rev-parse v$VERSION
+if git rev-parse v$VERSION &>/dev/null
 then
    git tag v$VERSION$COMPILED
 else
