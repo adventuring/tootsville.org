@@ -1,3 +1,5 @@
+(cl:in-package :cl-user)
+
 (defpackage thread-pool-taskmaster
   (:use :cl :hunchentoot :bordeaux-threads)
   (:import-from :alexandria #:when-let)

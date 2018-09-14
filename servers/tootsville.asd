@@ -21,7 +21,7 @@
   :version "0.3.4"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
-  :bug-tracker "https://github.com/ciwta/tootsville.org/issues"
+  :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
   :description
   "The server software monolith for REST services of Tootsville.org"
   :long-description
@@ -36,7 +36,6 @@ REST services for the front-end."
                :drakma
                :envy
                :memoize
-               :oliphaunt
                :restas
                :swank
                :sxql
@@ -44,6 +43,10 @@ REST services for the front-end."
                :uiop
                :uuid
                :yason
+
+               :oliphaunt
+               :thread-pool-taskmaster
+
                )
   :components
   ((:module "src"
