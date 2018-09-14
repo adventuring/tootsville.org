@@ -29,7 +29,7 @@ clean:
 
 deps:	.deps-installed~ modules
 
-modules:	.gitmodules $(shell  grep '\[submodule "' ../.gitmodules | \
+modules:	../.gitmodules $(shell  grep '\[submodule "' ../.gitmodules | \
 			cut -d '"' -f 2 | sed -e 's,^,../.git/modules/,g' -e 's,$$,/config,g')
 	(cd .. ; git submodule update --init )
 
@@ -69,6 +69,7 @@ bin/buildapp:	deps
 	fi
 
 Tootsville:	Tootsville.new
+	sleep 1
 	./Tootsville.new check
 	mv --backup=simple Tootsville.new Tootsville
 
