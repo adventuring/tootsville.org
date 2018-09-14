@@ -261,7 +261,7 @@ MAKE-INSTANCE 'PLAYER."
   "Link  a  PLAYER object  to  a  login  REGISTRAR and  their  ID-STRING
 representing that player."
   (check-type player player)
-  (check-type registrar (or string symbol) "string-designator for a registrar")
+  (check-type registrar string-designator "string-designator for a registrar")
   (check-type id-string string
               "string that uniquely identifies a user across time, distinctive to REGISTRAR")
   (with-connection (:members)
@@ -274,7 +274,7 @@ representing that player."
 (defun make-user-registration (registrar id-string info)
   "Create  a new  player object  based  upon INFO,  and link  it to  the
 REGISTRAR and ID-STRING"
-  (check-type registrar (or string symbol) "string-designator for a registrar")
+  (check-type registrar string-designator "string-designator for a registrar")
   (check-type id-string string
               "string that uniquely identifies a user across time, distinctive to REGISTRAR")
   (check-type  info  cons
