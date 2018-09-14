@@ -79,24 +79,32 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
     (setf hunchentoot:*catch-errors-p* nil
           hunchentoot:*show-lisp-errors-p* t
           hunchentoot:*show-lisp-backtraces-p* t))
-  (if (config :ssl)
-      (restas:start 'tootsville
-                    :port port
-                    :address host
-                    :hostname host
-                    :ssl-certificate-file (config :ssl :certificate-file)
-                    :ssl-privatekey-file (config :ssl :private-key-file)
-                    :ssl-privatekey-password (config :ssl :private-key-password)
-                    :acceptor-class 'tootsville-restas-acceptor)
-      (restas:start ' tootsville
+  (restart-case
+    (if (config :ssl)
+        (restas:start 'tootsville
                       :port port
                       :address host
                       :hostname host
-                      :acceptor-class 'tootsville-restas-acceptor))
+                      :ssl-certificate-file (config :ssl :certificate-file)
+                      :ssl-privatekey-file (config :ssl :private-key-file)
+                      :ssl-privatekey-password (config :ssl :private-key-password)
+                      :acceptor-class 'tootsville-restas-acceptor)
+        (restas:start 'tootsville
+                        :port port
+                        :address host
+                        :hostname host
+                        :acceptor-class 'tootsville-restas-acceptor))
+    (change-port (port*)
+      :report "Use a different port"
+      (start :host host :port port*))
+    (stonith ()
+      :report "Shoot the other node in the head (kill listening process)"
+      (stonith :host host :port port)
+      (start :host host :port port)))
   (let ((vhost (restas::find-vhost (cons host port))))
     (cond (vhost
            (setf restas:*default-host-redirect* vhost))
-          (t (error "Can't find teh default VHost?"))))
+          (t (error "Can't find the default VHost?"))))
   (let ((acceptor (find-acceptor host port)))
     (cond (acceptor
            (setf (hunchentoot:acceptor-name acceptor)
