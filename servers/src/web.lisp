@@ -210,10 +210,23 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
 (eval-when (:compile-toplevel :execute :load-toplevel)
   (defun add-charset (content-type)
     (if (member content-type
-                '("text/plain" "text/html" "application/json")
-                :test 'equal)
-        (format nil "~a;charset=utf-8" content-type)
+                '("text/plain" "text/html"
+                  "application/javascript"
+                  "application/json")
+                :test 'string=)
+        (concatenate 'string content-type "; charset=utf-8")
         content-type))
+  
+  (assert (equal (add-charset "text/html")
+                 "text/html; charset=utf-8"))
+  (assert (equal (add-charset "text/plain")
+                 "text/plain; charset=utf-8"))
+  (assert (equal (add-charset "application/javascript")
+                 "application/javascript; charset=utf-8"))
+  (assert (equal (add-charset "application/json")
+                 "application/json; charset=utf-8"))
+  (assert (equal (add-charset "image/png")
+                 "image/png"))
 
   (defun constituentp (ch)
     (let ((cc (char-code (char-upcase ch))))
