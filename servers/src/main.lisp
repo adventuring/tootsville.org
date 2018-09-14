@@ -20,6 +20,7 @@
 (defun not-found-if-null (thing)
   "If THING is null, then abort with a 404 Not Found."
   (unless thing
+    (verbose:info :not-found "404: object not found")
     (setf (hunchentoot:return-code*)
           hunchentoot:+http-not-found+)
     (hunchentoot:abort-request-handler))
@@ -28,23 +29,36 @@
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor tootsville-restas-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
+  (verbose:info :request "Dispatching request ~s via acceptor ~s" request acceptor)
   (let ((vhost (restas::find-vhost
                 (restas::request-hostname-port acceptor request)))
         (hunchentoot:*request* request))
-    (when (and (not vhost) restas:*default-host-redirect*)
+    (verbose:info :route "VHost mapping ~s to ~s" (restas::request-hostname-port acceptor request) vhost)
+    (when (and (null vhost)
+               restas:*default-host-redirect*)
+      (verbose:info :route "Unrecognized hostname and port ~s; redirect to default host"
+                           (restas::request-hostname-port acceptor request))
       (hunchentoot:redirect (hunchentoot:request-uri*)
                             :host (restas::vhost-hostname restas:*default-host-redirect*)
-                            :port (restas::vhost-port     restas:*default-host-redirect*))
+                            :port (restas::vhost-port     restas:*default-host-redirect*)))
+    (verbose:info :vhost "Request ~s on VHost ~s" request vhost)
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
                       (hunchentoot:request-uri*))
       (unless route
-        (break "No match for requested URI ~s on vhost ~s"
-               (hunchentoot:request-uri*) (restas::vhost-hostname-port vhost)))
+        (verbose::info :not-found "No match for requested URI ~s on vhost ~s"
+               (hunchentoot:request-uri*) (restas::vhost-hostname-port vhost))
+        (verbose::info :not-found "Mapper: ~s"
+                                  (slot-value vhost 'restas::mapper)))
+      (verbose:info :route "Route is ~s" route)
       (not-found-if-null route)
       (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
-        (restas:process-route route bindings)))))
+        (verbose:info :route "URI ~s mapped to route ~s"
+                             (hunchentoot:request-uri*) route)
+        (verbose:info :route "Processing route")
+        (restas:process-route route bindings)
+        (verbose:info :route "Done processing route")))))
 
 
 (defun find-acceptor (host port)
@@ -293,7 +307,8 @@ Hopefully you've already tested the changes?"
 (defun greeting/daemon/error-output ()
   (format *error-output*
           "~%Error-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now))))
+          (local-time:format-rfc3339-timestring nil (local-time:now)))
+  (force-output *error-output*))
 
 (defun greeting/daemon/log-output ()
   (v:info :logging
@@ -302,12 +317,14 @@ Hopefully you've already tested the changes?"
 
 (defun greeting/daemon/standard-output ()
   (format t "~%Standard-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now))))
+          (local-time:format-rfc3339-timestring nil (local-time:now)))
+  (force-output))
 
 (defun greeting/daemon/trace-output ()
   (format *trace-output*
           "~%Trace-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now))))
+          (local-time:format-rfc3339-timestring nil (local-time:now)))
+  (force-output *trace-output*))
 
 (defun set-up-for-daemon/standard-output (log-dir)
   (setf *standard-output* (open-log-file (standard-log-file log-dir)))
@@ -340,6 +357,7 @@ Hopefully you've already tested the changes?"
   (start-swank)
   (loop
      (format *trace-output* "~&//* Still Alive (~a)" (now))
+     (format *trace-output* "~{~&//* ~a~}" (bt:all-threads))
      (force-output *trace-output*)
      (sleep 90))) 
 
