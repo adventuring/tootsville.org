@@ -1,6 +1,6 @@
 (cl:in-package :cl-user)
 
-(defsystem thread-pool-taskmaster
+(asdf:defsystem thread-pool-taskmaster
   :version "0.1"
   :author "Bruce-Robert Pocock <brpocock@ciwta.org>"
   :license "AGPL v3+"
