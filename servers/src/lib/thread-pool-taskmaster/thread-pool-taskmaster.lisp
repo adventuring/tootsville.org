@@ -92,7 +92,10 @@
                            "Error signalled: worker ~a: ~:(~a~)~%~a"
                            ,name (class-of condition) condition)
             (cond
-              ((tootsville:developmentp) (signal condition))
+              ((and (find-package :tootsville)
+                    (fboundp (intern "DEVELOPMENTP" :tootsville))
+                    (funcall (intern "DEVELOPMENTP" :tootsville)))
+               (signal condition))
               ((plusp (the fixnum ,mulligan))
                (verbose:info '(:thread-pool-worker)
                              "With ~r mulligan~:p left: Trying again (~a stopped by ~:(~a~) ~a)"

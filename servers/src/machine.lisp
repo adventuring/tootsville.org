@@ -5,7 +5,8 @@
 
 (in-package #:org.star-hope.machine)
 
-(def-memoized-function processor-count ()
+(unless (fboundp 'processor-count)
+  (def-memoized-function processor-count ()
   "Number of processor (cores) available."
   #+linux
   (progn
@@ -18,7 +19,7 @@
            do (incf count (range-size set)))
         (the (integer 1 2000) count))))
   #-linux
-  (error "I don't have code to check this on non-Linux hosts"))
+  (error "I don't have code to check this on non-Linux hosts")))
 
 (defun load-average ()
   "Load averages return as multiple-values.

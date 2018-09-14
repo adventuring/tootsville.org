@@ -87,6 +87,11 @@ Yg8wz616XOOHpLNUki3j
        (lib-dirs (merge-pathnames (make-pathname :directory '(:relative "lib")
                                                  :name :wild)
                                   src-dir)))
+  (let ((*setup* t))
+    (asdf:load-asd (merge-pathnames (make-pathname :directory '(:relative :up)
+                                                   :name "tootsville"
+                                                   :type "asd") 
+                                    src-dir)))
   (dolist (lib-dir (directory lib-dirs))
     (let ((asdf (merge-pathnames (make-pathname :name :wild
                                                 :type "asd")

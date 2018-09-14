@@ -11,4 +11,6 @@
                :restas
               )
   :components
-    ((:file "thread-pool-taskmaster")))
+    ((:file "../../utils")
+     (:file "../../machine" :depends-on ("../../utils"))
+     (:file "thread-pool-taskmaster" :depends-on ("../../machine"))))

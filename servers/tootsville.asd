@@ -54,8 +54,7 @@ REST services for the front-end."
             ((:file "package" :depends-on ("utils"))
              (:file "machine" :depends-on ("utils"))
              (:file "utils")
-             (:file "taskmaster" :depends-on ("machine" "config"))
-             (:file "main" :depends-on ("config" "view" "db" "web" "package" "taskmaster"))
+             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
              (:file "db-player" :depends-on ("db" "package"))
              (:file "web" :depends-on ("view" "db-player" "errors" "config" "package"))
              
