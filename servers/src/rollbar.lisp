@@ -1,7 +1,7 @@
 (cl:in-package :cl-user)
 (require 'drakma)
 (defpackage rollbar
-  (:use :cl :drakma)
+  (:use :cl :drakma :alexandria)
   (:export
    :configure
    :with-configuration
@@ -18,22 +18,26 @@
 https://rollbar.com/{team}/{project}/settings/access_tokens/
 eg:
 https://rollbar.com/CIWTA/Tootsville/settings/access_tokens/")
+
 (defparameter *environment* "unknown"
   "The runtime environment (cluster or situational group) to report as.
 
 Typically “development” or “production,” but more interesting labels are
 allowed. Groups will be automatically created by Rollbar when you report
 to them; no need to pre-configure anything.")
+
 (defparameter *code-version* nil
   "The version of your source code.
 
 Can   be   anything,  but   a   Git   Hash   is   valid,  as   well   as
 a software version.")
+
 (defparameter *framework* (lisp-implementation-type)
   #.(concatenate 'string
                  "Any software framework which  you wish to identify as;
 by  default,  reports  the  name   of  your  Lisp  implementation  (from
 `LISP-IMPLEMENTATION-TYPE', ie, " (lisp-implementation-type) ")") )
+
 (defparameter *server* (machine-instance)
   "The server (machine) name to report as; defaults to `MACHINE-INSTANCE'
 (which is typically the hostname)")
@@ -53,7 +57,7 @@ Typically only invoked once at startup."
     (check-type environment string)
     (setf *environment* environment))
   (when code-version-present-p
-    (check-type code-version (or string symbol function))
+    (check-type code-version (or string-designator function))
     (setf *code-version* code-version))
   (when framework-present-p
     (check-type framework string)
@@ -85,7 +89,7 @@ Unmentioned keys are left unaltered."
 
 For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
 *ERROR-OUTPUT*."
-  (check-type level (or string symbol))
+  (check-type level string-designator)
   (let ((level* (string-downcase level)))
     (cond
       ((or (equalp level* "info")
@@ -121,6 +125,7 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
     (eql :external externality)))
 
 (defun escaped (string escape-char escaped-chars)
+  "Escape characters within the string, usually by \\"
   (let ((count-escaping (count-if (lambda (ch) (member ch escaped-chars))
                                   string)))
     (if (zerop count-escaping)
@@ -139,6 +144,7 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
           output))))
 
 (defun pretty-symbol-name (symbol)
+  "Format the symbol-name of SYMBOL nicely for the Rollbar report"
   (let ((first (if (symbol-name-can-be-unquoted-p symbol)
                    (string-capitalize (symbol-name symbol))
                    (concatenate 'string "|"
@@ -159,6 +165,7 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
     first))
 
 (defun format-symbol-name-carefully (symbol)
+  "Carefully format the symbol-name of SYMBOL"
   (check-type symbol symbol)
   (format nil "~:[|~a|~;~:(~a~)~]:~:[:~;~]~a"
           (package-name-can-be-unquoted-p (package-name (symbol-package symbol)))
@@ -166,14 +173,16 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
           (symbol-is-exported-p symbol)
           (pretty-symbol-name symbol)))
 
-(defun send-rollbar-notification (level message backtrace))
+(defun send-rollbar-notification (level message backtrace)
+  "Send a notification to Rollbar."
+  (error "TODO"))
 
 (defun quoted (string)
-  (concatenate 'string "\""
-               (escaped string #\\ '(#\\ #\"))
-               "\""))
+  "Return a quoted version of String"
+  (print-to-string string))
 
 (defun redact-directory (directory)
+  "Redact uninteresting parts of a directory pathname"
   (let ((relation (first directory))
         (files (rest directory)))
     (when (equal "home" (first files))
@@ -209,9 +218,13 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
               (quoted (pathname-type pathname))
               (pathname-version pathname)))))
 
-(defconstant +context-forms+ 5)
+(defconstant +context-forms+ 4
+  "How many forms' worth of context should be reported?
+  
+  Rollbar seems to insist upon 4.")
 
 (defun gather-source-info (filename top-level-form form-number)
+  "Get source code information for a frame in a backtrace"
   (declare (ignore form-number))
   (let ((pre '()) (code nil) (post '()))
     (block gather
@@ -240,6 +253,7 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
           (list :pre (reverse pre) :post (reverse post)))))
 
 (defun pretty-function-name (function)
+  "Pretty-print the name (and type information) of FUNCTION"
   (typecase function
     (symbol (if (symbol-function function)
                 (let ((*print-right-margin* 72)
@@ -253,6 +267,7 @@ For    “info”   or    “debug,”    returns   *TRACE-OUTPUT*;    otherwise
     (t (princ-to-string function))))
 
 (defun backtrace-frame-to-plist (frame)
+  "Convert FRAME into a plist of the sort Rollbar likes"
   (let ((plist))
     (let ((source-position (trivial-backtrace::frame-source-pos frame))
           top-level-form form-number)
@@ -349,7 +364,7 @@ raised, which you can choose to CATCH or ignore.
 A log entry will also be printed to *TRACE-OUTPUT* for levels “debug” or
 “info,”    and    to    *ERROR-OUTPUT*   for    other    levels.    (See
 `OUTPUT-FOR-LEVEL')"
-  (check-type level (or string symbol))
+  (check-type level string-designator)
   (assert (level-is-valid-p level) (level)
           "The classification level must be one of: ~{~a~^, ~}. (Got ~a)"
           *valid-notifier-levels* level)
