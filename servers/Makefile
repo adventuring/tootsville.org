@@ -57,6 +57,9 @@ bin:	Tootsville
 		--load src/setup.lisp \
 		--quit
 
+../.gitmodules:
+	>> ../.gitmodules
+
 bin/buildapp:	deps
 	if which buildapp; \
 	then \
