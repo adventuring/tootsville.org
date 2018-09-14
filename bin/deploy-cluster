@@ -150,8 +150,11 @@ COMPILED=$(servers/Tootsville version-info compiled)
 curl https://api.rollbar.com/api/1/deploy/ \
   -F access_token=$ACCESS_TOKEN \
   -F environment=$ENVIRONMENT \
+  -F framework=deploy-cluster \
+  -F notifier.name=deploy-cluster \
   -F revision=$REVISION \
   -F comment="v $VERSION built $COMPILED" \
+  -F uuid=$(uuidgen)
   -F local_username=$LOCAL_USERNAME
 
 ##########
