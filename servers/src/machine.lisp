@@ -53,3 +53,17 @@ will be of interest.
                 (the (real 0 *) (parse-number:parse-real-number a10))
                 (the (integer 0 #.(expt 2 32)) (parse-number:parse-real-number running))
                 (the (integer 0 #.(expt 2 32)) (parse-number:parse-real-number total)))))))
+
+
+
+(defun stonith (&key host port pid)
+  (cond
+    ((and host port)
+     (if (find host (mapcar #'network-interface-address (network-interfaces)))
+       (if-let ((pid (find-pid-of-local-listener :host host :port port)))
+         (stonith :pid pid)
+         (error "Cannot find local listener on ~a:~d" host port))
+       (drakma:http-request
+         (format nil "http://~a:~a/maintenance/quit" host port))))
+    (pid (signal-process :sigint pid))
+    (t (error "Can't shoot the other node in the head without better information"))))
