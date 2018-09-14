@@ -31,7 +31,7 @@ deps:	.deps-installed~ modules
 
 modules:	../.gitmodules $(shell  grep '\[submodule "' ../.gitmodules | \
 			cut -d '"' -f 2 | sed -e 's,^,../.git/modules/,g' -e 's,$$,/config,g')
-	(cd .. ; git submodule update --init )
+	if [ -d ../.git ]; then cd .. ; git submodule update --init; fi
 
 ../.git/modules/%/config:	.gitmodules
 	(cd .. ; git submodule update --init )
