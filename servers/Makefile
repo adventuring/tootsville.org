@@ -27,17 +27,14 @@ clean:
 	find . -name \*~ -exec rm {} \;
 	git gc --auto
 
-deps:	.deps-installed~ ~/quicklisp/setup.lisp
+deps:	.deps-installed~ modules
 
-~/quicklisp/setup.lisp:
-	make .quicklisp-signing-key.txt
-	gpg --import .quicklisp-signing-key.txt
-	curl -L https://beta.quicklisp.org/quicklisp.lisp > quicklisp.lisp
-	curl -L https://beta.quicklisp.org/quicklisp.lisp.asc > quicklisp.lisp.asc
-	gpg --verify quicklisp.lisp.asc quicklisp.lisp
-	sbcl --non-interactive \
-		--load quicklisp.lisp \
-		--eval '(quicklisp-quickstart:install)'
+modules:	.gitmodules $(shell  grep '\[submodule "' ../.gitmodules | \
+			cut -d '"' -f 2 | sed -e 's,^,../.git/modules/,g' -e 's,$$,/config,g')
+	(cd .. ; git submodule update --init )
+
+../.git/modules/%/config:	.gitmodules
+	(cd .. ; git submodule update --init )
 
 TAGS:	$(shell find . -name \*.lisp)
 	ctags --languages=lisp -e -R -f TAGS
@@ -55,6 +52,11 @@ doc-publish:	doc
 
 bin:	Tootsville
 
+~/quicklisp/setup.lisp:	src/setup.lisp
+	sbcl --non-interactive \
+		--load src/setup.lisp \
+		--quit
+
 bin/buildapp:	deps
 	if which buildapp; \
 	then \
@@ -70,21 +72,20 @@ Tootsville:	Tootsville.new
 	./Tootsville.new check
 	mv --backup=simple Tootsville.new Tootsville
 
-Tootsville.new:	tootsville.asd quicklisp-manifest.tmp bin/buildapp
+Tootsville.new:	quicklisp-manifest.tmp bin/buildapp
 	bin/buildapp --output Tootsville.new \
 		--manifest-file quicklisp-manifest.tmp \
-		--load ~/quicklisp/setup.lisp \
 		--load "src/setup.lisp" \
 		--load tootsville.asd \
 		--load-system tootsville \
 		--entry tootsville:entry
-	echo $(pwd)/tootsville.asd >> quicklisp-manifest.tmp
 
 quicklisp-manifest.tmp:	tootsville.asd \
 		$(shell find . -name \*.lisp \
+			-and -not -path \**/.\* \
+			-or -name \*.asd \
 			-and -not -path \**/.\*)
 	sbcl --no-userinit --no-sysinit --non-interactive \
-		--load ~/quicklisp/setup.lisp \
 		--load src/setup.lisp \
 		--load tootsville.asd \
 		--eval '(ql:quickload :tootsville)' \
