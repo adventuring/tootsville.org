@@ -1,14 +1,21 @@
 (cl:in-package :cl-user)
-(load (merge-pathnames
-       #p"./src/setup.lisp"
-       (make-pathname
-        :directory
-        (pathname-directory (or *load-pathname*
-                                *compile-file-pathname*
-                                *default-pathname-defaults*)))))
+
 (defpackage tootsville-asd
   (:use :cl :asdf))
 (in-package :tootsville-asd)
+
+(defvar *setup* nil)
+
+(unless *setup*
+  (load (merge-pathnames
+          #p"./src/setup.lisp"
+          (make-pathname
+            :directory
+            (pathname-directory (or *load-pathname*
+                                    *compile-file-pathname*
+                                    *default-pathname-defaults*))))))
+
+
 
 (defsystem tootsville
   :version "0.3.4"
