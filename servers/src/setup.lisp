@@ -1,4 +1,5 @@
 (cl:in-package :cl-user)
+(require :asdf)
 (unless (find-package :tootsville-asd)
   (defpackage tootsville-asd
     (:use :cl :asdf)))
