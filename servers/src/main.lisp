@@ -15,7 +15,7 @@
     ((acceptor tootsville-restas-acceptor) &rest initargs)
   (declare (ignore initargs))
   (setf (slot-value acceptor 'hunchentoot::taskmaster)
-        (make-instance ' thread-pool-taskmaster:thread-pool-taskmaster)))
+        (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
 
 (defun not-found-if-null (thing)
   "If THING is null, then abort with a 404 Not Found."
@@ -44,7 +44,9 @@
       (not-found-if-null route)
       (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
         (restas:process-route route bindings)))))
-(defun find-acceptor (host port)
+
+
+(defun find-acceptor (host port)
     "Find an active Acceptor running on the given HOST address and PORT"
     (dolist (acceptor restas::*acceptors*)
       (when (and (typep acceptor 'tootsville-restas-acceptor)
