@@ -1,5 +1,5 @@
 (defpackage org.star-hope.machine
-  (:use :cl :uiop :org.tfeb.hax.memoize)
+  (:use :cl :uiop :org.tfeb.hax.memoize :org.star-hope.utils)
   (:export #:processor-count
            #:load-average))
 
