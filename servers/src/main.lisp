@@ -361,7 +361,8 @@ Hopefully you've already tested the changes?"
   (start-swank)
   (loop
      (format *trace-output* "~&//* Still Alive (~a)" (now))
-     (format *trace-output* "~{~&//* ~a~}" (bt:all-threads))
+     (format *trace-output* "~{~&//  ~a~}" (bt:all-threads))
+     (format *trace-output* "~&/**")
      (force-output *trace-output*)
      (sleep 90))) 
 
