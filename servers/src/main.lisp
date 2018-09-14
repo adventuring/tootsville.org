@@ -26,6 +26,10 @@
     (hunchentoot:abort-request-handler))
   thing)
 
+(defgeneric respond-to-error (condition)
+  (:method ((error error))
+    (hunchentoot:maybe-invoke-debugger error)))
+
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor tootsville-restas-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
@@ -53,12 +57,12 @@
                                   (slot-value vhost 'restas::mapper)))
       (verbose:info :route "Route is ~s" route)
       (not-found-if-null route)
-      (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
+      (handler-bind ((error (lambda (c) (respond-to-error c))))
         (verbose:info :route "URI ~s mapped to route ~s"
                              (hunchentoot:request-uri*) route)
         (verbose:info :route "Processing route")
-        (restas:process-route route bindings)
-        (verbose:info :route "Done processing route")))))
+        (prog1 (restas:process-route route bindings)
+               (verbose:info :route "Done processing route"))))))
 
 
 (defun find-acceptor (host port)
