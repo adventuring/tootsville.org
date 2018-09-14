@@ -87,3 +87,9 @@ Yg8wz616XOOHpLNUki3j
          (format *trace-output* "~&Found system definition ~S"
                  another-system-definition)
          (asdf:load-asd another-system-definition)))))
+
+
+
+(format *trace-output* "~&Setup script completed; ready to load.~4%")
+
+(setf *setup* t)
