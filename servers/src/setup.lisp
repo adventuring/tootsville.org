@@ -98,7 +98,7 @@ Yg8wz616XOOHpLNUki3j
                                  lib-dir)))
       (dolist (another-system-definition (directory asdf))
          (format *trace-output* "~&Found system definition ~S"
-                 another-system-definition)
+                 (uiop/pathname:enough-pathname another-system-definition src-dir))
          (asdf:load-asd another-system-definition)))))
 
 
