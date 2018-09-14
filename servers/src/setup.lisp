@@ -1,3 +1,11 @@
+(cl:in-package :cl-user)
+(unless (find-package :tootsville-asd)
+  (defpackage tootsville-asd
+    (:use :cl :asdf)))
+(in-package :tootsville-asd)
+
+(defvar *setup* nil)
+
 (format t "~3& Tootsville Ⅴ Setup~3&")
 
 
