@@ -33,14 +33,15 @@
         (hunchentoot:*request* request))
     (when (and (not vhost) restas:*default-host-redirect*)
       (hunchentoot:redirect (hunchentoot:request-uri*)
-                            :host restas:*default-host-redirect*))
+                            :host (restas::vhost-hostname restas:*default-host-redirect*)
+                            :port (restas::vhost-port     restas:*default-host-redirect*))
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
-          (hunchentoot:request-uri*))
+                      (hunchentoot:request-uri*))
       (unless route
-        (break "404, no match for requested URI ~s in ~s"
-               (hunchentoot:request-uri*) vhost))
+        (break "No match for requested URI ~s on vhost ~s"
+               (hunchentoot:request-uri*) (restas::vhost-hostname-port vhost)))
       (not-found-if-null route)
       (handler-bind ((error #'hunchentoot:maybe-invoke-debugger))
         (restas:process-route route bindings)))))
