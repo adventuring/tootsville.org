@@ -33,17 +33,7 @@ clean:
 	find . -name \*~ -exec rm {} \;
 	git gc --auto
 
-deps:	.deps-installed~ ~/quicklisp/setup.lisp
-
-~/quicklisp/setup.lisp:
-	make .quicklisp-signing-key.txt
-	gpg --import .quicklisp-signing-key.txt
-	curl -L https://beta.quicklisp.org/quicklisp.lisp > quicklisp.lisp
-	curl -L https://beta.quicklisp.org/quicklisp.lisp.asc > quicklisp.lisp.asc
-	gpg --verify quicklisp.lisp.asc quicklisp.lisp
-	sbcl --non-interactive \
-		--load quicklisp.lisp \
-		--eval '(quicklisp-quickstart:install)'
+deps:	.deps-installed~
 
 TAGS:	$(shell find . -name \*.lisp)
 	ctags --languages=lisp -e -R -f TAGS
