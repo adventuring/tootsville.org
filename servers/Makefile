@@ -19,12 +19,6 @@
 
 all:	bin doc
 
-deploy-dev:	bin
-	rsync -C -r -essh . whitney-dev:servers/
-	ssh whitney-dev make -C servers Tootsville
-	ssh whitney-dev servers/Tootsville check | grep "Passed POST"
-	ssh whitney-dev mv --backup=simple servers/Tootsville /usr/local/bin
-
 clean:
 	-rm -f Tootsville Tootsville.new \
 		doc/* bin/buildapp
