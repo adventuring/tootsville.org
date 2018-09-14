@@ -29,6 +29,7 @@ REST services for the front-end."
                :drakma
                :envy
                :memoize
+               :oliphaunt
                :restas
                :swank
                :sxql
