@@ -49,7 +49,7 @@ REST services for the front-end."
   ((:module "src"
             :components
             ((:file "package" :depends-on ("utils"))
-             (:file "machine")
+             (:file "machine" :depends-on ("utils"))
              (:file "utils")
              (:file "taskmaster" :depends-on ("machine" "config"))
              (:file "main" :depends-on ("config" "view" "db" "web" "package" "taskmaster"))
