@@ -58,11 +58,19 @@
                                                 :type "asd")
                                  lib-dir)))
       (dolist (another-system-definition (directory asdf))
-         (format *trace-output* "~&Found system definition ~S"
-                 (uiop/pathname:enough-pathname another-system-definition src-dir))
-         (asdf:load-asd another-system-definition)))))
+        (format *trace-output* "~&Found system definition ~S"
+                (uiop/pathname:enough-pathname another-system-definition src-dir))
+        (asdf:load-asd another-system-definition)))))
 
-
+(format *trace-output*
+        "~2& Sytem Definitions registry:
+~{~& • ~a~}"
+        asdf:*central-registry*)
+
+;;; misc
+(setf sb-impl::*default-external-format* :utf-8)
+
+  
 
 (format *trace-output* "~&Setup script completed; ready to load.~4%")
 
