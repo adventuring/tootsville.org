@@ -88,6 +88,10 @@
                      (user-not-identified-source c)
                      (user-not-identified-value c)))))
 
+(defmethod respond-to-error ((error user-not-identified-error))
+    (setf (hunchentoot:return-code*) 401)
+    (hunchentoot:abort-request-handler))
+
 (defun find-user-from-session (&key (if-not-exists nil))
   (if-let ((google-token (hunchentoot:parameter "google-api-token")))
     (find-user-by-google-token google-token)
