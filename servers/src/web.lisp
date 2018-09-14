@@ -237,7 +237,7 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
   
   (defun lambda-list-as-variables (λ-list)
     (if λ-list
-        (cons 'list (map 'list
+        (cons 'list (mapcar
                          (lambda (x) (list 'quote x))
                          λ-list))
         'nil))
@@ -274,7 +274,7 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
              (block endpoint
                (block ,fname
                  ,@body))))
-         ,@(map 'list
+         ,@(mapcar
                 (lambda (content-type)
                   `(restas::register-route-traits
                     ',fname
