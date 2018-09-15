@@ -2,7 +2,7 @@ language: lisp
 sudo: required
 
 git:
-  submodules: false
+  submodules: true
 
 env:
   matrix:
@@ -23,8 +23,8 @@ install:
 #  - bin/ensure-sane-sbcl
 
 script:
-  - make
-  - make test
+  - make -C servers Tootsville
+  - make -C servers test
   
 addons:
   srcclr: true
