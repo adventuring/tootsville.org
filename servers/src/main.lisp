@@ -33,47 +33,59 @@
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-restas-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
-  (verbose:info :request "Dispatching request ~s via acceptor ~s" request acceptor)
+  (verbose:info :request "Dispatching request ~s via acceptor ~s"
+                request acceptor)
   (let ((vhost (restas::find-vhost
                 (restas::request-hostname-port acceptor request)))
         (hunchentoot:*request* request))
-    (verbose:info :route "VHost mapping ~s to ~s" (restas::request-hostname-port acceptor request) vhost)
+    (verbose:info :route "VHost mapping ~{~a:~a~} to ~s"
+                  (destructuring-bind (host . port)
+                      (restas::request-hostname-port acceptor request)
+                    (list host port))
+                  vhost)
     (when (and (null vhost)
                restas:*default-host-redirect*)
-      (verbose:info :route "Unrecognized hostname and port ~s; redirect to default host"
-                           (restas::request-hostname-port acceptor request))
+      (verbose:info :route "Unrecognized hostname and port ~s; ~
+redirect to default host"
+                    (restas::request-hostname-port acceptor request))
       (hunchentoot:redirect (hunchentoot:request-uri*)
-                            :host (restas::vhost-hostname restas:*default-host-redirect*)
-                            :port (restas::vhost-port     restas:*default-host-redirect*)))
+                            :host (restas::vhost-hostname
+                                   restas:*default-host-redirect*)
+                            :port (restas::vhost-port
+                                   restas:*default-host-redirect*)))
     (verbose:info :vhost "Request ~s on VHost ~s" request vhost)
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
-                      (hunchentoot:request-uri*))
+          (hunchentoot:request-uri*))
       (unless route
         (verbose::info :not-found "No match for requested URI ~s on vhost ~s"
-               (hunchentoot:request-uri*) (restas::vhost-hostname-port vhost))
+                       (hunchentoot:request-uri*) vhost)
         (verbose::info :not-found "Mapper: ~s"
-                                  (slot-value vhost 'restas::mapper)))
+                       (slot-value vhost 'restas::mapper)))
       (verbose:info :route "Route is ~s" route)
       (not-found-if-null route)
-      (handler-bind ((error (lambda (c) (respond-to-error c))))
+      (handler-bind ((sb-int:closed-stream-error
+                      (lambda (c)
+                        (verbose:info :disconnect "~a" c)
+                        (abort)))
+                     (error (lambda (c) (respond-to-error c))))
         (verbose:info :route "URI ~s mapped to route ~s"
-                             (hunchentoot:request-uri*) route)
+                      (hunchentoot:request-uri*) route)
         (verbose:info :route "Processing route")
         (prog1 (restas:process-route route bindings)
-               (verbose:info :route "Done processing route"))))))
+          (verbose:info :route "Done processing route"))))))
 
 
 (defun find-acceptor (host port)
-    "Find an active Acceptor running on the given HOST address and PORT"
-    (dolist (acceptor restas::*acceptors*)
-      (when (and (typep acceptor 'Tootsville-restas-acceptor)
-                 (equal host
-                        (hunchentoot:acceptor-address acceptor))
-                 (= port
-                    (hunchentoot:acceptor-port acceptor)))
-        (return-from find-acceptor acceptor))))
+  "Find an active Acceptor running on the given HOST address and PORT"
+  (dolist (acceptor restas::*acceptors*)
+    (when (and (typep acceptor 'Tootsville-restas-acceptor)
+               (equal host
+                      (hunchentoot:acceptor-address acceptor))
+               (= port
+                  (hunchentoot:acceptor-port acceptor)))
+      (return-from find-acceptor acceptor))))
 
 (defun start (&key (host "localhost") (port 5000))
   "Start a local Hunchentoot server.
@@ -101,16 +113,16 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
           hunchentoot:*show-lisp-errors-p* t
           hunchentoot:*show-lisp-backtraces-p* t))
   (restart-case
-    (if (config :ssl)
-        (restas:start 'Tootsville
-                      :port port
-                      :address host
-                      :hostname host
-                      :ssl-certificate-file (config :ssl :certificate-file)
-                      :ssl-privatekey-file (config :ssl :private-key-file)
-                      :ssl-privatekey-password (config :ssl :private-key-password)
-                      :acceptor-class 'Tootsville-restas-acceptor)
-        (restas:start 'Tootsville
+      (if (config :ssl)
+          (restas:start 'Tootsville
+                        :port port
+                        :address host
+                        :hostname host
+                        :ssl-certificate-file (config :ssl :certificate-file)
+                        :ssl-privatekey-file (config :ssl :private-key-file)
+                        :ssl-privatekey-password (config :ssl :private-key-password)
+                        :acceptor-class 'Tootsville-restas-acceptor)
+          (restas:start 'Tootsville
                         :port port
                         :address host
                         :hostname host
@@ -145,7 +157,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   "Stop the Hunchentoot server process started by `START'"
   (when acceptor
     (ignore-errors
-     (hunchentoot:stop acceptor :soft t))
+      (hunchentoot:stop acceptor :soft t))
     ;; TODO: wait for process to really be done
     (setf restas::*acceptors*
           (delete-if (curry #'eql acceptor)
@@ -193,7 +205,7 @@ help — print this
   (ql:quickload :prepl)
   (restart-bind
       ((quit #'cl-user::exit
-             :report-function (format *query-io* "Quit the REPL")))
+         :report-function (format *query-io* "Quit the REPL")))
     (funcall (intern "REPL" (find-package :prepl)))))
 
 (defun start-swank (&optional (port 46046))
