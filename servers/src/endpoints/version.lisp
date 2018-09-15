@@ -102,9 +102,12 @@ in HTTP headers and such."
              (list :class (string-capitalize
                            (class-name
                             (class-of hunchentoot:*acceptor*)))
-                   :name (hunchentoot:acceptor-name hunchentoot:*acceptor*)
-                   :port (hunchentoot:acceptor-port hunchentoot:*acceptor*)
-                   :address (hunchentoot:acceptor-address hunchentoot:*acceptor*)))))
+                   :name (hunchentoot:acceptor-name
+                          hunchentoot:*acceptor*)
+                   :port (hunchentoot:acceptor-port
+                          hunchentoot:*acceptor*)
+                   :address (hunchentoot:acceptor-address
+                             hunchentoot:*acceptor*)))))
     basics))
 
 (defendpoint (:get "/version" "application/json")
@@ -118,6 +121,12 @@ in HTTP headers and such."
         (version-info-report-string
          (uiop:split-string param :separator "/"))))
 
+(defendpoint (:get "/version/:param" "application/json")
+  (list 200 nil
+        (list param
+              (version-info-report-string
+               (uiop:split-string param :separator "/")))))
+
 (defun extract-plist-path (path plist &optional prefix)
   (labels ((prefixed (key)
              (if prefix
@@ -127,8 +136,8 @@ in HTTP headers and such."
     (etypecase path
       (null (if (consp plist)
                 (loop for (key . value) on plist by #'cddr
-                      append (extract-plist-path nil (car value)
-                                                 (prefixed key)))
+                   append (extract-plist-path nil (car value)
+                                              (prefixed key)))
                 (list prefix plist)))
       (cons (extract-plist-path (rest path) (getf plist (first path))
                                 (prefixed (first path))))
