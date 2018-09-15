@@ -46,7 +46,7 @@ TAGS:	$(shell find . -name \*.lisp)
 
 deploy:	bin test server-push doc-publish
 
-VERSION=$(shell grep :version Tootsville.asd | cut -d '"' -f 2)
+VERSION=$(shell grep :version tootsville.asd | cut -d '"' -f 2)
 doc-publish:	doc
 	rsync -rv -essh doc/* goethe.tootsville.org:goethe.tootsville.adventuring.click/devel/docs/Tootsville/$(VERSION)/
 
@@ -80,19 +80,19 @@ Tootsville.new:	quicklisp-manifest.tmp bin/buildapp
 	bin/buildapp --output Tootsville.new \
 		--manifest-file quicklisp-manifest.tmp \
 		--load "src/setup.lisp" \
-		--load Tootsville.asd \
-		--load-system Tootsville \
+		--load tootsville.asd \
+		--load-system tootsville \
 		--entry Tootsville:entry
 
-quicklisp-manifest.tmp:	Tootsville.asd \
+quicklisp-manifest.tmp:	tootsville.asd \
 		$(shell find . -name \*.lisp \
 			-and -not -path \**/.\* \
 			-or -name \*.asd \
 			-and -not -path \**/.\*)
 	sbcl --no-userinit --no-sysinit --non-interactive \
 		--load src/setup.lisp \
-		--load Tootsville.asd \
-		--eval '(ql:quickload :Tootsville)' \
+		--load tootsville.asd \
+		--load-system tootsville \
 		--eval '(ql:write-asdf-manifest-file "quicklisp-manifest.tmp")'
 
 test:	bin
