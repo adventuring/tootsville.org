@@ -1,5 +1,5 @@
 ;;;; redirect.lisp — HTTP redirect
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defun redirect-to/html-body (uri)
   "Returns an octet array that gives a simple redirection link.

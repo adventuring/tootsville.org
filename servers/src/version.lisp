@@ -1,13 +1,13 @@
 ;;;; version.lisp — version info
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defun romance-ii-program-version ()
   "This program's version. Taken from ASDF."
-  (asdf:component-version (asdf:find-system :tootsville)))
+  (asdf:component-version (asdf:find-system :Tootsville)))
 
 (defun romance-ii-program-name ()
   "This program's name. Taken from ASDF."
-  (asdf:component-name (asdf:find-system :tootsville)))
+  (asdf:component-name (asdf:find-system :Tootsville)))
 
 (defun romance-ii-program-name/version ()
   "This program's name and version number, in name/version form, as used
@@ -62,7 +62,7 @@ in HTTP headers and such."
         *romance-ii-copyright-latest*
         (setf *romance-ii-copyright-latest*
               (apply #'max (map-asdf-files #'file-write-year
-                                           (asdf:find-system :tootsville))))))
+                                           (asdf:find-system :Tootsville))))))
   (romance-ii-copyright-latest))
 
 (defun version-info-list ()
@@ -87,8 +87,8 @@ in HTTP headers and such."
                :software (list :type (software-type)
                                :version (software-version))
                :copyright-latest (romance-ii-copyright-latest)
-               :build-date tootsville::*build-date*
-               :compiled tootsville::*compiled*)))
+               :build-date Tootsville::*build-date*
+               :compiled Tootsville::*compiled*)))
     (when (and (boundp 'hunchentoot:*request*) hunchentoot:*request*)
       (appendf basics
                (list :request (list :name (hunchentoot:local-addr*)
@@ -173,6 +173,6 @@ in HTTP headers and such."
              (terpri s))
             (t (format s "~{~:(~a~):	~a~%~}" info))))))
 
-(defun tootsville::version-info-report (&optional (args '(:*)))
+(defun Tootsville::version-info-report (&optional (args '(:*)))
   (format t (version-info-report-string args))
   (finish-output))

@@ -1,14 +1,14 @@
 #+jscl
 (eval-when (:compile-toplevel :load-toplevel)
   (unless (find-package :jscl)
-    (load (asdf:system-relative-pathname :tootsville
+    (load (asdf:system-relative-pathname :Tootsville
                                          "src/lib/jscl/jscl" :type "lisp"))
     (funcall (intern "BOOTSTRAP-CORE" (find-package "JSCL")))))
-#+jscl(defpackage :tootsville.js (:use :jscl :cl))
-(in-package :tootsville)
+#+jscl(defpackage :Tootsville.js (:use :jscl :cl))
+(in-package :Tootsville)
 (syntax:use-syntax :annot)
 
-(defparameter *mesh-dir* (asdf:system-relative-pathname :tootsville "js/"))
+(defparameter *mesh-dir* (asdf:system-relative-pathname :Tootsville "js/"))
 
 (defun mesh.js-pathname ()
   (make-pathname :name "mesh" :type "js" :version :newest

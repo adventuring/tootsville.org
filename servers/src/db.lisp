@@ -1,10 +1,10 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defvar *db-secrets* nil)
 
 (defun db-secrets-pathname ()
   (merge-pathnames
-   (make-pathname :directory '(:relative ".config" "tootsville")
+   (make-pathname :directory '(:relative ".config" "Tootsville")
                   :name "db-secrets" :type "lisp")
    (user-homedir-pathname)))
 

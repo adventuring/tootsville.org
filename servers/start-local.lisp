@@ -4,11 +4,11 @@
 (format t "~|~3%TOOTSTEST local start
 
 Grabbing Tootstest ASDF…")
-(asdf:load-asd (merge-pathnames #p"./tootsville.asd" *load-pathname*))
+(asdf:load-asd (merge-pathnames #p"./Tootsville.asd" *load-pathname*))
 (format t "~&~|~%Loading system…")
-(ql:quickload :tootsville)
+(ql:quickload :Tootsville)
 (format t "~&~|~%Starting local server…")
-(eval (read-from-string "(tootsville:start)"))
+(eval (read-from-string "(Tootsville:start)"))
 (format t "~2&Opening in browser…")
-(uiop:run-program "xdg-open http://localhost:5000/tootsville/")
+(uiop:run-program "xdg-open http://localhost:5000/Tootsville/")
 (format t "~2&Ready.")

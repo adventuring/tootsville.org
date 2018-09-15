@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 ;;; Static assets
 

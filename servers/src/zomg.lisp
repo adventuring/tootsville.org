@@ -1,2 +1,2 @@
 ;;;;; zomg.lisp —- Client exceptions reporter
-(in-package :tootsville)
+(in-package :Tootsville)

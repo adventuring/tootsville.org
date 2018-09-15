@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 
 
@@ -35,7 +35,7 @@ is, of course, a subseq of \".json\" as well.)"
 
 ;; Error pages — Legacy CAVEMAN2 handler …
 #+ (or)
-(defmethod on-exception ((app <tootsville>) code)
+(defmethod on-exception ((app <Tootsville>) code)
   "Return error with code CODE
 
 CODE is allowed to be a string beginning with an HTTP error code.
@@ -57,7 +57,7 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
                             (t 501))))
          (unless (<= 300 code-number 599)
            (setf code-number 501))
-         (redirect-to (format nil "https://www.tootsville.org/error/~d.shtml" code-number))))))
+         (redirect-to (format nil "https://www.Tootsville.org/error/~d.shtml" code-number))))))
 
 
 
@@ -306,4 +306,4 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
          (restas:reconnect-all-routes)))))
 
 (defendpoint (get "/")
-  (list 307 '(:location "https://tootsville.org/") ""))
+  (list 307 '(:location "https://Tootsville.org/") ""))

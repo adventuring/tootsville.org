@@ -1,8 +1,8 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 
 
-(defclass tootsville-restas-acceptor (restas:restas-acceptor)
+(defclass Tootsville-restas-acceptor (restas:restas-acceptor)
   ((hunchentoot::taskmaster
     :initform (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
   (:default-initargs
@@ -12,7 +12,7 @@
     :message-log-destination (config :log :message)))
 
 (defmethod initialize-instance :after
-    ((acceptor tootsville-restas-acceptor) &rest initargs)
+    ((acceptor Tootsville-restas-acceptor) &rest initargs)
   (declare (ignore initargs))
   (setf (slot-value acceptor 'hunchentoot::taskmaster)
         (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
@@ -31,7 +31,7 @@
     (hunchentoot:maybe-invoke-debugger error)))
 
 (defmethod hunchentoot:acceptor-dispatch-request
-    ((acceptor tootsville-restas-acceptor) request)
+    ((acceptor Tootsville-restas-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
   (verbose:info :request "Dispatching request ~s via acceptor ~s" request acceptor)
   (let ((vhost (restas::find-vhost
@@ -68,7 +68,7 @@
 (defun find-acceptor (host port)
     "Find an active Acceptor running on the given HOST address and PORT"
     (dolist (acceptor restas::*acceptors*)
-      (when (and (typep acceptor 'tootsville-restas-acceptor)
+      (when (and (typep acceptor 'Tootsville-restas-acceptor)
                  (equal host
                         (hunchentoot:acceptor-address acceptor))
                  (= port
@@ -102,19 +102,19 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
           hunchentoot:*show-lisp-backtraces-p* t))
   (restart-case
     (if (config :ssl)
-        (restas:start 'tootsville
+        (restas:start 'Tootsville
                       :port port
                       :address host
                       :hostname host
                       :ssl-certificate-file (config :ssl :certificate-file)
                       :ssl-privatekey-file (config :ssl :private-key-file)
                       :ssl-privatekey-password (config :ssl :private-key-password)
-                      :acceptor-class 'tootsville-restas-acceptor)
-        (restas:start 'tootsville
+                      :acceptor-class 'Tootsville-restas-acceptor)
+        (restas:start 'Tootsville
                         :port port
                         :address host
                         :hostname host
-                        :acceptor-class 'tootsville-restas-acceptor))
+                        :acceptor-class 'Tootsville-restas-acceptor))
     (change-port (port*)
       :report "Use a different port"
       (start :host host :port port*))
@@ -235,15 +235,15 @@ Quicklisp when called."
   (format *trace-output* "~& Writing documentation…")
 
   (ql:quickload :net.didierverna.declt)
-  (let ((source-dir (asdf:component-pathname (asdf:find-system :tootsville))))
+  (let ((source-dir (asdf:component-pathname (asdf:find-system :Tootsville))))
     (inform-declt-of-agplv3)
     (ensure-directories-exist (merge-pathnames #p"doc/" source-dir))
     (funcall (intern "DECLT" (find-package :net.didierverna.declt))
-             :tootsville
+             :Tootsville
              :library "Tootsville Ⅴ (Romance Ⅱ)"
-             :texi-file (merge-pathnames #p"doc/tootsville.texi"
+             :texi-file (merge-pathnames #p"doc/Tootsville.texi"
                                          source-dir)
-             :info-file (merge-pathnames #p "doc/tootsville"
+             :info-file (merge-pathnames #p "doc/Tootsville"
                                          source-dir)
              :license :agplv3
              :declt-notice :short
@@ -270,7 +270,7 @@ to keep the process running."
 
 Hopefully you've already tested the changes?"
   (load (merge-pathnames
-         #p"tootsville.asd"
+         #p"Tootsville.asd"
          (or (when *location-of-main*
                (merge-pathnames
                 (make-pathname :directory '(:relative :up))
@@ -278,7 +278,7 @@ Hopefully you've already tested the changes?"
                                            *location-of-main*))))
              (merge-pathnames #p"servers/"
                               (user-homedir-pathname)))))
-  (ql:quickload :tootsville))
+  (ql:quickload :Tootsville))
 
 (defun trace-log-file (log-dir)
   (merge-pathnames (make-pathname :name "Tootsville.trace"
@@ -434,7 +434,7 @@ Licensed under the terms of the GNU Affero General Public License, version 3~%~%
   (finish-output *query-io*))
 
 (defun banner/standard-output ()
-  (format t "~&~|~%~a (© ~d)" (tootsville::romance-ii-program-name/version)
+  (format t "~&~|~%~a (© ~d)" (Tootsville::romance-ii-program-name/version)
           (romance-ii-copyright-latest))
   (finish-output))
 

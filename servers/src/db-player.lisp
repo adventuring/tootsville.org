@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 ;;; UUID  interation with  the database.  We handle  them internally  as
 ;;; (UNSIGNED-BYTE 128), and into MariaDB  as a BINARY(16), but may want
@@ -339,7 +339,7 @@ base-36-coded integer strings."
 
 (defun player-json (player)
   (check-type player player)
-  (tootsville::encode-json
+  (Tootsville::encode-json
    `(:is-a :player
      :given-name ,(player-given-name player)
      :surname ,(player-surname player)

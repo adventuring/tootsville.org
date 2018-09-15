@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defun condition-name (condition)
   (string-capitalize (symbol-name (class-name (class-of condition)))))
@@ -58,7 +58,7 @@
     (encode-json
      `(:error ,(princ-to-string condition)
        :condition ,(condition-name condition)
-       :location ,(if (tootsville:developmentp)
+       :location ,(if (Tootsville:developmentp)
                       backtrace
                       (nth 0 backtrace))
        :slots ,(slot-values condition)

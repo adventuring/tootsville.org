@@ -20,7 +20,7 @@
                                        #j:document:location:protocol
                                        "//"
                                        #j:document:location:host
-                                       "/tootsville/action"))))
+                                       "/Tootsville/action"))))
 
 (defun log (format &rest args)
   (#j:console:log (apply #'format nil format args)))

@@ -1,6 +1,6 @@
 ;;; register.lisp —  handle user  registration and sign-in  queries from
 ;;; the web
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (define-constant +google-client-ids+
     '("1052481910502-4tkek5mbv4jf9o16oaclg1v3ugrruilg.apps.googleusercontent.com"

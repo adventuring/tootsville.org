@@ -1,25 +1,25 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (setf (config-env-var) "TOOTSVILLE")
 
 (defparameter *application-root*
-  (asdf:system-source-directory :tootsville))
+  (asdf:system-source-directory :Tootsville))
 
 (defconfig :common
     `(:databases ((:maindb :sqlite3 :database-name ":memory:"))
       :on-error-mail (:from-name "Tootsville Support"
-                      :from-address "support@tootsville.org"
-                      :to-address "support@tootsville.org"
+                      :from-address "support@Tootsville.org"
+                      :to-address "support@Tootsville.org"
                       :smtp-server "localhost"
                       :subject-prefix "Error")))
 
 (defun default-config-file ()
   (merge-pathnames
    (make-pathname
-    :name "tootsville.config"
+    :name "Tootsville.config"
     :type "lisp"
     :version :newest
-    :directory '(:relative ".config" "tootsville"))
+    :directory '(:relative ".config" "Tootsville"))
    (user-homedir-pathname)))
 
 (defvar *config-file* nil
@@ -93,11 +93,11 @@
         (:prod nil))
       (let ((developmentp
               (let ((hostname (machine-instance)))
-                (or (search hostname "tootsville.ga")
+                (or (search hostname "Tootsville.ga")
                     (search hostname "dev.")
                     (search hostname "-dev")
                     (search hostname ".ga'")
-                    (not (search hostname "tootsville"))))))
+                    (not (search hostname "Tootsville"))))))
         (setf *developmentp* (if developmentp
                                  :devel
                                  :prod))

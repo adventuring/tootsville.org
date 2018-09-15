@@ -1,2 +1,2 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 (syntax:use-syntax :annot)

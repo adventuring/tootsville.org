@@ -1,5 +1,5 @@
 ;;;; news.lisp — latest news feed from Totsbook
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defvar *tootsbook-cache* nil
   "This is used as a cache  for the current headlines from Tootsbook for

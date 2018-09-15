@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 (syntax:use-syntax :annot)
 
 (defendpoint (:get "/world" "application/json")

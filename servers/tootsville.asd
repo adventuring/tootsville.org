@@ -1,8 +1,8 @@
 (cl:in-package :cl-user)
 
-(defpackage tootsville-asd
+(defpackage Tootsville-asd
   (:use :cl :asdf))
-(in-package :tootsville-asd)
+(in-package :Tootsville-asd)
 
 (defvar *setup* nil)
 
@@ -17,11 +17,11 @@
 
 
 
-(defsystem tootsville
+(defsystem Tootsville
   :version "0.3.5"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
-  :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
+  :bug-tracker "https://github.com/adventuring/Tootsville.org/issues"
   :description
   "The server software monolith for REST services of Tootsville.org"
   :long-description
@@ -130,4 +130,4 @@ REST services for the front-end."
                        (:file "webrepl" :depends-on ("package"))
                        (:file "world/events" :depends-on ("package"))
                        (:file "xhr" :depends-on ("package")))))))
-  :in-order-to ((test-op (load-op tootsville-test))))
+  :in-order-to ((test-op (load-op Tootsville-test))))

@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defvar *gossip-users* nil)
 (defvar *user*)

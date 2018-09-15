@@ -1,9 +1,9 @@
 (cl:in-package :cl-user)
 (require :asdf)
-(unless (find-package :tootsville-asd)
-  (defpackage tootsville-asd
+(unless (find-package :Tootsville-asd)
+  (defpackage Tootsville-asd
     (:use :cl :asdf)))
-(in-package :tootsville-asd)
+(in-package :Tootsville-asd)
 
 (defvar *setup* nil)
 
@@ -50,7 +50,7 @@
                                   src-dir)))
   (let ((*setup* t))
     (asdf:load-asd (merge-pathnames (make-pathname :directory '(:relative :up)
-                                                   :name "tootsville"
+                                                   :name "Tootsville"
                                                    :type "asd") 
                                     src-dir)))
   (dolist (lib-dir (directory lib-dirs))

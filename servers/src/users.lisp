@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 (syntax:use-syntax :annot)
 
 (defun potential-toot-name-character-p (c)
@@ -25,7 +25,7 @@
 (defvar *403.json-bytes*
   (flexi-streams:string-to-octets "{\"error\":\"player-not-found\",
 \"note\":\"You are not signed in to the web services\",
-\"login\":\"https://play.tootsville.org/login/\"}"))
+\"login\":\"https://play.Tootsville.org/login/\"}"))
 
 (defmacro with-player (() &body body)
   "Ensure that a recognized player is connected

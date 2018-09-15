@@ -1,5 +1,5 @@
 ;;;; maintenance.lisp — systems maintenance functions
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defparameter *maintenance-tasks-performed* nil)
 
@@ -75,14 +75,14 @@
     ("Reloading from local sources"
      (* 5 60) (* 30 60))
   (locally (declare #+sbcl (sb-ext:muffle-conditions style-warning))
-    (asdf:load-system :tootsville)))
+    (asdf:load-system :Tootsville)))
 
 (defvar *compilation* (make-string-output-stream))
 
 (define-maintenance-task buildapp
     ("Recompiling Tootsville executable"
      (* 20 60) (* 3 60 60))
-  (uiop:chdir (asdf:system-relative-pathname :tootsville "./"))
+  (uiop:chdir (asdf:system-relative-pathname :Tootsville "./"))
   (setf *compilation* (make-string-output-stream))
   (format *compilation* "Running “make Tootsville” to rebuild executable.
 Build starting at: ~a" (now))
@@ -99,8 +99,8 @@ Build starting at: ~a" (now))
 (define-maintenance-task reload-jscl
     ("Recompiling jscl.js"
      (* 20 60) (* 3 60 60))
-  (uiop:chdir (asdf:system-relative-pathname :tootsville "./"))
+  (uiop:chdir (asdf:system-relative-pathname :Tootsville "./"))
   (locally (declare #+sbcl (sb-ext:muffle-conditions style-warning))
-    (uiop:chdir (asdf:system-relative-pathname :tootsville "./src/lib/jscl/"))
-    (load (asdf:system-relative-pathname :tootsville "./src/lib/jscl/jscl.lisp"))
+    (uiop:chdir (asdf:system-relative-pathname :Tootsville "./src/lib/jscl/"))
+    (load (asdf:system-relative-pathname :Tootsville "./src/lib/jscl/jscl.lisp"))
     (funcall (intern "BOOTSTRAP-CORE" :jscl/bootstrap))))

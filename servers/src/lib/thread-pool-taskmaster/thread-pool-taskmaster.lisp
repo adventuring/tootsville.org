@@ -92,9 +92,9 @@
                            "Error signalled: worker ~a: ~:(~a~)~%~a"
                            ,name (class-of condition) condition)
             (cond
-              ((and (find-package :tootsville)
-                    (fboundp (intern "DEVELOPMENTP" :tootsville))
-                    (funcall (intern "DEVELOPMENTP" :tootsville)))
+              ((and (find-package :Tootsville)
+                    (fboundp (intern "DEVELOPMENTP" :Tootsville))
+                    (funcall (intern "DEVELOPMENTP" :Tootsville)))
                (signal condition))
               ((plusp (the fixnum ,mulligan))
                (verbose:info '(:thread-pool-worker)

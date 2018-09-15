@@ -117,7 +117,7 @@
           (T
            (setf (aref new j) char)))))))
 
-(defparameter *ignored-prefix-list* '("/" "/tootsville"))
+(defparameter *ignored-prefix-list* '("/" "/Tootsville"))
 
 (defun handle-request (req)
   "Convert  Request  from   server  into  a  plist   before  passing  to

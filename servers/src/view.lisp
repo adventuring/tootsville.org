@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defun render-json (object)
   (setf (hunchentoot:header-out :content-type)

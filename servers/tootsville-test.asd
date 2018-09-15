@@ -1,14 +1,14 @@
 (in-package :cl-user)
-(defpackage tootsville-test-asd
+(defpackage Tootsville-test-asd
   (:use :cl :asdf))
-(in-package :tootsville-test-asd)
+(in-package :Tootsville-test-asd)
 
-(defsystem tootsville-test
+(defsystem Tootsville-test
   :author "Bruce-Robert Pocock <BRFennPocock@star-hope.org>"
   :license ""
-  :depends-on (:tootsville
+  :depends-on (:Tootsville
                :prove)
   :components ((:module "t"
                         :components
-                        ((:file "tootsville"))))
+                        ((:file "Tootsville"))))
   :perform (load-op :after (op c) (asdf:clear-system c)))
