@@ -306,4 +306,39 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
          (restas:reconnect-all-routes)))))
 
 (defendpoint (get "/")
-  (list 307 '(:location "https://Tootsville.org/") ""))
+    (list 307 '(:location "https://Tootsville.org/") ""))
+
+
+
+(defmethod print-object ((route restas:route) stream)
+  (print-unreadable-object (route stream :type t)
+    (princ (string-capitalize (restas:route-symbol route)) stream)
+    (write-char #\Space stream)
+    (format stream "~{~:(~a~): ~a~^ ~}" (restas::route-headers route))
+    (write-char #\Space stream)
+    
+    (write-char #\Space stream)
+    (princ (restas::route-arbitrary-requirement route) stream)))
+
+
+(defmethod print-object ((vhost restas::vhost) stream)
+  (print-unreadable-object (vhost stream :type t)
+    (destructuring-bind (hostname . port) (restas::vhost-hostname-port vhost)
+      (princ hostname stream)
+      (write-char #\: stream)
+      (princ port stream))))
+
+(defmethod print-object ((request hunchentoot:request) stream)
+  (print-unreadable-object (request stream :type t)
+    (princ (hunchentoot:request-method request) stream)
+    (write-char #\Space stream)
+    (princ (hunchentoot:request-uri request) stream)))
+
+(defmethod print-object ((template routes:uri-component-template) stream)
+  (print-unreadable-object (template stream :type t)
+    (princ (slot-value template 'routes::spec) stream)))
+
+(defmethod print-object ((template routes:or-template) stream)
+  (print-unreadable-object (template stream :type t)
+    (format stream "~{~a~^ or ~}" (slot-value template 'routes::spec))))
+
