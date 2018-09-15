@@ -46,9 +46,9 @@ TAGS:	$(shell find . -name \*.lisp)
 
 deploy:	bin test server-push doc-publish
 
-VERSION=$(shell grep :version tootsville.asd | cut -d '"' -f 2)
+VERSION=$(shell grep :version Tootsville.asd | cut -d '"' -f 2)
 doc-publish:	doc
-	rsync -rv -essh doc/* goethe.tootsville.org:goethe.tootsville.adventuring.click/devel/docs/tootsville/$(VERSION)/
+	rsync -rv -essh doc/* goethe.tootsville.org:goethe.tootsville.adventuring.click/devel/docs/Tootsville/$(VERSION)/
 
 bin:	Tootsville
 
@@ -80,19 +80,19 @@ Tootsville.new:	quicklisp-manifest.tmp bin/buildapp
 	bin/buildapp --output Tootsville.new \
 		--manifest-file quicklisp-manifest.tmp \
 		--load "src/setup.lisp" \
-		--load tootsville.asd \
-		--load-system tootsville \
-		--entry tootsville:entry
+		--load Tootsville.asd \
+		--load-system Tootsville \
+		--entry Tootsville:entry
 
-quicklisp-manifest.tmp:	tootsville.asd \
+quicklisp-manifest.tmp:	Tootsville.asd \
 		$(shell find . -name \*.lisp \
 			-and -not -path \**/.\* \
 			-or -name \*.asd \
 			-and -not -path \**/.\*)
 	sbcl --no-userinit --no-sysinit --non-interactive \
 		--load src/setup.lisp \
-		--load tootsville.asd \
-		--eval '(ql:quickload :tootsville)' \
+		--load Tootsville.asd \
+		--eval '(ql:quickload :Tootsville)' \
 		--eval '(ql:write-asdf-manifest-file "quicklisp-manifest.tmp")'
 
 test:	bin
@@ -100,59 +100,59 @@ test:	bin
 
 ### Docs
 
-doc/tootsville.html.tar.gz:	doc/tootsville.html.tar
+doc/Tootsville.html.tar.gz:	doc/Tootsville.html.tar
 	gzip -9 -c < $< > $@
 
-doc/tootsville.html.tar.Z:	doc/tootsville.html.tar
+doc/Tootsville.html.tar.Z:	doc/Tootsville.html.tar
 	compress -9 -c < $< > $@
 
-doc/tootsville.html.tar.bz2:	doc/tootsville.html.tar
+doc/Tootsville.html.tar.bz2:	doc/Tootsville.html.tar
 	bzip2 -9 -c < $< > $@
 
-doc/tootsville.html.tar.xz:	doc/tootsville.html.tar
+doc/Tootsville.html.tar.xz:	doc/Tootsville.html.tar
 	xz -9 -c < $< > $@
 
-doc/tootsville.html.tar:	doc/tootsville.html.d/index.html
-	cd doc; tar cf tootsville.html.tar tootsville.html.d
+doc/Tootsville.html.tar:	doc/Tootsville.html.d/index.html
+	cd doc; tar cf Tootsville.html.tar Tootsville.html.d
 
-doc/tootsville.html.zip:	doc/tootsville.html.d/index.html
-	cd doc; zip -9 tootsville.html.zip tootsville.html.d
+doc/Tootsville.html.zip:	doc/Tootsville.html.d/index.html
+	cd doc; zip -9 Tootsville.html.zip Tootsville.html.d
 
-doc/tootsville.html.d/index.html:	doc/tootsville.texi
-	cd doc; makeinfo -o tootsville.html.d/ \
+doc/Tootsville.html.d/index.html:	doc/Tootsville.texi
+	cd doc; makeinfo -o Tootsville.html.d/ \
 		--html --css-include=../src/static/css/doc.css \
-		--split=node tootsville.texi
+		--split=node Tootsville.texi
 
-doc/tootsville.ps:	doc/tootsville.texi
-	cd doc; makeinfo --ps -o tootsville.ps tootsville.texi
+doc/Tootsville.ps:	doc/Tootsville.texi
+	cd doc; makeinfo --ps -o Tootsville.ps Tootsville.texi
 
-doc/tootsville.pdf:	doc/tootsville.texi
-	cd doc; makeinfo --pdf -o tootsville.pdf tootsville.texi
+doc/Tootsville.pdf:	doc/Tootsville.texi
+	cd doc; makeinfo --pdf -o Tootsville.pdf Tootsville.texi
 
-doc/tootsville.txt:	doc/tootsville.texi
-	cd doc; makeinfo --plaintext -o tootsville.txt tootsville.texi
+doc/Tootsville.txt:	doc/Tootsville.texi
+	cd doc; makeinfo --plaintext -o Tootsville.txt Tootsville.texi
 
-doc/tootsville.info:	doc/tootsville.texi
-	cd doc; makeinfo -o tootsville.info tootsville.texi
+doc/Tootsville.info:	doc/Tootsville.texi
+	cd doc; makeinfo -o Tootsville.info Tootsville.texi
 
-doc:	doc/tootsville.txt \
-	doc/tootsville.pdf \
-	doc/tootsville.html.tar.gz
+doc:	doc/Tootsville.txt \
+	doc/Tootsville.pdf \
+	doc/Tootsville.html.tar.gz
 
 all-docs: \
-	doc/tootsville.html.tar.gz	\
-	doc/tootsville.html.tar.Z	\
-	doc/tootsville.html.tar.bz2	\
-	doc/tootsville.html.tar.xz	\
-	doc/tootsville.html.zip	\
-	doc/tootsville.ps	\
-	doc/tootsville.pdf	\
-	doc/tootsville.txt 	\
-	doc/tootsville.info
+	doc/Tootsville.html.tar.gz	\
+	doc/Tootsville.html.tar.Z	\
+	doc/Tootsville.html.tar.bz2	\
+	doc/Tootsville.html.tar.xz	\
+	doc/Tootsville.html.zip	\
+	doc/Tootsville.ps	\
+	doc/Tootsville.pdf	\
+	doc/Tootsville.txt 	\
+	doc/Tootsville.info
 
-doc/tootsville.texi:	Tootsville
+doc/Tootsville.texi:	Tootsville
 	./Tootsville write-docs
 
-install:	tootsville.service Tootsville
+install:	Tootsville.service Tootsville
 	cp Tootsville /usr/local/bin/
-	cp tootsville.service /usr/lib/systemd/user/
+	cp Tootsville.service /usr/lib/systemd/user/
