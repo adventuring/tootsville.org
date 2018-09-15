@@ -1,6 +1,7 @@
 (cl:in-package :cl-user)
 (require :drakma)
 (require :alexandria)
+(require :trivial-backtrace)
 (defpackage rollbar
   (:use #:cl #:drakma #:alexandria)
   (:export
@@ -107,7 +108,9 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
           :test #'string-equal))
 
 (defun constituent-char-p (char)
-  (sb-impl::constituentp char *readtable*))
+  (plusp (logand sb-impl::+char-attr-constituent+
+                 (elt  (sb-impl::character-attribute-array *readtable*)
+                       (char-code char)))))
 
 (defun symbol-name-can-be-unquoted-p (symbol)
   "Decide whether a symbol name can be printed without quoting"
@@ -174,7 +177,8 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
   "Carefully format the symbol-name of SYMBOL"
   (check-type symbol symbol)
   (format nil "~:[|~a|~;~:(~a~)~]:~:[:~;~]~a"
-          (package-name-can-be-unquoted-p (package-name (symbol-package symbol)))
+          (package-name-can-be-unquoted-p
+           (package-name (symbol-package symbol)))
           (package-name (symbol-package symbol))
           (symbol-is-exported-p symbol)
           (pretty-symbol-name symbol)))
@@ -274,7 +278,7 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
 
 (defun backtrace-frame-to-plist (frame)
   "Convert FRAME into a plist of the sort Rollbar likes"
-  (let ((plist))
+  (let (plist top-level-form form-number)
     (when-let (source-position (trivial-backtrace::frame-source-pos frame))
       ;;top-level-form form-number)
       (when (search "tlf" source-position)
@@ -287,7 +291,8 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
                            (subseq source-position
                                    (+ 2 (search "fn" source-position)))
                            :junk-allowed t)))
-      (when-let (source-filename (trivial-backtrace::frame-source-filename frame))
+      (when-let (source-filename (trivial-backtrace::frame-source-filename
+                                  frame))
         (push (sanitize-file-name source-filename) plist)
         (push :source-filename plist)
         (when (and top-level-form (probe-file source-filename))
@@ -312,13 +317,15 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
             (when (or optional rest)
               (let (varargs)
                 (when optional
-                  (setf varargs (mapcar (lambda (arg)
-                                          (if (consp arg)
-                                              (let ((*print-case* :capitalize))
-                                                (format nil "~a (Default: ~s)"
-                                                        (pretty-symbol-name (first arg))
-                                                        (rest arg)))))
-                                        optional)))
+                  (setf varargs
+                        (mapcar (lambda (arg)
+                                  (if (consp arg)
+                                      (let ((*print-case* :capitalize))
+                                        (format nil "~a (Default: ~s)"
+                                                (pretty-symbol-name
+                                                 (first arg))
+                                                (rest arg)))))
+                                optional)))
                 (when rest
                   (setf varargs (cons varargs
                                       (format nil "(&Rest: ~a)"
@@ -407,7 +414,7 @@ function, and will be called after calling `DEBUGGER-HOOK'."
   (let ((closed-over-hook *debugger-hook*))
     (lambda (condition &optional hook)
       (debugger-hook condition hook)
-      (when closed-hook
+      (when closed-over-hook
         (funcall closed-over-hook condition hook)))))
 
 (defmacro with-rollbar-for-debugger (() &body body)
