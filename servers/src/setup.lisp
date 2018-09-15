@@ -1,9 +1,9 @@
 (cl:in-package :cl-user)
 (require :asdf)
-(unless (find-package :Tootsville-asd)
-  (defpackage Tootsville-asd
+(unless (find-package :Tootsville-ASD)
+  (defpackage Tootsville-ASD
     (:use :cl :asdf)))
-(in-package :Tootsville-asd)
+(in-package :Tootsville-ASD)
 
 (defvar *setup* nil)
 

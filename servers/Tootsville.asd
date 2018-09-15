@@ -1,8 +1,8 @@
 (cl:in-package :cl-user)
 
-(defpackage Tootsville-asd
+(defpackage Tootsville-ASD
   (:use :cl :asdf))
-(in-package :Tootsville-asd)
+(in-package :Tootsville-ASD)
 
 (defvar *setup* nil)
 
@@ -57,17 +57,21 @@ REST services for the front-end."
              (:file "main" :depends-on ("config" "view" "db" "web" "package"))
              (:file "db-player" :depends-on ("db" "package"))
              (:file "web" :depends-on ("view" "db-player" "errors" "config" "package"))
+
+             (:file "errors")
              
-             (:file "login" :depends-on ("web"))
-             (:file "errors" :depends-on ("package"))
-             (:file "version" :depends-on ("web"))
-             (:file "redirect" :depends-on ("web" "version"))
-             (:file "maintenance" :depends-on ("web"))
-             (:file "meta-game" :depends-on ("web"))
+             (:module "endpoints"
+                      :depends-on ("web")
+                      :components
+                      ((:file "login")
+                       (:file "version")
+                       (:file "redirect")
+                       (:file "maintenance")
+                       (:file "meta-game")
              
-             (:file "gossip" :depends-on ("web"))
-             (:file "users" :depends-on ("web"))
-             (:file "world" :depends-on ("web"))
+                       (:file "gossip")
+                       (:file "users")
+                       (:file "world")
              
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
