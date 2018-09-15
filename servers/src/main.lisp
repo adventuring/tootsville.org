@@ -70,7 +70,7 @@ redirect to default host"
                         (verbose:info :disconnect "~a" c)
                         (abort)))
                      (error (lambda (c) (respond-to-error c))))
-        (verbose:info :route "URI ~s mapped to route ~s"
+        (verbose:info :route "URI ~s leads to ~s"
                       (hunchentoot:request-uri*) route)
         (verbose:info :route "Processing route")
         (prog1 (restas:process-route route bindings)
