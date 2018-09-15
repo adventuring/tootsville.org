@@ -199,8 +199,8 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
              headers)
      (setf (hunchentoot:return-code*) status)
      (loop for (header . value) on headers by #'cddr
-           do (setf (hunchentoot:header-out header)
-                    (atom-or-comma-list value)))
+        do (setf (hunchentoot:header-out header)
+                 (atom-or-comma-list value)))
      ,(if jsonp
           `(if (consp content)
                (render-json content)
@@ -234,8 +234,8 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
           (<= (char-code #\A) cc (char-code #\Z))
           (<= (char-code #\0) cc (char-code #\9))
           (find ch "-/!?." :test #'char=))))
-
-  (defun make-endpoint-function-name (method uri accept-type)
+  
+  (defun make-endpoint-function-name (method uri &optional accept-type)
     (intern (string-upcase
              (format nil "ENDPOINT-~a-~a~@[->~a~]"
                      method
