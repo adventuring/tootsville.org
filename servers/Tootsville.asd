@@ -62,13 +62,13 @@ REST services for the front-end."
                     :depends-on ("view" "db-player" "errors" "config"))
              
              (:file "errors")
+             (:file "redirect" :depends-on ("web"))
              
              (:module "endpoints"
                       :depends-on ("web")
                       :components
                       ((:file "login")
                        (:file "version")
-                       (:file "redirect")
                        (:file "maintenance")
                        (:file "meta-game")
                        
