@@ -306,4 +306,44 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
          (restas:reconnect-all-routes)))))
 
 (defendpoint (get "/")
-  (list 307 '(:location "https://tootsville.org/") ""))
+    (list 307 '(:location "https://tootsville.org/") ""))
+
+
+
+(defmethod print-object ((route restas:route) stream)
+  (with-slots (symbol module required-method
+                      arbitrary-requirement render-method
+                      headers variables
+                      additional-variables)
+      route
+    (format stream "#<Restas Route~
+~[ Symbol: ~:*~s~]~
+~[ Module: ~:*~s~]~
+~[ Method: ~:*~s~]~
+~[ Must: ~:*~s~]~
+~[ Render: ~:*~s~]~
+~[ Headers: ~:*~s~]~
+~[ Vars: ~:*~s~]~
+~[ Add'l Vars: ~:*~s~]~
+>"
+            symbol module required-method
+            arbitrary-requirement render-method
+            headers variables
+            additional-variables)))
+
+(defmethod print-object ((vhost restas::vhost) stream)
+  (format stream "#<Restas VHost ~a:~a>"
+          (restas::vhost-hostname vhost)
+          (restas::vhost-port vhost)))
+
+(defmethod print-object ((request hunchentoot:request) stream)
+  (with-slots (method 
+               server-protocol local-addr local-port
+               uri query-string
+               remote-addr remote-port)
+      request
+    (format stream "#<Request ~a ~a://~a:~a~a~[~:*~a~] from ~a:~a>"
+            method 
+            server-protocol local-addr local-port
+            uri query-string
+            remote-addr remote-port)))
