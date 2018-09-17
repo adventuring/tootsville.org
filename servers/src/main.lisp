@@ -47,7 +47,7 @@
                restas:*default-host-redirect*)
       (verbose:info :route "Unrecognized hostname and port ~s; ~
 redirect to default host"
-                           (restas::request-hostname-port acceptor request))
+                    (restas::request-hostname-port acceptor request))
       (hunchentoot:redirect (hunchentoot:request-uri*)
                             :host (restas::vhost-hostname
                                    restas:*default-host-redirect*)
