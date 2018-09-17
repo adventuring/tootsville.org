@@ -8,12 +8,12 @@
 
 (unless *setup*
   (load (merge-pathnames
-         #p"./src/setup.lisp"
-         (make-pathname
-          :directory
-          (pathname-directory (or *load-pathname*
-                                  *compile-file-pathname*
-                                  *default-pathname-defaults*))))))
+          #p"./src/setup.lisp"
+          (make-pathname
+            :directory
+            (pathname-directory (or *load-pathname*
+                                    *compile-file-pathname*
+                                    *default-pathname-defaults*))))))
 
 
 
@@ -54,10 +54,10 @@ REST services for the front-end."
             :components
             ((:file "utils")
              (:file "package" :depends-on ("utils"))
-               (:file "config" :depends-on ("package"))
+             (:file "config" :depends-on ("package"))
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
-               (:file "types" :depends-on ("utils"))
+             (:file "types" :depends-on ("utils"))
              (:file "machine" :depends-on ("utils"))
              (:file "errors" :depends-on ("package"))
              (:file "logging" :depends-on ("package" "version"))
@@ -68,12 +68,12 @@ REST services for the front-end."
              (:file "db-player" :depends-on ("db" "package"))
                (:file "web"
                       :depends-on ("view" "db-player" "errors" "config"))
-
+             
                (:file "redirect" :depends-on ("web"))
                (:file "main" :depends-on ("config" "view" "db" "web" "package"))
-               (:module "endpoints"
-                        :depends-on ("web")
-                        :components
+             (:module "endpoints"
+                      :depends-on ("web")
+                      :components
                         ((:file "login")
                          (:file "version")
                          (:file "maintenance")
