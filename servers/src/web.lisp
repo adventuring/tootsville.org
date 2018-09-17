@@ -171,8 +171,8 @@ is, of course, a subseq of \".json\" as well.)"
              headers)
      (setf (hunchentoot:return-code*) status)
      (loop for (header . value) on headers by #'cddr
-        do (setf (hunchentoot:header-out header)
-                 (atom-or-comma-list value)))
+           do (setf (hunchentoot:header-out header)
+                    (atom-or-comma-list value)))
      ,(if jsonp
           `(if (consp content)
                (render-json content)
@@ -206,7 +206,7 @@ is, of course, a subseq of \".json\" as well.)"
           (<= (char-code #\A) cc (char-code #\Z))
           (<= (char-code #\0) cc (char-code #\9))
           (find ch "-/!?." :test #'char=))))
-  
+
   (defun make-endpoint-function-name (method uri &optional accept-type)
     (intern (string-upcase
              (format nil "ENDPOINT-~a-~a~@[->~a~]"
@@ -258,9 +258,9 @@ is, of course, a subseq of \".json\" as well.)"
               `(setf (hunchentoot:content-type*)
                      ,(add-charset accept-type)))
            (let ((content-bytes
-                   (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
-                     (block endpoint
-                       (block ,fname
+           (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
+             (block endpoint
+               (block ,fname
                          ,@body)))))
             (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
                       (thread-name (current-thread)))
