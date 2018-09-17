@@ -47,7 +47,7 @@
                restas:*default-host-redirect*)
       (verbose:info :route "Unrecognized hostname and port ~s; ~
 redirect to default host"
-                    (restas::request-hostname-port acceptor request))
+                           (restas::request-hostname-port acceptor request))
       (hunchentoot:redirect (hunchentoot:request-uri*)
                             :host (restas::vhost-hostname
                                    restas:*default-host-redirect*)
@@ -58,14 +58,14 @@ redirect to default host"
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
-          (hunchentoot:request-uri*))
+                      (hunchentoot:request-uri*))
       (unless route
         (verbose::info :not-found "{~a} No match for requested URI ~s on vhost ~s"
          (thread-name (current-thread))
                        (hunchentoot:request-uri*) vhost)
         (verbose::info :not-found "{~a} Mapper: ~s"
          (thread-name (current-thread))
-                       (slot-value vhost 'restas::mapper)))
+                                  (slot-value vhost 'restas::mapper)))
       (verbose:info :route "{~a} Route is ~s"  (thread-name (current-thread)) route)
       (not-found-if-null route)
       (handler-bind ((sb-int:closed-stream-error
@@ -75,21 +75,21 @@ redirect to default host"
                      (error (lambda (c) (respond-to-error c))))
         (verbose:info :route "{~a} URI ~s leads to ~s"
           (thread-name (current-thread))
-                      (hunchentoot:request-uri*) route)
+                             (hunchentoot:request-uri*) route)
         (verbose:info :route "{~a} Invoking endpoint for ~a" (thread-name (current-thread)) route)
         (prog1 (restas:process-route route bindings)
           (verbose:info :route "{~a} Done processing route ~a" (thread-name (current-thread)) route))))))
 
 
 (defun find-acceptor (host port)
-  "Find an active Acceptor running on the given HOST address and PORT"
-  (dolist (acceptor restas::*acceptors*)
+    "Find an active Acceptor running on the given HOST address and PORT"
+    (dolist (acceptor restas::*acceptors*)
     (when (and (typep acceptor 'Tootsville-restas-acceptor)
-               (equal host
-                      (hunchentoot:acceptor-address acceptor))
-               (= port
-                  (hunchentoot:acceptor-port acceptor)))
-      (return-from find-acceptor acceptor))))
+                 (equal host
+                        (hunchentoot:acceptor-address acceptor))
+                 (= port
+                    (hunchentoot:acceptor-port acceptor)))
+        (return-from find-acceptor acceptor))))
 
 (defvar *async-tasks* nil)
 
@@ -154,14 +154,14 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
           hunchentoot:*show-lisp-errors-p* t
           hunchentoot:*show-lisp-backtraces-p* t))
   (restart-case
-      (if (config :ssl)
+    (if (config :ssl)
           (restas:start 'Tootsville
-                        :port port
-                        :address host
-                        :hostname host
-                        :ssl-certificate-file (config :ssl :certificate-file)
-                        :ssl-privatekey-file (config :ssl :private-key-file)
-                        :ssl-privatekey-password (config :ssl :private-key-password)
+                      :port port
+                      :address host
+                      :hostname host
+                      :ssl-certificate-file (config :ssl :certificate-file)
+                      :ssl-privatekey-file (config :ssl :private-key-file)
+                      :ssl-privatekey-password (config :ssl :private-key-password)
                         :acceptor-class 'Tootsville-restas-acceptor)
           (restas:start 'Tootsville
                         :port port
@@ -198,7 +198,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   "Stop the Hunchentoot server process started by `START'"
   (when acceptor
     (ignore-errors
-      (hunchentoot:stop acceptor :soft t))
+     (hunchentoot:stop acceptor :soft t))
     ;; TODO: wait for process to really be done
     (setf restas::*acceptors*
           (delete-if (curry #'eql acceptor)
@@ -230,7 +230,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (ql:quickload :prepl)
   (restart-bind
       ((quit #'cl-user::exit
-         :report-function (format *query-io* "Quit the REPL")))
+             :report-function (format *query-io* "Quit the REPL")))
     (funcall (intern "REPL" (find-package :prepl)))))
 
 
