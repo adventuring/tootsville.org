@@ -416,21 +416,11 @@ need to be expanded a great deal to increase confidence in these tests."
   t)
 
 (defun banner/query-io ()
-  (format *query-io*
-          "~&~|
-Tootsville Ⅴ
-Copyright © ~d, Bruce-Robert Pocock
-Licensed under the terms of the GNU Affero General Public License, version 3~%~%"
-          (romance-ii-copyright-latest))
+  (write-string (tootsville-v-banner) *query-io*)
   (finish-output *query-io*))
 
 (defun banner/log ()
-  (v:info :startup
-          "~&~|
-Tootsville Ⅴ
-Copyright © ~d, Bruce-Robert Pocock
-Licensed under the terms of the GNU Affero General Public License, version 3~%~%"
-          (romance-ii-copyright-latest))
+  (v:info :startup (tootsville-v-banner))
   (finish-output *query-io*))
 
 (defun banner/standard-output ()
