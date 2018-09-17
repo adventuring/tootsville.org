@@ -58,14 +58,14 @@ redirect to default host"
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
-                      (hunchentoot:request-uri*))
+          (hunchentoot:request-uri*))
       (unless route
         (verbose::info :not-found "{~a} No match for requested URI ~s on vhost ~s"
          (thread-name (current-thread))
                        (hunchentoot:request-uri*) vhost)
         (verbose::info :not-found "{~a} Mapper: ~s"
          (thread-name (current-thread))
-                                  (slot-value vhost 'restas::mapper)))
+                       (slot-value vhost 'restas::mapper)))
       (verbose:info :route "{~a} Route is ~s"  (thread-name (current-thread)) route)
       (not-found-if-null route)
       (handler-bind ((sb-int:closed-stream-error
@@ -75,7 +75,7 @@ redirect to default host"
                      (error (lambda (c) (respond-to-error c))))
         (verbose:info :route "{~a} URI ~s leads to ~s"
           (thread-name (current-thread))
-                             (hunchentoot:request-uri*) route)
+                      (hunchentoot:request-uri*) route)
         (verbose:info :route "{~a} Invoking endpoint for ~a" (thread-name (current-thread)) route)
         (prog1 (restas:process-route route bindings)
           (verbose:info :route "{~a} Done processing route ~a" (thread-name (current-thread)) route))))))
