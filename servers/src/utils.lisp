@@ -51,6 +51,28 @@
 
 
 
+(defun year<-universal-time (time)
+  (nth-value 5 (decode-universal-time time)))
+
+(defun file-write-year (file)
+  (or (year<-universal-time (file-write-date file))
+      0))
+
+
+
+(defun map-asdf-files (function module)
+  (check-type function function)
+  (check-type module asdf/component:module)
+  (mapcan (lambda (child)
+            (etypecase child
+              (asdf/component:module (map-asdf-files function child))
+              (asdf/component:file-component
+               (list (funcall function
+                              (slot-value child 'asdf/component::absolute-pathname))))))
+          (asdf:component-children module)))
+
+
+
 ;;; Obscure compiler features?
 
 #+sbcl

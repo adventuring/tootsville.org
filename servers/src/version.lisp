@@ -17,12 +17,6 @@ in HTTP headers and such."
                "/"
                (romance-ii-program-version)))
 
-(defun unembarassing (string)
-  (loop for ((from to)) on '(("\\(R\\)" "®") ("\\(tm\\)" "™") ("\\(TM\\)" "™"))
-        do (setf string
-                 (cl-ppcre:regex-replace-all from string to)))
-  string)
-
 (defun ensure-site-name ()
   (unless (and (short-site-name)
                (long-site-name))
@@ -39,24 +33,6 @@ in HTTP headers and such."
 (defvar *romance-ii-copyright-latest*)
 
 (eval-when (:compile-toplevel :load-toplevel)
-  (defun year<-universal-time (time)
-    (nth-value 5 (decode-universal-time time)))
-
-  (defun file-write-year (file)
-    (or (year<-universal-time (file-write-date file))
-        0))
-
-  (defun map-asdf-files (function module)
-    (check-type function function)
-    (check-type module asdf/component:module)
-    (mapcan (lambda (child)
-              (etypecase child
-                (asdf/component:module (map-asdf-files function child))
-                (asdf/component:file-component
-                 (list (funcall function
-                                (slot-value child 'asdf/component::absolute-pathname))))))
-            (asdf:component-children module)))
-
   (defun romance-ii-copyright-latest ()
     (if (boundp '*romance-ii-copyright-latest*)
         *romance-ii-copyright-latest*
