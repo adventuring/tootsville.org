@@ -65,6 +65,21 @@ in HTTP headers and such."
                                            (asdf:find-system :tootsville))))))
   (romance-ii-copyright-latest))
 
+(defun tootsville-v-banner ()
+  (format nil 
+          "~&~|
+Tootsville Ⅴ, version ~a.
+
+Copyright © 2016,2017, Bruce-Robert Pocock
+Copyright  ©  2018~@[-~d~],  the  Corporation  for  Inter-World  Tourism
+and Adventuring.
+
+Licensed  under the  terms of  the  GNU Affero  General Public  License,
+version 3.~%~%"
+          (romance-ii-version)
+          (= 2018 *romance-ii-copyright-latest*)
+          *romance-ii-copyright-latest*))
+
 (defun version-info-list ()
   (ensure-site-name)
   (let ((basics
