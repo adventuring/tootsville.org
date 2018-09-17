@@ -49,20 +49,20 @@
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
-                      (hunchentoot:request-uri*))
+          (hunchentoot:request-uri*))
       (unless route
         (verbose::info :not-found "No match for requested URI ~s on vhost ~s"
-               (hunchentoot:request-uri*) (restas::vhost-hostname-port vhost))
+                       (hunchentoot:request-uri*) (restas::vhost-hostname-port vhost))
         (verbose::info :not-found "Mapper: ~s"
-                                  (slot-value vhost 'restas::mapper)))
+                       (slot-value vhost 'restas::mapper)))
       (verbose:info :route "Route is ~s" route)
       (not-found-if-null route)
       (handler-bind ((error (lambda (c) (respond-to-error c))))
         (verbose:info :route "URI ~s mapped to route ~s"
-                             (hunchentoot:request-uri*) route)
+                      (hunchentoot:request-uri*) route)
         (verbose:info :route "Processing route")
         (prog1 (restas:process-route route bindings)
-               (verbose:info :route "Done processing route"))))))
+          (verbose:info :route "Done processing route"))))))
 
 
 (defun find-acceptor (host port)
@@ -471,7 +471,7 @@ a verb (case-insensitive) from the hard-coded table in this function."
     (:repl (start-repl))
     (:version (print *compiled*))
     (:swank (start-swank)
-     (start-repl))
+            (start-repl))
     (:write-docs (write-docs))
     (:version-info (version-info-report (nthcdr 2 argv)))
     (otherwise (print-help))))
