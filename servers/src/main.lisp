@@ -37,11 +37,11 @@
   (let ((vhost (restas::find-vhost
                 (restas::request-hostname-port acceptor request)))
         (hunchentoot:*request* request))
-    (verbose:info :route "VHost mapping ~s to ~s" (restas::request-hostname-port acceptor request) vhost)
+    (verbose:info :route "Mapping ~s to ~s" (restas::request-hostname-port acceptor request) vhost)
     (when (and (null vhost)
                restas:*default-host-redirect*)
       (verbose:info :route "Unrecognized hostname and port ~s; redirect to default host"
-                           (restas::request-hostname-port acceptor request))
+                    (restas::request-hostname-port acceptor request))
       (hunchentoot:redirect (hunchentoot:request-uri*)
                             :host (restas::vhost-hostname restas:*default-host-redirect*)
                             :port (restas::vhost-port     restas:*default-host-redirect*)))
