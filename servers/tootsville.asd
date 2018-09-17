@@ -51,27 +51,38 @@ REST services for the front-end."
   :components
   ((:module "src"
             :components
-            ((:file "package" :depends-on ("utils"))
-             (:file "machine" :depends-on ("utils"))
-             (:file "utils")
-             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
-             (:file "db-player" :depends-on ("db" "package"))
-             (:file "web" :depends-on ("view" "db-player" "errors" "config" "package"))
-             
-             (:file "login" :depends-on ("web"))
-             (:file "errors" :depends-on ("package"))
-             (:file "version" :depends-on ("web"))
-             (:file "redirect" :depends-on ("web" "version"))
-             (:file "maintenance" :depends-on ("web"))
-             (:file "meta-game" :depends-on ("web"))
-             
-             (:file "gossip" :depends-on ("web"))
-             (:file "users" :depends-on ("web"))
-             (:file "world" :depends-on ("web"))
-             
+            ((:file "utils")
+             (:file "package" :depends-on ("utils"))
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
              (:file "config" :depends-on ("package"))
+             (:file "machine" :depends-on ("utils"))
+             (:file "errors" :depends-on ("package"))
+             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
+             (:file "logging" :depends-on ("package" "version"))
+             (:file "write-docs" :depends-on ("package"))
+             (:file "power-on-self-test" :depends-on ("web" "endpoints"))
+             (:file "version" :depends-on ("package" "config"))
+             (:file "command-line" :depends-on ("main" "logging" "write-docs"))
+             (:file "db-player" :depends-on ("db" "package"))
+             (:file "web" :depends-on
+                    ("view" "db-player" "errors" "config" "package"))
+             
+             (:module "endpoints"
+                      :depends-on ("web")
+                      :components
+                      ((:file "login" :depends-on ("web"))
+                       (:file "maintenance" :depends-on ("web"))
+                       (:file "meta-game" :depends-on ("web"))
+                       
+                       (:file "gossip" :depends-on ("web"))
+                       (:file "users" :depends-on ("web"))
+                       (:file "world" :depends-on ("web"))))
+             
+             (:file "redirect" :depends-on ("web" "version"))
+             
+             
+             
              #+jscl
              (:module "mesh"
                       :components

@@ -122,6 +122,17 @@ version 3.~%~%"
                    :address (hunchentoot:acceptor-address hunchentoot:*acceptor*)))))
     basics))
 
+(defendpoint (:get "/version" "application/json")
+  (list 200 nil (plist-alist (version-info-list))))
+
+(defendpoint (:get "/version" "text/plain")
+  (list 200 nil (version-info-report-string '(:*))))
+
+(defendpoint (:get "/version/:param" "text/plain")
+  (list 200 nil
+        (version-info-report-string
+         (uiop:split-string param :separator "/"))))
+
 (defun extract-plist-path (path plist &optional prefix)
   (labels ((prefixed (key)
              (if prefix
@@ -131,8 +142,8 @@ version 3.~%~%"
     (etypecase path
       (null (if (consp plist)
                 (loop for (key . value) on plist by #'cddr
-                   append (extract-plist-path nil (car value)
-                                              (prefixed key)))
+                      append (extract-plist-path nil (car value)
+                                                 (prefixed key)))
                 (list prefix plist)))
       (cons (extract-plist-path (rest path) (getf plist (first path))
                                 (prefixed (first path))))
