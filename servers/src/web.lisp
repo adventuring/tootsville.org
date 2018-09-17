@@ -4,11 +4,13 @@
 
 (defun accepts-content-type-p (content-type)
   "Does the current Hunchentoot request Accept: CONTENT-TYPE?"
-  (etypecase content-type
-    (string (string-equal content-type (hunchentoot:header-in* :accept)))
-    (cons (member (hunchentoot:header-in* :accept)
-                  content-type
-                  :test #'string-equal))))
+  (if (equal content-type "application/json")
+      (wants-json-p)
+      (etypecase content-type
+        (string (or (search content-type (hunchentoot:header-in* :accept))
+                    (when-let (ext (extension-for-content-type content-type))
+                      (string-ends ext (hunchentoot:request-uri*)))))
+        (cons (some #'accepts-content-type content-type)))))
 
 
 
@@ -22,7 +24,8 @@ is, of course, a subseq of \".json\" as well.)"
     (or (search "application/json" accept)
         (search "text/json" accept)
         (search "application/x-json" accept)
-        (search ".js" (hunchentoot:request-uri*)))))
+        (string-ends ".js" (hunchentoot:request-uri*))
+        (string-ends ".json" (hunchentoot:request-uri*)))))
 
 
 
@@ -33,31 +36,87 @@ is, of course, a subseq of \".json\" as well.)"
 
 
 
-;; Error pages — Legacy CAVEMAN2 handler …
-#+ (or)
-(defmethod on-exception ((app <Tootsville>) code)
-  "Return error with code CODE
+;; Error pages
 
-CODE is allowed to be a string beginning with an HTTP error code.
+(defun condition-backtrace-to-string (condition)
+  (with-output-to-string (s)
+    (uiop/image:print-backtrace :condition condition
+                                :stream s)))
 
-CODE must be between 300-599, inclusive, or 501 will be used.
+(defun condition->plist (condition)
+  (list :condition (stringify condition)
+        :class (type-of condition)
+        :backtrace (condition-backtrace-to-string condition)))
 
-TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
-  (declare (ignore app))
-  (cond
-    ((consp code)
-     (render-json code))
-    ((wants-json-p)
-     (render-json `((:error . ,code))))
-    (t (let ((code-number (typecase code
-                            (number code)
-                            (string (parse-integer code :junk-allowed t))
-                            (caveman2.exception:http-exception
-                             (caveman2.exception:exception-code code))
-                            (t 501))))
-         (unless (<= 300 code-number 599)
-           (setf code-number 501))
-         (redirect-to (format nil "https://www.Tootsville.org/error/~d.shtml" code-number))))))
+(defun condition->string (condition)
+  (format nil "
+~a
+\(Class: ~a)
+ 
+Backtrace:
+~a"
+          condition
+          (type-of condition)
+          (condition-backtrace-to-string condition)))
+
+(let ((cached-at% ())
+      (cached-response% ())
+      (cache-lock% (make-lock "HTTP Cache lock")))
+  ;; TODO: Do a better job about headers, expires, et al.
+  (defun http-fetch-with-caching (url cache-time)
+    (let ((cached-at (getf cached-at% url :test #'string=))
+          (cached-response (getf cached-response% url :test #'string=)))
+      (cond
+        ((null cached-at)
+         (let (b (s 0))
+           (loop until (= s 200)
+              do (multiple-value-bind (body status)
+                     (drakma:http-request uri :output :string)
+                   (setf b body s status)))
+           (setf (getf cached-at% url :test #'string=)
+                 (get-universal-time)
+                 (getf cached-response% url :test #'string=)
+                 b)))
+        ((> (get-universal-time) (+ cached-at cache-time))
+         (labels 
+             ((async-refresh-cache ()
+                (do-async (:name (format nil "Fetch ~a" url))
+                  (multiple-value-bind (body status &rest _)
+                      (drakma:http-request uri :output :string)
+                    (unless (= 200 status)
+                      (async-refresh-cache))
+                    (setf (getf cached-at% url :test #'string=)
+                          (get-universal-time)
+                          (getf cached-response% url :test #'string=)
+                          body)))))
+           (async-refresh-cache))
+         cached-response)
+        (t cached-response)))))
+
+(defun write-error-html-page (error-section)
+  (let* ((raw-page (http-fetch-with-caching
+                    "https://www.tootsville.ga/errors/500.shtml" 300))
+         (marker (search "<!--~-->" raw-page)))
+    (concatenate 'string
+                 (subseq raw-page 0 marker)
+                 error-section
+                 (subseq raw-page marker))))
+
+(defmethod respond-to-error ((error error))
+  (hunchentoot:maybe-invoke-debugger error)
+  (list 500 ()
+        (cond
+          ((wants-json-p)
+           (setf (hunchentoot:content-type* "application/json"))
+           (condition->plist error))
+          ((accepts-content-type-p "text/html")
+           (setf (hunchentoot:content-type* "text/html"))
+           (write-error-html-page (condition->html error)))
+          (t
+           (setf (hunchentoot:content-type* "text/plain"))
+           (condition->string condition)))))
+
+
 
 
 
@@ -207,6 +266,24 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
                content)
           '(flexi-streams:string-to-octets content :external-format :utf-8))))
 
+(defclass route-require-user (routes:proxy-route) () )
+
+
+(defmethod routes:route-check-conditions ((route route-require-user) bindings)
+  (when (call-next-method)
+    (unless (when-let ((google-token (hunchentoot:parameter 
+                                      "google-api-token")))
+              (find-user-by-google-token google-token))
+      (hunchentoot::start-output
+       hunchentoot:+http-authorization-required+
+       "User must be logged in")
+      (hunchentoot:abort-request-handler))))
+
+(defgeneric add-endpoint-filter (endpoint filter))
+
+(defmethod add-endpoint-filter (endpoint (filter (eql :user)))
+  `(make-instance 'route-require-user :target ,endpoint))
+
 (eval-when (:compile-toplevel :execute :load-toplevel)
   (defun add-charset (content-type)
     (if (member content-type
@@ -251,8 +328,8 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
   (defun lambda-list-as-variables (λ-list)
     (if λ-list
         (cons 'list (mapcar
-                         (lambda (x) (list 'quote x))
-                         λ-list))
+                     (lambda (x) (list 'quote x))
+                     λ-list))
         'nil))
 
   (defun defendpoint/make-extension-named-route (fname λ-list
@@ -264,7 +341,9 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
                                  :method ,method
                                  :variables ,(lambda-list-as-variables λ-list)))))))
 
-  (defmacro defendpoint ((method uri &optional accept-type)
+  (defmacro defendpoint ((method uri 
+                                 &optional accept-type
+                                 &rest filters)
                          &body body)
     (let* ((method (make-keyword (symbol-name method)))
            (fname (make-endpoint-function-name method uri accept-type))
@@ -279,24 +358,25 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
 ~@[ and accepting content-type ~{~a~^ or ~}~]"
                                   uri accept-types))))
       `(progn
+         ,(mapcar (curry #'add-endpoint-filter fname) filters)
          (defun ,fname (,@λ-list) ,docstring
-           ,(unless (consp accept-type)
-              `(setf (hunchentoot:content-type*)
-                     ,(add-charset accept-type)))
-           (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
-             (block endpoint
-               (block ,fname
-                 ,@body))))
+                ,(unless (consp accept-type)
+                   `(setf (hunchentoot:content-type*)
+                          ,(add-charset accept-type)))
+                (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
+                  (block endpoint
+                    (block ,fname
+                      ,@body))))
          ,@(mapcar
-                (lambda (content-type)
-                  `(restas::register-route-traits
-                    ',fname
-                    (plist-hash-table
-                     (list :template ,uri
-                           :method ,method
-                           :content-type ,content-type
-                           :variables ,(lambda-list-as-variables λ-list)))))
-                accept-types)
+            (lambda (content-type)
+              `(restas::register-route-traits
+                ',fname
+                (plist-hash-table
+                 (list :template ,uri
+                       :method ,method
+                       :content-type ,content-type
+                       :variables ,(lambda-list-as-variables λ-list)))))
+            accept-types)
          ,@(mapcan
             (lambda (content-type)
               (when-let (extension (extension-for-content-type content-type))

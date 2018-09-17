@@ -26,9 +26,7 @@
     (hunchentoot:abort-request-handler))
   thing)
 
-(defgeneric respond-to-error (condition)
-  (:method ((error error))
-    (hunchentoot:maybe-invoke-debugger error)))
+(defgeneric respond-to-error (condition))
 
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-restas-acceptor) request)

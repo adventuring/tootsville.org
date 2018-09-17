@@ -1,22 +1,5 @@
 (in-package :Tootsville)
-(syntax:use-syntax :annot)
 
-(defun potential-toot-name-character-p (c)
-  (and (characterp c)
-       (or (alphanumericp c)
-           (char= #\- c)
-           (char= #\' c)
-           (char= #\space c))))
-
-(defun potential-toot-name-p (toot-name)
-  (and (stringp toot-name)
-       (<= 3 (length toot-name) 64)
-       (every #'potential-toot-name-character-p
-              toot-name)
-       (alpha-char-p (char toot-name 0))))
-
-(deftype toot-name ()
-  `(and string (satisfies potential-toot-name-p)))
 
 (defun find-player-or-die ()
   "Ensure that a recognized player is connected."
@@ -27,15 +10,7 @@
 \"note\":\"You are not signed in to the web services\",
 \"login\":\"https://play.Tootsville.org/login/\"}"))
 
-(defmacro with-player (() &body body)
-  "Ensure that a recognized player is connected
-using `FIND-PLAYER-OR-DIE' and bind *USER*"
-  `(multiple-value-bind  (foundp *user*)
-       (find-player-or-die)
-     (cond (foundp
-            ,@body)
-           (t (return-from endpoint
-                (list 403 nil *403.json-bytes*))))))
+
 
 (define-condition not-your-toot-error (error)
   ((name :initarg name :accessor which-toot-is-not-yours))

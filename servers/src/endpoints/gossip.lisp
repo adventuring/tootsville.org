@@ -93,13 +93,12 @@
     (hunchentoot:abort-request-handler))
 
 (defun find-user-from-session (&key (if-not-exists nil))
-  (if-let ((google-token (hunchentoot:parameter "google-api-token")))
-    (find-user-by-google-token google-token)
-    (ecase if-not-exists
-      (nil nil)
-      (:error (error 'user-not-identified-error
-                     :source :session
-                     :value (list :google-api-token nil))))))
+  (
+   (ecase if-not-exists
+     (nil nil)
+     (:error (error 'user-not-identified-error
+                    :source :session
+                    :value (list :google-api-token nil))))))
 
 (defun active-sdp-offers (&optional (user *user*))
   (mapcar (rcurry #'drakma:url-encode :utf-8)

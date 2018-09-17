@@ -87,30 +87,30 @@
 (defmacro with-mulligan-handlers ((name mulligan) &body body)
   `(handler-bind
        ((error
-          (lambda (condition)
-            (verbose:fatal '(:thread-pool-worker)
-                           "Error signalled: worker ~a: ~:(~a~)~%~a"
-                           ,name (class-of condition) condition)
-            (cond
-              ((and (find-package :Tootsville)
-                    (fboundp (intern "DEVELOPMENTP" :Tootsville))
-                    (funcall (intern "DEVELOPMENTP" :Tootsville)))
-               (signal condition))
-              ((plusp (the fixnum ,mulligan))
-               (verbose:info '(:thread-pool-worker)
-                             "With ~r mulligan~:p left: Trying again (~a stopped by ~:(~a~) ~a)"
-                             ,mulligan ,name (class-of condition) condition)
-               (decf (the fixnum ,mulligan))
-               (invoke-restart 'restart))
-              (t
-               (verbose:info '(:thread-pool-worker)
-                             "Out of mulligans, abandoning ~a")))))
+         (lambda (condition)
+           (verbose:fatal '(:thread-pool-worker)
+                          "Error signalled: worker ~a: ~:(~a~)~%~a"
+                          ,name (class-of condition) condition)
+           (cond
+             ((and (find-package :Tootsville)
+                   (fboundp (intern "DEVELOPMENTP" :Tootsville))
+                   (funcall (intern "DEVELOPMENTP" :Tootsville)))
+              (signal condition))
+             ((plusp (the fixnum ,mulligan))
+              (verbose:info '(:thread-pool-worker)
+                            "With ~r mulligan~:p left: Trying again (~a stopped by ~:(~a~) ~a)"
+                            ,mulligan ,name (class-of condition) condition)
+              (decf (the fixnum ,mulligan))
+              (invoke-restart 'restart))
+             (t
+              (verbose:info '(:thread-pool-worker)
+                            "Out of mulligans, abandoning ~a")))))
         (condition
-          (lambda (condition)
-            (verbose:debug '(:thread-pool-worker)
-                           "Condition signalled: worker ~a signal ~:(~a~)~%~a"
-                           ,name (class-of condition) condition)
-            (invoke-restart 'abandon))))
+         (lambda (condition)
+           (verbose:debug '(:thread-pool-worker)
+                          "Condition signalled: worker ~a signal ~:(~a~)~%~a"
+                          ,name (class-of condition) condition)
+           (invoke-restart 'abandon))))
      ,@body))
 
 (defmacro with-pool-thread-restarts ((name) &body body)
@@ -120,21 +120,22 @@
         (let ((,mulligan *mulligans*))
           (restart-bind
               ((restart (lambda () (go ,restart-top))
-                        :report-function (lambda (s)
-                                           (princ (concatenate 'string "Restart " ,name) s)))
+                 :report-function (lambda (s)
+                                    (princ (concatenate 'string "Restart " ,name) s)))
                (abandon #'null
-                        :report-function (lambda (s)
-                                           (princ (concatenate 'string "Abandon " ,name) s)))
+                 :report-function (lambda (s)
+                                    (princ (concatenate 'string "Abandon " ,name) s)))
                (continue (lambda () (go ,restart-top))
-                         :report-function (lambda (s)
-                                            (princ "(synonym for Restart)" s)))
+                 :report-function (lambda (s)
+                                    (princ "(synonym for Restart)" s)))
                (abort #'null
-                      :report-function (lambda (s)
-                                         (princ "Skip this job (lose it)" s))))
+                 :report-function (lambda (s)
+                                    (princ "Skip this job (lose it)" s))))
             (with-mulligan-handlers (,name ,mulligan)
               ,@body))))))
 
-(defmacro named-thread-pool-runner ((&key (name "Thread pool worker")) &body body)
+(defmacro named-thread-pool-runner ((&key (name "Thread pool worker"))
+                                    &body body)
   #+sbcl
   (let ((idle-name (gensym "IDLE-NAME-"))
         (thread-name (gensym "THREAD-NAME-")))
@@ -170,34 +171,43 @@ This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
   (hunchentoot::increment-taskmaster-accept-count taskmaster)
   (handler-bind
       ((cl-threadpool:threadpool-error
-         (lambda (cond)
-           (verbose:fatal '(:threadpool-worker) "Thread pool error: ~a" cond)
-           (too-many-taskmaster-requests taskmaster socket)
-           (hunchentoot::send-service-unavailable-reply taskmaster socket))))
+        (lambda (cond)
+          (verbose:fatal '(:threadpool-worker) "Thread pool error: ~a" cond)
+          (too-many-taskmaster-requests taskmaster socket)
+          (hunchentoot::send-service-unavailable-reply taskmaster socket))))
     (hunchentoot::process-connection (taskmaster-acceptor taskmaster) socket)))
 
 (defun safe-client-as-string (socket)
   (handler-bind
       ((usocket:bad-file-descriptor-error
-         (lambda (c) (declare (ignore c))
-           "Disconnected Client")))
+        (lambda (c) (declare (ignore c))
+                "Disconnected Client")))
     (client-as-string socket)))
+
+(defmacro do-async ((&key (name "Asynchronous job")) &body body)
+  `(run-async (lambda () ,@body) ,name))
+
+(defun run-async (function &optional (name "Asynchronous job"))
+  (cl-threadpool:add-job (taskmaster-thread-pool taskmaster)
+                         (named-thread-pool-runner
+                             (:name name)
+                           (funcall function))))
 
 (defmethod handle-incoming-connection ((taskmaster thread-pool-taskmaster)
                                        socket)
   (handler-bind
       ((error
-         (lambda (cond)
-           ;; need  to  bind  *ACCEPTOR*  so that  LOG-MESSAGE*  can  do
-           ;; its work.
-           (let ((*acceptor* (taskmaster-acceptor taskmaster)))
-             (ignore-errors
+        (lambda (cond)
+          ;; need  to  bind  *ACCEPTOR*  so that  LOG-MESSAGE*  can  do
+          ;; its work.
+          (let ((*acceptor* (taskmaster-acceptor taskmaster)))
+            (ignore-errors
               (usocket:socket-close socket))
-             (log-message* *lisp-errors-log-level*
-                           "Error while assigning worker thread for ~
+            (log-message* *lisp-errors-log-level*
+                          "Error while assigning worker thread for ~
 new incoming connection ~a: ~a"
-                           (safe-client-as-string socket)
-                           cond)))))
+                          (safe-client-as-string socket)
+                          cond)))))
     (cl-threadpool:add-job (taskmaster-thread-pool taskmaster)
                            (named-thread-pool-runner
                                (:name (make-thread-name taskmaster socket))
