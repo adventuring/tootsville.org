@@ -54,10 +54,9 @@ REST services for the front-end."
             :components
             ((:file "utils")
              (:file "package" :depends-on ("utils"))
-             (:file "config" :depends-on ("package"))
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
-             (:file "types" :depends-on ("utils"))
+             (:file "config" :depends-on ("package"))
              (:file "machine" :depends-on ("utils"))
              (:file "errors" :depends-on ("package"))
              (:file "logging" :depends-on ("package" "version"))
