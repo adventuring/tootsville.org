@@ -53,17 +53,19 @@ REST services for the front-end."
   ((:module "src"
             :components
             #+sbcl
-            ((:file "package" :depends-on ("utils"))
+            ((:file "utils")
+             (:file "package" :depends-on ("utils"))
+             (:file "config" :depends-on ("package"))
+             (:file "view" :depends-on ("config"))
+             (:file "db" :depends-on ("config"))
+             (:file "types" :depends-on ("utils"))
              (:file "machine" :depends-on ("utils"))
-             (:file "utils")
-             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
+             (:file "errors")
              (:file "db-player" :depends-on ("db" "package"))
              (:file "web"
                     :depends-on ("view" "db-player" "errors" "config"))
-             
-             (:file "errors")
              (:file "redirect" :depends-on ("web"))
-             
+             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
              (:module "endpoints"
                       :depends-on ("web")
                       :components
@@ -76,9 +78,7 @@ REST services for the front-end."
                        (:file "users")
                        (:file "world")))
              
-             (:file "view" :depends-on ("config"))
-             (:file "db" :depends-on ("config"))
-             (:file "config" :depends-on ("package"))
+             
              #+jscl
              (:module "mesh"
                       :components
