@@ -48,7 +48,7 @@ deploy:	bin test server-push doc-publish
 
 VERSION=$(shell grep :version tootsville.asd | cut -d '"' -f 2)
 doc-publish:	doc
-	rsync -rv -essh doc/* goethe.tootsville.org:goethe.tootsville.adventuring.click/devel/docs/tootsville/$(VERSION)/
+	rsync -rv -essh doc/* goethe.tootsville.org:goethe.tootsville.org/wiki/devel/docs/tootsville/$(VERSION)/
 
 bin:	Tootsville
 

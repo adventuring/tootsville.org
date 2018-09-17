@@ -21,7 +21,7 @@
                             "description": "A not-for-profit volunteer organization responsible for Tootsville V",
                             "name": "CIWTA",
                             "url":
-                            "https://wikiwiki.tootsville.adventuring.click/wikiwiki/CIWTA"
+                            "https://wiki.tootsville.org/wiki/CIWTA"
                           },
     "name": "Tootsville",
     "description": "Tootsville is a fun virtual world where anybody can play, build, and explore for free",
@@ -34,13 +34,13 @@
               },
     "applicationCategory": "Game, Multimedia",
     "applicationSubCategory": "Massively Multiplayer Online Role-Playing Game",
-    "softwareHelp": "https://wikiwiki.tootsville.adventuring.click/wikiwiki/",
-    "softwareRequirements": "https://wikiwiki.tootsville.adventuring.click/wikiwiki/Minimum_Requirements",
+    "softwareHelp": "https://wiki.tootsville.org/wiki/",
+    "softwareRequirements": "https://wiki.tootsville.org/wiki/Minimum_Requirements",
     "softwareVersion": "5.0.3.0",
     "discussionUrl": "https://www.tootsbook.com/tootsbook/",
     "genre": "non-violent multiplayer",
     "interactivityType": "active",
     "inLanguage": "en",
     "typicalAgeRange": "13-",
-    "gameLocation": "https://wikiwiki.tootsville.adventuring.click/wikiwiki/Tootanga"
+    "gameLocation": "https://wiki.tootsville.org/wiki/Tootanga"
 }
