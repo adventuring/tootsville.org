@@ -69,15 +69,15 @@ REST services for the front-end."
                     ("view" "db-player" "errors" "config" "package"))
              
              (:module "endpoints"
-                      :depends-on ("../web")
+                      :depends-on ()
                       :components
-                      ((:file "login" :depends-on ("web"))
-                       (:file "maintenance" :depends-on ("web"))
-                       (:file "meta-game" :depends-on ("web"))
+                      ((:file "login")
+                       (:file "maintenance")
+                       (:file "meta-game")
                        
-                       (:file "gossip" :depends-on ("web"))
-                       (:file "users" :depends-on ("web"))
-                       (:file "world" :depends-on ("web"))))
+                       (:file "gossip")
+                       (:file "users")
+                       (:file "world")))
              
              (:file "redirect" :depends-on ("web" "version")))))
   :in-order-to ((test-op (load-op tootsville-test))))
