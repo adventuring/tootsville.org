@@ -8,7 +8,7 @@ version-page query locally."
        (handler-case
            (return-from post/read-version-page
              (drakma:http-request
-              (format nil "http://localhost:~d/version.txt" port)))
+              (format nil "http://localhost:~d/version/about.txt" port)))
          (usocket:connection-refused-error (c)
            (cond ((minusp (decf retries))
                   (error "Failed POST: Can't connect to local server ~
