@@ -252,13 +252,16 @@ is, of course, a subseq of \".json\" as well.)"
                                   uri accept-types))))
       `(progn
          (defun ,fname (,@λ-list) ,docstring
+           (v:info ',fname :endpoint ,(concatenate 'string "Starting: " docstring))
            ,(unless (consp accept-type)
               `(setf (hunchentoot:content-type*)
                      ,(add-charset accept-type)))
-           (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
+           (prog1
+            (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
              (block endpoint
                (block ,fname
                  ,@body))))
+            (v:info ',fname :endpoint ,(concatenate 'string "Finished: " docstring)))
          ,@(mapcar
                 (lambda (content-type)
                   `(restas::register-route-traits
