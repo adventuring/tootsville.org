@@ -179,16 +179,20 @@ then
        now=$(date +%Y-%m-%d)
        msg="Deployed v$VERSION to $cluster $now" 
        echo " - I meant v$VERSION@$now"
+       git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
        git tag -a v$VERSION@$now -m "$msg"
    else
+       git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
        git tag -a v$VERSION@$now -m "$msg"
    fi
 else
    echo "First deploy of v$VERSION, tagging"
+   git submodule foreach git tag -a tootsville-v$VERSION -m "for Tootsville.org: $msg"
    git tag -a v$VERSION -m "$msg"
 fi
 
 git push origin
+git submodule foreach git push origin
 
 ##########
 
