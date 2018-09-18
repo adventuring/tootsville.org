@@ -155,4 +155,4 @@ doc/Tootsville.texi:	Tootsville
 
 install:	tootsville.service Tootsville
 	cp Tootsville /usr/local/bin/
-	cp Tootsville.service /usr/lib/systemd/system/
+	cp tootsville.service /usr/lib/systemd/system/

@@ -36,6 +36,9 @@ Header set X-Tootsville-Cluster "@@CLUSTER@@"
 #
 # This allows arbitrary servers to bounce 404's off to one another,
 # basically, and hopefully makes it easier for players to find things
+#
+# NB. Maintenance and Version are NOT bounced like this.
+#
 RedirectMatch ^/assets/(.*)$ //jumbo.tootsville.org/Assets/$1
 RedirectMatch ^/Assets/(.*)$ //jumbo.tootsville.org/Assets/$1
 RedirectMatch ^/ciwta/(.*)$ https://www.ciwta.org/about/$1
@@ -49,7 +52,10 @@ RedirectMatch ^/gossip/(.*)$ https://gossip.@@CLUSTER@@/gossip/$1
 RedirectMatch ^/help/(.*)$ https://wiki.tootsville.org/wiki/Help_$1
 RedirectMatch ^/indira/(.*)$ https://world.@@CLUSTER@@/world/$1
 RedirectMatch ^/login/(.*)$ https://play.@@CLUSTER@@/play/?login/$1
+RedirectMatch ^/maintenance/(.*)$ https://gossip.@@CLUSTER@@/version/$1
 RedirectMatch ^/members/(.*)$ https://members.tootsbook.com/members/$1
+RedirectMatch ^/meta/(.*)$ https://gossip.@@CLUSTER@@/meta/$1
+RedirectMatch ^/meta-game/(.*)$ https://gossip.@@CLUSTER@@/meta-game/$1
 RedirectMatch ^/play/(.*)$ https://play.@@CLUSTER@@/play/$1
 RedirectMatch ^/play-now(.*)$ https://play.@@CLUSTER@@/play/
 RedirectMatch ^/playnow(.*)$ https://play.@@CLUSTER@@/play/
@@ -60,7 +66,7 @@ RedirectMatch ^/tootsbook/(.*)$ https://www.tootsbook.com/tootsbook/$1
 RedirectMatch ^/toots/(.*)$ https://users.@@CLUSTER@@/toots/$1
 RedirectMatch ^/users/(.*)$ https://users.@@CLUSTER@@/users/$1
 RedirectMatch ^/wiki/(.*)$ https://wiki.tootsville.org/wiki/$1
-RedirectMatch ^/wiki/(.*)$ https://wiki.tootsville.org/wiki/$1
+RedirectMatch ^/wikiwiki/(.*)$ https://wiki.tootsville.org/wiki/$1
 RedirectMatch ^/world/(.*)$ https://world.@@CLUSTER@@/world/$1
 
 # Error Documents for all defined error codes.

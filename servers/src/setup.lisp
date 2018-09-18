@@ -58,7 +58,7 @@
                                                 :type "asd")
                                  lib-dir)))
       (dolist (another-system-definition (directory asdf))
-        (format *trace-output* "~&Found system definition: ~S"
+        (format *trace-output* "~&Found system definition ~S"
                 (uiop/pathname:enough-pathname another-system-definition src-dir))
         (asdf:load-asd another-system-definition)))))
 

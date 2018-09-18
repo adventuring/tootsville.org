@@ -1,7 +1,11 @@
 (defpackage org.star-hope.machine
   (:use :cl :uiop :org.tfeb.hax.memoize :org.star-hope.utils)
   (:export #:processor-count
-           #:load-average))
+           #:load-average
+           #:unembarassing
+           #:stonith
+           #:run-ssh
+           ))
 
 (in-package #:org.star-hope.machine)
 
@@ -20,6 +24,14 @@
         (the (integer 1 2000) count))))
   #-linux
   (error "I don't have code to check this on non-Linux hosts")))
+
+(defun unembarassing (string)
+  "Intel and AMD use these  embarassing ASCII7 characters in things like
+CPU names."
+  (loop for ((from to)) on '(("\\(R\\)" "®") ("\\(tm\\)" "™") ("\\(TM\\)" "™"))
+     do (setf string
+              (cl-ppcre:regex-replace-all from string to)))
+  string)
 
 (defun load-average ()
   "Load averages return as multiple-values.
@@ -68,3 +80,16 @@ will be of interest.
          (format nil "http://~a:~a/maintenance/quit" host port))))
     (pid (signal-process :sigint pid))
     (t (error "Can't shoot the other node in the head without better information"))))
+
+
+
+(defun run-ssh (&key host user identity-file command script (port 22))
+  (check-type command (or string null))
+  (check-type script (or string null))
+  (assert (or command script))
+  (assert host)
+  (check-type host dns-name)
+  (check-type user string)
+  (assert (probe-file identity-file))
+  
+  (uiop/run-program:run-program (list "ssh" "-i" identity-file "-l" user host "echo t")))
