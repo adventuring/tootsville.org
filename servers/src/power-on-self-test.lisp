@@ -1,6 +1,7 @@
 (in-package :tootsville)
 
-(defvar *post-tests-queue*)
+(defvar *post-tests-queue* nil
+  "Power-on-self-tests are placed into this queue, usually by DEFPOST.")
 
 (defmacro defpost (name (&key) &body body)
   "Define  a power-on-self-test  from  somewhere else  in the  codebase.
