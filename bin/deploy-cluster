@@ -203,7 +203,7 @@ git submodule foreach git push --tags origin
 echobig Checking version
 for host in users world gossip
 do
-    if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/ | grep ^Version: | cut -f2)" ]
+    if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/about/ | grep ^Version: | cut -f2)" ]
     then
         echo $host.$cluster: $VERSION
     else
