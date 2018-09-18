@@ -7,8 +7,9 @@ Type=simple
 Environment=LANG=C
 
 ExecStart=/usr/local/bin/Tootsville daemon
-ExecReload=
-ExecStop=/usr/local/bin/Tootsville swank-send-stop
+#ExecReload=
+ExecStop=killall Tootsville
+#/usr/local/bin/Tootsville swank-send-stop
 
 [Install]
 WantedBy=multi-user.target
