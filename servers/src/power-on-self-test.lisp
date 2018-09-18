@@ -58,9 +58,7 @@ a moment and try that again.~%" c)
 
 This testing should  be much more complete  than it really is  — it will
 need to be expanded a great deal to increase confidence in these tests."
-  (fresh-line)
-  (princ "Power-on self-test:")
-  (fresh-line)
+  (format t "~2&Starting Power-On Self-Test … ~a" (now))
   (let ((warnings 0) (serious 0) (errors 0))
     (dolist (test *post-tests-queue*)
       (handler-case
@@ -68,10 +66,11 @@ need to be expanded a great deal to increase confidence in these tests."
         (warning (c) (format *error-output* "~&~A" c) (incf warnings))
         (error (c) (format *error-output* "~&~A" c) (incf errors))
         (serious-condition (c) (format *error-output* "~&~A" c) (incf serious))))
-    (format t "~&Power-On Self Test: ~:[no errors~; ~r error~:p~], ~
-~:[no non-error serious conditions~; ~r non-error serious condition~:p~], ~
-and ~:[no warnings~;~r warning~:p~].~&"
-            errors serious warnings)
+    (format t "~&Power-On Self Test completed ~a with ~
+ ~[no errors~; ~:*~r error~:p~],
+~[no non-error serious conditions~;~:*~r non-error serious condition~:p~], ~
+ and~[ no warnings~; ~:*~r warning~:p~].~&"
+            (now) errors serious warnings)
     (cond ((or (and (productionp) (plusp errors))
                (> serious 6)
                (> errors 4)
