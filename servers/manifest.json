@@ -6,7 +6,7 @@
     "lang": "en",
     "short_name": "Tootsville",
     "description": "Tootsville is a free, multiplayer game world where everyone can play, build, and explore",
-    "start_url": "https://tootsville.adventuring.click/tootsville.cgi/splash?from=web-app-manifest",
+    "start_url": "https://play.tootsville.org/play/?from=web-app-manifest",
     
     "icons": [
         {
