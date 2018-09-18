@@ -130,12 +130,20 @@ echobig Switching Roots
 )&
 for host in users gossip world
 do (
-    ssh $host.$cluster "cp servers/Tootsville --backup=simple /usr/local/bin/; \
-cp $host.$cluster.htaccess /var/www/$host.$cluster/.htaccess; \
-cp servers/tootsville.service /usr/lib/systemd/user/; \
+    ssh $host.$cluster "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
+cp $host.$cluster.htaccess --backup=simple -f /var/www/$host.$cluster/.htaccess; \
+cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
 ### cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
     )&
+done
+
+##########
+
+until [ 0 -eq $(jobs | wc -l) ]
+do
+   sleep 1
+   jobs
 done
 
 ##########
@@ -163,9 +171,11 @@ echobig Tagging Git
 
 if git rev-parse v$VERSION &>/dev/null
 then
+   echo "Previous tag v$VERSION found, adding v$VERSION$COMPILED"
    git tag v$VERSION$COMPILED
 else
-    git tag v$VERSION
+   echo "First deploy of v$VERSION, tagging"
+   git tag v$VERSION
 fi
 
 git push origin
