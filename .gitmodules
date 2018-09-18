@@ -1,3 +1,5 @@
 [submodule "oliphaunt"]
 	path = servers/src/lib/oliphaunt
 	url = git@github.com:romance-ii/elephant
+        branch = .
+
