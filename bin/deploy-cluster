@@ -195,8 +195,8 @@ else
    git tag -a v$VERSION -m "$msg"
 fi
 
-git push origin
-git submodule foreach git push origin
+git push --tags origin
+git submodule foreach git push --tags origin
 
 ##########
 
