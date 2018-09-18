@@ -1,9 +1,9 @@
 <!--#include file="error-header.htmlf"-->
 
 <div id="bella-flight">
-  <img src="https://jumbo.tootsville.adventuring.click/Assets/Avatars/Quicksilver/Assets/Bella.png"
+  <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella.png"
        id="bella">
-  <img src="https://jumbo.tootsville.adventuring.click/Assets/Avatars/Quicksilver/Assets/Bella-Shadow.png"
+  <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella-Shadow.png"
        id="bella-shadow">
 </div>
 
@@ -58,9 +58,9 @@ to { transform: translatex(75vw);}
 </style>
 
 <audio onloadeddata="var fiddlesticks = this; setTimeout(function() { fiddlesticks.play(); }, 6000)">
-  <source src="https://jumbo.tootsville.adventuring.click/Assets/Voices/Bella-Fiddlesticks.mp3" />
-  <source src="https://jumbo.tootsville.adventuring.click/Assets/Voices/Bella-Fiddlesticks.ogg" />
-  <source src="https://jumbo.tootsville.adventuring.click/Assets/Voices/Bella-Fiddlesticks.wav" />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.mp3" />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.ogg" />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.wav" />
 </audio>
 
 <!--#include file="error-footer.htmlf"-->
