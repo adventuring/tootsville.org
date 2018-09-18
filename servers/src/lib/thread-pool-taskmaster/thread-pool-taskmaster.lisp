@@ -88,7 +88,7 @@
   `(handler-bind
        ((error
           (lambda (condition)
-            (verbose:fatal '(:thread-pool-worker)
+            (verbose:fatal '(:thread-pool-worker :worker-error)
                            "Error signalled: worker ~a: ~:(~a~)~%~a"
                            ,name (class-of condition) condition)
             (cond
@@ -97,17 +97,17 @@
                     (funcall (intern "DEVELOPMENTP" :Tootsville)))
                (signal condition))
               ((plusp (the fixnum ,mulligan))
-               (verbose:info '(:thread-pool-worker)
+               (verbose:info '(:thread-pool-worker :worker-mulligan)
                              "With ~r mulligan~:p left: Trying again (~a stopped by ~:(~a~) ~a)"
                              ,mulligan ,name (class-of condition) condition)
                (decf (the fixnum ,mulligan))
                (invoke-restart 'restart))
               (t
-               (verbose:info '(:thread-pool-worker)
+               (verbose:info '(:thread-pool-worker :work-abandoned)
                              "Out of mulligans, abandoning ~a")))))
         (condition
           (lambda (condition)
-            (verbose:debug '(:thread-pool-worker)
+            (verbose:debug '(:thread-pool-worker :worker-signal :work-abandoned)
                            "Condition signalled: worker ~a signal ~:(~a~)~%~a"
                            ,name (class-of condition) condition)
             (invoke-restart 'abandon))))
@@ -144,9 +144,9 @@
          (setf (sb-thread:thread-name (current-thread)) ,thread-name)
          (unwind-protect
               (with-pool-thread-restarts (,thread-name)
-                (verbose:info '(:threadpool-worker) "~a working" ,thread-name)
+                (verbose:info '(:threadpool-worker :web-worker :worker-start) "~a working" ,thread-name)
                 ,@body)
-           (verbose:info '(:threadpool-worker) "~a done" ,thread-name)
+           (verbose:info '(:threadpool-worker :web-worker :worker-finish) "~a done" ,thread-name)
            (setf (sb-thread:thread-name (current-thread)) ,idle-name)))))
   #-sbcl
   `(lambda () ,@body))
@@ -171,9 +171,12 @@ This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
   (handler-bind
       ((cl-threadpool:threadpool-error
          (lambda (cond)
-           (verbose:fatal '(:threadpool-worker) "Thread pool error: ~a" cond)
+           (verbose:fatal '(:threadpool-worker :web-worker :worker-error) "{~a} Thread pool error: ~a"
+              (thread-name (current-thread)) cond)
            (too-many-taskmaster-requests taskmaster socket)
            (hunchentoot::send-service-unavailable-reply taskmaster socket))))
+    (verbose:info '(:threadpool-worker :web-worker :accepting) "{~a} processing ~s via ~a"
+                  (thread-name (current-thread)) (safe-client-as-string socket) (taskmaster-acceptor taskmaster))
     (hunchentoot::process-connection (taskmaster-acceptor taskmaster) socket)))
 
 (defun safe-client-as-string (socket)
