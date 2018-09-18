@@ -17,7 +17,7 @@ LOCAL_USERNAME=`whoami`
 REVISION=`git log -n 1 --pretty=format:"%H"`
 if which finger &>/dev/null
 then
-   REALNAME=$(finger $LOCAL_USERNAME | perl -ne 'if (/Name: (.*)[\t\n]/) { print $1; exit }')
+    REALNAME=$(finger $LOCAL_USERNAME | perl -ne 'if (/Name: (.*)[\t\n]/) { print $1; exit }')
 fi
 if [ "x$REALNAME" = "x" ]
 then
@@ -27,7 +27,7 @@ if [ "x$REALNAME" = "x" ]
 then
     REALNAME=$LOCAL_USERNAME
 fi
-   
+
 echo "Deploy cluster: $1"
 echo "Initiated by $LOCAL_USERNAME@$(hostname) ($REALNAME)"
 date
@@ -62,35 +62,35 @@ bin/make-all-htaccess || exit 4
 
 echobig Pre-deploy front-ends
 
-    echo "Pre-deployment for play.$cluster:"
-    # safe place to copy in
-    echo "rm -fr play.$cluster.prior-deploy && \
+echo "Pre-deployment for play.$cluster:"
+# safe place to copy in
+echo "rm -fr play.$cluster.prior-deploy && \
 rm -fr play.$cluster.before-deploy && \
 mv -u play.$cluster.new play.$cluster.prior-deploy ; \
 cp -a play.$cluster play.$cluster.new && \
 cd play.$cluster.new;" >> dist/play.preamble
-    # copy in most files
-    mkdir -p dist/play
-    rsync --exclude='*~' --exclude='*#' -ar \
-          play/* dist/play/
-    # each host copies error pages
-    rsync --exclude='*~' --exclude='*#'  -ar \
-          www/error dist/play/
-    # .htaccess generated above
-    cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
-    # Google auth linking
-    ### mkdir -p dist/play/.well-known
-    ### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
-    ( cd dist/ ; \
-      shar -C xz -g 9 -M -Q -q -x \
-           -o play.shar \
-           -n "play.$cluster $REVISION" \
-           -s "$LOCAL_USERNAME ($REALNAME)" \
-           play/ )
-    cat dist/play.preamble dist/play.shar* | ssh play.$cluster
-    rm -r dist/play
-    echo "done pre-deploying play.$cluster static files"
-    echo ""
+# copy in most files
+mkdir -p dist/play
+rsync --exclude='*~' --exclude='*#' -ar \
+      play/* dist/play/
+# each host copies error pages
+rsync --exclude='*~' --exclude='*#'  -ar \
+      www/error dist/play/
+# .htaccess generated above
+cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
+# Google auth linking
+### mkdir -p dist/play/.well-known
+### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
+( cd dist/ ; \
+  shar -C xz -g 9 -M -Q -q -x \
+       -o play.shar \
+       -n "play.$cluster $REVISION" \
+       -s "$LOCAL_USERNAME ($REALNAME)" \
+       play/ )
+cat dist/play.preamble dist/play.shar* | ssh play.$cluster
+rm -r dist/play
+echo "done pre-deploying play.$cluster static files"
+echo ""
 
 ##########
 
@@ -117,8 +117,8 @@ do
 
     # update sources and compile
     rsync -essh -zar --delete servers \
-        --exclude \*~ --exclude \*.tmp \
-        $host.$cluster: || exit 6
+          --exclude \*~ --exclude \*.tmp \
+          $host.$cluster: || exit 6
     ssh $host.$cluster make -C servers Tootsville test || exit 6
 done
 
@@ -138,15 +138,15 @@ sudo -n systemctl restart tootsville; \
 sudo -n systemctl start tootsville; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
 ### cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
-    )&
+)&
 done
 
 ##########
 
 until [ 0 -eq $(jobs | wc -l) ]
 do
-   sleep 1
-   jobs
+    sleep 1
+    jobs
 done
 
 ##########
@@ -159,14 +159,14 @@ VERSION=$(servers/Tootsville version-info version)
 COMPILED=$(servers/Tootsville version-info compiled)
 
 curl https://api.rollbar.com/api/1/deploy/ \
-  -F access_token=$ACCESS_TOKEN \
-  -F environment=$ENVIRONMENT \
-  -F framework=deploy-cluster \
-  -F notifier.name=deploy-cluster \
-  -F revision=$REVISION \
-  -F comment="v $VERSION built $COMPILED" \
-  -F uuid=$(uuidgen)
-  -F local_username=$LOCAL_USERNAME
+     -F access_token=$ACCESS_TOKEN \
+     -F environment=$ENVIRONMENT \
+     -F framework=deploy-cluster \
+     -F notifier.name=deploy-cluster \
+     -F revision=$REVISION \
+     -F comment="v $VERSION built $COMPILED" \
+     -F uuid=$(uuidgen)
+-F local_username=$LOCAL_USERNAME
 
 ##########
 
@@ -177,22 +177,22 @@ msg="Deployed v$VERSION to $cluster $now"
 
 if git rev-parse v$VERSION &>/dev/null
 then
-   echo "Previous tag v$VERSION found, adding v$VERSION@$now"
-   if git rev-parse v$VERSION@$now &>/dev/null
-   then
-       now=$(date +%Y-%m-%d)
-       msg="Deployed v$VERSION to $cluster $now" 
-       echo " - I meant v$VERSION@$now"
-       git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
-       git tag -a v$VERSION@$now -m "$msg"
-   else
-       git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
-       git tag -a v$VERSION@$now -m "$msg"
-   fi
+    echo "Previous tag v$VERSION found, adding v$VERSION@$now"
+    if git rev-parse v$VERSION@$now &>/dev/null
+    then
+        now=$(date +%Y-%m-%d)
+        msg="Deployed v$VERSION to $cluster $now"
+        echo " - I meant v$VERSION@$now"
+        git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
+        git tag -a v$VERSION@$now -m "$msg"
+    else
+        git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
+        git tag -a v$VERSION@$now -m "$msg"
+    fi
 else
-   echo "First deploy of v$VERSION, tagging"
-   git submodule foreach git tag -a tootsville-v$VERSION -m "for Tootsville.org: $msg"
-   git tag -a v$VERSION -m "$msg"
+    echo "First deploy of v$VERSION, tagging"
+    git submodule foreach git tag -a tootsville-v$VERSION -m "for Tootsville.org: $msg"
+    git tag -a v$VERSION -m "$msg"
 fi
 
 git push --tags origin
@@ -203,13 +203,13 @@ git submodule foreach git push --tags origin
 echobig Checking version
 for host in users world gossip
 do
-   if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/ | grep ^Version: | cut -f2)" ]
-   then
-       echo $host.$cluster: $VERSION
-   else
-       echo $host.$cluster: version mismatch! >&2
-       exit 19
-   fi
+    if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/ | grep ^Version: | cut -f2)" ]
+    then
+        echo $host.$cluster: $VERSION
+    else
+        echo $host.$cluster: version mismatch! >&2
+        exit 19
+    fi
 done
 
 ##########
@@ -220,4 +220,3 @@ make -C servers doc-publish
 ##########
 
 echobig Deployed $VERSION to $cluster
-    
