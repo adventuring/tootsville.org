@@ -100,8 +100,8 @@ do
     ssh $host.$cluster \
     	sbcl --non-interactive \
     	--no-inform \
-    	--eval '(ql:update-client)' \
-    	--eval '(ql:update-all-dists)' \
+    	--eval "'(ql:update-client)'" \
+    	--eval "'(ql:update-all-dists)'" \
     	--quit
 done
 
