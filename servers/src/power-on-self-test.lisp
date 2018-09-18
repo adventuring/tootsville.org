@@ -8,7 +8,7 @@
   boot-up sequence."
   (let ((fn-name (intern (concatenate 'string "⊕POST-" (string name)))))
     `(progn
-       (defun ,fn-name () ,@body)
+       (defun ,fn-name () (block ,fn-name ,@body))
        (pushnew ',fn-name *post-tests-queue*))))
 
 
@@ -47,7 +47,7 @@ a moment and try that again.~%" c)
                     (warn "Failed POST~%got~%~a" reply)
                     (if exitp
                         (cl-user::exit :code 27 :abort t :timeout 5)
-                        (return-from power-on-self-test nil))
+                        (return-from post-version-check nil))
                     nil)))
       (stop :port port))))
 
