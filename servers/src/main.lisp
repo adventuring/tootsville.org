@@ -53,28 +53,32 @@ redirect to default host"
                                    restas:*default-host-redirect*)
                             :port (restas::vhost-port
                                    restas:*default-host-redirect*)))
-    (verbose:info :vhost "Request ~s on VHost ~s" request vhost)
+    (verbose:info :vhost "{~a} Request ~s on VHost ~s"
+           (thread-name (current-thread)) request vhost)
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
           (hunchentoot:request-uri*))
       (unless route
-        (verbose::info :not-found "No match for requested URI ~s on vhost ~s"
+        (verbose::info :not-found "{~a} No match for requested URI ~s on vhost ~s"
+         (thread-name (current-thread))
                        (hunchentoot:request-uri*) vhost)
-        (verbose::info :not-found "Mapper: ~s"
+        (verbose::info :not-found "{~a} Mapper: ~s"
+         (thread-name (current-thread))
                        (slot-value vhost 'restas::mapper)))
-      (verbose:info :route "Route is ~s" route)
+      (verbose:info :route "{~a} Route is ~s"  (thread-name (current-thread)) route)
       (not-found-if-null route)
       (handler-bind ((sb-int:closed-stream-error
                       (lambda (c)
                         (verbose:info :disconnect "~a" c)
                         (abort)))
                      (error (lambda (c) (respond-to-error c))))
-        (verbose:info :route "URI ~s leads to ~s"
+        (verbose:info :route "{~a} URI ~s leads to ~s"
+          (thread-name (current-thread))
                       (hunchentoot:request-uri*) route)
-        (verbose:info :route "Processing route")
+        (verbose:info :route "{~a} Invoking endpoint for ~a" (thread-name (current-thread)) route)
         (prog1 (restas:process-route route bindings)
-          (verbose:info :route "Done processing route"))))))
+          (verbose:info :route "{~a} Done processing route ~a" (thread-name (current-thread)) route))))))
 
 
 (defun find-acceptor (host port)
