@@ -7,11 +7,13 @@
 
 (defconfig :common
     `(:databases ((:maindb :sqlite3 :database-name ":memory:"))
-      :on-error-mail (:from-name "Tootsville Support"
-                      :from-address "support@Tootsville.org"
-                      :to-address "support@Tootsville.org"
-                      :smtp-server "localhost"
-                      :subject-prefix "Error")))
+                 :on-error-mail (:from-name "Tootsville Support"
+                                            :from-address "support@Tootsville.org"
+                                            :to-address "support@Tootsville.org"
+                                            :smtp-server "localhost"
+                                            :subject-prefix "Error")
+                 :run-dir '(:home "run")
+                 :log-dir '(:home "logs" "Tootsville")))
 
 (defun default-config-file ()
   (merge-pathnames
@@ -56,20 +58,25 @@
   (:method ((collection null) key more-keys)
     (values))
   (:method :around (collection key (more-keys cons))
-    (extract-key-path% (call-next-method)
-                       (first more-keys)
-                       (rest more-keys))))
+           (extract-key-path% (call-next-method)
+                              (first more-keys)
+                              (rest more-keys))))
 
-(defun extract-key-path (collection key &rest more-keys)
+(defun extract (collection key &rest more-keys)
+  "Extract the  item identified  by KEY  from COLLECTION.  If MORE-KEYS,
+then extract an item from each subsequently nested collection.
+
+ • For a list with a symbol key, uses GETF
+ • For a sequence and integer, uses ELT
+ • For a hash-table, uses GETHASH
+ • For an array, uses AREF"
   (extract-key-path% collection key more-keys))
 
-(assert (= 4 (extract-key-path '(:a (:b (:c (:d 4))))
-                               :a :b :c :d)))
-(assert (= 4 (extract-key-path '(:a (1 2 3 4)) :a 3)))
+(assert (= 4 (extract '(:a (:b (:c (:d 4)))) :a :b :c :d)))
+(assert (= 4 (extract '(:a (1 2 3 4)) :a 3)))
 (let ((h (make-hash-table :test 'equalp)))
   (setf (gethash "monkey" h) "George")
-  (assert (string= "George" (extract-key-path `(:a (:b ,h))
-                                              :a :b "monkey"))))
+  (assert (string= "George" (extract `(:a (:b ,h)) :a :b "monkey"))))
 
 
 
@@ -92,12 +99,13 @@
         (:devel t)
         (:prod nil))
       (let ((developmentp
-              (let ((hostname (machine-instance)))
-                (or (search hostname "Tootsville.ga")
-                    (search hostname "dev.")
-                    (search hostname "-dev")
-                    (search hostname ".ga'")
-                    (not (search hostname "Tootsville"))))))
+             (let ((hostname (string-downcase (machine-instance))))
+               (or (search "tootsville.ga" hostname)
+                   (search "tootsville.gc" hostname)
+                   (search "dev." hostname)
+                   (search "-dev" hostname)
+                   (search "builder" hostname)
+                   (not (search "tootsville" hostname))))))
         (setf *developmentp* (if developmentp
                                  :devel
                                  :prod))
