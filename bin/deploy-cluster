@@ -215,7 +215,7 @@ done
 ##########
 
 echobig Posting docs to Goethe
-make doc-publish
+make -C servers doc-publish
 
 ##########
 
