@@ -50,7 +50,7 @@
                                   src-dir)))
   (let ((*setup* t))
     (asdf:load-asd (merge-pathnames (make-pathname :directory '(:relative :up)
-                                                   :name "Tootsville"
+                                                   :name "tootsville"
                                                    :type "asd") 
                                     src-dir)))
   (dolist (lib-dir (directory lib-dirs))
