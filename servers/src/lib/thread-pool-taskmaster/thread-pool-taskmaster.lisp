@@ -2,7 +2,7 @@
 
 (defpackage thread-pool-taskmaster
   (:use :cl :hunchentoot :bordeaux-threads)
-  (:import-from :alexandria #:when-let)
+  (:import-from :alexandria #:when-let #:if-let)
   (:import-from :org.tfeb.hax.memoize #:def-memoized-function)
   (:export #:thread-pool-taskmaster))
 
@@ -158,7 +158,8 @@
  connection, and report that, as well.
 
 This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
- (if-let (f-f (assoc :x-forwarded-for (hunchentoot::headers-in*)))
+ (if-let ((f-f (and (boundp 'hunchentoot::*request*)
+                   (assoc :x-forwarded-for (hunchentoot::headers-in*)))))
    (format nil "~a (via ~a:~d; local ~a:~d)"
            (cdr f-f)
            (usocket::host-to-hostname (usocket:get-peer-address socket))
