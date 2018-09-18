@@ -33,34 +33,6 @@ is, of course, a subseq of \".json\" as well.)"
 
 
 
-;; Error pages — Legacy CAVEMAN2 handler …
-#+ (or)
-(defmethod on-exception ((app <Tootsville>) code)
-  "Return error with code CODE
-
-CODE is allowed to be a string beginning with an HTTP error code.
-
-CODE must be between 300-599, inclusive, or 501 will be used.
-
-TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
-  (declare (ignore app))
-  (cond
-    ((consp code)
-     (render-json code))
-    ((wants-json-p)
-     (render-json `((:error . ,code))))
-    (t (let ((code-number (typecase code
-                            (number code)
-                            (string (parse-integer code :junk-allowed t))
-                            (caveman2.exception:http-exception
-                             (caveman2.exception:exception-code code))
-                            (t 501))))
-         (unless (<= 300 code-number 599)
-           (setf code-number 501))
-         (redirect-to (format nil "https://www.Tootsville.org/error/~d.shtml" code-number))))))
-
-
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun after-slash (s)
     (if (find #\/ s)
