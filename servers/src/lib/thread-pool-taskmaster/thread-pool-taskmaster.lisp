@@ -152,15 +152,24 @@
   `(lambda () ,@body))
 
 (defun client-as-string (socket)
-  "A helper function which returns the client's address and port as a
- string and tries to act robustly in the presence of network problems.
+  "A helper function which returns the client's address and port as a string
+ and tries to act robustly in the presence of network problems.  This will
+ also check the current HTTP request context to see if it's a forwarded
+ connection, and report that, as well.
 
 This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
-  (format nil "~a port ~d (local: ~a port ~d)"
-          (usocket::host-to-hostname (usocket:get-peer-address socket))
-          (usocket:get-peer-port socket)
-          (usocket::host-to-hostname (usocket:get-local-address socket))
-          (usocket:get-local-port socket)))
+ (if-let (f-f (assoc :x-forwarded-for (hunchentoot::headers-in*)))
+   (format nil "~a (via ~a:~d; local ~a:~d)"
+           (cdr f-f)
+           (usocket::host-to-hostname (usocket:get-peer-address socket))
+           (usocket:get-peer-port socket)
+           (usocket::host-to-hostname (usocket:get-local-address socket))
+           (usocket:get-local-port socket))
+   (format nil "~a:~d (local: ~a:~d)"
+           (usocket::host-to-hostname (usocket:get-peer-address socket))
+           (usocket:get-peer-port socket)
+           (usocket::host-to-hostname (usocket:get-local-address socket))
+           (usocket:get-local-port socket))))
 
 (defun make-thread-name (taskmaster socket)
   (declare (ignore taskmaster))
