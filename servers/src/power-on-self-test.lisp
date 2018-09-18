@@ -60,17 +60,21 @@ need to be expanded a great deal to increase confidence in these tests."
   (fresh-line)
   (princ "Power-on self-test:")
   (fresh-line)
-  (let ((warnings 0) (errors 0))
+  (let ((warnings 0) (serious 0) (errors 0))
     (dolist (test *post-tests-queue*)
       (handler-case
           (funcall test)
-        (warning (incf warnings))
-        (error (incf errors))))
-    (format t "~&Power-On Self Test: ~:[no errors~; ~r error~:p~], and ~:[no warnings~;~r warning~:p~].~&"
-            errors warnings)
+        (warning (c) (format *error-output* "~&~A" c) (incf warnings))
+        (error (c) (format *error-output* "~&~A" c) (incf errors))
+        (serious-condition (c) (format *error-output* "~&~A" c) (incf serious))))
+    (format t "~&Power-On Self Test: ~:[no errors~; ~r error~:p~], ~
+~:[no non-error serious conditions~; ~r non-error serious condition~:p~], ~
+and ~:[no warnings~;~r warning~:p~].~&"
+            errors serious warnings)
     (cond ((or (and (productionp) (plusp errors))
+               (> serious 6)
                (> errors 4)
-               (> warnings 5))
+               (> warnings 8))
            (princ "POST Failed")
            nil)
           (t (princ "POST Passed")
