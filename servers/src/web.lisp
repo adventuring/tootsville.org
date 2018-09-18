@@ -252,16 +252,24 @@ is, of course, a subseq of \".json\" as well.)"
                                   uri accept-types))))
       `(progn
          (defun ,fname (,@λ-list) ,docstring
-           (v:info ',fname :endpoint ,(concatenate 'string "Starting: " docstring))
+           (v:info '(,(make-keyword fname) :endpoint :endpoint-start) ,(concatenate 'string "{~a} Starting: " docstring)
+                        (thread-name (current-thread)))
            ,(unless (consp accept-type)
               `(setf (hunchentoot:content-type*)
                      ,(add-charset accept-type)))
-           (prog1
-            (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
-             (block endpoint
-               (block ,fname
-                 ,@body))))
-            (v:info ',fname :endpoint ,(concatenate 'string "Finished: " docstring)))
+           (let ((content-bytes
+                   (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
+                     (block endpoint
+                       (block ,fname
+                         ,@body)))))
+            (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
+                      (thread-name (current-thread)))
+            (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
+                      (thread-name (current-thread))
+                      (hunchentoot:return-code*)
+                      (length (hunchentoot:headers-out*))
+                      (length content-bytes))
+            content-bytes))
          ,@(mapcar
                 (lambda (content-type)
                   `(restas::register-route-traits
