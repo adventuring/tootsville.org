@@ -171,8 +171,9 @@ echobig Tagging Git
 
 if git rev-parse v$VERSION &>/dev/null
 then
-   echo "Previous tag v$VERSION found, adding v$VERSION$COMPILED"
-   git tag v$VERSION$COMPILED
+   now=$(date +%Y%m%d-%H%M)
+   echo "Previous tag v$VERSION found, adding v$VERSION@$now"
+   git tag v$VERSION@$now
 else
    echo "First deploy of v$VERSION, tagging"
    git tag v$VERSION
