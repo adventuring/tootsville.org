@@ -207,7 +207,7 @@ do
        echo $host.$cluster: version mismatch! >&2
        exit 19
    fi
-fi
+done
 
 ##########
 
