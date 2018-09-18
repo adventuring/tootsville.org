@@ -176,6 +176,7 @@ if git rev-parse v$VERSION &>/dev/null
 then
    echo "Previous tag v$VERSION found, adding v$VERSION@$now"
    if git rev-parse v$VERSION@$now &>/dev/null
+   then
        now=$(date +%Y-%m-%d)
        msg="Deployed v$VERSION to $cluster $now" 
        echo " - I meant v$VERSION@$now"
