@@ -197,5 +197,24 @@ git submodule foreach git push --tags origin
 
 ##########
 
+echobig Checking version
+for host in users world gossip
+do
+   if [ $VERSION = $(curl -\# https://$host.$cluster/version.txt | grep ^Version: | cut -f2) ]
+   then
+       echo $host.$cluster: $VERSION
+   else
+       echo $host.$cluster: version mismatch! >&2
+       exit 19
+   fi
+done
+
+##########
+
+echobig Posting docs to Goethe
+make doc-publish
+
+##########
+
 echobig Deployed $VERSION to $cluster
     
