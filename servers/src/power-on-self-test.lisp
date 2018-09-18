@@ -6,7 +6,7 @@
   "Define  a power-on-self-test  from  somewhere else  in the  codebase.
   These are run as confidence tests  after a build, or during Production
   boot-up sequence."
-  (let ((fn-name (intern (concatenate 'string "⊕POST-" name))))
+  (let ((fn-name (intern (concatenate 'string "⊕POST-" (string name)))))
     `(progn
        (defun ,fn-name () ,@body)
        (pushnew ',fn-name *post-tests-queue*))))
