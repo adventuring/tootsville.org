@@ -82,7 +82,7 @@ then extract an item from each subsequently nested collection.
 
 (defun config (&optional key &rest sub-keys)
   (if sub-keys
-      (extract-key-path (config key) sub-keys)
+      (extract (config key) sub-keys)
       (envy:config #.(package-name *package*) key)))
 
 (defun appenv ()
