@@ -169,14 +169,16 @@ curl https://api.rollbar.com/api/1/deploy/ \
 
 echobig Tagging Git
 
+now=$(date +%Y%m%d-%H%M)
+msg="Deployed v$VERSION to $cluster $now"
+
 if git rev-parse v$VERSION &>/dev/null
 then
-   now=$(date +%Y%m%d-%H%M)
    echo "Previous tag v$VERSION found, adding v$VERSION@$now"
-   git tag v$VERSION@$now
+   git tag -a v$VERSION@$now -m $msg
 else
    echo "First deploy of v$VERSION, tagging"
-   git tag v$VERSION
+   git tag -a v$VERSION -m $msg
 fi
 
 git push origin
