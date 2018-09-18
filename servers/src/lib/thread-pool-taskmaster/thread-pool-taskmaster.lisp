@@ -208,6 +208,7 @@ new incoming connection ~a: ~a"
 
 (defmethod start-thread ((taskmaster thread-pool-taskmaster)
                          thunk &key name)
+  ;; XXX: if this happens, we should really toss it into add-job . . . 
   (error "Thread-Pool-Taskmaster does not start new threads while running.
 Tried to start a thread named ~a with ~s"
          name thunk))
