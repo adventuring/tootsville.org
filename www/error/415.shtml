@@ -1,5 +1,5 @@
-<!--#include file="error-header.htmlf"--> 
-<h1> 415: Unsupported Media Type</h1> 
-<p> The media type submitted is not one that the server can understand. </p> 
-<a href="https://wiki.tootsville.org/wiki/Error_415">(Learn More…)</a> 
+<!--#include file="error-header.htmlf"-->
+<h1> 415: Unsupported Media Type</h1>
+<p> The media type submitted is not one that the server can understand. </p>
+<a href="https://wiki.tootsville.org/wiki/Error_415">(Learn More…)</a>
 <!--#include file="error-footer.htmlf"-->

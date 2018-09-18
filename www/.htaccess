@@ -19,13 +19,13 @@ Redirect /form/display-bug https://wiki.tootsville.org/wiki/The_Yes_it_is_ugly_P
 Redirect /quiz/toots-quiz-201610 https://docs.google.com/forms/d/e/1FAIpQLSf3u024H6qDYC7U5dsMdORwOw7oYXXLoN2nJQJC3RFVljXYog/viewform
 
 <FilesMatch "\.twiml$">
-  Header set Content-type "application/xml;charset=utf-8"
+    Header set Content-type "application/xml;charset=utf-8"
 </FilesMatch>
 <FilesMatch "\.json$">
-  Header set Content-type "application/json;charset=utf-8"
+    Header set Content-type "application/json;charset=utf-8"
 </FilesMatch>
 <FilesMatch "\.babylon$">
-  Header set Content-type "application/json;charset=utf-8"
+    Header set Content-type "application/json;charset=utf-8"
 </FilesMatch>
 
 Header set Access-Control-Allow-Origin "*"
@@ -98,4 +98,3 @@ ErrorDocument 506 /error/506
 ErrorDocument 507 /error/507
 ErrorDocument 508 /error/508
 ErrorDocument 510 /error/510
-
