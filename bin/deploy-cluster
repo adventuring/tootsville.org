@@ -133,6 +133,9 @@ do (
     ssh $host.$cluster "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
 cp $host.$cluster.htaccess --backup=simple -f /var/www/$host.$cluster/.htaccess; \
 cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
+sudo -n systemctl enable tootsville; \
+sudo -n systemctl restart tootsville; \
+sudo -n systemctl start tootsville; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
 ### cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
     )&
