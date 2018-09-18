@@ -98,11 +98,11 @@ echobig Quicklisp update
 for host in users gossip world
 do
     ssh $host.$cluster \
-    	sbcl --non-interactive \
-    	--no-inform \
-    	--eval "'(ql:update-client)'" \
-    	--eval "'(ql:update-all-dists)'" \
-    	--quit
+        sbcl --non-interactive \
+        --no-inform \
+        --eval "'(ql:update-client)'" \
+        --eval "'(ql:update-all-dists)'" \
+        --quit
 done
 
 ##########
