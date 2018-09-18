@@ -15,7 +15,7 @@ AddHandler server-parsed .htmlf
 
 # Form and quiz vanity URIs
 Redirect /form/reserve-legacy-toot-name https://goo.gl/forms/TSF6zTktKAsty7OR2
-Redirect /form/display-bug https://wiki.tootsville.org/wikiwiki/The_Yes_it_is_ugly_Page
+Redirect /form/display-bug https://wiki.tootsville.org/wiki/The_Yes_it_is_ugly_Page
 Redirect /quiz/toots-quiz-201610 https://docs.google.com/forms/d/e/1FAIpQLSf3u024H6qDYC7U5dsMdORwOw7oYXXLoN2nJQJC3RFVljXYog/viewform
 
 <FilesMatch "\.twiml$">
@@ -46,7 +46,7 @@ RedirectMatch ^/directory/(.*)$ https://gossip.@@CLUSTER@@/directory/$1
 #RedirectMatch ^/for/?$ https://www.tootsville.org/
 RedirectMatch ^/(form.*)$ https://tootsville.adventuring.click/$1
 RedirectMatch ^/gossip/(.*)$ https://gossip.@@CLUSTER@@/gossip/$1
-RedirectMatch ^/help/(.*)$ https://wiki.tootsville.org/wikiwiki/Help_$1
+RedirectMatch ^/help/(.*)$ https://wiki.tootsville.org/wiki/Help_$1
 RedirectMatch ^/indira/(.*)$ https://world.@@CLUSTER@@/world/$1
 RedirectMatch ^/login/(.*)$ https://play.@@CLUSTER@@/play/?login/$1
 RedirectMatch ^/members/(.*)$ https://members.tootsbook.com/members/$1
@@ -60,7 +60,7 @@ RedirectMatch ^/tootsbook/(.*)$ https://www.tootsbook.com/tootsbook/$1
 RedirectMatch ^/toots/(.*)$ https://users.@@CLUSTER@@/toots/$1
 RedirectMatch ^/users/(.*)$ https://users.@@CLUSTER@@/users/$1
 RedirectMatch ^/wiki/(.*)$ https://wiki.tootsville.org/wiki/$1
-RedirectMatch ^/wikiwiki/(.*)$ https://wiki.tootsville.org/wiki/$1
+RedirectMatch ^/wiki/(.*)$ https://wiki.tootsville.org/wiki/$1
 RedirectMatch ^/world/(.*)$ https://world.@@CLUSTER@@/world/$1
 
 # Error Documents for all defined error codes.

@@ -22,7 +22,7 @@ time frame.
 The pilot  program for CIWTA, from which  it takes its  name via
 anagram, is Tootsville Ⅴ, a game accessible via http://Tootsville.org/ —
 For         details         on          that         game,         visit
-https://wiki-wiki.tootsville.adventuring.click/wikiwiki/
+https://wiki-wiki.tootsville.adventuring.click/wiki/
 
 Development is being financed entirely (as  of March, 2017) by the Fenn
 Pocock family.

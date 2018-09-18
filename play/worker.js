@@ -9,6 +9,6 @@ Tootsville.registerServiceWorkner = function () {
         });
     } else {
         alert('Can not register ServiceWorker.\nThis is a required feature to play the game.');
-        document.location = 'https://wiki.tootsville.org/wikiwiki/Can_not_register_ServiceWorker';
+        document.location = 'https://wiki.tootsville.org/wiki/Can_not_register_ServiceWorker';
     }
 }

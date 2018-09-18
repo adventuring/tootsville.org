@@ -6,5 +6,5 @@
   #builder-toot { display: none }
 </style>
 <p> I'm a teapot … I don't make coffee. </p> 
-<a href="https://wiki.tootsville.org/wikiwiki/Error_418">(Learn More…)</a> 
+<a href="https://wiki.tootsville.org/wiki/Error_418">(Learn More…)</a> 
 <!--#include file="error-footer.htmlf"-->
