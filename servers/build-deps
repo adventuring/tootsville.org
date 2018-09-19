@@ -11,3 +11,4 @@ curl
 gpg
 closure-compiler
 sharutils
+texinfo
