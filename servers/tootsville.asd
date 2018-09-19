@@ -69,6 +69,7 @@ REST services for the front-end."
                (:file "db-player" :depends-on ("db" "package"))
                (:file "web"
                       :depends-on ("view" "db-player" "errors" "config"))
+               (:file "http-error" :depends-on ("web"))
 
                (:file "redirect" :depends-on ("web"))
                (:file "main" :depends-on ("config" "view" "db" "web" "package"))
