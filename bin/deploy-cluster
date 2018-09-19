@@ -119,6 +119,16 @@ cp -a $cluster $cluster.new && \
 cd $cluster.new;
 PREAMBLE_END
 
+if [ $cluster = 'tootsville.ga' ]
+then
+    scp www/index.ga.html tootsville.ga:tootsville.ga.new/index.html
+fi
+
+if [ $cluster = 'tootsville.gc' ]
+then
+    scp www/index.gc.html tootsville.gc:tootsville.gc.new/index.html
+fi
+
 echo "done pre-deploying www.$cluster static files"
 echo ""
 
