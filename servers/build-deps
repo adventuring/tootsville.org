@@ -10,3 +10,4 @@ sbcl
 curl
 gpg
 closure-compiler
+sharutils
