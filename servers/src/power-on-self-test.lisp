@@ -45,12 +45,9 @@ a moment and try that again.~%" c)
                 (let ((reply (prog1 (post/read-version-page port)
                                (stop))))
                   (unless (search "Bruce-Robert Pocock" reply)
-                    (warn "Failed POST~%got~%~a" reply)
-                    (if exitp
-                        (cl-user::exit :code 27 :abort t :timeout 5)
-                        (return-from post-version-check nil))
+                    (error "Failed POST~%got~%~a" reply)
                     nil)))
-      (stop :port port))))
+      (stop))))
 
 
 (defun power-on-self-test (&key (exitp t))
@@ -63,12 +60,21 @@ need to be expanded a great deal to increase confidence in these tests."
     (dolist (test *post-tests-queue*)
       (handler-case
           (funcall test)
-        (warning (c) (format *error-output* "~&~A" c) (incf warnings))
-        (error (c) (format *error-output* "~&~A" c) (incf errors))
-        (serious-condition (c) (format *error-output* "~&~A" c) (incf serious))))
+        (warning (c)
+          (format *error-output* "~&WARNING: ~s~%~:*~A" c) 
+          (uiop/image:print-condition-backtrace c :stream *error-output*)
+          (incf warnings))
+        (error (c)
+          (format *error-output* "~&ERROR: ~s~%~:*~A" c)
+          (uiop/image:print-condition-backtrace c :stream *error-output*)
+          (incf errors))
+        (serious-condition (c)
+          (format *error-output* "~&SERIOUS-CONDITION: ~s~%~:*~A" c)
+          (uiop/image:print-condition-backtrace c :stream *error-output*)
+          (incf serious))))
     (format t "~&Power-On Self Test completed ~a with ~
  ~[no errors~; ~:*~r error~:p~],
-~[no non-error serious conditions~;~:*~r non-error serious condition~:p~], ~
+~[no other serious conditions~;~:*~r other serious condition~:p~], ~
  and~[ no warnings~; ~:*~r warning~:p~].~&"
             (now) errors serious warnings)
     (cond ((or (and (productionp) (plusp errors))
@@ -76,7 +82,9 @@ need to be expanded a great deal to increase confidence in these tests."
                (> errors 4)
                (> warnings 8))
            (princ "POST Failed")
-           nil)
+           (if exitp
+               (cl-user::exit :code 27 :abort t :timeout 5)
+               nil))
           (t (princ "POST Passed")
              t))))
 
