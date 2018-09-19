@@ -27,3 +27,4 @@
 # Output files
 dist/
 htaccess.all
+www/.htaccess
