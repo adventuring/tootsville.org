@@ -3,7 +3,7 @@
 (defpackage thread-pool-taskmaster
   (:use :cl :hunchentoot :bordeaux-threads)
   (:import-from :alexandria #:when-let #:if-let)
-  (:import-from :org.tfeb.hax.memoize #:def-memoized-function)
+  (:import-from :fare-memoization #:define-memo-function)
   (:export #:thread-pool-taskmaster))
 
 (in-package #:thread-pool-taskmaster)
@@ -64,7 +64,7 @@
     (ignore-errors (cl-threadpool:stop pool)))
   (call-next-method))
 
-(def-memoized-function cores*threads-per-core (cores)
+(define-memo-function cores*threads-per-core (cores)
   (declare (type (integer 0 #.(expt 2 15)) +threads-per-core+ cores))
   (if (= 1 cores)
       +single-core-threads+

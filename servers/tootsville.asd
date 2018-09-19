@@ -35,7 +35,7 @@ REST services for the front-end."
                  :datafly
                  :drakma
                  :envy
-                 :memoize
+                 :fare-memoization
                  :restas
                  :swank
                  :sxql

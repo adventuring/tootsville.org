@@ -1,5 +1,6 @@
 (defpackage org.star-hope.machine
-  (:use :cl :uiop :org.tfeb.hax.memoize :org.star-hope.utils)
+  (:use :cl :uiop :org.star-hope.utils)
+  (:import-from :fare-memoization #:define-memo-function)
   (:export #:processor-count
            #:load-average
            #:unembarassing
@@ -10,20 +11,20 @@
 (in-package #:org.star-hope.machine)
 
 (unless (fboundp 'processor-count)
-  (def-memoized-function processor-count ()
-  "Number of processor (cores) available."
-  #+linux
-  (progn
-    (with-open-file (online "/sys/devices/system/cpu/online"
-                            :direction :input
-                            :if-does-not-exist :error)
-      (let ((count 0))
-        (loop for set = (read-line online nil nil)
-           while set
-           do (incf count (range-size set)))
-        (the (integer 1 2000) count))))
-  #-linux
-  (error "I don't have code to check this on non-Linux hosts")))
+  (define-memo-function processor-count ()
+    "Number of processor (cores) available."
+    #+linux
+    (progn
+      (with-open-file (online "/sys/devices/system/cpu/online"
+                              :direction :input
+                              :if-does-not-exist :error)
+        (let ((count 0))
+          (loop for set = (read-line online nil nil)
+             while set
+             do (incf count (range-size set)))
+          (the (integer 1 2000) count))))
+    #-linux
+    (error "I don't have code to check this on non-Linux hosts")))
 
 (defun unembarassing (string)
   "Intel and AMD use these  embarassing ASCII7 characters in things like
