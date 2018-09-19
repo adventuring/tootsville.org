@@ -64,11 +64,7 @@ echobig Pre-deploy front-ends
 
 echo "Pre-deployment for play.$cluster:"
 # safe place to copy in
-echo "rm -fr play.$cluster.prior-deploy && \
-rm -fr play.$cluster.before-deploy && \
-mv -u play.$cluster.new play.$cluster.prior-deploy ; \
-cp -a play.$cluster play.$cluster.new && \
-cd play.$cluster.new;" >> dist/play.preamble
+>> dist/play.preamble
 # copy in most files
 mkdir -p dist/play
 rsync --exclude='*~' --exclude='*#' -ar \
@@ -81,14 +77,20 @@ cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
 # Google auth linking
 ### mkdir -p dist/play/.well-known
 ### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
-( cd dist/ ; \
-  shar -C xz -g 9 -M -Q -q -x \
-       -o play.shar \
-       -n "play.$cluster $REVISION" \
-       -s "$LOCAL_USERNAME ($REALNAME)" \
-       play/ )
-cat dist/play.preamble dist/play.shar* | ssh play.$cluster
-rm -r dist/play dist/play.shar*
+cat - \
+ <( cd dist/ ; \
+     shar -C xz -g 9 -M -Q -q -x \
+          -n "play.$cluster $REVISION" \
+          -s "$LOCAL_USERNAME ($REALNAME)" \
+          play/ ) \
+ << PREAMBLE_END | ssh play.$cluster
+rm -fr play.$cluster.prior-deploy && \
+rm -fr play.$cluster.before-deploy && \
+mv -u play.$cluster.new play.$cluster.prior-deploy 2>/dev/null ; \
+cp -a play.$cluster play.$cluster.new && \
+cd play.$cluster.new;
+PREAMBLE_END
+rm -r dist/play
 echo "done pre-deploying play.$cluster static files"
 echo ""
 
@@ -98,19 +100,20 @@ cp dist/htaccess.all/www.$cluster.htaccess www/.htaccess
 # Google auth linking
 ### mkdir -p dist/play/.well-known
 ### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
-echo "rm -fr $cluster.prior-deploy && \
+cat - \
+ <( cd www;
+    shar -C xz -g 9 -M -Q -q -x \
+         -n "www.$cluster $REVISION" \
+         -s "$LOCAL_USERNAME ($REALNAME)" \
+         * .??* ) \
+ << PREAMBLE_END | ssh $cluster
+rm -fr $cluster.prior-deploy && \
 rm -fr $cluster.before-deploy && \
 mv -u $cluster.new $cluster.prior-deploy ; \
 cp -a $cluster $cluster.new && \
-cd $cluster.new;" >> dist/www.preamble
-( cd www/ ; \
-  shar -C xz -g 9 -M -Q -q -x \
-       -o play.shar \
-       -n "www.$cluster $REVISION" \
-       -s "$LOCAL_USERNAME ($REALNAME)" \
-       www/ )
-cat dist/www.preamble dist/www.shar* | ssh $cluster
-rm -r dist/www.shar*
+cd $cluster.new;
+PREAMBLE_END
+
 echo "done pre-deploying www.$cluster static files"
 echo ""
 
