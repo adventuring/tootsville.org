@@ -42,7 +42,7 @@ then
     echo "Cluster name required" >&2
     exit 2
 fi
-grep "$1" << VALID_CLUSTERS || echo "Cluster name not recognized ($1)" >&2  && exit 2
+grep "$1" << VALID_CLUSTERS || ( echo "Cluster name not recognized ($1)" >&2 && exit 2 )
 tootsville.org
 tootsville.ga
 tootsville.gc
@@ -208,8 +208,8 @@ curl https://api.rollbar.com/api/1/deploy/ \
      -F notifier.name=deploy-cluster \
      -F revision=$REVISION \
      -F comment="v $VERSION built $COMPILED" \
-     -F uuid=$(uuidgen)
--F local_username=$LOCAL_USERNAME
+     -F uuid=$(uuidgen) \
+     -F local_username=$LOCAL_USERNAME
 
 ##########
 
