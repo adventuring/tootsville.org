@@ -262,4 +262,9 @@ make -C servers doc-publish
 
 ##########
 
+if [ -t 1 ] && which img2txt 2>/dev/null
+then
+    img2txt  -W 78 -H 40  www/favicon.gif
+fi
+
 echobig Deployed $VERSION to $cluster
