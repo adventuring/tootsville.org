@@ -36,9 +36,9 @@ Quicklisp when called."
     (funcall (intern "DECLT" (find-package :net.didierverna.declt))
              :tootsville
              :library "Tootsville Ⅴ (Romance Ⅱ)"
-             :texi-file (merge-pathnames #p"doc/tootsville.texi"
+             :texi-file (merge-pathnames #p"doc/Tootsville.texi"
                                          source-dir)
-             :info-file (merge-pathnames #p "doc/tootsville"
+             :info-file (merge-pathnames #p "doc/Tootsville"
                                          source-dir)
              :license :agplv3
              :declt-notice :short
