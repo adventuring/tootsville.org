@@ -233,7 +233,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
          :report-function (format *query-io* "Quit the REPL")))
     (funcall (intern "REPL" (find-package :prepl)))))
 
-
+
 ;;; Swank
 
 (defun start-swank (&optional (port (+ 46046 (* 2 (random 500)))))
@@ -249,7 +249,7 @@ process's PID."
                                   (swank/backend:getpid))))
   port)
 
-
+
 ;;; Web servers
 
 (defun start-hunchentoot (&key port)
