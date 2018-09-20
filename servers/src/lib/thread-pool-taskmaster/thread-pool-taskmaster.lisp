@@ -158,18 +158,18 @@
  connection, and report that, as well.
 
 This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
- (if-let ((f-f (and (boundp 'hunchentoot::*request*)
-                   (assoc :x-forwarded-for (hunchentoot::headers-in*)))))
-   (format nil "~a (via ~a:~d; local ~a:~d)"
-           (cdr f-f)
-           (usocket::host-to-hostname (usocket:get-peer-address socket))
-           (usocket:get-peer-port socket)
-           (usocket::host-to-hostname (usocket:get-local-address socket))
-           (usocket:get-local-port socket))
-   (format nil "~a:~d (local: ~a:~d)"
-           (usocket::host-to-hostname (usocket:get-peer-address socket))
-           (usocket:get-peer-port socket)
-           (usocket::host-to-hostname (usocket:get-local-address socket))
+  (if-let ((f-f (and (boundp 'hunchentoot::*request*)
+                     (assoc :x-forwarded-for (hunchentoot::headers-in*)))))
+    (format nil "~a (via ~a:~d; local ~a:~d)"
+            (cdr f-f)
+            (usocket::host-to-hostname (usocket:get-peer-address socket))
+            (usocket:get-peer-port socket)
+            (usocket::host-to-hostname (usocket:get-local-address socket))
+            (usocket:get-local-port socket))
+      (format nil "~a:~d (local: ~a:~d)"
+              (usocket::host-to-hostname (usocket:get-peer-address socket))
+              (usocket:get-peer-port socket)
+              (usocket::host-to-hostname (usocket:get-local-address socket))
            (usocket:get-local-port socket))))
 
 (defun make-thread-name (taskmaster socket)

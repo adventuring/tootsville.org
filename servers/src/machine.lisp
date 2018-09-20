@@ -10,8 +10,7 @@
 
 (in-package #:org.star-hope.machine)
 
-(unless (fboundp 'processor-count)
-  (define-memo-function processor-count ()
+(define-memo-function processor-count ()
     "Number of processor (cores) available."
     #+linux
     (progn
@@ -24,7 +23,7 @@
              do (incf count (range-size set)))
           (the (integer 1 2000) count))))
     #-linux
-    (error "I don't have code to check this on non-Linux hosts")))
+    (error "I don't have code to check this on non-Linux hosts"))
 
 (defun unembarassing (string)
   "Intel and AMD use these  embarassing ASCII7 characters in things like
