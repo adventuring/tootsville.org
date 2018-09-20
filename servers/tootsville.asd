@@ -58,7 +58,7 @@ REST services for the front-end."
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
              (:file "users" :depends-on ("utils" "db"))
-             (:file players" :depends-on ("utils" "db"))
+             (:file "players" :depends-on ("utils" "db"))
              (:file "types" :depends-on ("utils"))
              (:file "machine" :depends-on ("utils"))
              (:file "errors" :depends-on ("package"))
