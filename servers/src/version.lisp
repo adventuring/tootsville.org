@@ -42,7 +42,7 @@ in HTTP headers and such."
   (romance-ii-copyright-latest))
 
 (defun tootsville-v-banner ()
-  (format nil 
+  (format nil
           "~&~|
 Tootsville Ⅴ, version ~a.
 
@@ -85,7 +85,7 @@ version 3.~%~%"
                (list :request (list :name (hunchentoot:local-addr*)
                                     :port (hunchentoot:local-port*)
                                     :protocol (hunchentoot:server-protocol*)))))
-    
+
     (when (and (boundp 'hunchentoot:*acceptor*) hunchentoot:*acceptor*)
       (appendf
        basics
@@ -133,15 +133,15 @@ version 3.~%~%"
                       (or args '(:*))))
         (info (version-info-list)))
     (loop for key in keys
-          appending
-          (cond
-            ((find #\/ (string key))
-             (extract-plist-path (mapcar #'make-keyword
-                                         (split-sequence #\/ (string key)))
-                                 info))
-            ((equal :* key)
-             (extract-plist-path nil info))
-            (t (list key (getf info key)))))))
+       appending
+         (cond
+           ((find #\/ (string key))
+            (extract-plist-path (mapcar #'make-keyword
+                                        (split-sequence #\/ (string key)))
+                                info))
+           ((equal :* key)
+            (extract-plist-path nil info))
+           (t (list key (getf info key)))))))
 
 (defun version-info-report-string (args)
   (with-output-to-string (s)

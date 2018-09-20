@@ -28,7 +28,7 @@ Note that DECLT  is not usually compiled into the  binary by default, so
 this  may  have  to  download  DECLT  and/or  its  dependencies  through
 Quicklisp when called."
   (format *trace-output* "~& Writing documentation…")
-  
+
   (ql:quickload :net.didierverna.declt)
   (let ((source-dir (asdf:component-pathname (asdf:find-system :tootsville))))
     (inform-declt-of-agplv3)

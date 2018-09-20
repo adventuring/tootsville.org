@@ -188,7 +188,7 @@ is, of course, a subseq of \".json\" as well.)"
                 :test 'string=)
         (concatenate 'string content-type "; charset=utf-8")
         content-type))
-  
+
   (assert (equal (add-charset "text/html")
                  "text/html; charset=utf-8"))
   (assert (equal (add-charset "text/plain")
@@ -206,7 +206,7 @@ is, of course, a subseq of \".json\" as well.)"
           (<= (char-code #\A) cc (char-code #\Z))
           (<= (char-code #\0) cc (char-code #\9))
           (find ch "-/!?." :test #'char=))))
-  
+
   (defun make-endpoint-function-name (method uri &optional accept-type)
     (intern (string-upcase
              (format nil "ENDPOINT-~a-~a~@[->~a~]"
@@ -219,12 +219,12 @@ is, of course, a subseq of \".json\" as well.)"
                                 (mapcar #'name-for-content-type accept-type)))
                        ((stringp accept-type)
                         (name-for-content-type accept-type)))))))
-  
+
   (defun lambda-list-as-variables (λ-list)
     (if λ-list
         (cons 'list (mapcar
-                         (lambda (x) (list 'quote x))
-                         λ-list))
+                     (lambda (x) (list 'quote x))
+                     λ-list))
         'nil))
 
   (defun defendpoint/make-extension-named-route (fname λ-list
@@ -252,34 +252,34 @@ is, of course, a subseq of \".json\" as well.)"
                                   uri accept-types))))
       `(progn
          (defun ,fname (,@λ-list) ,docstring
-           (v:info '(,(make-keyword fname) :endpoint :endpoint-start) ,(concatenate 'string "{~a} Starting: " docstring)
+                (v:info '(,(make-keyword fname) :endpoint :endpoint-start) ,(concatenate 'string "{~a} Starting: " docstring)
                         (thread-name (current-thread)))
-           ,(unless (consp accept-type)
-              `(setf (hunchentoot:content-type*)
-                     ,(add-charset accept-type)))
-           (let ((content-bytes
-                   (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
-                     (block endpoint
-                       (block ,fname
-                         ,@body)))))
-            (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
-                      (thread-name (current-thread)))
-            (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
-                      (thread-name (current-thread))
-                      (hunchentoot:return-code*)
-                      (length (hunchentoot:headers-out*))
-                      (length content-bytes))
-            content-bytes))
+                ,(unless (consp accept-type)
+                   `(setf (hunchentoot:content-type*)
+                          ,(add-charset accept-type)))
+                (let ((content-bytes
+                       (rewrite-restas (:jsonp ,(equal accept-type "application/json"))
+                         (block endpoint
+                           (block ,fname
+                             ,@body)))))
+                  (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
+                          (thread-name (current-thread)))
+                  (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
+                          (thread-name (current-thread))
+                          (hunchentoot:return-code*)
+                          (length (hunchentoot:headers-out*))
+                          (length content-bytes))
+                  content-bytes))
          ,@(mapcar
-                (lambda (content-type)
-                  `(restas::register-route-traits
-                    ',fname
-                    (plist-hash-table
-                     (list :template ,uri
-                           :method ,method
-                           :content-type ,content-type
-                           :variables ,(lambda-list-as-variables λ-list)))))
-                accept-types)
+            (lambda (content-type)
+              `(restas::register-route-traits
+                ',fname
+                (plist-hash-table
+                 (list :template ,uri
+                       :method ,method
+                       :content-type ,content-type
+                       :variables ,(lambda-list-as-variables λ-list)))))
+            accept-types)
          ,@(mapcan
             (lambda (content-type)
               (when-let (extension (extension-for-content-type content-type))
@@ -289,7 +289,7 @@ is, of course, a subseq of \".json\" as well.)"
          (restas:reconnect-all-routes)))))
 
 (defendpoint (get "/")
-    (list 307 '(:location "https://Tootsville.org/") ""))
+  (list 307 '(:location "https://Tootsville.org/") ""))
 
 
 
@@ -299,7 +299,7 @@ is, of course, a subseq of \".json\" as well.)"
     (write-char #\Space stream)
     (format stream "~{~:(~a~): ~a~^ ~}" (restas::route-headers route))
     (write-char #\Space stream)
-    
+
     (write-char #\Space stream)
     (princ (restas::route-arbitrary-requirement route) stream)))
 
@@ -324,4 +324,3 @@ is, of course, a subseq of \".json\" as well.)"
 (defmethod print-object ((template routes:or-template) stream)
   (print-unreadable-object (template stream :type t)
     (format stream "~{~a~^ or ~}" (slot-value template 'routes::spec))))
-

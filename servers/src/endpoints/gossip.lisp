@@ -14,11 +14,11 @@
        :accessor user-id
        :initarg :id)
    (remote-address :type string
-                   :accessor user-remote-address 
+                   :accessor user-remote-address
                    :initarg :remote-address)
    (sdp-offer :type string
               :accessor user-sdp-offer
-              :initarg :sdp-offer 
+              :initarg :sdp-offer
               :initform nil)
    (sdp-answer :type string
                :accessor user-sdp-answer
@@ -51,18 +51,18 @@
     (or (find-if (curry #'equal token) *gossip-users*
                  :key #'user-google-token)
         (with-connection (:members)
-          (or (datafly:retrieve-one 
+          (or (datafly:retrieve-one
                (sxql:select (:*)
-                            :from :users
-                            :where '(:= :google-token token))
+                 :from :users
+                 :where '(:= :google-token token))
                :as 'gossip-user)
               (progn
                 (datafly:execute (sxql:insert-into :users
                                    :google-token token))
                 (datafly:retrieve-one
                  (sxql:select (:*)
-                              :from :users
-                              :where '(:= :id (:last_insert_id)))
+                   :from :users
+                   :where '(:= :id (:last_insert_id)))
                  :as 'gossip-user)))))))
 
 (defun request-param-value (param)
@@ -89,8 +89,8 @@
                      (user-not-identified-value c)))))
 
 (defmethod respond-to-error ((error user-not-identified-error))
-    (setf (hunchentoot:return-code*) 401)
-    (hunchentoot:abort-request-handler))
+  (setf (hunchentoot:return-code*) 401)
+  (hunchentoot:abort-request-handler))
 
 (defun find-user-from-session (&key (if-not-exists nil))
   (if-let ((google-token (hunchentoot:parameter "google-api-token")))

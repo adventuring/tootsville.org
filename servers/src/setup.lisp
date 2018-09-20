@@ -41,17 +41,17 @@
 ;;; we load submodules into lib/
 
 (let* ((src-dir (make-pathname
-                   :directory
-                   (pathname-directory (or *load-pathname*
-                                           *compile-file-pathname*
-                                           *default-pathname-defaults*))))
+                 :directory
+                 (pathname-directory (or *load-pathname*
+                                         *compile-file-pathname*
+                                         *default-pathname-defaults*))))
        (lib-dirs (merge-pathnames (make-pathname :directory '(:relative "lib")
                                                  :name :wild)
                                   src-dir)))
   (let ((*setup* t))
     (asdf:load-asd (merge-pathnames (make-pathname :directory '(:relative :up)
                                                    :name "tootsville"
-                                                   :type "asd") 
+                                                   :type "asd")
                                     src-dir)))
   (dolist (lib-dir (directory lib-dirs))
     (let ((asdf (merge-pathnames (make-pathname :name :wild
@@ -70,7 +70,7 @@
 ;;; misc
 (setf sb-impl::*default-external-format* :utf-8)
 
-  
+
 
 (format *trace-output* "~&Setup script completed; ready to load.~4%")
 

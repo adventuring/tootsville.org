@@ -5,8 +5,8 @@
 
 (defmacro defpost (name (&key) &body body)
   "Define  a power-on-self-test  from  somewhere else  in the  codebase.
-  These are run as confidence tests  after a build, or during Production
-  boot-up sequence."
+ These are run as confidence tests  after a build, or during Production
+ boot-up sequence."
   (let ((fn-name (intern (concatenate 'string "⊕POST-" (string name)))))
     `(progn
        (defun ,fn-name () (block ,name ,@body))
@@ -35,7 +35,7 @@ a moment and try that again.~%" c)
 
 (defpost post-version-check ()
   (let ((port (+ (random 10) 27700)))
-    (unwind-protect 
+    (unwind-protect
          (progn (handler-case (start :port port)
                   (simple-error (c) (if (find-restart :restart-server)
                                         (invoke-restart :restart-server)
@@ -61,7 +61,7 @@ need to be expanded a great deal to increase confidence in these tests."
       (handler-case
           (funcall test)
         (warning (c)
-          (format *error-output* "~&WARNING: ~s~%~:*~A" c) 
+          (format *error-output* "~&WARNING: ~s~%~:*~A" c)
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf warnings))
         (error (c)
@@ -87,5 +87,3 @@ need to be expanded a great deal to increase confidence in these tests."
                nil))
           (t (princ "POST Passed")
              t))))
-
-

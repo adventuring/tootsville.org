@@ -230,7 +230,7 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
 
 (defconstant +context-forms+ 4
   "How many forms' worth of context should be reported?
- 
+
  Rollbar seems to insist upon 4.")
 
 (defun gather-source-info (filename top-level-form form-number)

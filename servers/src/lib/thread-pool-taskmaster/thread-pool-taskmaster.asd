@@ -10,7 +10,7 @@
                :alexandria
                :fare-memoization
                :hunchentoot
-               :restas  
+               :restas
                )
   :components
   ((:file "../../utils")

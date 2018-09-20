@@ -9,9 +9,9 @@
 
 (defun slot-values (obj)
   (loop for slot in (condition-slots obj)
-        collecting
-        (list :slot (symbol-name slot)
-              :value (jonathan.encode:%to-json (slot-value obj slot)))))
+     collecting
+       (list :slot (symbol-name slot)
+             :value (jonathan.encode:%to-json (slot-value obj slot)))))
 
 (defparameter +backtrace-regex+ "\\n\\w*\\d+:"
   "A regular expression to split backtraces")
@@ -31,40 +31,40 @@
 (defmethod jonathan.encode:%to-json ((pathname pathname))
   (jonathan.encode:%to-json
    `(:is-a "pathname"
-     :host ,(typecase (pathname-host pathname)
-              (sb-impl::unix-host (machine-instance))
-              (t (princ-to-string (pathname-host pathname))))
-     :device ,(pathname-device pathname)
-     :directory ,(uiop:split-string (pathname-directory pathname)
-                                    :separator "/")
-     :name ,(pathname-name pathname)
-     :version ,(pathname-version pathname)
-     :type ,(pathname-type pathname))))
+           :host ,(typecase (pathname-host pathname)
+                    (sb-impl::unix-host (machine-instance))
+                    (t (princ-to-string (pathname-host pathname))))
+           :device ,(pathname-device pathname)
+           :directory ,(uiop:split-string (pathname-directory pathname)
+                                          :separator "/")
+           :name ,(pathname-name pathname)
+           :version ,(pathname-version pathname)
+           :type ,(pathname-type pathname))))
 
 (defmethod jonathan.encode:%to-json ((function function))
   (let ((name (nth-value 2 (function-lambda-expression #'jonathan.encode:%to-json))))
     (jonathan.encode:%to-json
      `(:is-a "function"
-       :package ,(string-upcase (package-name (symbol-package name)))
-       :name ,(string-upcase (symbol-name name))))))
+             :package ,(string-upcase (package-name (symbol-package name)))
+             :name ,(string-upcase (symbol-name name))))))
 
 (defmethod jonathan.encode:%to-json ((object t))
   (jonathan.encode:%to-json
    `(:is-a ,(string-capitalize (type-of object))
-     :t ,(format nil "~s" object))))
+           :t ,(format nil "~s" object))))
 
 (defmethod render (bt condition env)
   (let* ((backtrace (parse-backtrace bt)))
     (encode-json
      `(:error ,(princ-to-string condition)
-       :condition ,(condition-name condition)
-       :location ,(if (Tootsville:developmentp)
-                      backtrace
-                      (nth 0 backtrace))
-       :slots ,(slot-values condition)
-       :timestamp ,(nth 1 backtrace)
-       :env ,env
-       ))))
+              :condition ,(condition-name condition)
+              :location ,(if (Tootsville:developmentp)
+                             backtrace
+                             (nth 0 backtrace))
+              :slots ,(slot-values condition)
+              :timestamp ,(nth 1 backtrace)
+              :env ,env
+              ))))
 
 (defun present-error-to-client (condition env)
   (let ((backtrace (with-output-to-string (stream)
@@ -83,8 +83,8 @@
     (tagbody do-over
        (restart-bind
            ((retry-request
-              (lambda ()
-                (go do-over))))
+             (lambda ()
+               (go do-over))))
          (handler-bind
              ((error (lambda (c) (present-error-to-client c env))))
            (funcall app))))))

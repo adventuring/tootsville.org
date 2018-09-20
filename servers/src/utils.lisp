@@ -2,7 +2,7 @@
 (defpackage org.star-hope.utils
   (:use :cl :alexandria)
   (:export
-   
+
    #:stringify
    #:extreme
    #:human-duration
@@ -12,7 +12,7 @@
    #:map-asdf-files
    #:dns-name
    #:www-uri
-   
+
    ))
 (in-package :org.star-hope.utils)
 
@@ -34,7 +34,7 @@
 (defun range-size (numeric-range-string)
   "Count the length of a range of numbers separated by -"
   (if (find #\- numeric-range-string)
-      (destructuring-bind (start end) 
+      (destructuring-bind (start end)
           (uiop:split-string numeric-range-string
                              :separator "-")
         (1+ (- (parse-integer end) (parse-integer start))))
@@ -85,7 +85,7 @@
     sb-alien:void)
 #+sbcl
 (sb-alien:define-alien-routine ("enable_lossage_handler" enable-sbcl-ldb)
-                               sb-alien:void)
+    sb-alien:void)
 
 #-sbcl
 (defun disable-sbcl-ldb ())

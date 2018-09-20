@@ -11,19 +11,19 @@
 (in-package #:org.star-hope.machine)
 
 (define-memo-function processor-count ()
-    "Number of processor (cores) available."
-    #+linux
-    (progn
-      (with-open-file (online "/sys/devices/system/cpu/online"
-                              :direction :input
-                              :if-does-not-exist :error)
-        (let ((count 0))
-          (loop for set = (read-line online nil nil)
-             while set
-             do (incf count (range-size set)))
-          (the (integer 1 2000) count))))
-    #-linux
-    (error "I don't have code to check this on non-Linux hosts"))
+  "Number of processor (cores) available."
+  #+linux
+  (progn
+    (with-open-file (online "/sys/devices/system/cpu/online"
+                            :direction :input
+                            :if-does-not-exist :error)
+      (let ((count 0))
+        (loop for set = (read-line online nil nil)
+           while set
+           do (incf count (range-size set)))
+        (the (integer 1 2000) count))))
+  #-linux
+  (error "I don't have code to check this on non-Linux hosts"))
 
 (defun unembarassing (string)
   "Intel and AMD use these  embarassing ASCII7 characters in things like
@@ -56,7 +56,7 @@ will be of interest.
   (with-open-file (loadavg "/proc/loadavg"
                            :direction :input
                            :if-does-not-exist :error)
-    (destructuring-bind (a1 a5 a10 ratio &rest _) 
+    (destructuring-bind (a1 a5 a10 ratio &rest _)
         (uiop:split-string (read-line loadavg) :separator " ")
       (declare (ignore _))
       (destructuring-bind (running total)
@@ -73,11 +73,11 @@ will be of interest.
   (cond
     ((and host port)
      (if (find host (mapcar #'network-interface-address (network-interfaces)))
-       (if-let ((pid (find-pid-of-local-listener :host host :port port)))
-         (stonith :pid pid)
-         (error "Cannot find local listener on ~a:~d" host port))
-       (drakma:http-request
-         (format nil "http://~a:~a/maintenance/quit" host port))))
+         (if-let ((pid (find-pid-of-local-listener :host host :port port)))
+           (stonith :pid pid)
+           (error "Cannot find local listener on ~a:~d" host port))
+         (drakma:http-request
+          (format nil "http://~a:~a/maintenance/quit" host port))))
     (pid (signal-process :sigint pid))
     (t (error "Can't shoot the other node in the head without better information"))))
 
@@ -91,5 +91,5 @@ will be of interest.
   (check-type host dns-name)
   (check-type user string)
   (assert (probe-file identity-file))
-  
+
   (uiop/run-program:run-program (list "ssh" "-i" identity-file "-l" user host "echo t")))

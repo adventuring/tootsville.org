@@ -9,9 +9,9 @@
   (check-type uuid uuid:uuid)
   (let ((binary 0))
     (loop with byte-array = (uuid:uuid-to-byte-array uuid)
-          for index from 0 upto 15
-          for byte = (aref byte-array index)
-          do (setf binary (dpb byte (byte 8 (* 8 index)) binary)))
+       for index from 0 upto 15
+       for byte = (aref byte-array index)
+       do (setf binary (dpb byte (byte 8 (* 8 index)) binary)))
     binary))
 
 (defun uuid<-binary (integer)
@@ -19,8 +19,8 @@
   (check-type integer (unsigned-byte 128))
   (let ((byte-array (make-array 16 :element-type '(unsigned-byte 8))))
     (loop for index from 0 upto 15
-          for byte = (ldb (byte 8 (* 8 index)) integer)
-          do (setf (aref byte-array index) byte))
+       for byte = (ldb (byte 8 (* 8 index)) integer)
+       do (setf (aref byte-array index) byte))
     (uuid:byte-array-to-uuid byte-array)))
 
 (defun uuid-string (uuid)
@@ -169,7 +169,7 @@ reasons, eg, COPPA."
       (local-time:decode-timestamp reference-date)
     (declare (ignore msec sec min hour))
     (multiple-value-bind (msec sec min hour
-                          day-of-birth month-of-birth year-of-birth)
+                               day-of-birth month-of-birth year-of-birth)
         (local-time:decode-timestamp date-of-birth)
       (declare (ignore msec sec min hour))
       (let ((had-birthday-p (or (< month-of-birth month)
@@ -255,7 +255,7 @@ MAKE-INSTANCE 'PLAYER."
     (when Δ
       (let ((player (find-player-by-id player-id)))
         (loop for (key . new-value) in Δ
-              do (setf (slot-value (intern (symbol-name key)) player) new-value))))))
+           do (setf (slot-value (intern (symbol-name key)) player) new-value))))))
 
 (defun link-player-to-registration (player registrar id-string)
   "Link  a  PLAYER object  to  a  login  REGISTRAR and  their  ID-STRING
@@ -341,14 +341,14 @@ base-36-coded integer strings."
   (check-type player player)
   (Tootsville::encode-json
    `(:is-a :player
-     :given-name ,(player-given-name player)
-     :surname ,(player-surname player)
-     :full-name ,(player-full-name player)
-     :age ,(player-age player)
-     :date-of-birth ,(local-time:format-timestring nil (player-date-of-birth player))
-     :child-p ,(player-child-p player)
-     :youth-p ,(player-youth-p player)
-     :adult-p ,(player-adult-p player)
-     :nation ,(player-nation player)
-     :id ,(player-id player)
-     :uuid ,(uuid-string (player-id player)))))
+           :given-name ,(player-given-name player)
+           :surname ,(player-surname player)
+           :full-name ,(player-full-name player)
+           :age ,(player-age player)
+           :date-of-birth ,(local-time:format-timestring nil (player-date-of-birth player))
+           :child-p ,(player-child-p player)
+           :youth-p ,(player-youth-p player)
+           :adult-p ,(player-adult-p player)
+           :nation ,(player-nation player)
+           :id ,(player-id player)
+           :uuid ,(uuid-string (player-id player)))))

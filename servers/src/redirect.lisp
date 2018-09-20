@@ -37,8 +37,8 @@ via `REDIRECT-TO/HTML/BODY'."
     (list
      status
      `(:location ,uri
-       :x-redirected-by ,(romance-ii-program-name/version)
-       :content-type "text/html")
+                 :x-redirected-by ,(romance-ii-program-name/version)
+                 :content-type "text/html")
      (redirect-to/html-body uri))))
 
 (defmethod on-exception (code)

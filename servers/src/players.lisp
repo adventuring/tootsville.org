@@ -96,7 +96,7 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
 (define-condition not-your-toot-error (error)
   ((name :initarg name :accessor which-toot-is-not-yours))
   (:report (lambda (c s)
-             (format s "You do not have a Toot named “~a.”" 
+             (format s "You do not have a Toot named “~a.”"
                      (which-toot-is-not-yours c)))))
 
 (defun assert-my-character (toot-name &optional (user *user*))

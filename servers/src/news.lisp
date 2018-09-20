@@ -38,10 +38,10 @@ Returns the RDF as a raw string"
   "Convert and  RDF story  (DOM object)  into a  property list  with the
 title, link, content, and description."
   (loop for (tag label)
-          in '(("title" :title) ("link" :link)
-               ("content:encoded" :content) ("description" :description))
-        collect label
-        collect (get-text-of-element story tag)))
+     in '(("title" :title) ("link" :link)
+          ("content:encoded" :content) ("description" :description))
+     collect label
+     collect (get-text-of-element story tag)))
 
 (defun tootsbook-headline-stories ()
   "Returns  the  headline  elements   (DOM  objects)  from  the  current
