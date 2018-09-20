@@ -4,12 +4,12 @@ In conclusion … hope you have fun, contact us if you need more help.
 
 We'll document things better as time goes by, I promise.
 
-@node
+@node Other Manuals,,,
 @section Other Manuals
 
 Other manuals that are relevant:
 
-@begin{itemize}
+@itemize
 @item
 Front-end client software -- Tootsville game
 @item
@@ -21,9 +21,9 @@ troubleshoting, user manual, et al.
 Players' Guide
 @item
 Parents' Guide
-@end{itemize}
+@end itemize
 
-@node
+@node For Further Involvement,,,
 @appendix For Further Involvement
 
 @section Tootsville Ⅴ
