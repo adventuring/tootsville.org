@@ -1,5 +1,5 @@
 Tootsville.wardrobe = {
-    
+
     don: function(item) {
         /* TODO */
     },
@@ -7,14 +7,14 @@ Tootsville.wardrobe = {
     don2: function(item) {
         /* TODO */
     },
-    
+
     doff: function(item) {
         if (! Tootsville.player.wearingP(item)) { return; }
         /* TODO */
     },
 
     wearing: function() {
-        /* TODO */        
+        /* TODO */
     },
 
     refresh: function() {

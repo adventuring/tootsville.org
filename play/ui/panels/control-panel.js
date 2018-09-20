@@ -13,4 +13,3 @@ if (navigator.userAgent.indexOf("Firefox/") > 0) {
 }
 
 Tootsville.audio.updateVolumeUI();
-

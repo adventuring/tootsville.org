@@ -18,12 +18,12 @@ Tootsville.util.postJSONforJSON = function (uri, post, headers) {
         xhr.setRequestHeader('Accept', 'application/json;encoding=utf-8');
         xhr.setRequestHeader('Content-Type', 'application/json;encoding=utf-8');
         xhr.send(JSON.strigify(post));
-        });
+    });
 };
 
 Tootsville.util.assertValidHost = function (hostName) {
     return (['users', 'gossip', 'indira'].indexOf(hostName) > -1)
-    }
+}
 
 Tootsville.util.rest = function (uri, post, headers) {
     var hostName = uri.split('/')[1];
@@ -33,10 +33,10 @@ Tootsville.util.rest = function (uri, post, headers) {
 };
 
 Tootsville.util.loadScript = function (src) {
-        return new Promise( finish => {
-            var el = document.createElement('SCRIPT');
-            el.onload = finish;
-            el.src = src;
-            document.body.appendChild(el);
-        });
+    return new Promise( finish => {
+        var el = document.createElement('SCRIPT');
+        el.onload = finish;
+        el.src = src;
+        document.body.appendChild(el);
+    });
 };

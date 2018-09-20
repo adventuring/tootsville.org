@@ -49,4 +49,3 @@ window.loadWatchdog1 = setTimeout(() => {
         setTimeout(window.loadWatchdog1, 300);
     }
 }, 5000);
-

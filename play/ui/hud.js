@@ -53,7 +53,7 @@ Tootsville.hud = {
         var div = document.createElement('DIV');
         var hud = document.getElementById('hud');
         if (! hud) { return; }
-        
+
         div.id = panel + '-loading';
         div.className = 'hud-panel hud-panel-loader';
         div.style.opacity = .1;
@@ -178,7 +178,7 @@ Tootsville.hud = {
                                  - stageBox.bottom
                                  + (stageBox.height/2)
                                  - (miniBox.height/2)) + 'px';
-            
+
             mini.style.height = stageBox.height + 'px';
             mini.style.width = stageBox.width + 'px';
             mini.style.borderRadius = 0;
@@ -186,7 +186,7 @@ Tootsville.hud = {
     },
 
     returnPaperdollMini: function() {
-        var mini = document.getElementById('paperdoll-mini');    
+        var mini = document.getElementById('paperdoll-mini');
         mini.style.top = 'unset';
         mini.style.left = 'unset';
         mini.style.height = 'unset';

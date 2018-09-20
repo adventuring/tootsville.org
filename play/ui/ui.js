@@ -122,7 +122,7 @@ Tootsville.ui = {
             return confirmationMessage;            // Gecko, WebKit, Chrome <34
         });
     },
-    
+
     slowLoadingWatchdog: function () {
         Tootsville.ui.confirmPretty(
             "Slow Loading?",

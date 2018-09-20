@@ -42,4 +42,3 @@ Tootsville.ui.googleFit = {
         });
     }
 }
-
