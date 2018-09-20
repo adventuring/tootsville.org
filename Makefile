@@ -13,6 +13,9 @@ servers:	servers/Tootsville
 servers/Tootsville:	$(shell find servers -name \*.lisp -o -name \*.asd)
 	$(MAKE) -C servers Tootsville
 
+doc:
+	$(MAKE) -C servers doc
+
 ####################
 
 worker:	dist/worker.js
