@@ -1,0 +1,95 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename Players-Guide.info
+@settitle Tootsville Players' Guide
+@c %**end of header
+@copying
+An introduction to Tootsville.
+
+Copyright @copyright{} 2018  
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled ``GNU
+Free Documentation License''.
+
+A copy of the license is also available from the Free Software
+Foundation Web site at @url{https://www.gnu.org/licenses/fdl.html}.
+
+@end quotation
+
+The document was typeset with
+@uref{http://www.texinfo.org/, GNU Texinfo}.
+
+@end copying
+
+@titlepage
+@title Tootsville Players' Guide
+@subtitle An introduction to Tootsville
+@author  <brpocock@Star-Hope.org>
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@c Output the table of the contents at the beginning.
+@contents
+
+@ifnottex
+@node Top
+@top Tootsville Players' Guide
+
+@insertcopying
+@end ifnottex
+
+@c Generate the nodes for this menu with `C-c C-u C-m'.
+@menu
+@end menu
+
+@node
+@chapter* Introduction
+
+@section What is Tootsville?
+
+@node
+@section Getting Ready
+
+Requirements -- check the Wiki-Wiki
+
+@node
+@section Signing In
+
+@c Update all node entries with `C-c C-u C-n'.
+@c Insert new nodes with `C-c C-c n'.
+@node 
+@chapter Managing Toots
+
+@node
+@section Creating a New Toot
+
+@node
+@section Toots for Childrenf
+
+
+
+@node Copying This Manual
+@appendix Copying This Manual
+
+@menu
+* GNU Free Documentation License::  License for copying this manual.
+@end menu
+
+@c Get fdl.texi from https://www.gnu.org/licenses/fdl.html
+@include fdl.texi
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye
+
+@c Players-Guide.texi ends here
