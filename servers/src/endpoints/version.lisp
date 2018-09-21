@@ -8,9 +8,12 @@
   (list 200 nil (version-info-report-string '(:*))))
 
 (defendpoint (:get "/version/about/:param" "text/plain")
-  (list 200 nil
-        (version-info-report-string
-         (uiop:split-string param :separator "/"))))
+  (if param
+      (list 200 nil
+            (version-info-report-string
+             (uiop:split-string param :separator "/")))
+      (list 400 nil
+            "You forgot to ask anything.")))
 
 (defendpoint (:get "/version/about/:param" "application/json")
   (list 200 nil
