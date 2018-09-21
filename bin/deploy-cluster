@@ -28,6 +28,19 @@ then
     REALNAME=$LOCAL_USERNAME
 fi
 
+if ! git remote -v | grep github
+then
+	git remote add github git@github.com:adventuring/tootsville.org
+fi
+if ! git remote -v | grep gitlab
+then
+	git remote add gitlab git@gitlab.com:adventuring/tootsville.org
+fi
+if ! git remote -v | grep goethe
+then
+	git remote add goethe goethe.tootsville.org:devel/git/tootsville.org
+fi
+
 echo "Deploy cluster: $1"
 echo "Initiated by $LOCAL_USERNAME@$(hostname) ($REALNAME)"
 date
@@ -240,6 +253,9 @@ fi
 
 git push --tags origin
 git submodule foreach git push --tags origin
+git push --tags github
+git push --tags gitlab
+git push --tags goethe
 
 ##########
 
