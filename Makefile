@@ -10,7 +10,7 @@ clean:
 
 servers:	servers/Tootsville
 
-servers/Tootsville:	$(shell find servers -name \*.lisp -o -name \*.asd)
+servers/Tootsville:	$(shell find servers -name \*.lisp -o -name \*.asd -and -not -path \**/.\*)
 	$(MAKE) -C servers Tootsville
 
 doc:
@@ -33,11 +33,11 @@ dist/worker.js:	play/worker.js
 play:	dist/play.css \
 	dist/play.js
 
-PLAYJS = $(shell ./bin/find-play-js )
+PLAYJS = $(shell ./bin/find-play-js)
 
 dist/play.map:	dist/play.js
 
-dist/play.css:	$(shell find play -name \*.less)
+dist/play.css:	$(shell find play -name \*.less -and -not -name .\*)
 	mkdir -p dist/
 	lessc --strict-math=on --include-path=include --source-map play/play.less dist/play.css
 
