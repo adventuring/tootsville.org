@@ -39,7 +39,7 @@ dist/play.map:	dist/play.js
 
 dist/play.css:	$(shell find play -name \*.less)
 	mkdir -p dist/
-	lessc --strict-math=on --include-path=include --source-map play/play.less play/play.css
+	lessc --strict-math=on --include-path=include --source-map play/play.less dist/play.css
 
 dist/play.js:	${PLAYJS}
 	mkdir -p dist/
