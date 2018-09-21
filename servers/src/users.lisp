@@ -1,22 +1,58 @@
 (in-package :Tootsville)
-(syntax:use-syntax :annot)
 
-(defun potential-toot-name-character-p (c)
-  (and (characterp c)
-       (or (alphanumericp c)
-           (char= #\- c)
-           (char= #\' c)
-           (char= #\space c))))
+
 
-(defun potential-toot-name-p (toot-name)
-  (and (stringp toot-name)
-       (<= 3 (length toot-name) 64)
-       (every #'potential-toot-name-character-p
-              toot-name)
-       (alpha-char-p (char toot-name 0))))
+;;; Toot character data.
 
-(deftype toot-name ()
-  `(and string (satisfies potential-toot-name-p)))
+(defun find-toot-by-name (toot-name)
+  (check-type toot-name toot-name)
+  (remove-if-not (lambda (toot)
+                   (string-equal (getf toot :name) toot-name))
+                 (player-toots)))
+
+(defun toot-info (toot)
+  (append toot (list :is-a "toot")))
+
+(defun player-toots (&optional (player *user*))
+  (declare (ignore player))
+  (list
+   (list :name "Zap"
+         :note "These are still fake Toots for testing"
+         :avatar "UltraToot"
+         :base-color "violet"
+         :pattern "lightning"
+         :pattern-color "yellow"
+         :highlight-color "yellow"
+         :child-p nil
+         :sensitive-p nil
+         :last-seen (local-time:format-timestring
+                     nil (3-days-ago)))
+   (list :name "Flora"
+         :note "This an an example of a child's Toot
+appearing on a parent's account."
+         :avatar "UltraToot"
+         :base-color "pink"
+         :pattern "flowers"
+         :pattern-color "white"
+         :highlight-color "yellow"
+         :child-p t
+         :sensitive-p nil
+         :last-seen (local-time:format-timestring
+                     nil (2-days-ago)))
+   (list :name "Moo"
+         :note ""
+         :avatar "UltraToot"
+         :base-color "white"
+         :pattern "moo"
+         :pattern-color "black"
+         :highlight-color "black"
+         :child-p nil
+         :sensitive-p nil
+         :last-seen (local-time:format-timestring
+                     nil
+                     (yesterday)))))
+
+
 
 (defun find-player-or-die ()
   "Ensure that a recognized player is connected."
@@ -37,11 +73,7 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
            (t (return-from endpoint
                 (list 403 nil *403.json-bytes*))))))
 
-(define-condition not-your-toot-error (error)
-  ((name :initarg name :accessor which-toot-is-not-yours))
-  (:report (lambda (c s)
-             (format s "You do not have a Toot named “~a.”"
-                     (which-toot-is-not-yours c)))))
+
 
 (defun assert-my-character (toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
