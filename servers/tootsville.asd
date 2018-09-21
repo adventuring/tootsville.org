@@ -83,5 +83,6 @@ REST services for the front-end."
                        (:file "meta-game")
 
                        (:file "gossip")
+                       (:file "toots")
                        (:file "users")
                        (:file "world")))))))
