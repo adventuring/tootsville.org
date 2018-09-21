@@ -123,11 +123,11 @@ doc/Tootsville.html.d/index.html:	doc/Tootsville.texi
 		--html --css-include=../src/static/css/doc.css \
 		--split=node Tootsville.texi
 
-doc/Tootsville.ps:	doc/Tootsville.texi
-	cd doc; makeinfo --ps -o Tootsville.ps Tootsville.texi
+doc/Tootsville.ps:	doc/Tootsville.pdf
+	cd doc; pdf2ps Tootsville.pdf
 
 doc/Tootsville.pdf:	doc/Tootsville.texi
-	cd doc; makeinfo --pdf -o Tootsville.pdf Tootsville.texi
+	cd doc; PDFLATEX=xelatex texi2pdf Tootsville.texi 
 
 doc/Tootsville.txt:	doc/Tootsville.texi
 	cd doc; makeinfo --plaintext -o Tootsville.txt Tootsville.texi
