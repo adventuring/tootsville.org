@@ -276,7 +276,7 @@ then
     echo "Previous tag v$VERSION found, adding v$VERSION@$now"
     if git rev-parse v$VERSION@$now &>/dev/null
     then
-        now=$(date +%Y-%m-%d)
+        now=$(date +%Y-%m-%d@%H:%M)
         msg="Deployed v$VERSION to $cluster $now"
         echo " - I meant v$VERSION@$now"
         git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
