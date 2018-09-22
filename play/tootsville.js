@@ -6,13 +6,9 @@ var Tootsville = {
         TheOtherMoon: { Gravity: 0.12 },
         ThePinkMoon: { Gravity: 0.08 }
     },
-    charName: '？',
-    playerName: '？',
-    playerEMail: null,
-    charID: null,
+    character: null,
+    player: null,
     privateKey: null,
-    activeItem: null,
-    inactiveItem: null,
     audio: { volume: 100,
              savedVolume: 100 },
     createBoxAvatar: function () {
@@ -37,9 +33,9 @@ var Tootsville = {
 document.domain = Tootsville.cluster;
 
 window.addEventListener('Tootsville/Login', function (ev) {
-    Rollbar.configure({ payload: { person: { id: Tootsville.playerID,
-                                             username: Tootsville.charName,
-                                             email: Tootsville.playerEMail }}});
+    Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
+                                             username: Tootsville.character && Tootsville.character.name,
+                                             email: Tootsville.player && Tootsville.player.eMail }}});
 }, false);
 
 window.loadWatchdog1 = setTimeout(() => {
