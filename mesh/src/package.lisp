@@ -76,7 +76,7 @@
   (:use :cl :jscl/ffi)
   (:export #:vibrate)
   (:documentation "Haptic feedback"))
-(defpackage org.tootsville.gaius-asinius-pollio
+(defpackage org.test.tootsville.gaius-asinius-pollio
   (:nicknames #:asinius)
   (:use :cl :jscl/ffi :romance)
   (:documentation   "Gaius   Asinius   Pollio,  the   database   module.
@@ -85,14 +85,14 @@
  a Postgres database back-end for  its persistent storage of game-world
  data, which  can also be  used by  reporting tools to  generate ad-hoc
  queries about the game world."))
-(defpackage org.tootsville.gaius-julius-caesar
+(defpackage org.test.tootsville.gaius-julius-caesar
   (:nicknames #:caesar)
   (:use :cl :jscl/ffi :romance)
   (:documentation  "the module  which  monitors and  controls all  other
  components. Caesar is  being extended to have the ability  to bring up
  and  down  other services,  as  well  as provide  \"health\"  monitoring
  of them."))
-(defpackage org.tootsville.gaius-lutatius-catulus
+(defpackage org.test.tootsville.gaius-lutatius-catulus
   (:nicknames #:lutatius)
   (:use :cl :jscl/ffi :romance)
   (:documentation "which translates between  plain written text forms of

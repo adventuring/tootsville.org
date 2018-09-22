@@ -100,8 +100,8 @@ then extract an item from each subsequently nested collection.
         (:prod nil))
       (let ((developmentp
              (let ((hostname (string-downcase (machine-instance))))
-               (or (search "tootsville.ga" hostname)
-                   (search "tootsville.gc" hostname)
+               (or (search "test.tootsville.org" hostname)
+                   (search "qa.tootsville.org" hostname)
                    (search "dev." hostname)
                    (search "-dev" hostname)
                    (search "builder" hostname)

@@ -8,7 +8,7 @@
 <p> The collection of back-end workers that should have handled your request
   was <tt><!--#echo var="HTTP_HOST"--></tt>. </p>
 
-<!--#if expr="%{HTTP_HOST} =~ /tootsville.ga/" -->
+<!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/" -->
 <p> <q>Tootsville.ga</q> are testing servers. It's possible that a software
   experiment is being tested right now that has caused a disruption. </p>
 <!--#endif-->

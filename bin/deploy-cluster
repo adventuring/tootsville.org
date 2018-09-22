@@ -57,8 +57,8 @@ then
 fi
 grep "$1" << VALID_CLUSTERS || ( echo "Cluster name not recognized ($1)" >&2 && exit 2 )
 tootsville.org
-tootsville.ga
-tootsville.gc
+test.tootsville.org
+qa.tootsville.org
 VALID_CLUSTERS
 
 cluster=$1
@@ -172,14 +172,14 @@ cp -a $cluster $cluster.new && \
 cd $cluster.new;
 PREAMBLE_END
 
-if [ $cluster = 'tootsville.ga' ]
+if [ $cluster = 'test.tootsville.org' ]
 then
-    scp www/index.ga.html tootsville.ga:tootsville.ga.new/index.html
+    scp www/index.test.html test.tootsville.org:test.tootsville.org.new/index.html
 fi
 
-if [ $cluster = 'tootsville.gc' ]
+if [ $cluster = 'qa.tootsville.org' ]
 then
-    scp www/index.gc.html tootsville.gc:tootsville.gc.new/index.html
+    scp www/index.qa.html qa.tootsville.org:qa.tootsville.org.new/index.html
 fi
 
 echo "done pre-deploying www.$cluster static files"
