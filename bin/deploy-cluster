@@ -78,6 +78,46 @@ bin/make-all-htaccess || exit 4
 
 ##########
 
+make TODO.scorecard
+. ./TODO.scorecard
+
+if [[ $TOOT_FIXME -gt 0 ]]
+then
+	while true
+	do
+		clear
+		echobig FIXME!
+		echo ""
+		echo "There are $TOOT_FIXME FIXME comments!"
+		if [[ $cluster = tootsville.org ]]
+		then
+			echo " ✗ Refusing to deploy to Production with FIXME notes"
+			exit 8
+		fi
+		echo ""
+		echo "$REALNAME, are you sure you want to deploy to $cluster"
+		echo "when there are $TOOT_FIXME FIXME notes and $TOOT_TODO TODOs?"
+		echo ""
+		read -p "Yes or No? (Y/N) ⇒ " -n 1 yorn
+		if [[ "${yorn_}" = "y" ]]
+		then
+			echo ""
+			echobig Overridden
+			echo ""
+			echo "Override accepted. Good luck …"
+			break
+		elif [[ "${yorn_}" = "n" ]]
+		then
+			echo ""
+			echo "That seems wise. Exiting."
+			echo ""
+			exit 8
+		fi
+	done
+fi
+
+##########
+
 echobig Pre-deploy front-ends
 
 echo "Pre-deployment for play.$cluster:"
