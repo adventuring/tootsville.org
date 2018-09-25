@@ -77,3 +77,10 @@ TODO.scorecard:	$(shell find */ -type f) README.org
 	git grep XXX: */ README.org | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
 	git grep ☠☠☠: */ README.org | wc -l >> TODO.scorecard
+
+####################
+
+jscl:	bin/jscl
+
+bin/jscl: $(shell find jscl -name \**.lisp -or -name \**.js -or -name \**.asd  -and -not -path \**/.\*)
+	cd jscl; ./make.sh
