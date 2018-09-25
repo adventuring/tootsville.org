@@ -36,5 +36,4 @@ of *SCALING$$$*.
 @end itemize
 
 "
-  (let ((all-servers (servers-by-kind server-kind))
-        (grouped-servers ))))
+  )
