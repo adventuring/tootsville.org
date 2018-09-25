@@ -65,6 +65,7 @@ cluster=$1
 
 cd "$(dirname $0)"/../
 
+##########
 
 echobig Deploying to
 echobig $cluster
@@ -273,17 +274,17 @@ msg="Deployed v$VERSION to $cluster $now"
 
 if git rev-parse v$VERSION &>/dev/null
 then
-    echo "Previous tag v$VERSION found, adding v$VERSION@$now"
-    if git rev-parse v$VERSION@$now &>/dev/null
+    echo "Previous tag v$VERSION found, adding v$VERSION-$now"
+    if git rev-parse v$VERSION-$now &>/dev/null
     then
-        now=$(date +%Y-%m-%d@%H:%M)
+        now=$(date +%Y-%m-%d.%H:%M)
         msg="Deployed v$VERSION to $cluster $now"
-        echo " - I meant v$VERSION@$now"
-        git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
-        git tag -a v$VERSION@$now -m "$msg"
+        echo " - I meant v$VERSION-$now"
+        git submodule foreach git tag -a tootsville-v$VERSION-$now -m "for Tootsville.org: $msg"
+        git tag -a v$VERSION-$now -m "$msg"
     else
-        git submodule foreach git tag -a tootsville-v$VERSION@$now -m "for Tootsville.org: $msg"
-        git tag -a v$VERSION@$now -m "$msg"
+        git submodule foreach git tag -a tootsville-v$VERSION-$now -m "for Tootsville.org: $msg"
+        git tag -a v$VERSION-$now -m "$msg"
     fi
 else
     echo "First deploy of v$VERSION, tagging"
