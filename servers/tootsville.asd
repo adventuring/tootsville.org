@@ -59,6 +59,7 @@ REST services for the front-end."
              (:file "package" :depends-on ("utils"))
              (:file "config" :depends-on ("package"))
              (:file "view" :depends-on ("config"))
+             (:file "calendar")
              (:file "db" :depends-on ("config"))
              (:file "users" :depends-on ("utils" "db"))
              (:file "toots" :depends-on ("utils" "db"))
@@ -85,8 +86,17 @@ REST services for the front-end."
                        (:file "slash-version")
                        (:file "slash-maintenance")
                        (:file "slash-meta-game")
-
+                       
                        (:file "slash-gossip")
                        (:file "slash-toots")
                        (:file "slash-users")
-                       (:file "slash-world")))))))
+                       (:file "slash-world")
+                       (:module "gossip"
+                                :depends-on ("slash-gossip")
+                                :components 
+                                ((:module "alexa"
+                                          :components
+                                          ((:file "alexa")
+                                           (:file "info" :depends-on ("alexa"))
+                                           (:file "chat" :depends-on ("alexa"))
+                                           (:file "clock" :depends-on ("alexa"))))))))))))
