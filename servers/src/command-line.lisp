@@ -27,6 +27,8 @@ help — print this
 
 Dispatches   based   upon   the   single  argument,   expected   to   be
 a verb (case-insensitive) from the hard-coded table in this function."
+  (when (probe-file (default-config-file))
+    (load-config))
   (case (intern (string-upcase (typecase argv
                                  (cons (if (< 1 (length argv))
                                            (second argv)

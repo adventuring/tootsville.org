@@ -39,9 +39,6 @@
                             :file-write-date (file-write-date config-file)
                             :author (file-author config-file))))
 
-(when (probe-file (default-config-file))
-  (load-config))
-
 
 
 (defgeneric extract-key-path% (collection key)
