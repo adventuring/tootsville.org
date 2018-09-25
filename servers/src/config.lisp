@@ -41,55 +41,7 @@
 
 
 
-(defgeneric extract-key-path% (collection key)
-  (:method ((collection cons) (key symbol))
-    (getf collection key))
-  (:method (collection (key integer))
-    (elt collection key))
-  (:method ((collection hash-table) key)
-    (gethash key collection))
-  (:method ((collection array) (indices cons))
-    (apply #'aref collection indices))
-  (:method ((collection null) key)
-    (declare (ignore key))
-    (values))
-  (:method ((jso st-json:jso) (key string))
-    (st-json:getjso key jso))
-  (:method ((jso st-json:jso) (key symbol))
-    (st-json:getjso (kebab:to-camel-case (string key)) jso))
-  (:method ((jso st-json:jso) (key integer))
-    (st-json:getjso (kebab:to-camel-case (stringify key)) jso)))
 
-(defun extract (collection key &rest more-keys)
-  "Extract the  item identified  by KEY  from COLLECTION.  If MORE-KEYS,
-then extract an item from each subsequently nested collection.
-
- • For a list with a symbol key, uses GETF
- • For a sequence and integer, uses ELT
- • For a hash-table, uses GETHASH
- • For an array, uses AREF"
-  (if more-keys
-      (apply #'extract (extract-key-path% collection key) more-keys)
-      (extract-key-path% collection key)))
-
-(assert (= 4 (extract '(:a (:b (:c (:d 4)))) :a :b :c :d))
-        () "EXTRACT must be able to descend a sequence of dereferences")
-(assert (= 4 (extract '(:a (1 2 3 4)) :a 3))
-        () "EXTRACT must handle plists and regular lists")
-(assert (= 4 (extract '(:a #(1 2 3 4)) :a 3))
-        () "EXTRACT must handle plists and arrays")
-(assert (= 4 (extract (st-json:read-json-from-string "{\"a\": 4}") "a"))
-        () "EXTRACT must handle JSON objects")
-(assert (= 4 (extract (st-json:read-json-from-string "{\"fooBar\": 4}") :foo-bar))
-        () "EXTRACT must translate symbols to camelCase strings")
-(assert (= 4 (extract (st-json:read-json-from-string "{\"a\": [1,2,4,8]}") "a" 2))
-        () "EXTRACT must handle JSON objects and lists")
-(let ((h (make-hash-table :test 'equalp)))
-  (setf (gethash "monkey" h) "George")
-  (assert (string= "George" (extract `(:a (:b ,h)) :a :b "monkey"))
-          () "EXTRACT must handle plists and hash tables"))
-
-
 
 (defun config (&optional key &rest sub-keys)
   "Obtain the configuration value at the path KEY + SUB-KEYS"
