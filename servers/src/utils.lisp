@@ -2,7 +2,7 @@
 (defpackage org.star-hope.utils
   (:use :cl :alexandria)
   (:export
-
+   
    #:stringify
    #:extreme
    #:human-duration
@@ -10,11 +10,9 @@
    #:year<-universal-time
    #:file-write-year
    #:map-asdf-files
-   #:dns-name
    #:two-chars-in-a-row-p
    #:three-chars-in-a-row-p
-   #:www-uri
-
+   
    ))
 (in-package :org.star-hope.utils)
 
@@ -134,14 +132,6 @@ Accepts either a LOCAL-TIME:TIMESTAMP or NUMBER of Universal Time."
 ;;; Types
 
 
-(defun host-name-char-p (char)
-  (check-type char character)
-  (or (char<= #\a char #\z)
-      (char<= #\A char #\Z)
-      (char<= #\0 char #\9)
-      (char= #\. char)
-      (char= #\- char)))
-
 (defun two-chars-in-a-row-p (string char-bag)
   "Do any two characters in CHAR-BAG occur together in STRING?"
   (check-type string string)
@@ -176,29 +166,44 @@ itself returns true."
          do (return-from three-chars-in-a-row-p i)))
   nil)
 
-(defun host-name-like-p (name)
-  (check-type name string)
-  (and (every #'host-name-char-p name)
-       (not (char= #\- (char name 0)))
-       (not (char= #\- (char name (1- (length name)))))
-       (not (two-chars-in-a-row-p name ".-"))
-       (let ((parts (uiop:split-string name ".")))
-         (every #'alpha-char-p (last parts))
-         (<= 2 (length (last parts))))))
 
-(defun www-uri-like-p (uri)
-  (check-type uri string)
-  (and (<= 3 (count #\/ uri))
-       (destructuring-bind (method _ host+port)
-           (uiop:split-string uri :separator "/" :max 3)
-         (and (member method '("http:" "https:") :test #'string=)
-              (emptyp _)
-              (host-name-like-p (subseq host+port
-                                        0
-                                        (position #\: host+port)))))))
+
 
-(deftype dns-name ()
-  '(and string (satisfies host-name-like-p)))
+;;; UUID  interation with  the database.  We handle  them internally  as
+;;; (UNSIGNED-BYTE 128), and into MariaDB  as a BINARY(16), but may want
+;;; to also sometimes use UUID objects directly (eg, to generate them).
 
-(deftype www-uri ()
-  '(and string (satisfies www-uri-like-p)))
+(defun binary<-uuid (uuid)
+  "Return a single (UNSIGNED-BYTE 128) representing UUID"
+  (check-type uuid uuid:uuid)
+  (let ((binary 0))
+    (loop with byte-array = (uuid:uuid-to-byte-array uuid)
+       for index from 0 upto 15
+       for byte = (aref byte-array index)
+       do (setf binary (dpb byte (byte 8 (* 8 index)) binary)))
+    binary))
+
+(defun uuid<-binary (integer)
+  "Convert an (UNSIGNED-BYTE 128) into a UUID"
+  (check-type integer (unsigned-byte 128))
+  (let ((byte-array (make-array 16 :element-type '(unsigned-byte 8))))
+    (loop for index from 0 upto 15
+       for byte = (ldb (byte 8 (* 8 index)) integer)
+       do (setf (aref byte-array index) byte))
+    (uuid:byte-array-to-uuid byte-array)))
+
+(defun uuid-string (uuid)
+  (etypecase uuid
+    ((unsigned-byte 128)
+     (format nil "{~8,0x-~4,0x-~4,0x-~4,0x-~12,0x}"
+             (ldb (byte (* 8 4) 0) uuid)
+             (ldb (byte (* 4 4) (* 8 4)) uuid)
+             (ldb (byte (* 4 4) (* 12 4)) uuid)
+             (ldb (byte (* 4 4) (* 16 4)) uuid)
+             (ldb (byte (* 12 4) (* 20 4)) uuid)))
+    (uuid:uuid (uuid-string (binary<-uuid uuid)))))
+
+(assert
+ (let ((uuid (uuid:make-v4-uuid)))
+   (uuid:uuid= uuid (uuid<-binary (binary<-uuid uuid)))))
+

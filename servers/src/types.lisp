@@ -215,3 +215,53 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
          (check-type base-color Toot-pattern-color-name)
          (go do-over)))))
 
+
+
+(defun host-name-char-p (char)
+  (check-type char character)
+  (or (char<= #\a char #\z)
+      (char<= #\A char #\Z)
+      (char<= #\0 char #\9)
+      (char= #\. char)
+      (char= #\- char)))
+
+(defun host-name-like-p (name)
+  (check-type name string)
+  (and (every #'host-name-char-p name)
+       (not (char= #\- (char name 0)))
+       (not (char= #\- (char name (1- (length name)))))
+       (not (two-chars-in-a-row-p name ".-"))
+       (let ((parts (uiop:split-string name ".")))
+         (every #'alpha-char-p (last parts))
+         (<= 2 (length (last parts))))))
+
+(defun www-uri-like-p (uri)
+  (check-type uri string)
+  (and (<= 3 (count #\/ uri))
+       (destructuring-bind (method _ host+port)
+           (uiop:split-string uri :separator "/" :max 3)
+         (and (member method '("http:" "https:") :test #'string=)
+              (emptyp _)
+              (host-name-like-p (subseq host+port
+                                        0
+                                        (position #\: host+port)))))))
+
+(deftype dns-name ()
+  '(and string (satisfies host-name-like-p)))
+
+(deftype www-uri ()
+  '(and string (satisfies www-uri-like-p)))
+
+
+(defun string-length-2-p (s)
+  (check-type s string)
+  (equal 2 (length s)))
+
+(defun string-all-alpha-chars-p (s)
+  (check-type s string)
+  (every #'alpha-char-p s))
+
+(deftype two-letter-string ()
+  '(and string
+    (satisfies string-length-2-p)
+    (satisfies string-all-alpha-chars-p)))

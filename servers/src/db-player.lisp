@@ -1,43 +1,5 @@
 (in-package :Tootsville)
 
-;;; UUID  interation with  the database.  We handle  them internally  as
-;;; (UNSIGNED-BYTE 128), and into MariaDB  as a BINARY(16), but may want
-;;; to also sometimes use UUID objects directly (eg, to generate them).
-
-(defun binary<-uuid (uuid)
-  "Return a single (UNSIGNED-BYTE 128) representing UUID"
-  (check-type uuid uuid:uuid)
-  (let ((binary 0))
-    (loop with byte-array = (uuid:uuid-to-byte-array uuid)
-       for index from 0 upto 15
-       for byte = (aref byte-array index)
-       do (setf binary (dpb byte (byte 8 (* 8 index)) binary)))
-    binary))
-
-(defun uuid<-binary (integer)
-  "Convert an (UNSIGNED-BYTE 128) into a UUID"
-  (check-type integer (unsigned-byte 128))
-  (let ((byte-array (make-array 16 :element-type '(unsigned-byte 8))))
-    (loop for index from 0 upto 15
-       for byte = (ldb (byte 8 (* 8 index)) integer)
-       do (setf (aref byte-array index) byte))
-    (uuid:byte-array-to-uuid byte-array)))
-
-(defun uuid-string (uuid)
-  (etypecase uuid
-    ((unsigned-byte 128)
-     (format nil "{~8,0x-~4,0x-~4,0x-~4,0x-~12,0x}"
-             (ldb (byte (* 8 4) 0) uuid)
-             (ldb (byte (* 4 4) (* 8 4)) uuid)
-             (ldb (byte (* 4 4) (* 12 4)) uuid)
-             (ldb (byte (* 4 4) (* 16 4)) uuid)
-             (ldb (byte (* 12 4) (* 20 4)) uuid)))
-    (uuid:uuid (uuid-string (binary<-uuid uuid)))))
-
-(assert
- (let ((uuid (uuid:make-v4-uuid)))
-   (uuid:uuid= uuid (uuid<-binary (binary<-uuid uuid)))))
-
 
 ;;; Items, Creatures
 
@@ -54,21 +16,10 @@
 
 ;;; Creatures, Players.
 
-(defun string-length-2-p (s)
-  (check-type s string)
-  (equal 2 (length s)))
 
-(defun string-all-alpha-chars-p (s)
-  (check-type s string)
-  (every #'alpha-char-p s))
-
-(deftype two-letter-string ()
-  '(and string
-    (satisfies string-length-2-p)
-    (satisfies string-all-alpha-chars-p)))
 
 (datafly:defmodel player
-  "A  structure representing  a  player  who is  a  human  being in  the
+    "A  structure representing  a  player  who is  a  human  being in  the
  real world.
 
 Structure slots:
