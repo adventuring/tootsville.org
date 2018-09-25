@@ -30,8 +30,10 @@ hostnames, are  handled from  a proxied HTTP  server. This  provides the
 REST services for the front-end."
   :depends-on (
                :bordeaux-threads
+               :cl-memcached
                :cl-ppcre
                :cl-threadpool
+               :clouchdb  
                :datafly
                :drakma
                :envy
@@ -40,6 +42,7 @@ REST services for the front-end."
                :swank
                :sxql
                :trivial-backtrace
+               :trivial-ldap
                :uiop
                :uuid
                :yason
@@ -58,6 +61,7 @@ REST services for the front-end."
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
              (:file "users" :depends-on ("utils" "db"))
+             (:file "toots" :depends-on ("utils" "db"))
              (:file "players" :depends-on ("utils" "db"))
              (:file "types" :depends-on ("utils"))
              (:file "machine" :depends-on ("utils"))
@@ -77,12 +81,12 @@ REST services for the front-end."
              (:module "endpoints"
                       :depends-on ("web")
                       :components
-                      ((:file "login")
-                       (:file "version")
-                       (:file "maintenance")
-                       (:file "meta-game")
+                      ((:file "slash-login")
+                       (:file "slash-version")
+                       (:file "slash-maintenance")
+                       (:file "slash-meta-game")
 
-                       (:file "gossip")
-                       (:file "toots")
-                       (:file "users")
-                       (:file "world")))))))
+                       (:file "slash-gossip")
+                       (:file "slash-toots")
+                       (:file "slash-users")
+                       (:file "slash-world")))))))
