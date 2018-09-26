@@ -10,7 +10,7 @@ clean:
 
 servers:	servers/Tootsville
 
-servers/Tootsville:	$(shell find servers -name \*.lisp -o -name \*.asd -and -not -path \**/.\*)
+servers/Tootsville:	$(shell find servers \( -name \*.lisp -o -name \*.asd \) -and -not -name .\*)
 	$(MAKE) -C servers Tootsville
 
 doc:
@@ -82,5 +82,5 @@ TODO.scorecard:	$(shell find */ -type f) README.org
 
 jscl:	bin/jscl
 
-bin/jscl: $(shell find jscl -name \**.lisp -or -name \**.js -or -name \**.asd  -and -not -path \**/.\*)
+bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
 	cd jscl; ./make.sh
