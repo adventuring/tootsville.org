@@ -24,11 +24,6 @@ is, of course, a subseq of \".json\" as well.)"
         (search "application/x-json" accept)
         (search ".js" (hunchentoot:request-uri*)))))
 
-
-
-
-
-
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -38,7 +33,7 @@ is, of course, a subseq of \".json\" as well.)"
         (subseq (string-downcase s) (1+ (position #\/ s)))
         (string-downcase s)))
 
-(defmacro check-arg-type (arg type &optional name)
+  (defmacro check-arg-type (arg type &optional name)
     "Ensure that ARG  is of type TYPE, which is  called NAME. Signals back
 to an HTTP client with a 400 error if this assertion is untrue.
 
@@ -192,7 +187,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                 :test 'string=)
         (concatenate 'string content-type "; charset=utf-8")
         content-type))
-  
+
   (assert (equal (add-charset "text/html")
                  "text/html; charset=utf-8"))
   (assert (equal (add-charset "text/plain")
@@ -210,34 +205,34 @@ This is basically just CHECK-TYPE for arguments passed by the user."
           (<= (char-code #\A) cc (char-code #\Z))
           (<= (char-code #\0) cc (char-code #\9))
           (find ch "-/!?." :test #'char=))))
-  
+
   (defun make-endpoint-function-name (method uri &optional accept-type)
     (intern (format nil "ENDPOINT-~a-~a~@[->~a~]"
-                     method
-                     (remove-if-not #'constituentp uri)
-                     (cond
-                       ((null accept-type) nil)
-                       ((stringp accept-type)
+                    method
+                    (remove-if-not #'constituentp uri)
+                    (cond
+                      ((null accept-type) nil)
+                      ((stringp accept-type)
                        (name-for-content-type accept-type))))))
-  
+
   (defun lambda-list-as-variables (λ-list)
     (if λ-list
         (cons 'list (mapcar (lambda (var)
                               (list 'quote var))
-                         λ-list))
+                            λ-list))
         'nil))
 
   (defun defendpoint/make-extension-named-route (fname λ-list
                                                  method uri extension)
-    (let ((typed-uri (concatenate 'string 
+    (let ((typed-uri (concatenate 'string
                                   uri (if (char= #\/ (last-elt uri))
                                           "index."
                                           ".")
                                   extension)))
       `(restas::register-route-traits
-         ',fname
-         (plist-hash-table (list :template ,typed-uri
-                                 :method ,method
+        ',fname
+        (plist-hash-table (list :template ,typed-uri
+                                :method ,method
                                 :variables ,(lambda-list-as-variables λ-list))))))
 
   (defmacro defendpoint ((method uri &optional content-type)
@@ -256,35 +251,36 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                   uri content-type))))
       `(progn
          (defun ,fname (,@λ-list) ,docstring
-           (v:info '(,(make-keyword fname) :endpoint :endpoint-start) ,(concatenate 'string "{~a} Starting: " docstring)
+                (v:info '(,(make-keyword fname) :endpoint :endpoint-start) ,(concatenate 'string "{~a} Starting: " docstring)
                         (thread-name (current-thread)))
                 ,(unless (consp content-type)
-              `(setf (hunchentoot:content-type*)
+                   `(setf (hunchentoot:content-type*)
                           ,(add-charset content-type)))
-           (let ((content-bytes
+                (let ((content-bytes
                        (rewrite-restas (:jsonp ,(equal content-type "application/json"))
-                     (block endpoint
-                       (block ,fname
-                         ,@body)))))
-            (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
-                      (thread-name (current-thread)))
-            (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
-                      (thread-name (current-thread))
-                      (hunchentoot:return-code*)
-                      (length (hunchentoot:headers-out*))
-                      (length content-bytes))
-            content-bytes))
-         (restas::register-route-traits
-                    ',fname
-                    (plist-hash-table
-                     (list :template ,uri
-                           :method ,method
-                           :content-type ,content-type
-                 :variables ,(lambda-list-as-variables λ-list))))
-         ,(when-let (extension (extension-for-content-type content-type))
-                (defendpoint/make-extension-named-route
-                 fname λ-list method uri extension))
-         (restas:reconnect-all-routes)))))
+                                       (catch endpoint
+                                         (block endpoint
+                                           (block ,fname
+                                             ,@body)))))
+                      (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
+                              (thread-name (current-thread)))
+                      (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
+                              (thread-name (current-thread))
+                              (hunchentoot:return-code*)
+                              (length (hunchentoot:headers-out*))
+                              (length content-bytes))
+                      content-bytes))
+                (restas::register-route-traits
+                 ',fname
+                 (plist-hash-table
+                  (list :template ,uri
+                        :method ,method
+                        :content-type ,content-type
+                        :variables ,(lambda-list-as-variables λ-list))))
+                ,(when-let (extension (extension-for-content-type content-type))
+                   (defendpoint/make-extension-named-route
+                       fname λ-list method uri extension))
+                (restas:reconnect-all-routes)))))))
 
 (defendpoint (get "/" text/html)
     (list 307 '(:location "https://Tootsville.org/") ""))
@@ -297,7 +293,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
     (write-char #\Space stream)
     (format stream "~{~:(~a~): ~a~^ ~}" (restas::route-headers route))
     (write-char #\Space stream)
-    
+
     (write-char #\Space stream)
     (princ (restas::route-arbitrary-requirement route) stream)))
 

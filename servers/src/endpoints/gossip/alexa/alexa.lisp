@@ -61,9 +61,14 @@ Excerpt from Amazon requirements at @url{https://developer.amazon.com/docs/custo
 
 Verifying the Signature Certificate URL
 
-Before downloading the certificate from the URL specified in the SignatureCertChainUrl header, you should ensure that the URL represents a URL Amazon would use for the certificate. This protects against requests that attempt to make your web service download malicious files and similar attacks.
+Before  downloading  the  certificate  from the  URL  specified  in  the
+SignatureCertChainUrl header, you should  ensure that the URL represents
+a  URL Amazon  would  use  for the  certificate.  This protects  against
+requests that attempt to make  your web service download malicious files
+and similar attacks.
 
-First, normalize the URL so that you can validate against a correctly formatted URL. For example, normalize
+First, normalize  the URL so that  you can validate against  a correctly
+formatted URL. For example, normalize
 
 https://s3.amazonaws.com/echo.api/../echo.api/echo-api-cert.pem
 
@@ -117,12 +122,14 @@ If the URL does not pass these tests, reject the request and do not proceed with
   (let* ((normalized (normalize-url url))
          (parts (split-sequence #\/ normalized)))
     (assert (> (length parts) (length +amazon-cert-chain-url-matching+)) ()
-            "The URL ~a does not have enough path components to be a valid Alexa certificate chain URL"
+            "The URL ~a does not have enough path components to be a valid ~
+Alexa certificate chain URL"
             url)
     (loop for (string . fun) in +amazon-cert-chain-url-matching+
        for part in parts
        unless (funcall fun string part)
-       do (error "The URL ~a is not a valid Alexa certificate chain URL: ~a is not ~a ~a"
+       do (error "The URL ~a is not a valid Alexa certificate chain URL: ~
+~a is not ~a ~a"
                  url part (ecase fun (#'string-equal "≈") (#'string= "=")) string)))
   t)
 
@@ -159,7 +166,9 @@ Excerpt from Amazon requirements at @url{https://developer.amazon.com/docs/custo
 
 Checking the Signature of the Request
 
-Requests sent by Alexa provide the information you need to verify the signature in the HTTP headers:
+Requests sent  by Alexa provide the  information you need to  verify the
+signature in the HTTP headers:
+
 @itemize
 @item
     SignatureCertChainUrl
@@ -171,31 +180,74 @@ To validate the signature:
 
 @enumerate
 @item
-    Verify the URL specified by the SignatureCertChainUrl header value on the request to ensure that it matches the format used by Amazon. See Verifying the Signature Certificate URL.
+    
+Verify the  URL specified by  the SignatureCertChainUrl header  value on
+the  request to  ensure  that  it matches  the  format  used by  Amazon.
+See Verifying the Signature Certificate URL.
+
 @item
-    Download the PEM-encoded X.509 certificate chain that Alexa used to sign the message as specified by the SignatureCertChainUrl header value on the request.
+    
+Download the PEM-encoded X.509 certificate chain that Alexa used to sign
+the message  as specified by  the SignatureCertChainUrl header  value on
+the request.
+
 @item
-    This chain is provided at runtime so that the certificate may be updated periodically, so your web service should be resilient to different URLs with different content.
+    
+This chain is provided at runtime so that the certificate may be updated
+periodically, so your web service  should be resilient to different URLs
+with different content.
+
 @item
-    This certificate chain is composed of, in order, (1) the Amazon signing certificate and (2) one or more additional certificates that create a chain of trust to a root certificate authority (CA) certificate. To confirm the validity of the signing certificate, perform the following checks:
+    
+This certificate chain is composed of,  in order, (1) the Amazon signing
+certificate  and (2)  one or  more additional  certificates that  create
+a  chain of  trust to  a  root certificate  authority (CA)  certificate.
+To  confirm  the  validity  of  the  signing  certificate,  perform  the
+following checks:
+
 @itemize
 @item
-        The signing certificate has not expired (examine both the Not Before and Not After dates)
+        
+The signing certificate has not expired (examine both the Not Before and
+Not After dates)
+
 @item
-        The domain echo-api.amazon.com is present in the Subject Alternative Names (SANs) section of the signing certificate
+        
+The  domain echo-api.amazon.com  is present  in the  Subject Alternative
+Names (SANs) section of the signing certificate
+
 @item
-        All certificates in the chain combine to create a chain of trust to a trusted root CA certificate
+        
+All certificates  in the  chain combine  to create a  chain of  trust to
+a trusted root CA certificate
+
 @end itemize
+
 @item
-    Once you have determined that the signing certificate is valid, extract the public key from it. 
+    
+Once you have determined that  the signing certificate is valid, extract
+the public key from it.
+
 @item
-Base64-decode the Signature header value on the request to obtain the encrypted signature.
-    @item
-Use the public key extracted from the signing certificate to decrypt the encrypted signature to produce the asserted hash value.
-    @item
-Generate a SHA-1 hash value from the full HTTPS request body to produce the derived hash value
-    @item
-Compare the asserted hash value and derived hash values to ensure that they match.
+
+Base64-decode the  Signature header value  on the request to  obtain the
+encrypted signature.
+    
+@item
+
+Use the public key extracted from the signing certificate to decrypt the
+encrypted signature to produce the asserted hash value.
+    
+@item
+
+Generate a SHA-1 hash value from  the full HTTPS request body to produce
+the derived hash value
+    
+@item
+
+Compare the asserted  hash value and derived hash values  to ensure that
+they match.
+
 @end enumerate
 "
   (let ((cert-chain-url (hunchentoot:header-in* :Signature-Cert-Chain-Url))
@@ -268,27 +320,48 @@ Documented by Amazon at: @url{https://developer.amazon.com/docs/custom-skills/ho
 
 Service
 
-To handle requests sent by Alexa, your web service must meet the following requirements:
+To  handle requests  sent  by  Alexa, your  web  service  must meet  the
+following requirements:
 
 @enumerate
 @item 
+
 The service must be Internet-accessible.
+
 @item 
+
 The service must adhere to the Alexa Skills Kit interface.
+
 @item 
-The service must support HTTP over SSL/TLS, leveraging an Amazon-trusted certificate.
+
+The   service   must   support   HTTP  over   SSL/TLS,   leveraging   an
+Amazon-trusted certificate.
+
 @itemize
 @item
-For testing, Amazon accepts different methods for providing a certificate. For details, see About the SSL Options. 
+
+For   testing,   Amazon   accepts  different   methods   for   providing
+a certificate. For details, see About the SSL Options.
+
 @item
-For publishing to end users, Amazon only trusts certificates that have been signed by an Amazon-approved certificate authority. 
+
+For publishing to  end users, Amazon only trusts  certificates that have
+been signed by an Amazon-approved certificate authority.
+
 @end itemize
 @item
+
 The service must accept requests on port 443.
+
 @item 
-The service must present a certificate with a subject alternate name that matches the domain name of the endpoint. 
+
+The service  must present  a certificate with  a subject  alternate name
+that matches the domain name of the endpoint.
+
 @item 
+
 The service must validate that incoming requests are coming from Alexa.
+
 @end itemize
 
 Note: if you are using Apache HTTP  Server to host your web service, use
@@ -305,7 +378,7 @@ ServerAlias to your server's configuration file.
         (check-alexa-timestamp-tolerance body-json))
     (error (c)
       (report-error c)
-      (return-from 'endpoint (list 400 () (stringify c))))))
+      (throw 'endpoint (list 400 () (stringify c))))))
 
 (defmacro define-alexa-endpoint (name (arg) &body body)
   `(defendpoint (post ,(format nil "/gossip/alexa/~(~a~)/region=:region" name))
