@@ -77,7 +77,7 @@ REST services for the front-end."
                          (:file "version")
                          (:file "maintenance")
                          (:file "meta-game")
-                       
+             
                          (:file "gossip")
                          (:file "users")
                          (:file "world")))))))
