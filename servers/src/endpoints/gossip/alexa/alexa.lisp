@@ -4,41 +4,39 @@
 
 (defun normalize-url (url)
   "Normalize URL into a canonical form, using some typical UNIX pathname rules."
-  (check-type url www-uri)
-  ;; TODO s(/foo/../) (/)
-  ;; TODO s( http://foo:80/ ) (http://foo/ )
-  ;; TODO s( http://foo:443/ ) (http://foo/ )
-  ;; TODO s ( %xx ) (byte xx ) and back again
-  (error 'unimplemented))
+  (let ((uri (puri::parse-uri url)))
+    (assert (host-name-like-p (puri:uri-host uri)))
+    (setf (puri:uri-host uri) (string-downcase (puri:uri-host uri)))
+    (puri:render-uri uri nil)))
 
 (assert (equal (normalize-url "HTTPS://example.com/foo") "https://example.com/foo")
-        () "Protocol should be downcased")
+        () "NORMALIZE-URL: Protocol should be downcased")
 (assert (equal (normalize-url "https://EXAMPLE.COM/foo") "https://example.com/foo")
-        () "Hostname should be downcased")
+        () "NORMALIZE-URL: Hostname should be downcased")
 (assert (equal (normalize-url "https://example.com:443/foo") "https://example.com/foo")
-        () "Default TLS port number should be omitted")
+        () "NORMALIZE-URL: Default TLS port number should be omitted")
 (assert (equal (normalize-url "https://example.com:4343/foo") "https://example.com:4343/foo")
-        () "Non-default TLS port number should be kept")
+        () "NORMALIZE-URL: Non-default TLS port number should be kept")
 (assert (equal (normalize-url "http://example.com:80/foo") "http://example.com/foo")
-        () "Default HTTP port number should be omitted")
+        () "NORMALIZE-URL: Default HTTP port number should be omitted")
 (assert (equal (normalize-url "http://example.com:8080/foo") "http://example.com:8080/foo")
-        () "Default HTTP port number should be kept")
+        () "NORMALIZE-URL: Default HTTP port number should be kept")
 (assert (equal (normalize-url "http://example.com/foo/../bar") "http://example.com/bar")
-        () "../ path elements should be treated as (:UP)")
+        () "NORMALIZE-URL: ../ path elements should be treated as (:UP)")
 (assert (equal (normalize-url "http://example.com/foo//bar") "http://example.com/foo/bar")
-        () "// path elements should collapse to /")
+        () "NORMALIZE-URL: // path elements should collapse to /")
 (assert (equal (normalize-url "http://example.com/foo/./bar") "http://example.com/foo/bar")
-        () "/./ path elements should collapse to /")
+        () "NORMALIZE-URL: /./ path elements should collapse to /")
 (assert (equal (normalize-url "http://example.com/foo/.") "http://example.com/foo/")
-        () "trailing /. path elements should collapse to /")
+        () "NORMALIZE-URL: trailing /. path elements should collapse to /")
 (assert (equal (normalize-url "http://example.com/foo/bar/../../baz") "http://example.com/baz")
-        () "../../ chained path elements should each be processed")
+        () "NORMALIZE-URL: ../../ chained path elements should each be processed")
 (assert (equal (normalize-url "http://example.com/foo/%47") "http://example.com/foo/%47")
-        () "reserved characters should remain %-encoded")
+        () "NORMALIZE-URL: reserved characters should remain %-encoded")
 (assert (equal (normalize-url "http://example.com/foo/+x") "http://example.com/foo/%20x")
-        () "spaces should be converted from + to %20")
+        () "NORMALIZE-URL: spaces should be converted from + to %20")
 (assert (equal (normalize-url "http://example.com/foo/%97") "http://example.com/foo/a")
-        () "non-reserved ASCII characters should not be %-encoded")
+        () "NORMALIZE-URL: non-reserved ASCII characters should not be %-encoded")
 
 
 
@@ -135,29 +133,29 @@ Alexa certificate chain URL"
 
 (assert (ignore-errors (check-alexa-signature-cert-chain-url 
                         "https://s3.amazonaws.com/echo.api/echo-api-cert.pem"))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 (assert (ignore-errors (check-alexa-signature-cert-chain-url 
                         "https://s3.amazonaws.com:443/echo.api/echo-api-cert.pem"))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 (assert (ignore-errors (check-alexa-signature-cert-chain-url 
                         "https://s3.amazonaws.com/echo.api/../echo.api/echo-api-cert.pem"))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 
 (assert (null (ignore-errors (check-alexa-signature-cert-chain-url
                               "http://s3.amazonaws.com/echo.api/echo-api-cert.pem")))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 (assert (null (ignore-errors (check-alexa-signature-cert-chain-url
                               "https://notamazon.com/echo.api/echo-api-cert.pem")))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 (assert (null (ignore-errors (check-alexa-signature-cert-chain-url
                               "https://s3.amazonaws.com/EcHo.aPi/echo-api-cert.pem")))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 (assert (null (ignore-errors (check-alexa-signature-cert-chain-url
                               "https://s3.amazonaws.com/invalid.path/echo-api-cert.pem")))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 (assert (null (ignore-errors (check-alexa-signature-cert-chain-url
                               "https://s3.amazonaws.com:563/echo.api/echo-api-cert.pem")))
-        () "Unit test from Amazon requirements")
+        () "CHECK-ALEXA-SIGNATURE-CERT-CHAIN-URL: Unit test from Amazon requirements")
 
 (defun check-alexa-signature ()
   "Check the signature of an Alexa request.

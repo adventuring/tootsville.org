@@ -265,7 +265,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                        (catch endpoint
                          (block endpoint
                            (block ,fname
-                                             ,@body)))))
+                                             ,@body))))))
                   (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
                           (thread-name (current-thread)))
                   (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
