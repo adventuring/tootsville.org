@@ -262,9 +262,10 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                           ,(add-charset content-type)))
                 (let ((content-bytes
                        (rewrite-restas (:jsonp ,(equal content-type "application/json"))
-                         (block endpoint
-                           (block ,fname
-                             ,@body)))))
+                         (catch 'endpoint-over
+                           (block endpoint
+                             (block ,fname
+                               ,@body))))))
                   (v:info '(,(make-keyword fname) :endpoint :endpoint-finish) ,(concatenate 'string "{~a} Finished: " docstring)
                           (thread-name (current-thread)))
                   (v:info '(,(make-keyword fname) :endpoint :endpoint-output) "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
@@ -282,7 +283,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                  :variables ,(lambda-list-as-variables λ-list))))
          ,(when-let (extension (extension-for-content-type content-type))
             (defendpoint/make-extension-named-route
-                 fname λ-list method uri extension))
+                fname λ-list method uri extension))
          (restas:reconnect-all-routes)))))
 
 (defendpoint (get "/" text/html)
