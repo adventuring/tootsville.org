@@ -4,7 +4,7 @@
         branch = .
 
 [submodule "jscl"]
-	path = jscl/
+	path = jscl
 	url = git@github.com:romance-ii/jscl
-        branch = .
+	branch = .
 
