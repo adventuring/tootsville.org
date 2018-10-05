@@ -322,7 +322,7 @@ ServerAlias to your server's configuration file.
         (check-alexa-timestamp-tolerance body-json))
     (error (c)
       (report-error c)
-      (return-from 'endpoint (list 400 () (stringify c))))))
+      (throw 'endpoint-over (list 400 () (stringify c))))))
 
 (defmacro define-alexa-endpoint (name (arg) &body body)
   `(defendpoint (post ,(format nil "/gossip/alexa/~(~a~)/region=:region" name))
