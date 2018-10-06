@@ -117,11 +117,13 @@ leftmost digit must be after the rightmost non-digit character.
   :documentation "Named colors allowed as Toot pads colors")
 
 (define-memo-function Toot-pads-color-name-p (string-designator)
+  "Is STRING-DESIGNATOR a color that can be used for foot pads and trunk tips"
   (check-type string-designator string-designator)
   (member string-designator +Toot-pads-color-names+
           :test #'string-equal))
 
 (deftype Toot-pads-color-name ()
+  "A color name that can be used for Toot foot pads and nose tip"
   '(and string-designator
     (satisfies Toot-pads-color-name-p)))
 
@@ -131,12 +133,14 @@ leftmost digit must be after the rightmost non-digit character.
   :documentation "Named colors allowed as Toot pattern colors")
 
 (define-memo-function Toot-pattern-color-name-p (string-designator)
+  "Is STRING-DESIGNATOR the name of a color that can be used for a pattern?"
   (check-type string-designator string-designator)
   (member string-designator
           +Toot-pattern-color-names+
           :test #'string-equal))
 
 (deftype Toot-pattern-color-name ()
+  "The name of a color that can be used for a pattern"
   '(and string-designator
     (satisfies Toot-pattern-color-name-p)))
 
@@ -149,9 +153,10 @@ leftmost digit must be after the rightmost non-digit character.
 (define-constant +Toot-extended-pattern-names+
     '(Circuitboard Peace)
   :test #'equalp
-  :documentation "Extended patterns that require special effort")
+  :documentation "Extended patterns that require special effort to obtain")
 
 (define-memo-function Toot-pattern-name-p (string-designator)
+  "Is STRING-DESIGNATOR the name of a Toot pattern?"
   (check-type string-designator string-designator)
   (member string-designator (concatenate 'list
                                          +Toot-basic-pattern-names+
@@ -159,6 +164,7 @@ leftmost digit must be after the rightmost non-digit character.
           :test #'string-equal))
 
 (deftype Toot-pattern-name ()
+  "The name of a Toot pattern"
   '(and string-designator
     (satisfies Toot-pattern-name-p)))
 
@@ -218,6 +224,7 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 
 
 (defun host-name-char-p (char)
+  "Is CHAR a constituent character that could be in a DNS host name?"
   (check-type char character)
   (or (char<= #\a char #\z)
       (char<= #\A char #\Z)
@@ -226,25 +233,39 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
       (char= #\- char)))
 
 (defun host-name-like-p (name)
+  "Does NAME meet the general rules of being a DNS host name.
+  
+  TODO: Compare this against RFCs for DNS names."
   (check-type name string)
   (and (every #'host-name-char-p name)
        (not (char= #\- (char name 0)))
        (not (char= #\- (char name (1- (length name)))))
        (not (two-chars-in-a-row-p name ".-"))
-       (let ((parts (uiop:split-string name ".")))
-         (every #'alpha-char-p (last parts))
-         (<= 2 (length (last parts))))))
+       (let ((tld (subseq name (1+ (position #\. name :from-end t)))))
+         (and (every #'alpha-char-p tld)
+              (<= 2 (length tld))))))
+
+(assert (host-name-like-p "tootsville.org"))
+(assert (host-name-like-p "www.tootsvillle.org"))
+(assert (host-name-like-p "www.gov.uk"))
+(assert (host-name-like-p "s3.amazonaws.com"))
 
 (defun www-uri-like-p (uri)
+  "Does URI look like a WWW (HTTP/HTTPS) URI?"
   (check-type uri string)
   (and (<= 3 (count #\/ uri))
        (destructuring-bind (method _ host+port)
-           (uiop:split-string uri :separator "/" :max 3)
-         (and (member method '("http:" "https:") :test #'string=)
-              (emptyp _)
+           (split-sequence #\/ uri :count 3)
+         (and (emptyp _)
+              (or (string= "https:" method)
+                  (string= "http:" method))
               (host-name-like-p (subseq host+port
                                         0
                                         (position #\: host+port)))))))
+
+(assert (www-uri-like-p "https://www.tootsville.org/"))
+(assert (www-uri-like-p "https://users.tootsville.org/users/foo/bar?blah=%49"))
+(assert (www-uri-like-p "https://s3.amazonaws.com:443/echo.api/echo-api-cert.pem"))
 
 (deftype dns-name ()
   '(and string (satisfies host-name-like-p)))
@@ -265,3 +286,39 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
   '(and string
     (satisfies string-length-2-p)
     (satisfies string-all-alpha-chars-p)))
+
+
+
+(defun two-chars-in-a-row-p (string char-bag)
+  "Do any two characters in CHAR-BAG occur together in STRING?"
+  (check-type string string)
+  (check-type char-bag sequence)
+  (loop for i from 1 below (length string)
+     when (and (find (char string i) char-bag)
+               (find (char string (1- i)) char-bag))
+     do (return-from two-chars-in-a-row-p i))
+  nil)
+
+(defun three-chars-in-a-row-p (string &optional char-bag)
+  "Do any three characters in CHAR-BAG occur together in STRING?
+
+If CHAR-BAG is NIL, then any  character that occurs three times matching
+itself returns true."
+  (check-type string string)
+  (check-type char-bag (or null sequence))
+  (unless (<= 3 (length string))
+    (return-from three-chars-in-a-row-p nil))
+  (if char-bag
+      (progn
+        (assert (every #'characterp char-bag))
+        (loop for i from 2 below (length string)
+           when (and (find (char string i) char-bag)
+                     (find (char string (1- i)) char-bag)
+                     (find (char string (- i 2)) char-bag))
+           do (return-from three-chars-in-a-row-p i)))
+      (loop for i from 2 below (length string)
+         when (char= (char string i) 
+                     (char string (- i 1))
+                     (char string (- i 2)))
+         do (return-from three-chars-in-a-row-p i)))
+  nil)
