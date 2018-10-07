@@ -17,7 +17,7 @@
 
 
 
-(defsystem tootsville
+(defsystem Tootsville
   :version "0.3.5"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
@@ -59,7 +59,7 @@ REST services for the front-end."
              (:file "package" :depends-on ("utils"))
              (:file "config" :depends-on ("package" "types"))
              (:file "view" :depends-on ("config"))
-             (:file "calendar")
+             (:file "lib/Chœrogryllum/Chœrogryllum")
              (:file "db" :depends-on ("config"))
              (:file "users" :depends-on ("utils" "db"))
              (:file "toots" :depends-on ("utils" "db"))
