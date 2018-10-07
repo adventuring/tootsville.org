@@ -11,8 +11,6 @@
    #:year<-universal-time
    #:file-write-year
    #:map-asdf-files
-   #:two-chars-in-a-row-p
-   #:three-chars-in-a-row-p
    
    ))
 (in-package :org.star-hope.utils)
