@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defvar *post-tests-queue* nil
   "Power-on-self-tests are placed into this queue, usually by DEFPOST.")

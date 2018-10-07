@@ -1,4 +1,4 @@
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defun print-help ()
   "Prints a short usage summary  to *STANDARD-OUTPUT*. Note that this is

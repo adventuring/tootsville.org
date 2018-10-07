@@ -3,7 +3,6 @@
 (restas:define-module Tootsville
   (:documentation  "Let's make some noise!")
   (:use #:alexandria #:cl #:local-time #:bordeaux-threads
-        #:org.star-hope.utils
         #:oliphaunt)
   (:shadowing-import-from #:cl-fad #:copy-file #:copy-stream) ; conflicts with Alexandria.
   (:import-from #:split-sequence #:split-sequence)

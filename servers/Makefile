@@ -81,7 +81,7 @@ Tootsville.new:	quicklisp-manifest.tmp bin/buildapp
 		--manifest-file quicklisp-manifest.tmp \
 		--load "src/setup.lisp" \
 		--load tootsville.asd \
-		--eval '(ql:quickload :tootsville)' \
+		--eval '(ql:quickload :Tootsville)' \
 		--entry Tootsville:entry
 
 quicklisp-manifest.tmp:	tootsville.asd \
@@ -92,7 +92,7 @@ quicklisp-manifest.tmp:	tootsville.asd \
 	sbcl --no-userinit --no-sysinit --non-interactive \
 		--load src/setup.lisp \
 		--load tootsville.asd \
-		--eval '(ql:quickload :tootsville)' \
+		--eval '(ql:quickload :Tootsville)' \
 		--eval '(ql:write-asdf-manifest-file "quicklisp-manifest.tmp")'
 
 test:	bin
