@@ -2,7 +2,9 @@
 (in-package :cl-user)
 (restas:define-module Tootsville
   (:documentation  "Let's make some noise!")
-  (:use #:alexandria #:cl #:local-time #:org.star-hope.utils #:org.star-hope.machine #:oliphaunt #:bordeaux-threads)
+  (:use #:alexandria #:cl #:local-time #:bordeaux-threads
+        #:org.star-hope.utils
+        #:oliphaunt)
   (:shadowing-import-from #:cl-fad #:copy-file #:copy-stream) ; conflicts with Alexandria.
   (:import-from #:split-sequence #:split-sequence)
   (:import-from #:fare-memoization #:define-memo-function)
