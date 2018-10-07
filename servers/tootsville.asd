@@ -65,7 +65,6 @@ REST services for the front-end."
              (:file "toots" :depends-on ("utils" "db"))
              (:file "players" :depends-on ("utils" "db"))
              (:file "types" :depends-on ("utils"))
-             (:file "machine" :depends-on ("utils"))
              (:file "errors" :depends-on ("package"))
              (:file "logging" :depends-on ("package" "version"))
              (:file "write-docs" :depends-on ("package"))
