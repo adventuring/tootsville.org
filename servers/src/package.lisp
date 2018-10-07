@@ -35,6 +35,8 @@
    #:start-repl
    #:start-swank
    #:stop
+   #:three-chars-in-a-row-p
+   #:two-chars-in-a-row-p
    #:wants-json-p
    #:with-connection
    #:write-docs
