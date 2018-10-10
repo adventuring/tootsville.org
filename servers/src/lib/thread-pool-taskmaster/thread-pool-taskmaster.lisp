@@ -4,6 +4,7 @@
   (:use :cl :hunchentoot :bordeaux-threads)
   (:import-from :alexandria #:when-let #:if-let)
   (:import-from :fare-memoization #:define-memo-function)
+  (:import-from :oliphaunt #:processor-count)
   (:export #:thread-pool-taskmaster))
 
 (in-package #:thread-pool-taskmaster)
@@ -72,7 +73,7 @@
                                  (the (unsigned-byte 15) cores)))))
 
 (defmethod taskmaster-max-thread-count ((taskmaster thread-pool-taskmaster))
-  (cores*threads-per-core (org.star-hope.machine:processor-count)))
+  (cores*threads-per-core (processor-count)))
 
 (defmethod taskmaster-thread-count ((taskmaster thread-pool-taskmaster))
   (if (taskmaster-thread-pool taskmaster)
@@ -80,7 +81,7 @@
       0))
 
 (defmethod taskmaster-max-accept-count ((taskmaster thread-pool-taskmaster))
-  (the fixnum (1+ (the fixnum (cores*threads-per-core (org.star-hope.machine:processor-count))))))
+  (the fixnum (1+ (the fixnum (cores*threads-per-core (processor-count))))))
 
 (defparameter *mulligans* 5)
 
