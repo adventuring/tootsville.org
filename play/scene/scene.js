@@ -94,7 +94,7 @@ Tootsville.tank.initCrappyDefaultLight = function () {
 };
 
 Tootsville.tank.initPlayerToot = function () {
-    Tootsville.Avatars.getAvatar(Tootsville.charName).then(
+    Tootsville.Avatars.getAvatar(Tootsville.character && Tootsville.character.name).then(
         (toot) => {
             Tootsville.Avatars.UltraTootBuilder.makeToot(
                 toot

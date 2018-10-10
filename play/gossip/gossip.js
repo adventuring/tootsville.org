@@ -31,7 +31,7 @@ Tootsville.gossip.setConnectionHandlers = function(connection) {
     connection.onicegatheringstatechange = event => {
         console.log(`[gossip] onicegatheringstatechange`, connection.iceGatheringState);
     };
-    
+
     connection.onidentityresult = event => console.log(`[gossip] onidentityresult`, event);
     connection.onidpassertionerror = event => console.log(`[gossip] onidpassertionerror`, event);
     connection.onidpvalidationerror = event => console.log(`[gossip] onidpvalidationerror`, event);
@@ -118,7 +118,7 @@ Tootsville.gossip.connectToOffer = function(offer) {
         peerConnection.onicegatheringstatechange = event => {
             console.log(`[gossip] onicegatheringstatechange`, peerConnection.iceGatheringState);
         };
-        
+
         peerConnection.onidentityresult = event => console.log(`[gossip] onidentityresult`, event);
         peerConnection.onidpassertionerror = event => console.log(`[gossip] onidpassertionerror`, event);
         peerConnection.onidpvalidationerror = event => console.log(`[gossip] onidpvalidationerror`, event);

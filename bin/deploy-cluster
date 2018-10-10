@@ -17,7 +17,7 @@ LOCAL_USERNAME=`whoami`
 REVISION=`git log -n 1 --pretty=format:"%H"`
 if which finger &>/dev/null
 then
-   REALNAME=$(finger $LOCAL_USERNAME | perl -ne 'if (/Name: (.*)[\t\n]/) { print $1; exit }')
+    REALNAME=$(finger $LOCAL_USERNAME | perl -ne 'if (/Name: (.*)[\t\n]/) { print $1; exit }')
 fi
 if [ "x$REALNAME" = "x" ]
 then
@@ -27,26 +27,45 @@ if [ "x$REALNAME" = "x" ]
 then
     REALNAME=$LOCAL_USERNAME
 fi
-   
+
+if ! git remote -v | grep github
+then
+	git remote add github git@github.com:adventuring/tootsville.org
+fi
+if ! git remote -v | grep gitlab
+then
+	git remote add gitlab git@gitlab.com:adventuring/tootsville.org
+fi
+if ! git remote -v | grep goethe
+then
+	git remote add goethe goethe.tootsville.org:devel/git/tootsville.org
+fi
+
 echo "Deploy cluster: $1"
 echo "Initiated by $LOCAL_USERNAME@$(hostname) ($REALNAME)"
 date
 rm -fr .tmp.*
 if [ "$1" = tootsville.org ]
 then
-    echo "That seems dangerous/stupid. Let's not."
+    echo "That seems dangerous/stupid. Let's not." >&2
     exit 1
 fi
 if [ "x$1" = x ]
 then
-    echo "Cluster name required"
+    echo "Cluster name required" >&2
     exit 2
 fi
+grep "$1" << VALID_CLUSTERS || ( echo "Cluster name not recognized ($1)" >&2 && exit 2 )
+tootsville.org
+test.tootsville.org
+qa.tootsville.org
+VALID_CLUSTERS
 
 cluster=$1
 
 cd "$(dirname $0)"/../
 
+##########
 
 echobig Deploying to
 echobig $cluster
@@ -60,38 +79,124 @@ bin/make-all-htaccess || exit 4
 
 ##########
 
+make TODO.scorecard
+. ./TODO.scorecard
+
+if [[ $TOOT_FIXME -gt 0 ]]
+then
+	while true
+	do
+		clear
+		echobig FIXME!
+		echo ""
+		echo "There are $TOOT_FIXME FIXME comments!"
+		if [[ $cluster = tootsville.org ]]
+		then
+			echo " ✗ Refusing to deploy to Production with FIXME notes"
+			exit 8
+		fi
+		echo ""
+		echo "$REALNAME, are you sure you want to deploy to $cluster"
+		echo "when there are $TOOT_FIXME FIXME notes and $TOOT_TODO TODOs?"
+		echo ""
+		read -p "Yes or No? (Y/N) ⇒ " -n 1 yorn
+		if [[ "${yorn_}" = "y" ]]
+		then
+			echo ""
+			echobig Overridden
+			echo ""
+			echo "Override accepted. Good luck …"
+			break
+		elif [[ "${yorn_}" = "n" ]]
+		then
+			echo ""
+			echo "That seems wise. Exiting."
+			echo ""
+			exit 8
+		fi
+	done
+fi
+
+##########
+
 echobig Pre-deploy front-ends
-for host in play login
+
+echo "Pre-deployment for play.$cluster:"
+# safe place to copy in
+>> dist/play.preamble
+# copy in most files
+mkdir -p dist/play
+rsync --exclude='*~' --exclude='*#' -ar \
+      play/* dist/play/
+# each host copies error pages
+rsync --exclude='*~' --exclude='*#'  -ar \
+      www/error dist/play/
+# .htaccess generated above
+cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
+# Google auth linking
+### mkdir -p dist/play/.well-known
+### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
+cat - \
+ <( cd dist/ ; \
+     shar -C xz -g 9 -M -Q -q -x \
+          -n "play.$cluster $REVISION" \
+          -s "$LOCAL_USERNAME ($REALNAME)" \
+          play/ ) \
+ << PREAMBLE_END | ssh play.$cluster
+rm -fr play.$cluster.prior-deploy && \
+rm -fr play.$cluster.before-deploy && \
+mv -u play.$cluster.new play.$cluster.prior-deploy 2>/dev/null ; \
+cp -a play.$cluster play.$cluster.new && \
+cd play.$cluster.new;
+PREAMBLE_END
+rm -r dist/play
+echo "done pre-deploying play.$cluster static files"
+echo ""
+
+echo "Pre-deployment for www.$cluster:"
+# .htaccess generated above
+cp dist/htaccess.all/www.$cluster.htaccess www/.htaccess
+# Google auth linking
+### mkdir -p dist/play/.well-known
+### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
+cat - \
+ <( cd www;
+    shar -C xz -g 9 -M -Q -q -x \
+         -n "www.$cluster $REVISION" \
+         -s "$LOCAL_USERNAME ($REALNAME)" \
+         * .??* ) \
+ << PREAMBLE_END | ssh $cluster
+rm -fr $cluster.prior-deploy && \
+rm -fr $cluster.before-deploy && \
+mv -u $cluster.new $cluster.prior-deploy ; \
+cp -a $cluster $cluster.new && \
+cd $cluster.new;
+PREAMBLE_END
+
+if [ $cluster = 'test.tootsville.org' ]
+then
+    scp www/index.test.html test.tootsville.org:test.tootsville.org.new/index.html
+fi
+
+if [ $cluster = 'qa.tootsville.org' ]
+then
+    scp www/index.qa.html qa.tootsville.org:qa.tootsville.org.new/index.html
+fi
+
+echo "done pre-deploying www.$cluster static files"
+echo ""
+
+##########
+
+echobig Quicklisp update
+for host in users gossip world
 do
-    echo "Pre-deployment for $host.$cluster:"
-    # safe place to copy in
-    echo "rm -fr $host.$cluster.prior-deploy; \
-rm -fr $host.$cluster.before-deploy; \
-mv -u $host.$cluster.new $host.$cluster.prior-deploy; \
-cp -a $host.$cluster $host.$cluster.new; \
-cd $host.$cluster.new;" >> .tmp.$host.preamble
-    # copy in most files
-    mkdir .tmp.$host
-    rsync -essh --exclude='*~' --exclude='*#' -ar \
-          $host/* .tmp.$host/
-    # each host copies error pages
-    rsync -essh --exclude='*~' --exclude='*#'  -ar \
-          www/error .tmp.$host/
-    # .htaccess generated above
-    cp htaccess.all/$host.$cluster.htaccess .tmp.$host/.htaccess
-    # Google auth linking
-    mkdir -p .tmp.$host/.well-known
-    cp include/well-known.assetlinks.json .tmp.$host/.well-known/assetlinks.json || exit 5
-    ( cd .tmp.$host ; \
-      shar -C xz -g 9 -M -Q -q -x \
-           -o ../.tmp.$host.shar \
-           -n "$host.$cluster $REVISION" \
-           -s "$LOCAL_USERNAME ($REALNAME)" \
-           * )
-    cat .tmp.$host.preamble .tmp.$host.shar* | ssh $host.$cluster
-    rm -r .tmp.$host*
-    echo "done pre-deploying $host.$cluster static files"
-    echo ""
+    ssh $host.$cluster \
+        sbcl --non-interactive \
+        --no-inform \
+        --eval "'(ql:update-client)'" \
+        --eval "'(ql:update-all-dists)'" \
+        --quit
 done
 
 ##########
@@ -100,31 +205,45 @@ echobig Pre-deploy back-ends
 for host in users gossip world
 do
     # .htaccess generated above
-    scp htaccess.all/$host.$cluster.htaccess $host.$cluster: || exit 6
+    scp dist/htaccess.all/$host.$cluster.htaccess $host.$cluster: || exit 6
     # Google auth linking
-    scp include/well-known.assetlinks.json $host.$cluster: || exit 6
+    ### scp include/well-known.assetlinks.json $host.$cluster: || exit 6
 
     # update sources and compile
-    rsync -essh -Car servers $host.$cluster: || exit 6
+    rsync -essh -zar --delete servers \
+          --exclude \*~ --exclude \*.tmp \
+          $host.$cluster: || exit 6
     ssh $host.$cluster make -C servers Tootsville test || exit 6
 done
 
 ##########
 
 echobig Switching Roots
-for host in play login
-do (
-    ssh $host.$cluster "mv $host.$cluster $host.$cluster.before-deploy && mv $host.$cluster.new $host.$cluster"
-    )&
-done
+(
+    ssh play.$cluster "mv play.$cluster play.$cluster.before-deploy && mv play.$cluster.new play.$cluster"
+)&
+(
+    ssh $cluster "mv $cluster $cluster.before-deploy && mv $cluster.new $cluster"
+)&
 for host in users gossip world
 do (
-    ssh $host.$cluster "cp /usr/local/bin/Tootsville -f /usr/local/bin/Tootsville.prior; \
-cp servers/Tootsville /usr/local/bin/; \
-cp $host.$cluster.htaccess /var/www/$host.$cluster/.htaccess; \
+    ssh $host.$cluster "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
+cp $host.$cluster.htaccess --backup=simple -f /var/www/$host.$cluster/.htaccess; \
+cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
+sudo -n systemctl enable tootsville; \
+sudo -n systemctl restart tootsville; \
+sudo -n systemctl start tootsville; \
 mkdir -p /var/www/$host.$cluster/.well-known; \
-cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
-    )&
+### cp well-known.assetlinks.json /var/www/$host.$cluster/.well-known/assetlinks.json"
+)&
+done
+
+##########
+
+until [ 0 -eq $(jobs | wc -l) ]
+do
+    sleep 1
+    jobs
 done
 
 ##########
@@ -133,8 +252,76 @@ echobig Notifying Rollbar
 ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 ENVIRONMENT=$cluster
 
+VERSION=$(servers/Tootsville version-info version)
+COMPILED=$(servers/Tootsville version-info compiled)
+
 curl https://api.rollbar.com/api/1/deploy/ \
-  -F access_token=$ACCESS_TOKEN \
-  -F environment=$ENVIRONMENT \
-  -F revision=$REVISION \
-  -F local_username=$LOCAL_USERNAME
+     -F access_token=$ACCESS_TOKEN \
+     -F environment=$ENVIRONMENT \
+     -F framework=deploy-cluster \
+     -F notifier.name=deploy-cluster \
+     -F revision=$REVISION \
+     -F comment="v $VERSION built $COMPILED" \
+     -F uuid=$(uuidgen) \
+     -F local_username=$LOCAL_USERNAME
+
+##########
+
+echobig Tagging Git
+
+now=$(date +%Y-%m-%d)
+msg="Deployed v$VERSION to $cluster $now"
+
+if git rev-parse v$VERSION &>/dev/null
+then
+    echo "Previous tag v$VERSION found, adding v$VERSION-$now"
+    if git rev-parse v$VERSION-$now &>/dev/null
+    then
+        now=$(date +%Y-%m-%d.%H:%M)
+        msg="Deployed v$VERSION to $cluster $now"
+        echo " - I meant v$VERSION-$now"
+        git submodule foreach git tag -a tootsville-v$VERSION-$now -m "for Tootsville.org: $msg"
+        git tag -a v$VERSION-$now -m "$msg"
+    else
+        git submodule foreach git tag -a tootsville-v$VERSION-$now -m "for Tootsville.org: $msg"
+        git tag -a v$VERSION-$now -m "$msg"
+    fi
+else
+    echo "First deploy of v$VERSION, tagging"
+    git submodule foreach git tag -a tootsville-v$VERSION -m "for Tootsville.org: $msg"
+    git tag -a v$VERSION -m "$msg"
+fi
+
+git push --tags origin
+git submodule foreach git push --tags origin
+git push --tags github
+git push --tags gitlab
+git push --tags goethe
+
+##########
+
+echobig Checking version
+for host in users world gossip
+do
+    if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/about/ | grep ^Version: | cut -f2)" ]
+    then
+        echo $host.$cluster: $VERSION
+    else
+        echo $host.$cluster: version mismatch! >&2
+        exit 19
+    fi
+done
+
+##########
+
+echobig Posting docs to Goethe
+make -C servers doc-publish
+
+##########
+
+if [ -t 1 ] && which img2txt 2>/dev/null
+then
+    img2txt  -W 78 -H 40  www/favicon.gif
+fi
+
+echobig Deployed $VERSION to $cluster

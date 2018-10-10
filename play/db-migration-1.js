@@ -9,6 +9,5 @@ Tootsville.db.migrateTo[1] = function(db) {
                 done(db);
             };
         };
-    });              
+    });
 };
-

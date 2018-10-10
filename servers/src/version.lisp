@@ -17,12 +17,6 @@ in HTTP headers and such."
                "/"
                (romance-ii-program-version)))
 
-(defun unembarassing (string)
-  (loop for ((from to)) on '(("\\(R\\)" "®") ("\\(tm\\)" "™") ("\\(TM\\)" "™"))
-        do (setf string
-                 (cl-ppcre:regex-replace-all from string to)))
-  string)
-
 (defun ensure-site-name ()
   (unless (and (short-site-name)
                (long-site-name))
@@ -39,24 +33,6 @@ in HTTP headers and such."
 (defvar *romance-ii-copyright-latest*)
 
 (eval-when (:compile-toplevel :load-toplevel)
-  (defun year<-universal-time (time)
-    (nth-value 5 (decode-universal-time time)))
-
-  (defun file-write-year (file)
-    (or (year<-universal-time (file-write-date file))
-        0))
-
-  (defun map-asdf-files (function module)
-    (check-type function function)
-    (check-type module asdf/component:module)
-    (mapcan (lambda (child)
-              (etypecase child
-                (asdf/component:module (map-asdf-files function child))
-                (asdf/component:file-component
-                 (list (funcall function
-                                (slot-value child 'asdf/component::absolute-pathname))))))
-            (asdf:component-children module)))
-
   (defun romance-ii-copyright-latest ()
     (if (boundp '*romance-ii-copyright-latest*)
         *romance-ii-copyright-latest*
@@ -65,37 +41,52 @@ in HTTP headers and such."
                                            (asdf:find-system :tootsville))))))
   (romance-ii-copyright-latest))
 
+(defun tootsville-v-banner ()
+  (format nil
+          "~&~|
+Tootsville Ⅴ, version ~a.
+
+Copyright © 2016,2017, Bruce-Robert Pocock
+Copyright  ©  2018~@[-~d~],  the  Corporation  for  Inter-World  Tourism
+and Adventuring.
+
+Licensed  under the  terms of  the  GNU Affero  General Public  License,
+version 3.~%~%"
+          (romance-ii-version)
+          (= 2018 *romance-ii-copyright-latest*)
+          *romance-ii-copyright-latest*))
+
 (defun version-info-list ()
   (ensure-site-name)
   (let ((basics
-          (list :product (romance-ii-program-name)
-                :version (romance-ii-program-version)
-                :copyright (format nil "© ~d Bruce-Robert Pocock"
-                                   (romance-ii-copyright-latest))
-                :environment (list :configuration (cond ((developmentp) "development")
-                                                        ((productionp) "production")
-                                                        (t "unknown"))
-                                   :developmentp (developmentp)
-                                   :productionp (productionp))
-                :machine (list :version (unembarassing (machine-version))
-                               :type (machine-type)
-                               :instance (string-capitalize (machine-instance)))
-                :site (list :short-name (short-site-name)
-                            :long-name (long-site-name))
-                :lisp (list :type (lisp-implementation-type)
-                            :version (lisp-implementation-version))
-                :software (list :type (software-type)
-                                :version (software-version))
-                :copyright-latest (romance-ii-copyright-latest)
-                :build-date tootsville::*build-date*
-                :compiled tootsville::*compiled*)))
-    (when hunchentoot:*request*
+         (list :product (romance-ii-program-name)
+               :version (romance-ii-program-version)
+               :copyright (format nil "© ~d Bruce-Robert Pocock"
+                                  (romance-ii-copyright-latest))
+               :environment (list :configuration (cond ((developmentp) "development")
+                                                       ((productionp) "production")
+                                                       (t "unknown"))
+                                  :developmentp (developmentp)
+                                  :productionp (productionp))
+               :machine (list :version (unembarassing (machine-version))
+                              :type (machine-type)
+                              :instance (string-capitalize (machine-instance)))
+               :site (list :short-name (short-site-name)
+                           :long-name (long-site-name))
+               :lisp (list :type (lisp-implementation-type)
+                           :version (lisp-implementation-version))
+               :software (list :type (software-type)
+                               :version (software-version))
+               :copyright-latest (romance-ii-copyright-latest)
+               :build-date tootsville::*build-date*
+               :compiled tootsville::*compiled*)))
+    (when (and (boundp 'hunchentoot:*request*) hunchentoot:*request*)
       (appendf basics
                (list :request (list :name (hunchentoot:local-addr*)
                                     :port (hunchentoot:local-port*)
                                     :protocol (hunchentoot:server-protocol*)))))
 
-    (when hunchentoot:*acceptor*
+    (when (and (boundp 'hunchentoot:*acceptor*) hunchentoot:*acceptor*)
       (appendf
        basics
        (list :acceptor
@@ -107,17 +98,6 @@ in HTTP headers and such."
                    :address (hunchentoot:acceptor-address hunchentoot:*acceptor*)))))
     basics))
 
-(defendpoint (:get "/version" "application/json")
-  (list 200 nil (plist-alist (version-info-list))))
-
-(defendpoint (:get "/version" "text/plain")
-  (list 200 nil (version-info-report-string '(:*))))
-
-(defendpoint (:get "/version/:param" "text/plain")
-  (list 200 nil
-        (version-info-report-string
-         (uiop:split-string param :separator "/"))))
-
 (defun extract-plist-path (path plist &optional prefix)
   (labels ((prefixed (key)
              (if prefix
@@ -127,8 +107,8 @@ in HTTP headers and such."
     (etypecase path
       (null (if (consp plist)
                 (loop for (key . value) on plist by #'cddr
-                      append (extract-plist-path nil (car value)
-                                                 (prefixed key)))
+                   append (extract-plist-path nil (car value)
+                                              (prefixed key)))
                 (list prefix plist)))
       (cons (extract-plist-path (rest path) (getf plist (first path))
                                 (prefixed (first path))))
@@ -153,15 +133,15 @@ in HTTP headers and such."
                       (or args '(:*))))
         (info (version-info-list)))
     (loop for key in keys
-          appending
-          (cond
-            ((find #\/ (string key))
-             (extract-plist-path (mapcar #'make-keyword
-                                         (split-sequence #\/ (string key)))
-                                 info))
-            ((equal :* key)
-             (extract-plist-path nil info))
-            (t (list key (getf info key)))))))
+       appending
+         (cond
+           ((find #\/ (string key))
+            (extract-plist-path (mapcar #'make-keyword
+                                        (split-sequence #\/ (string key)))
+                                info))
+           ((equal :* key)
+            (extract-plist-path nil info))
+           (t (list key (getf info key)))))))
 
 (defun version-info-report-string (args)
   (with-output-to-string (s)

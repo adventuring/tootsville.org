@@ -6,24 +6,24 @@
   request. </p>
 
 <p> The  collection of  back-end workers that  should have  handled your
-request was <tt><!--#echo var="HTTP_HOST"--></tt>. </p>
+  request was <tt><!--#echo var="HTTP_HOST"--></tt>. </p>
 
-<!--#if expr="%{HTTP_HOST} =~ /tootsville.ga/" -->
+<!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/" -->
 <p> <q>Tootsville.ga</q> are testing servers. It's possible that a software
-experiment is being tested right now that has caused a disruption. </p>
+  experiment is being tested right now that has caused a disruption. </p>
 <!--#endif-->
 
 <!--#if expr="%{HTTP_HOST} =~ /tootsville.org/" -->
 <p> <q>Tootsville.org</q> are our main servers. Unfortunately, a disruption
-like this will probably affect many or most of our players. We'll attempt to
-restore service quickly; check <a
-href="https://www.tootsbook.com/">Tootsbook.com</a> for updates. If this
-outage has not yet been reported, you can <a
-href="mailto:support@tootsville.net?subject=503+error+seen+on+tootsville.org+cluster">send
-an e-mail message to our support team</a> in case we haven't found out yet.
-</p> 
+  like this will probably affect many or most of our players. We'll attempt to
+  restore service quickly; check <a
+                                   href="https://www.tootsbook.com/">Tootsbook.com</a> for updates. If this
+  outage has not yet been reported, you can <a
+                                              href="mailto:support@tootsville.net?subject=503+error+seen+on+tootsville.org+cluster">send
+    an e-mail message to our support team</a> in case we haven't found out yet.
+</p>
 <!--#endif-->
 
 
 
-<a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Error_502">(Learn More…)</a> <!--#include file="error-footer.htmlf"-->
+<a href="https://wiki.tootsville.org/wiki/Error_502">(Learn More…)</a> <!--#include file="error-footer.htmlf"-->

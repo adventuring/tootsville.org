@@ -56,7 +56,8 @@
     }
 
     function logNameForStartTime (startTime) {
-        return "Tootsville log for " + Tootsville.charName +
+        return "Tootsville log for " +
+            (Tootsville.character && Tootsville.character.name || 'No character') +
             "(" + (startTime.toISOString()) + ")";
     }
 

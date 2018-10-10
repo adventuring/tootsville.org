@@ -1,5 +1,5 @@
 ;;;; redirect.lisp — HTTP redirect
-(in-package :tootsville)
+(in-package :Tootsville)
 
 (defun redirect-to/html-body (uri)
   "Returns an octet array that gives a simple redirection link.
@@ -21,50 +21,6 @@ but sometimes caught by tools like curl or wget with certain settings."
                uri
                "</a></html>"))
 
-(defun host-name-char-p (char)
-  (check-type char character)
-  (or (char<= #\a char #\z)
-      (char<= #\A char #\Z)
-      (char<= #\0 char #\9)
-      (char= #\. char)
-      (char= #\- char)))
-
-(defun two-chars-in-a-row (string char-bag)
-  "Do any two characters in CHAR-BAG occur together in STRING?"
-  (check-type string string)
-  (check-type char-bag sequence)
-  (loop for i from 1 below (length string)
-        when (and (find (char string i) char-bag)
-                  (find (char string (1- i)) char-bag))
-          do (return-from two-chars-in-a-row t))
-  nil)
-
-(defun host-name-like-p (name)
-  (check-type name string)
-  (and (every #'host-name-char-p name)
-       (not (char= #\- (char name 0)))
-       (not (char= #\- (char name (1- (length name)))))
-       (not (two-chars-in-a-row name ".-"))
-       (let ((parts (uiop:split-string name ".")))
-         (every #'alpha-char-p (last parts))
-         (<= 2 (length (last parts))))))
-
-(defun www-uri-like-p (uri)
-  (check-type uri string)
-  (and (<= 3 (count #\/ uri))
-       (destructuring-bind (method _ host+port)
-           (uiop:split-string uri :separator "/" :max 3)
-         (and (member method '("http:" "https:") :test #'string=)
-              (emptyp _)
-              (host-name-like-p (subseq host+port
-                                        0
-                                        (position #\: host+port)))))))
-
-(deftype dns-name ()
-  '(and string (satisfies host-name-like-p)))
-
-(deftype www-uri ()
-  '(and string (satisfies www-uri-like-p)))
 
 (defun redirect-to (uri &optional (status 307))
   "Redirect to  another URI. Status code  307 for temporary, 301  or 308
@@ -81,8 +37,8 @@ via `REDIRECT-TO/HTML/BODY'."
     (list
      status
      `(:location ,uri
-       :x-redirected-by ,(romance-ii-program-name/version)
-       :content-type "text/html")
+                 :x-redirected-by ,(romance-ii-program-name/version)
+                 :content-type "text/html")
      (redirect-to/html-body uri))))
 
 (defmethod on-exception (code)

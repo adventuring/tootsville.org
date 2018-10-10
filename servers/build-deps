@@ -5,3 +5,11 @@ gnupg
 uglify-js
 emacs-nox
 rlwrap
+nodejs-less nodejs-source-map readline-devel
+sbcl
+curl
+gpg
+closure-compiler
+sharutils
+texinfo
+texinfo-tex

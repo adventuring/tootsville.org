@@ -7,20 +7,20 @@
         (warn "Error reading system definition file ~a: ~a"
               asd-path error)))
     (let ((systems
-            (loop
+           (loop
               for index from 1
 
               for form =
-                       (handler-case
-                           (read asd nil nil)
-                         (error (error)
-                           (warn "Error reading ~:r form in ~a: ~a"
-                                 index asd-path error)))
+                (handler-case
+                    (read asd nil nil)
+                  (error (error)
+                    (warn "Error reading ~:r form in ~a: ~a"
+                          index asd-path error)))
 
               while form
               when (and (listp form)
                         (string-equal (first form) "DEFSYSTEM"))
-                collect (second form))))
+              collect (second form))))
       (cond ((null systems)
              (warn "No DEFSYSTEM forms found in ~a" asd-path))
             (t

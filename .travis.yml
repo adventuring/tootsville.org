@@ -1,0 +1,30 @@
+language: lisp
+sudo: required
+
+git:
+  submodules: true
+
+env:
+  matrix:
+    - LISP=sbcl
+    - LISP=ecl
+    - LISP=ccl
+
+before_install:
+  - echo "Changing submodule pointers to use HTTPS URL's for Travis"
+  - sed -e 's#git@github.com:#https://github.com/#' -i .gitmodules
+  - git submodule sync
+  - echo "Updating submodules"
+  - git submodule update --init --recursive
+
+install:
+  - curl -L https://github.com/luismbo/cl-travis/raw/master/install.sh | sh
+  - sh -c 'make deps || true'
+#  - bin/ensure-sane-sbcl
+
+script:
+  - make -C servers Tootsville
+  - make -C servers test
+  
+addons:
+  srcclr: true

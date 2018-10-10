@@ -1,18 +1,19 @@
 #!/bin/sh
 
-mkdir -p "$(dirname $0)"/../htaccess.all/
-rm -r "$(dirname $0)"/../htaccess.all/*
-cd "$(dirname $0)"/../htaccess.all/
-    for cluster in tootsville.org tootsville.ga ; do
+mkdir -p "$(dirname $0)"/../dist/htaccess.all/
+rm -fr "$(dirname $0)"/../dist/htaccess.all/*
+cd "$(dirname $0)"/../dist/htaccess.all/
+    for cluster in tootsville.org test.tootsville.org qa.tootsville.org ; do
         echo '{' >> $cluster.cluster.json
-        for host in play gossip world login users ; do
-            sed ../htaccess.base -e s/@@HOST@@/$host/g \
+        for host in www play gossip world users ; do
+            sed ../../htaccess.base -e s/@@HOST@@/$host/g \
                 -e s/@@CLUSTER@@/$cluster/g \
                 | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
                        > $host.$cluster.htaccess
             echo "\"$host\": \"$host.$cluster\"," >> $cluster.cluster.json
         done
     done
-    echo '"productionP":true,"testP":false}' >> tootsville.org.cluster.json
-    echo '"productionP":false,"testP":true}' >> tootsville.ga.cluster.json
+    echo '"productionP":true,"developmentP":false}' >> tootsville.org.cluster.json
+    echo '"productionP":false,"developmentP":true}' >> test.tootsville.org.cluster.json
+    echo '"productionP":false,"developmentP":true}' >> qa.tootsville.org.cluster.json
 

@@ -27,3 +27,6 @@
 # Output files
 dist/
 htaccess.all
+www/.htaccess
+TODO.org
+TODO.scorecard

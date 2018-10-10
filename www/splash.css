@@ -3,15 +3,15 @@
 
 * { transition: 2s ease-in-out }
 
-html { 
-    margin: 0; 
+html {
+    margin: 0;
     padding: 0;
     background-color: #ccf;
     font-family: Acme, sans-serif;
 }
-body { 
-    color: black; 
-    background-color: white; 
+body {
+    color: black;
+    background-color: white;
     margin: 3rem 1rem 3rem 1rem;
     padding: 1rem 2rem 1rem 2rem;
     border: 0 solid white;
@@ -41,13 +41,13 @@ body {
     float: left;
 }
 body>ul { display: block;
-     align-content: center;
-     width: 33%;
-     margin-left: 27.5%;
-}
+          align-content: center;
+          width: 33%;
+          margin-left: 27.5%;
+        }
 body>ul>li { display: block;
-        align-content: center;
-}
+             align-content: center;
+           }
 body>ul>li>a {
     display: block;
     text-decoration: none;
@@ -59,10 +59,10 @@ body>ul>li>a {
     font-weight: bold;
     font-family: Acme, sans-serif;
     text-shadow:
-    -1px -1px 0 #000,  
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
     font-size: 2rem;
     letter-spacing: .2rem;
     font-variant: small-caps;
@@ -70,10 +70,10 @@ body>ul>li>a {
 }
 body>ul>li>a:hover {
     box-shadow:
-    -.2rem -.2rem 0 #ffc636,
-    .2rem -.2rem 0 #ffc636,
-    -.2rem .2rem 0 #ffc636,
-    .2rem .2rem 0 #ffc636;
+        -.2rem -.2rem 0 #ffc636,
+        .2rem -.2rem 0 #ffc636,
+        -.2rem .2rem 0 #ffc636,
+        .2rem .2rem 0 #ffc636;
     color: #ffee6c;
 }
 #tootsvilleorg { background-color: #9669ad }
@@ -110,8 +110,8 @@ body>ul>li>a:hover {
 .post-footer {
     position: fixed;
     bottom: 0;
-    font-family: Cantarell, serif; 
-    font-size: .8rem; 
+    font-family: Cantarell, serif;
+    font-size: .8rem;
     color: #444;
     border: 1px solid white;
     background-color: white;
@@ -124,11 +124,11 @@ body>ul>li>a:hover {
 @media screen and (max-width:60em) {
     body { margin: 1.25rem 0 5rem 0; }
     #builder-toot {
-       position: absolute;
-       top: 5rem;
-       left: 50vw;
-       width: 100%;
-       opacity: .20;
+        position: absolute;
+        top: 5rem;
+        left: 50vw;
+        width: 100%;
+        opacity: .20;
     }
     #logo {
         float: left;
@@ -151,11 +151,11 @@ body>ul>li>a:hover {
     body { margin: 0 0 0 0 }
     .post-footer { position: relative; top: 0; left: 0 }
     #tootsville { top: -1rem; width: 20rem }
-    #builder-toot { position: absolute; 
-        top: 0;
-        right: 0;
-        height: 100%;
-        opacity: .20 }
+    #builder-toot { position: absolute;
+                    top: 0;
+                    right: 0;
+                    height: 100%;
+                    opacity: .20 }
     #logo { display: inline-block; width: 4rem; margin: 1rex; }
     body>ul {
         display: block;

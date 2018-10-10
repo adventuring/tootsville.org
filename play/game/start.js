@@ -15,7 +15,7 @@ window.addEventListener('load', () => {
     window.addEventListener('click', Tootsville.ui.onFirstClick);
 
     document.addEventListener('fullscreenchange', Tootsville.ui.setFullscreenFromNavigator);
-    
+
     Tootsville.game.hideWhenGameReady();
 
     Tootsville.game.stopSlowLoadingWatchdogs();
