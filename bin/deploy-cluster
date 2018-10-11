@@ -214,6 +214,10 @@ do
           --exclude \*~ --exclude \*.tmp \
           $host.$cluster: || exit 6
     ssh $host.$cluster make -C servers Tootsville test || exit 6
+    
+    # Update error pages. No need to be so careful, here.
+    rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
+       www/error $host.$cluster:/var/www/$host.$cluster/
 done
 
 ##########
