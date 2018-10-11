@@ -14,7 +14,7 @@
 
 (defun slot-values (object)
   "For any OBJECT, this returns a list; each element is a PList with a slot
-  name and value, encoded in JSON."
+ name and value, encoded in JSON."
   (loop for slot in (condition-slots object)
      collecting
        (list :slot (symbol-name slot)
@@ -32,7 +32,7 @@
 
 (defun parse-backtrace (bt)
   "Break lines of a backtrace into error messag, date/time, and call frames
-  (stack)" 
+ (stack)"
   (destructuring-bind (header &rest frames) (split-backtrace bt)
     (let ((error-msg (subseq header
                              (position #\: header :from-end t)))
@@ -119,6 +119,3 @@
          (handler-bind
              ((error (lambda (c) (present-error-to-client c env))))
            (funcall app))))))
-
-
-

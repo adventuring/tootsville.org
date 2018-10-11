@@ -5,7 +5,8 @@
   (:import-from :alexandria #:when-let #:if-let)
   (:import-from :fare-memoization #:define-memo-function)
   (:import-from :oliphaunt #:processor-count)
-  (:export #:thread-pool-taskmaster))
+  (:export #:thread-pool-taskmaster
+           #:*developmentp*))
 
 (in-package #:thread-pool-taskmaster)
 
@@ -85,6 +86,8 @@
 
 (defparameter *mulligans* 5)
 
+(defparameter *developmentp* nil)
+
 (defmacro with-mulligan-handlers ((name mulligan) &body body)
   `(handler-bind
        ((error
@@ -93,9 +96,7 @@
                           "Error signalled: worker ~a: ~:(~a~)~%~a"
                           ,name (class-of condition) condition)
            (cond
-             ((and (find-package :Tootsville)
-                   (fboundp (intern "DEVELOPMENTP" :Tootsville))
-                   (funcall (intern "DEVELOPMENTP" :Tootsville)))
+             (*developmentp*
               (signal condition))
              ((plusp (the fixnum ,mulligan))
               (verbose:info '(:thread-pool-worker :worker-mulligan)

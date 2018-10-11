@@ -4,7 +4,7 @@
 (defparameter *maintenance-tasks-performed* nil)
 
 (defendpoint (:get "/maintenance/" "text/plain")
-  (list 401 nil "You are not the boss of me."))
+    (list 401 nil "You are not the boss of me."))
 
 (defmacro with-continuable-errors-skipped (&body body)
   `(handler-case
@@ -48,8 +48,8 @@
            (setf (getf *maintenance-tasks-performed* ,task-start-sym)
                  (get-universal-time))
            (with-standard-streams-to-string
-             (with-continuable-errors-skipped
-               ,@body))
+               (with-continuable-errors-skipped
+                   ,@body))
          (setf (getf *maintenance-tasks-performed* ,task-sym)
                (get-universal-time))))))
 
@@ -58,7 +58,7 @@
   `(defendpoint (:post ,(concatenate 'string
                                      "/maintenance/"
                                      (string-downcase label)))
-     nil
+       nil
      (verbose:info :maintenance
                    ,(format nil "Maintenance request: ~a (~a)" label name))
      (with-maintenance-times (,label

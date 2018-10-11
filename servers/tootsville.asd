@@ -70,12 +70,15 @@ REST services for the front-end."
              (:file "version" :depends-on ("package" "config"))
              (:file "logging" :depends-on ("package" "version"))
              (:file "write-docs" :depends-on ("package"))
+             (:file "power-on-self-test" :depends-on ("web" "endpoints"))
+             (:file "version" :depends-on ("package" "config"))
              (:file "command-line" :depends-on ("main" "logging" "write-docs"))
+             (:file "db-player" :depends-on ("db" "package"))
              (:file "web"
                     :depends-on ("view" "db-player" "errors" "config"))
              (:file "http-error" :depends-on ("web"))
              (:file "redirect" :depends-on ("web"))
-             (:file "main" :depends-on ("config" "utils" "view" "db" "web" "package"))
+             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
              (:module "endpoints"
                       :depends-on ("web")
                       :components

@@ -32,6 +32,8 @@
 (defun load-config (&optional (config-file (default-config-file)))
   "Load the configuration from CONFIG-FILE."
   (load config-file)
+  (when (developmentp)
+    (setf thread-pool-taskmaster:*developmentp* t))
   (setf *config-file* (list :path config-file
                             :truename (truename config-file)
                             :read (get-universal-time)
@@ -108,4 +110,3 @@ Returns one of:
 (defun productionp ()
   "Returns true if this is the Production cluster"
   (not (developmentp)))
-

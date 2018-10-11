@@ -5,7 +5,6 @@
   (:use :alexandria :cl :local-time :bordeaux-threads
         :oliphaunt)
   (:shadowing-import-from :cl-fad #:copy-file #:copy-stream) ; conflicts with Alexandria.
-  (:import-from :split-sequence #:split-sequence)
   (:import-from :envy
                 #:config-env-var
                 #:defconfig)

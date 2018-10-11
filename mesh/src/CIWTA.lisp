@@ -11,16 +11,16 @@
 
 (defvar *game-state*
   `( :google-user nil
-     :facebook-user nil
-     :oauth-user nil
-     :location-info nil
-     :player-info nil
-     :overlay-active "game-welcome"
-     :server-info ( :url ,(concatenate 'string
-                                       #j:document:location:protocol
-                                       "//"
-                                       #j:document:location:host
-                                       "/tootsville/action"))))
+                  :facebook-user nil
+                  :oauth-user nil
+                  :location-info nil
+                  :player-info nil
+                  :overlay-active "game-welcome"
+                  :server-info ( :url ,(concatenate 'string
+                                                    #j:document:location:protocol
+                                                    "//"
+                                                    #j:document:location:host
+                                                    "/tootsville/action"))))
 
 (defun log (format &rest args)
   (#j:console:log (apply #'format nil format args)))
