@@ -55,29 +55,27 @@ REST services for the front-end."
   :components
   ((:module "src"
             :components
-            ((:file "package")
+            ((:file "lib/Chœrogryllum/Chœrogryllum")
+             (:file "package")
              (:file "utils" :depends-on ("package"))
+             (:file "types" :depends-on ("utils"))
              (:file "config" :depends-on ("package" "types"))
              (:file "view" :depends-on ("config"))
-             (:file "lib/Chœrogryllum/Chœrogryllum")
              (:file "db" :depends-on ("config"))
-             (:file "users" :depends-on ("utils" "db"))
+             (:file "db-player" :depends-on ("db" "package"))
+             (:file "users" :depends-on ("utils" "db" "db-player"))
              (:file "toots" :depends-on ("utils" "db"))
              (:file "players" :depends-on ("utils" "db"))
-             (:file "types" :depends-on ("utils"))
              (:file "errors" :depends-on ("package"))
+             (:file "version" :depends-on ("package" "config"))
              (:file "logging" :depends-on ("package" "version"))
              (:file "write-docs" :depends-on ("package"))
-             (:file "power-on-self-test" :depends-on ("web" "endpoints"))
-             (:file "version" :depends-on ("package" "config"))
              (:file "command-line" :depends-on ("main" "logging" "write-docs"))
-             (:file "db-player" :depends-on ("db" "package"))
              (:file "web"
                     :depends-on ("view" "db-player" "errors" "config"))
              (:file "http-error" :depends-on ("web"))
-
              (:file "redirect" :depends-on ("web"))
-             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
+             (:file "main" :depends-on ("config" "utils" "view" "db" "web" "package"))
              (:module "endpoints"
                       :depends-on ("web")
                       :components
@@ -98,4 +96,5 @@ REST services for the front-end."
                                           ((:file "alexa")
                                            (:file "info" :depends-on ("alexa"))
                                            (:file "chat" :depends-on ("alexa"))
-                                           (:file "clock" :depends-on ("alexa"))))))))))))
+                                           (:file "clock" :depends-on ("alexa"))))))))
+             (:file "power-on-self-test" :depends-on ("web" "endpoints"))))))
