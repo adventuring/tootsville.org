@@ -1,12 +1,12 @@
 (unless (find-package :ql)
-  (let ((quicklisp.lisp (merge-pathnames 
+  (let ((quicklisp.lisp (merge-pathnames
                          (make-pathname :directory '(:relative "quicklisp")
                                         :name "setup" :type "lisp")
                          (user-homedir-pathname))))
     (when (probe-file quicklisp.lisp)
       (load quicklisp.lisp)))
   (unless (find-package :ql)
-    (flet ((check-installed (command 
+    (flet ((check-installed (command
                              &optional (package command))
              (handler-case (uiop/run-program:run-program
                             (format nil "which ~a" command))

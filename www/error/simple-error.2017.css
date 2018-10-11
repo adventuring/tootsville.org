@@ -2,15 +2,15 @@
 @import url(https://fonts.googleapis.com/css?family=Cantarell);
 @import url(https://fonts.googleapis.com/css?family=Inconsolata);
 
-html { 
-    margin: 0; 
+html {
+    margin: 0;
     padding: 0;
     background-color: #ccf;
     font-family: Acme, sans-serif;
 }
-body { 
-    color: black; 
-    background-color: white; 
+body {
+    color: black;
+    background-color: white;
     margin: 3rem 1rem 3rem 1rem;
     padding: 1rem 2rem 1rem 2rem;
     border: 0 solid white;
@@ -40,11 +40,11 @@ body {
     float: left;
 }
 body>#redirect>ul { display: block;
-     align-content: center;
-     width: 33%;
-     margin-left: 27.5%;
-}
-body>#redirect>ul>li { 
+                    align-content: center;
+                    width: 33%;
+                    margin-left: 27.5%;
+                  }
+body>#redirect>ul>li {
     display: block;
     align-content: center;
     text-align: center;
@@ -63,10 +63,10 @@ body>#redirect>ul>li>a {
     font-weight: bold;
     font-family: Acme, sans-serif;
     text-shadow:
-    -1px -1px 0 #000,  
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
     font-size: 2rem;
     letter-spacing: .2rem;
     font-variant: small-caps;
@@ -74,10 +74,10 @@ body>#redirect>ul>li>a {
 }
 body>#redirect>ul>li>a:hover {
     box-shadow:
-    -.2rem -.2rem 0 #ffc636,
-    .2rem -.2rem 0 #ffc636,
-    -.2rem .2rem 0 #ffc636,
-    .2rem .2rem 0 #ffc636;
+        -.2rem -.2rem 0 #ffc636,
+        .2rem -.2rem 0 #ffc636,
+        -.2rem .2rem 0 #ffc636,
+        .2rem .2rem 0 #ffc636;
     color: #ffee6c;
 }
 #tootsvilleorg { background-color: #9669ad }
@@ -103,8 +103,8 @@ body>#redirect>ul>li>a:hover {
 .post-footer {
     position: fixed;
     bottom: 0;
-    font-family: Cantarell, serif; 
-    font-size: .8rem; 
+    font-family: Cantarell, serif;
+    font-size: .8rem;
     color: #444;
 }
 .post-footer a:link, .post-footer a:visited {

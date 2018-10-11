@@ -6,10 +6,14 @@ After=network.target remote-fs.target nss-lookup.target httpd-init.service
 Type=simple
 Environment=LANG=C
 
-ExecStart=sudo pil /usr/local/bin/Tootsville daemon
+ExecStart=/bin/bash -c 'exec /usr/bin/sudo -n -u pil /usr/local/bin/Tootsville daemon'
 #ExecReload=
-ExecStop=sudo pil killall Tootsville
+ExecStop=/bin/bash -c 'exec /usr/bin/sudo -n -u pil killall Tootsville'
 #/usr/local/bin/Tootsville swank-send-stop
+
+PrivateTmp=true
+
+#PidFile=/var/run/tootsville.pid
 
 [Install]
 WantedBy=multi-user.target

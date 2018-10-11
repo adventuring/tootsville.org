@@ -48,7 +48,7 @@ deploy:	bin test server-push doc-publish
 
 VERSION=$(shell grep :version tootsville.asd | cut -d '"' -f 2)
 doc-publish:	doc
-	rsync -rv -essh doc/* goethe.tootsville.org:goethe.tootsville.adventuring.click/devel/docs/Tootsville/$(VERSION)/
+	rsync -rv -essh doc/* goethet@goethe.tootsville.org:goethe.tootsville.org/devel/docs/Tootsville/$(VERSION)/
 
 bin:	Tootsville
 
@@ -81,7 +81,7 @@ Tootsville.new:	quicklisp-manifest.tmp bin/buildapp
 		--manifest-file quicklisp-manifest.tmp \
 		--load "src/setup.lisp" \
 		--load tootsville.asd \
-		--load-system tootsville \
+		--eval '(ql:quickload :Tootsville)' \
 		--entry Tootsville:entry
 
 quicklisp-manifest.tmp:	tootsville.asd \
@@ -92,7 +92,7 @@ quicklisp-manifest.tmp:	tootsville.asd \
 	sbcl --no-userinit --no-sysinit --non-interactive \
 		--load src/setup.lisp \
 		--load tootsville.asd \
-		--load-system tootsville \
+		--eval '(ql:quickload :Tootsville)' \
 		--eval '(ql:write-asdf-manifest-file "quicklisp-manifest.tmp")'
 
 test:	bin
@@ -123,11 +123,11 @@ doc/Tootsville.html.d/index.html:	doc/Tootsville.texi
 		--html --css-include=../src/static/css/doc.css \
 		--split=node Tootsville.texi
 
-doc/Tootsville.ps:	doc/Tootsville.texi
-	cd doc; makeinfo --ps -o Tootsville.ps Tootsville.texi
+doc/Tootsville.ps:	doc/Tootsville.pdf
+	cd doc; pdf2ps Tootsville.pdf
 
 doc/Tootsville.pdf:	doc/Tootsville.texi
-	cd doc; makeinfo --pdf -o Tootsville.pdf Tootsville.texi
+	cd doc; PDFLATEX=xelatex texi2pdf Tootsville.texi 
 
 doc/Tootsville.txt:	doc/Tootsville.texi
 	cd doc; makeinfo --plaintext -o Tootsville.txt Tootsville.texi
@@ -153,6 +153,6 @@ all-docs: \
 doc/Tootsville.texi:	Tootsville
 	./Tootsville write-docs
 
-install:	Tootsville.service Tootsville
+install:	tootsville.service Tootsville
 	cp Tootsville /usr/local/bin/
-	cp Tootsville.service /usr/lib/systemd/user/
+	cp tootsville.service /usr/lib/systemd/system/

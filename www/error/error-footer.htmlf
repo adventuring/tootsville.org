@@ -2,22 +2,22 @@
 <section id="redirect">
   <ul>
     <li> <a id="tootsvilleorg"
-            href="https://www.tootsville.org/">Tootsville.org</a> 
+            href="https://www.tootsville.org/">Tootsville.org</a>
       <br> Fun, free, for everyone! </li>
     <li> <a id="play-now"
             href="https://play.tootsville.org/play">Play
-        Now</a> 
+        Now</a>
       <br> No downloads needed! </li>
     <li> <a id="tootsbook"
-            href="https://www.tootsbook.com/tootsbook/">Tootsbook</a> 
+            href="https://www.tootsbook.com/tootsbook/">Tootsbook</a>
       <br> News &amp; Blogs </li>
     <li> <a id="wiki-wiki"
-            href="https://wikiwiki.tootsville.adventuring.click/">Wiki-Wiki</a> 
+            href="https://wiki.tootsville.org/">Wiki-Wiki</a>
       <br> Tootsville Encyclopædia </li>
   </ul>
 </section>
 
-<!--#if expr="%{HTTP_HOST} =~ /tootsville.ga/"-->
+<!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/"-->
 
 <section style="border: 3pt solid red; padding: 1rem">
 
@@ -33,8 +33,8 @@
 
 <!--#endif-->
 
-   <br> <small> This is the host <tt><!--#echo var="HTTP_HOST"--></tt> (server <tt><!--#echo
-     var="SERVER_NAME"--></tt>). </small>
+<br> <small> This is the host <tt><!--#echo var="HTTP_HOST"--></tt> (server <tt><!--#echo
+                                                                                    var="SERVER_NAME"--></tt>). </small>
 
 </body>
 </html>

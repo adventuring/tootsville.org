@@ -10,3 +10,6 @@ sbcl
 curl
 gpg
 closure-compiler
+sharutils
+texinfo
+texinfo-tex

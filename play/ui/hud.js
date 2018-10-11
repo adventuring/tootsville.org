@@ -53,7 +53,7 @@ Tootsville.hud = {
         var div = document.createElement('DIV');
         var hud = document.getElementById('hud');
         if (! hud) { return; }
-        
+
         div.id = panel + '-loading';
         div.className = 'hud-panel hud-panel-loader';
         div.style.opacity = .1;
@@ -178,7 +178,7 @@ Tootsville.hud = {
                                  - stageBox.bottom
                                  + (stageBox.height/2)
                                  - (miniBox.height/2)) + 'px';
-            
+
             mini.style.height = stageBox.height + 'px';
             mini.style.width = stageBox.width + 'px';
             mini.style.borderRadius = 0;
@@ -186,7 +186,7 @@ Tootsville.hud = {
     },
 
     returnPaperdollMini: function() {
-        var mini = document.getElementById('paperdoll-mini');    
+        var mini = document.getElementById('paperdoll-mini');
         mini.style.top = 'unset';
         mini.style.left = 'unset';
         mini.style.height = 'unset';
@@ -229,12 +229,12 @@ Tootsville.hud = {
         }
     },
     refreshEquipment: function() {
-        if (null == Tootsville.activeItem) {
+        if (null == Tootsville.player || null == Tootsville.player.activeItem) {
             document.getElementById('active-item-box').style.opacity = 0;
         } else {
             // TODO
         }
-        if (null == Tootsville.inactiveItem) {
+        if (null == Tootsville.player || null == Tootsville.player.inactiveItem) {
             document.getElementById('inactive-item-box').style.opacity = 0;
         } else {
             // TODO
@@ -242,10 +242,10 @@ Tootsville.hud = {
     },
 
     switchActiveItem: function() {
-        if (Tootsville.inactiveItem == null) { return; }
-        var prior = Tootsville.activeItem;
-        Tootsville.wardrobe.doff(Tootsville.activeItem);
-        Tootsville.wardrobe.don(Tootsville.inactiveItem);
+        if (null == Tootsville.player || null == Tootsville.player.inactiveItem) { return; }
+        var prior = Tootsville.player.activeItem;
+        Tootsville.wardrobe.doff(Tootsville.player.activeItem);
+        Tootsville.wardrobe.don(Tootsville.player.inactiveItem);
         Tootsville.wardrobe.don2(prior);
         /* TODO: cool rotate-and-swap animation between the two entities */
         Tootsville.hud.refreshEquipment();

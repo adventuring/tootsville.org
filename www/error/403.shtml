@@ -4,6 +4,6 @@
 
 <p> Access to this resource is forbidden. </p>
 <p> The resource at “<!--#echo var="REDIRECT_URL"-->” requires access
-    permissions which you do not have. </p>
+  permissions which you do not have. </p>
 
-<a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Error_403">(Learn More…)</a> <!--#include file="error-footer.htmlf"-->
+<a href="https://wiki.tootsville.org/wiki/Error_403">(Learn More…)</a> <!--#include file="error-footer.htmlf"-->

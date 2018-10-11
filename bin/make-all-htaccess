@@ -3,9 +3,9 @@
 mkdir -p "$(dirname $0)"/../dist/htaccess.all/
 rm -fr "$(dirname $0)"/../dist/htaccess.all/*
 cd "$(dirname $0)"/../dist/htaccess.all/
-    for cluster in tootsville.org tootsville.ga ; do
+    for cluster in tootsville.org test.tootsville.org qa.tootsville.org ; do
         echo '{' >> $cluster.cluster.json
-        for host in play gossip world users ; do
+        for host in www play gossip world users ; do
             sed ../../htaccess.base -e s/@@HOST@@/$host/g \
                 -e s/@@CLUSTER@@/$cluster/g \
                 | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
@@ -13,6 +13,7 @@ cd "$(dirname $0)"/../dist/htaccess.all/
             echo "\"$host\": \"$host.$cluster\"," >> $cluster.cluster.json
         done
     done
-    echo '"productionP":true,"testP":false}' >> tootsville.org.cluster.json
-    echo '"productionP":false,"testP":true}' >> tootsville.ga.cluster.json
+    echo '"productionP":true,"developmentP":false}' >> tootsville.org.cluster.json
+    echo '"productionP":false,"developmentP":true}' >> test.tootsville.org.cluster.json
+    echo '"productionP":false,"developmentP":true}' >> qa.tootsville.org.cluster.json
 

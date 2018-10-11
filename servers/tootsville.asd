@@ -17,11 +17,11 @@
 
 
 
-(defsystem tootsville
+(defsystem Tootsville
   :version "0.3.5"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
-  :bug-tracker "https://github.com/adventuring/Tootsville.org/issues"
+  :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
   :description
   "The server software monolith for REST services of Tootsville.org"
   :long-description
@@ -30,16 +30,19 @@ hostnames, are  handled from  a proxied HTTP  server. This  provides the
 REST services for the front-end."
   :depends-on (
                :bordeaux-threads
+               :cl-memcached
                :cl-ppcre
                :cl-threadpool
+               :clouchdb  
                :datafly
                :drakma
                :envy
-               :memoize
+               :fare-memoization
                :restas
                :swank
                :sxql
                :trivial-backtrace
+               :trivial-ldap
                :uiop
                :uuid
                :yason
@@ -52,103 +55,47 @@ REST services for the front-end."
   :components
   ((:module "src"
             :components
-            #+sbcl
-            ((:file "utils")
-             (:file "package" :depends-on ("utils"))
-             (:file "config" :depends-on ("package"))
+            ((:file "lib/Chœrogryllum/Chœrogryllum")
+             (:file "package")
+             (:file "utils" :depends-on ("package"))
+             (:file "types" :depends-on ("utils"))
+             (:file "config" :depends-on ("package" "types"))
              (:file "view" :depends-on ("config"))
              (:file "db" :depends-on ("config"))
-             (:file "types" :depends-on ("utils"))
-             (:file "machine" :depends-on ("utils"))
-             (:file "errors")
              (:file "db-player" :depends-on ("db" "package"))
+             (:file "users" :depends-on ("utils" "db" "db-player"))
+             (:file "toots" :depends-on ("utils" "db"))
+             (:file "players" :depends-on ("utils" "db"))
+             (:file "errors" :depends-on ("package"))
+             (:file "version" :depends-on ("package" "config"))
+             (:file "logging" :depends-on ("package" "version"))
+             (:file "write-docs" :depends-on ("package"))
+             (:file "power-on-self-test" :depends-on ("web" "endpoints"))
+             (:file "command-line" :depends-on ("main" "logging" "write-docs"))
              (:file "web"
                     :depends-on ("view" "db-player" "errors" "config"))
+             (:file "http-error" :depends-on ("web"))
              (:file "redirect" :depends-on ("web"))
              (:file "main" :depends-on ("config" "view" "db" "web" "package"))
              (:module "endpoints"
                       :depends-on ("web")
                       :components
-                      ((:file "login")
-                       (:file "version")
-                       (:file "maintenance")
-                       (:file "meta-game")
+                      ((:file "slash-login")
+                       (:file "slash-version")
+                       (:file "slash-maintenance")
+                       (:file "slash-meta-game")
                        
-                       (:file "gossip")
-                       (:file "users")
-                       (:file "world")))
-             
-             
-             #+jscl
-             (:module "mesh"
-                      :components
-                      ((:module "assets"
-                                :components
-                                ((:file "archives")
-                                 (:file "service")
-                                 (:file "torrent")))
-                       (:file "assets")
-                       (:file "babylon")
-                       (:file "chatter")
-                       (:module "device"
-                                :components
-                                ((:file "ambient-light")
-                                 (:file "network")
-                                 (:file "orientation")
-                                 (:file "vibration")))
+                       (:file "slash-gossip")
+                       (:file "slash-toots")
+                       (:file "slash-users")
+                       (:file "slash-world")
                        (:module "gossip"
-                                :components
-                                ((:file "events")
-                                 (:file "genesis")
-                                 (:file "integrity")
-                                 (:file "net")))
-                       (:file "login")
-                       (:file "package")
-                       (:module "parrot"
-                                :components
-                                ((:file "buddy-list")
-                                 (:file "child-account")
-                                 (:file "child-login")
-                                 (:file "new-player")))
-                       (:file "parrot")
-                       (:module "player-input"
-                                :components
-                                ((:file "bluetooth-gamepad")
-                                 (:file "bluetooth-wiimote")
-                                 (:file "events")
-                                 (:file "gamepad")
-                                 (:file "keyboard")
-                                 (:file "lipread")
-                                 (:file "listen")
-                                 (:file "tabletpad")
-                                 (:file "touch")))
-                       (:module "Romans"
-                                :components
-                                ((:file "Aelius-Galenus/Galen")
-                                 (:file "Appius-Claudius-Caecus/Appius")
-                                 (:file "Clodia-Metelli-Pulcher/Clodia")
-                                 (:file "Gaius-Asinius-Pollio/Asinius")
-                                 (:file "Gaius-Julius-Caesar/Caesar")
-                                 (:file "Gaius-Lutatius-Catulus/Lutatius")
-                                 (:file "Lucius-Aemilius-Regillus/Regillus")
-                                 (:file "Marcus-Vitruvius-Pollio/Vitruvius")
-                                 (:file "Narcissus/Narcissus")
-                                 (:file "Publius-Cornelius-Tacitus/Tacitus")
-                                 (:file "Rabirius/Rabirius")
-                                 (:file "Rahab/Rahab")
-                                 (:file "Sextus-Julius-Frontinus/Frontinus")))
-                       (:module "ux"
-                                :components
-                                ((:file "events")
-                                 (:file "gossip-mouse")
-                                 (:file "make-noise")
-                                 (:file "overlay")
-                                 (:file "parrot")
-                                 (:file "speak")))
-                       (:file "ciwta")
-                       (:file "webdebug")
-                       (:file "webinspect")
-                       (:file "webrepl")
-                       (:file "world/events")
-                       (:file "xhr"))))))
-  :in-order-to ((test-op (load-op Tootsville-test))))
+                                :depends-on ("slash-gossip")
+                                :components 
+                                ((:module "alexa"
+                                          :components
+                                          ((:file "alexa")
+                                           (:file "info" :depends-on ("alexa"))
+                                           (:file "chat" :depends-on ("alexa"))
+                                           (:file "clock" :depends-on
+                                           ("alexa"))))))))))))

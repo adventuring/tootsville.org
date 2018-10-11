@@ -38,7 +38,7 @@
   (let ((vhost (restas::find-vhost
                 (restas::request-hostname-port acceptor request)))
         (hunchentoot:*request* request))
-    (verbose:info :route "VHost mapping ~{~a:~a~} to ~s"
+    (verbose:info :route "Mapping ~{~a:~a~} to ~s"
                   (destructuring-bind (host . port)
                       (restas::request-hostname-port acceptor request)
                     (list host port))
@@ -97,21 +97,24 @@ redirect to default host"
 
 (defun name-all-async-threads-idle ()
   (loop for thread in (slot-value *async-tasks*
-                       'cl-threadpool::threads)
+                                  'cl-threadpool::threads)
      for i fixnum from 1
-     with count = (taskmaster-max-thread-count taskmaster)
+     with count = (taskmaster-max-thread-count taskmaster) ;; FIXME
      do (setf (sb-thread:thread-name thread)
               (format nil "Idle Asyncronous Worker (#~d of ~d)" i count))))
 
+(defun swank-connected-p ()
+  (when (swank:connection-info) t))
+
 (defun init-async ()
-    (setf *async-tasks*
+  (setf *async-tasks*
         (cl-threadpool:make-threadpool
-          +async-worker-threads+
-          :max-queue-size 1024
-          :name "Asynchronous Workers"
-          :resignal-job-conditions (not (swank-connected-p))))
+         +async-worker-threads+
+         :max-queue-size 1024
+         :name "Asynchronous Workers"
+         :resignal-job-conditions (not (swank-connected-p))))
   (cl-threadpool:start *async-tasks*)
-  (name-all-threads-idle *async-tasks*))
+  (name-all-async-threads-idle))
 
 (defun run-async (function)
   (unless *async-tasks*
@@ -206,26 +209,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
 
 
 
-
-(defun print-help ()
-  "Prints a short usage summary  to *STANDARD-OUTPUT*. Note that this is
-invoked  by calling  the  program  with “help”  as  its first  argument,
-explicitly — the default behaviour is to run as a FastCGI server."
-  (format t "~|
-Usage: Run this program with one of these verbs.
-No verb at all defaults to “repl”
-
-check — perform a very simple power-on self-test
-fast-cgi — run in FastCGI mode under an appropriate server (eg, Apache)
-repl — run a REPL (you might want to rlwrap it)
-server — start a Hunchentoot server for testing
-daemon — start a Hunchentoot server for production
-swank — start a Swank server
-version — print the precise time and date compiled (DEPRECATED)
-version-info — extract specfic version information
-write-docs — write out TeΧInfo documentation
-help — print this
-"))
+;;; build date/timestamp
 
 (defparameter *compiled* :never
   "A string representing the (fairly  precise) time at which the program
@@ -241,6 +225,9 @@ help — print this
         *build-date* (format-timestring nil (now)
                                         :format '(:year #\- :month #\- :day))))
 
+
+;;; REPL
+
 (defun start-repl ()
   "Starts a PREPL REPL."
   (ql:quickload :prepl)
@@ -249,64 +236,24 @@ help — print this
          :report-function (format *query-io* "Quit the REPL")))
     (funcall (intern "REPL" (find-package :prepl)))))
 
-(defun start-swank (&optional (port 46046))
-  "Starts a SWANK server."
+
+;;; Swank
+
+(defun start-swank (&optional (port (+ 46046 (* 2 (random 500)))))
+  "Starts a SWANK server on PORT.
+
+Writes  the   port  number   to  a  file   named  after   this  (parent)
+process's PID."
   (asdf:load-system :swank)
-  (v:info :swank
-          "~&Started Swank listener on port ~d"
-          (funcall (intern "CREATE-SERVER"
-                           (find-package :swank))
-                   :port port :dont-close t)))
+  (v:info :swank "~&Starting Swank listener on port ~d" port)
+  (swank:create-server :port port :dont-close t)
+  (ensure-directories-exist "~/run/")
+  (with-output-to-file (s (format nil "~~/run/~D.swank.port" 
+                                  (swank/backend:getpid))))
+  port)
 
-(defun inform-declt-of-agplv3 ()
-  "Adds the AGPLv3 to the list of licenses for DECLT."
-  (let ((licenses (intern "*LICENSES*" (find-package :net.didierverna.declt))))
-    (set licenses
-         (cons (eval licenses)
-               '((:agplv3
-                  "The GNU Affero General Public License"
-                  "This  program is  free  software; you  can redistribute  it
-and/or  modify it  under  the terms  of the  GNU  Affero General  Public
-License as  published by  the Free  Software Foundation;  either version
-3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program; if not,  write to the Free Software Foundation,
-Inc., 675 Mass Ave, Cambridge, MA 02139, USA."))))))
-
-(defun write-docs ()
-  "Write out the documentation in TeΧinfo format using DECLT.
-
-Note that DECLT  is not usually compiled into the  binary by default, so
-this  may  have  to  download  DECLT  and/or  its  dependencies  through
-Quicklisp when called."
-  (format *trace-output* "~& Writing documentation…")
-
-  (ql:quickload :net.didierverna.declt)
-  (let ((source-dir (asdf:component-pathname (asdf:find-system :Tootsville))))
-    (inform-declt-of-agplv3)
-    (ensure-directories-exist (merge-pathnames #p"doc/" source-dir))
-    (funcall (intern "DECLT" (find-package :net.didierverna.declt))
-             :Tootsville
-             :library "Tootsville Ⅴ (Romance Ⅱ)"
-             :texi-file (merge-pathnames #p"doc/Tootsville.texi"
-                                         source-dir)
-             :info-file (merge-pathnames #p "doc/Tootsville"
-                                         source-dir)
-             :license :agplv3
-             :declt-notice :short
-             :hyperlinks nil
-             :introduction (alexandria:read-file-into-string
-                            (merge-pathnames #p"src/doc/introduction"
-                                             source-dir))
-             :conclusion (alexandria:read-file-into-string
-                          (merge-pathnames #p"src/doc/conclusion"
-                                           source-dir)))))
+;;; Web servers
 
 (defun start-hunchentoot (&key port)
   "Start a Hunchentoot  server via `START' and fall through  into a REPL
@@ -314,6 +261,21 @@ to keep the process running."
   (start :port port)
   (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, or exit the REPL.")
   (start-repl))
+
+(defparameter *trace-output-heartbeat-time* 90)
+
+(defun start-production (&key port)
+  "Start a Hunchentoot  server via `START' and daemonize with Swank"
+  (disable-sbcl-ldb)
+  (set-up-for-daemon/start-logging)
+  (start :port port)
+  (start-swank)
+  (loop
+     (trace-output-heartbeat)
+     (sleep *trace-output-heartbeat-time*))) 
+
+
+;;; Recompilation
 
 (defvar *location-of-main* (or *load-pathname*
                                *compile-file-pathname*))
@@ -333,208 +295,3 @@ Hopefully you've already tested the changes?"
                               (user-homedir-pathname)))))
   (ql:quickload :Tootsville))
 
-(defun trace-log-file (log-dir)
-  (merge-pathnames (make-pathname :name "Tootsville.trace"
-                                  :type "log")
-                   log-dir))
-
-(defun find-log-dir ()
-  (merge-pathnames #p"./logs/Tootsville/" (user-homedir-pathname)))
-
-(defun standard-log-file (log-dir)
-  (merge-pathnames (make-pathname :name "Tootsville.standard"
-                                  :type "log")
-                   log-dir))
-
-(defun error-log-file (log-dir)
-  (merge-pathnames (make-pathname :name "Tootsville.error"
-                                  :type "log")
-                   log-dir))
-
-(defun verbose-log-file (log-dir)
-  (merge-pathnames (make-pathname :name "Tootsville.verbose"
-                                  :type "log")
-                   log-dir))
-
-(defun open-log-file (pathname)
-  (open pathname :direction :output
-        :if-exists :append
-        :if-does-not-exist :create))
-
-(defun greeting/daemon/error-output ()
-  (format *error-output*
-          "~%Error-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now)))
-  (force-output *error-output*))
-
-(defun greeting/daemon/log-output ()
-  (v:info :logging
-          "~%Log-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now))))
-
-(defun greeting/daemon/standard-output ()
-  (format t "~%Standard-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now)))
-  (force-output))
-
-(defun greeting/daemon/trace-output ()
-  (format *trace-output*
-          "~%Trace-Output: Tootsville daemon started at ~a"
-          (local-time:format-rfc3339-timestring nil (local-time:now)))
-  (force-output *trace-output*))
-
-(defun set-up-for-daemon/standard-output (log-dir)
-  (setf *standard-output* (open-log-file (standard-log-file log-dir)))
-  (greeting/daemon/standard-output))
-
-(defun set-up-for-daemon/log-output (log-dir)
-  (v:output-here (open-log-file (verbose-log-file log-dir)))
-  (greeting/daemon/log-output))
-
-(defun set-up-for-daemon/error-output (log-dir)
-  (setf *error-output* (open-log-file (error-log-file log-dir)))
-  (greeting/daemon/error-output))
-
-(defun set-up-for-daemon/trace-output (log-dir)
-  (setf *trace-output* (open-log-file (trace-log-file log-dir)))
-  (greeting/daemon/trace-output))
-
-(defun set-up-for-daemon/start-logging ()
-  (let ((log-dir (find-log-dir)))
-    (ensure-directories-exist log-dir)
-    (set-up-for-daemon/log-output log-dir)
-    (set-up-for-daemon/standard-output log-dir)
-    (set-up-for-daemon/error-output log-dir)
-    (set-up-for-daemon/trace-output log-dir)))
-
-(defun start-production (&key port)
-  "Start a Hunchentoot  server via `START' and daemonize with Swank"
-  (set-up-for-daemon/start-logging)
-  (start :port port)
-  (start-swank)
-  (loop
-     (format *trace-output* "~&//* Still Alive (~a)" (now))
-     (format *trace-output* "~{~&//  ~a~}" (bt:all-threads))
-     (format *trace-output* "~&/**")
-     (force-output *trace-output*)
-     (sleep 90))) 
-
-(defun post/read-version-page (port)
-  "Power-On-Self-Test:  Checks  that  the  server  can  respond  to  the
-version-page query locally."
-  (let ((retries 9))
-    (tagbody retry-post
-       (handler-case
-           (return-from post/read-version-page
-             (drakma:http-request
-              (format nil "http://localhost:~d/version.txt" port)))
-         (usocket:connection-refused-error (c)
-           (cond ((minusp (decf retries))
-                  (error "Failed POST: Can't connect to local server ~
-(after retries)~%~a" c))
-                 (t (format *error-output*
-                            "~&~a~%Hmm, maybe we need to wait ~
-a moment and try that again.~%" c)
-                    (force-output *error-output*)
-                    (sleep 1)
-                    (go retry-post))))))))
-
-(defun power-on-self-test (&key (exitp t))
-  "Perform some sanity checking as a part of testing.
-
-This testing should  be much more complete  than it really is  — it will
-need to be expanded a great deal to increase confidence in these tests."
-  (fresh-line)
-  (princ "Power-on self-test:")
-  (fresh-line)
-  (let ((port (+ (random 10) 27700)))
-    (handler-case (start :port port)
-      (simple-error (c) (if (find-restart :restart-server)
-                            (invoke-restart :restart-server)
-                            (signal c))))
-    (sleep 1/2) ; start time
- ;;; something that appears on the version page, but no error pages.
-    (let ((reply (prog1 (post/read-version-page port)
-                   (stop))))
-      (unless (search "Bruce-Robert Pocock" reply)
-        (warn "Failed POST~%got~%~a" reply)
-        (if exitp
-            (cl-user::exit :code 27 :abort t :timeout 5)
-            (return-from power-on-self-test nil))
-        nil)))
-  (fresh-line)
-  (princ "Passed POST")
-  (fresh-line)
-  (stop)
-  t)
-
-(defun banner/query-io ()
-  (format *query-io*
-          "~&~|
-Tootsville Ⅴ
-Copyright © ~d, Bruce-Robert Pocock
-Licensed under the terms of the GNU Affero General Public License, version 3~%~%"
-          (romance-ii-copyright-latest))
-  (finish-output *query-io*))
-
-(defun banner/log ()
-  (v:info :startup
-          "~&~|
-Tootsville Ⅴ
-Copyright © ~d, Bruce-Robert Pocock
-Licensed under the terms of the GNU Affero General Public License, version 3~%~%"
-          (romance-ii-copyright-latest))
-  (finish-output *query-io*))
-
-(defun banner/standard-output ()
-  (format t "~&~|~%~a (© ~d)" (Tootsville::romance-ii-program-name/version)
-          (romance-ii-copyright-latest))
-  (finish-output))
-
-(defun banner/error-output ()
-  (format *error-output* "~&~|
-~a Starting Tootsville Ⅴ, error log begins"
-          (local-time:format-timestring nil (local-time:now))))
-
-(defun banner/trace-output ()
-  (format *error-output* "~&~|
-~a Starting Tootsville Ⅴ, trace log begins"
-          (local-time:format-timestring nil (local-time:now))))
-
-(defun banner ()
-  (banner/log)
-  (banner/query-io)
-  (banner/standard-output)
-  (banner/error-output)
-  (banner/trace-output))
-
-(defun entry (argv)
-  "Top-level  entry-point  for  the  compiled  executable  binary  form.
-
-Dispatches   based   upon   the   single  argument,   expected   to   be
-a verb (case-insensitive) from the hard-coded table in this function."
-  (case (intern (string-upcase (typecase argv
-                                 (cons (if (< 1 (length argv))
-                                           (second argv)
-                                           "REPL"))
-                                 (null "HELP")
-                                 (t argv))) :keyword)
-    (load-config)
-    (banner)
-    (:fast-cgi (or #-common-lisp (fastcgi-entry) (error 'unimplemented)))
-    (:server (start-hunchentoot :port (if (and (consp argv)
-                                               (< 2 (length argv)))
-                                          (parse-integer (third argv))
-                                          5000)))
-    (:daemon (start-production :port (if (and (consp argv)
-                                              (< 2 (length argv)))
-                                         (parse-integer (third argv))
-                                         5000)))
-    (:check (power-on-self-test))
-    (:repl (start-repl))
-    (:version (print *compiled*))
-    (:swank (start-swank)
-     (start-repl))
-    (:write-docs (write-docs))
-    (:version-info (version-info-report (nthcdr 2 argv)))
-    (otherwise (print-help))))

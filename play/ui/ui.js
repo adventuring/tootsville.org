@@ -68,18 +68,18 @@ Tootsville.ui = {
 
     switchToots: function() {
         Tootsville.ui.confirmPretty("Switch Toot?",
-                                    "Do you want to quit playing as " + Tootsville.charName +
+                                    "Do you want to quit playing as " + Tootsville.character.name +
                                     " and pick a different character?",
                                     "Quit and Switch").then(
                                         reallyP => {
                                             if (reallyP) {
-                                                Tootsville.ui.quitAndGoTo('https://login.tootsville.org/login#switch-characters');
+                                                Tootsville.ui.quitAndGoTo('https://play.' + Tootsville.cluster + '/login#switch-characters');
                                             }
                                         });
     },
 
     accountSettings: function() {
-        window.open('https://login.tootsville.org/login#account-settings', 'login');
+        window.open('https://play.' + Tootsville.cluster + '/login#account-settings', 'login');
     },
 
     signOut: function() {
@@ -88,8 +88,8 @@ Tootsville.ui = {
                                     "Quit").then(
                                         reallyP => {
                                             if (reallyP) {
-                                                Tootsville.ui.quitAndGoTo('https://login.tootsville.org/login/logout');
-                                            }
+                                                Tootsville.ui.quitAndGoTo('https://play.' + Tootsville.cluster + '/login/logout');
+                                            }!
                                         }
                                     );
     },
@@ -122,7 +122,7 @@ Tootsville.ui = {
             return confirmationMessage;            // Gecko, WebKit, Chrome <34
         });
     },
-    
+
     slowLoadingWatchdog: function () {
         Tootsville.ui.confirmPretty(
             "Slow Loading?",

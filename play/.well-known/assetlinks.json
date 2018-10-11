@@ -8,13 +8,13 @@
   "relation": ["delegate_permission/common.get_login_creds"],
   "target": {
     "namespace": "web",
-    "site": "https://play.tootsville.ga"
+    "site": "https://play.test.tootsville.org"
   },
 },{
   "relation": ["delegate_permission/common.get_login_creds"],
   "target": {
     "namespace": "web",
-    "site": "https://tootsville.tk"
+    "site": "https://kit.tootsville.org"
   },
 },{
   "relation": ["delegate_permission/common.get_login_creds"],

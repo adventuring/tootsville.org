@@ -183,9 +183,31 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
           (symbol-is-exported-p symbol)
           (pretty-symbol-name symbol)))
 
+(define-condition http-error (error)
+  ((status :initarg :status :reader http-error-status)
+   (status-text :initarg :status-text :reader http-error-status-text)
+   (wanted-uri :initarg :wanted-uri :reader http-error-wanted-uri)
+   (got-uri :initarg :got-uri :reader http-error-got-uri)
+   (headers :initarg :headers :reader http-error-headers)))
+
+(defun http-successful-request (uri &rest keys &key  &allow-other-keys)
+  (multiple-value-bind (body status headers reply-uri body-stream body-stream-closeable-p status-line)
+      (apply #'http-request uri keys)
+    (declare (ignore body body-stream body-stream-closeable-p))
+    (unless (< status 400)
+      (error 'http-error :status status :status-text status-line
+             :wanted-uri uri :got-uri reply-uri :headers headers))))
+
+(defun rollbar-notify-deployment (&key user revision environment)
+  (http-successful-request "https://api.rollbar.com/api/1/deploy/" :method :post :content-type "application/json"
+                           :content (encode-json (list :access-token *access-token*
+                                                       :local-username user
+                                                       :revision revision
+                                                       :environment environment))))
+
 (defun send-rollbar-notification (level message backtrace)
   "Send a notification to Rollbar."
-  (error "TODO"))
+  )
 
 (defun quoted (string)
   "Return a quoted version of String"
@@ -230,7 +252,7 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
 
 (defconstant +context-forms+ 4
   "How many forms' worth of context should be reported?
- 
+
  Rollbar seems to insist upon 4.")
 
 (defun gather-source-info (filename top-level-form form-number)

@@ -3,3 +3,8 @@
 	url = git@github.com:romance-ii/elephant
         branch = .
 
+[submodule "jscl"]
+	path = jscl
+	url = git@github.com:romance-ii/jscl
+	branch = .
+

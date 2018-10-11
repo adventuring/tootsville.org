@@ -298,7 +298,7 @@ Keys must be of the form (NAME :CATEGORY).
 (defun mapcan-definitions-pool (function pool)
   "Like MAPCAN, but work on a definitions POOL."
   (loop :for definition :being :the :hash-values :in pool
-        :nconc (funcall function definition)))
+     :nconc (funcall function definition)))
 
 ;; #### FIXME: the finalize process needs to find standalone writers and uses
 ;; this function. However, this function returns all writers; not only
@@ -338,7 +338,7 @@ Name must be that of the reader (not the SETF form)."
   (:method (name (category (eql :generic-accessor)) pool
             &optional errorp
             &aux (definition
-                  (find-definition name :generic pool errorp)))
+                     (find-definition name :generic pool errorp)))
     "Method used to find generic accessor definitions."
     (or (when (generic-accessor-definition-p definition)
           definition)
@@ -390,70 +390,70 @@ Return NIL if not found."
   (:method (category pool)
     "Default method used for root CATEGORYs."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (eq (second key) category)
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (eq (second key) category)
+       :collect value))
   (:method ((category (eql :accessor)) pool)
     "Method used for ordinary accessors."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (and (eq (second key) :function)
-                     (accessor-definition-p value))
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (and (eq (second key) :function)
+                  (accessor-definition-p value))
+       :collect value))
   (:method ((category (eql :writer)) pool)
     "Method used for ordinary writers.
 Note that this only returns standalone (toplevel) writers."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (and (eq (second key) :function)
-                     (writer-definition-p value))
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (and (eq (second key) :function)
+                  (writer-definition-p value))
+       :collect value))
   (:method ((category (eql :generic-accessor)) pool)
     "Method used for generic accessors."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (and (eq (second key) :generic)
-                     (generic-accessor-definition-p value))
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (and (eq (second key) :generic)
+                  (generic-accessor-definition-p value))
+       :collect value))
   (:method ((category (eql :generic-writer)) pool)
     "Method used for generic writers.
 Note that this only returns standalone (toplevel) generic writers."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (and (eq (second key) :generic)
-                     (generic-writer-definition-p value))
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (and (eq (second key) :generic)
+                  (generic-writer-definition-p value))
+       :collect value))
   (:method ((category (eql :short-combination)) pool)
     "Method used for short method combinations."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (and (eq (second key) :combination)
-                     (short-combination-definition-p value))
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (and (eq (second key) :combination)
+                  (short-combination-definition-p value))
+       :collect value))
   (:method ((category (eql :long-combination)) pool)
     "Method used for long method combinations."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          :when (and (eq (second key) :combination)
-                     (long-combination-definition-p value))
-            :collect value))
+       :for value :being :the :hash-values :in pool
+       :when (and (eq (second key) :combination)
+                  (long-combination-definition-p value))
+       :collect value))
   (:method ((category (eql :setf-expander)) pool)
     "Method used for setf expanders."
     (loop :for key   :being :the :hash-keys   :in pool
-          :for value :being :the :hash-values :in pool
-          ;; #### NOTE: do you see why dropping structures and using mixin
-          ;; classes would help here ? ;-)
-          :when (and (eq (second key) :macro)
-                     (macro-definition-access-expander value))
-            :collect (macro-definition-access-expander value)
-          :when (and (eq (second key) :function)
-                     (accessor-definition-p value)
-                     (accessor-definition-access-expander value))
-            :collect (accessor-definition-access-expander value)
-          :when (and (eq (second key) :generic)
-                     (generic-accessor-definition-p value)
-                     (generic-accessor-definition-access-expander value))
-            :collect (generic-accessor-definition-access-expander value))))
+       :for value :being :the :hash-values :in pool
+       ;; #### NOTE: do you see why dropping structures and using mixin
+       ;; classes would help here ? ;-)
+       :when (and (eq (second key) :macro)
+                  (macro-definition-access-expander value))
+       :collect (macro-definition-access-expander value)
+       :when (and (eq (second key) :function)
+                  (accessor-definition-p value)
+                  (accessor-definition-access-expander value))
+       :collect (accessor-definition-access-expander value)
+       :when (and (eq (second key) :generic)
+                  (generic-accessor-definition-p value)
+                  (generic-accessor-definition-access-expander value))
+       :collect (generic-accessor-definition-access-expander value))))
 
 (defun add-definition (symbol category definition pool)
   "Add CATEGORY kind of DEFINITION for SYMBOL to POOL."
@@ -489,15 +489,15 @@ Note that this only returns standalone (toplevel) generic writers."
          (when-let* ((macro (macro-function symbol))
                      (macro-definition
                       (make-macro-definition :symbol symbol :function macro)))
-           (when-let ((expander (sb-int:info :setf :expander symbol)))
-             (let ((expander-definition
-                     (make-setf-expander-definition
-                      :symbol symbol
-                      :access macro-definition
-                      :update expander)))
-               (setf (macro-definition-access-expander macro-definition)
-                     expander-definition)))
-           (add-definition symbol category macro-definition pool)))
+                    (when-let ((expander (sb-int:info :setf :expander symbol)))
+                      (let ((expander-definition
+                             (make-setf-expander-definition
+                              :symbol symbol
+                              :access macro-definition
+                              :update expander)))
+                        (setf (macro-definition-access-expander macro-definition)
+                              expander-definition)))
+                    (add-definition symbol category macro-definition pool)))
         (:compiler-macro
          (when-let ((compiler-macro (compiler-macro-function symbol)))
            (add-definition
@@ -529,7 +529,7 @@ Note that this only returns standalone (toplevel) generic writers."
                           (when (fboundp writer-name)
                             (fdefinition writer-name))))
                 (ordinary-writer-p
-                  (and writer (not (typep writer 'generic-function))))
+                 (and writer (not (typep writer 'generic-function))))
                 (expander (sb-int:info :setf :expander symbol)))
            (cond ((and function (or writer expander))
                   (let ((accessor-definition (make-accessor-definition
@@ -544,10 +544,10 @@ Note that this only returns standalone (toplevel) generic writers."
                               writer-definition)))
                     (when expander
                       (let ((expander-definition
-                              (make-setf-expander-definition
-                               :symbol symbol
-                               :access accessor-definition
-                               :update expander)))
+                             (make-setf-expander-definition
+                              :symbol symbol
+                              :access accessor-definition
+                              :update expander)))
                         (setf (accessor-definition-access-expander
                                accessor-definition)
                               expander-definition)))
@@ -567,87 +567,87 @@ Note that this only returns standalone (toplevel) generic writers."
                    pool)))))
         (:generic
          (let* ((function
-                  (when (and (fboundp symbol)
-                             (typep (fdefinition symbol) 'generic-function))
-                    (fdefinition symbol)))
+                 (when (and (fboundp symbol)
+                            (typep (fdefinition symbol) 'generic-function))
+                   (fdefinition symbol)))
                 ;; #### NOTE: an accessor's writer definition is created here
                 ;; only if it's also a generic function. Cross-references
                 ;; between heterogeneous accessors will be resolved when the
                 ;; pools are finalized.
                 (writer
-                  (let ((writer-name `(setf ,symbol)))
-                    (when (fboundp writer-name)
-                      (fdefinition writer-name))))
+                 (let ((writer-name `(setf ,symbol)))
+                   (when (fboundp writer-name)
+                     (fdefinition writer-name))))
                 (generic-writer-p (typep writer 'generic-function))
                 (expander (sb-int:info :setf :expander symbol)))
            (cond ((and function (or writer expander))
                   (let ((generic-definition
-                          (make-generic-accessor-definition
-                           :symbol symbol
-                           :function function
-                           ;; #### NOTE: for a generic accessor function, we
-                           ;; store accessor methods in the generic accessor
-                           ;; function definition, along with standard
-                           ;; methods. Only writer-only methods are stored in
-                           ;; the generic writer function definition.
-                           :methods
-                           (mapcar
-                            (lambda (method)
-                              (let ((writer-method
-                                      (and generic-writer-p
-                                           (find-method
-                                            writer
-                                            (method-qualifiers method)
-                                            ;; #### FIXME: I'm not sure if the
-                                            ;; first argument (NEW-VALUE) of a
-                                            ;; writer method always has a
-                                            ;; specializer of T...
-                                            (cons t (sb-mop:method-specializers
-                                                     method))
-                                            nil))))
-                                (if writer-method
-                                    (make-accessor-method-definition
-                                     :symbol symbol
-                                     :method method
-                                     :writer (make-writer-method-definition
-                                              :symbol symbol
-                                              :method writer-method))
-                                    (make-method-definition
-                                     :symbol symbol :method method))))
-                            (sb-mop:generic-function-methods function)))))
+                         (make-generic-accessor-definition
+                          :symbol symbol
+                          :function function
+                          ;; #### NOTE: for a generic accessor function, we
+                          ;; store accessor methods in the generic accessor
+                          ;; function definition, along with standard
+                          ;; methods. Only writer-only methods are stored in
+                          ;; the generic writer function definition.
+                          :methods
+                          (mapcar
+                           (lambda (method)
+                             (let ((writer-method
+                                    (and generic-writer-p
+                                         (find-method
+                                          writer
+                                          (method-qualifiers method)
+                                          ;; #### FIXME: I'm not sure if the
+                                          ;; first argument (NEW-VALUE) of a
+                                          ;; writer method always has a
+                                          ;; specializer of T...
+                                          (cons t (sb-mop:method-specializers
+                                                   method))
+                                          nil))))
+                               (if writer-method
+                                   (make-accessor-method-definition
+                                    :symbol symbol
+                                    :method method
+                                    :writer (make-writer-method-definition
+                                             :symbol symbol
+                                             :method writer-method))
+                                   (make-method-definition
+                                    :symbol symbol :method method))))
+                           (sb-mop:generic-function-methods function)))))
                     (when generic-writer-p
                       (let ((writer-definition
-                              (make-generic-writer-definition
-                               :symbol symbol
-                               :function writer
-                               :methods
-                               (mapcan
-                                (lambda (method)
-                                  (unless
-                                      (find-method
-                                       function
-                                       (method-qualifiers method)
-                                       ;; #### NOTE: don't forget to remove
-                                       ;; the first (NEW-VALUE) specializer
-                                       ;; from the writer method.
-                                       (cdr (sb-mop:method-specializers
-                                             method))
-                                       nil)
-                                    (list (make-writer-method-definition
-                                           :symbol symbol
-                                           :method method))))
-                                (sb-mop:generic-function-methods
-                                 writer))
-                               :reader generic-definition)))
+                             (make-generic-writer-definition
+                              :symbol symbol
+                              :function writer
+                              :methods
+                              (mapcan
+                               (lambda (method)
+                                 (unless
+                                     (find-method
+                                      function
+                                      (method-qualifiers method)
+                                      ;; #### NOTE: don't forget to remove
+                                      ;; the first (NEW-VALUE) specializer
+                                      ;; from the writer method.
+                                      (cdr (sb-mop:method-specializers
+                                            method))
+                                      nil)
+                                   (list (make-writer-method-definition
+                                          :symbol symbol
+                                          :method method))))
+                               (sb-mop:generic-function-methods
+                                writer))
+                              :reader generic-definition)))
                         (setf (generic-accessor-definition-writer
                                generic-definition)
                               writer-definition)))
                     (when expander
                       (let ((expander-definition
-                              (make-setf-expander-definition
-                               :symbol symbol
-                               :access generic-definition
-                               :update expander)))
+                             (make-setf-expander-definition
+                              :symbol symbol
+                              :access generic-definition
+                              :update expander)))
                         (setf (generic-accessor-definition-access-expander
                                generic-definition)
                               expander-definition)))
@@ -695,8 +695,8 @@ Note that this only returns standalone (toplevel) generic writers."
          (let* ((method (find-method #'sb-mop:find-method-combination
                                      nil
                                      `(,(find-class 'generic-function)
-                                       (eql ,symbol)
-                                       t)
+                                        (eql ,symbol)
+                                        t)
                                      nil))
                 (combination (when method
                                (sb-mop:find-method-combination
@@ -789,7 +789,7 @@ Note that this only returns standalone (toplevel) generic writers."
     "Method for structure slots."
     (list
      (let ((reader-name
-             (sb-pcl::slot-definition-defstruct-accessor-symbol slot)))
+            (sb-pcl::slot-definition-defstruct-accessor-symbol slot)))
        (or (find-definition reader-name :function pool1)
            (find-definition reader-name :function pool2)
            (make-generic-definition :symbol reader-name :foreignp t))))))
@@ -809,7 +809,7 @@ Note that this only returns standalone (toplevel) generic writers."
     "Method for structure slots."
     (list
      (let ((writer-name
-             (sb-pcl::slot-definition-defstruct-accessor-symbol slot)))
+            (sb-pcl::slot-definition-defstruct-accessor-symbol slot)))
        (or (find-definition writer-name :writer pool1)
            (find-definition writer-name :writer pool2)
            (make-writer-definition :symbol writer-name :foreignp t))))))
@@ -834,7 +834,7 @@ Return nil."
     "Method for generic accessor definitions."
     (nconc (call-next-method)
            (definition-combination-users
-            (generic-accessor-definition-writer definition) combination))))
+               (generic-accessor-definition-writer definition) combination))))
 
 (defun pool-combination-users (pool combination)
   "Return a list of all generic definitions in POOL using method COMBINATION."
@@ -978,20 +978,20 @@ Currently, this means resolving:
                (let ((name (setf-expander-definition-update expander)))
                  (when (symbolp name)
                    (let ((update-definition
-                           (or (find-definition name :function pool1)
-                               (find-definition name :function pool2)
-                               (find-definition name :generic pool1)
-                               (find-definition name :generic pool2)
-                               (find-definition name :macro pool1)
-                               (find-definition name :macro pool2)
-                               ;; #### NOTE: a foreign expander is not
-                               ;; necessarily a regular function. However,
-                               ;; since we don't actually document those (only
-                               ;; print their name), we can just use a
-                               ;; function definition here (it's out of
-                               ;; laziness).
-                               (make-function-definition :symbol name
-                                                         :foreignp t))))
+                          (or (find-definition name :function pool1)
+                              (find-definition name :function pool2)
+                              (find-definition name :generic pool1)
+                              (find-definition name :generic pool2)
+                              (find-definition name :macro pool1)
+                              (find-definition name :macro pool2)
+                              ;; #### NOTE: a foreign expander is not
+                              ;; necessarily a regular function. However,
+                              ;; since we don't actually document those (only
+                              ;; print their name), we can just use a
+                              ;; function definition here (it's out of
+                              ;; laziness).
+                              (make-function-definition :symbol name
+                                                        :foreignp t))))
                      ;; #### NOTE: do you see why dropping structures and
                      ;; using mixin classes would help here ? ;-)
                      (etypecase update-definition

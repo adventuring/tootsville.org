@@ -12,7 +12,7 @@
     function clearTalk() {
         document.getElementById('talk-speak').value = '';
     }
-    
+
     document.addEventListener('keydown', function (ev) {
         /// DEBUG console.log(ev);
         // TODO: numeric keypad to arrow mapping
@@ -28,7 +28,7 @@
                 if (closeHUDPanel()) { done(ev); }
             } if (ev.key == "ContextMenu") {
                 showHUDPanel('control-panel');
-                done(ev);                
+                done(ev);
             } else if (ev.key == "PageUp") {
                 if (ev.ctrlKey) {
                     toggleHUDPanel('control-panel');
@@ -44,7 +44,7 @@
                     return speakIt();
                 } else {
                     // TODO
-                }                    
+                }
             } else if (ev.key == "End") {
                 if (Tootsville.ui.talkBoxOpenP) {
                     return speakIt();
@@ -56,7 +56,7 @@
                 done(ev);
             } else
                 // keys to *always* pass to input.
-                if (ev.key == "Backspace" || 
+                if (ev.key == "Backspace" ||
                     ev.key == "Copy" || ev.key == "Cut" ||
                     ev.key == "Delete" || ev.key == "ExSel" ||
                     ev.key == "Paste" || ev.key == "Redo" ||
@@ -91,7 +91,7 @@
                 } else if (ev.key == "MailSend" || ev.key == "F8") {
                     // TODO
                 }
-            
+
         }
     });
 

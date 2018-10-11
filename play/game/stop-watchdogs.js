@@ -11,7 +11,7 @@ Tootsville.game.stopSlowLoadingWatchdogs = function () {
     clearTimeout(window.loadWatchdog2);
     window.loadWatchdog1 = null;
     window.loadWatchdog2 = null;
-    
+
     var dialog = document.getElementById('elt-Slow-Loading-');
     if (dialog) {
         dialog.parentNode.removeChild(dlg);

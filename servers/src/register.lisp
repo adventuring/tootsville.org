@@ -45,7 +45,7 @@ http://ncona.com/2015/02/consuming-a-google-id-token-from-a-server/ "
 is good, and return the local user object reference associated with it."
   (multiple-value-bind
         (response-binary status response-headers response-uri
-         stream stream-closed-p status-reason)
+                         stream stream-closed-p status-reason)
       (drakma:http-request "https://www.googleapis.com/oauth2/v3/tokeninfo"
                            :parameters (list (cons "id_token" id-token))
                            :method :get
@@ -91,12 +91,12 @@ This method needs to be reworked."
 
 (defroute facebook-deauthorize
     ("/login/registrars/facebook/deauthorize-callback") ()
-  "This callback is invoked whenever a Facebook user de-authorizes our
+    "This callback is invoked whenever a Facebook user de-authorizes our
 access to their Facebook account/profile.  It should unlink the Facebook
 user information from the Toots account. If there is no remaining way to
 log  in to  the account,  though, that  effectively would  disable their
 access … TODO"
-  "☹")
+    "☹")
 
 (defroute ("/login/registrars/:registrar" :method :post)
     (&key registrar id-token)

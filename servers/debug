@@ -1,1 +1,1 @@
-rlwrap sbcl --load src/setup --eval '(ql:quickload :tootsville)'
+rlwrap sbcl --load src/setup --eval '(ql:quickload :Tootsville)'

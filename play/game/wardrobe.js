@@ -1,5 +1,5 @@
 Tootsville.wardrobe = {
-    
+
     don: function(item) {
         /* TODO */
     },
@@ -7,14 +7,15 @@ Tootsville.wardrobe = {
     don2: function(item) {
         /* TODO */
     },
-    
+
     doff: function(item) {
-        if (! Tootsville.player.wearingP(item)) { return; }
+        if (null == Tootsville.player || (! Tootsville.player.wearingP(item)))
+        { return; }
         /* TODO */
     },
 
     wearing: function() {
-        /* TODO */        
+        /* TODO */
     },
 
     refresh: function() {
@@ -22,10 +23,11 @@ Tootsville.wardrobe = {
     },
 
     proposeExchange: function(tradePartner, offerItems, demandItems) {
+        Tootsville.character || return; // XXX assert?
         return { exchange: {
             offers: [
                 {
-                    from: Tootsville.charName,
+                    from: Tootsville.character.name,
                     items: Array.map(offerItems, Tootsville.Item.publicInfo)
                 },
                 {
@@ -37,7 +39,7 @@ Tootsville.wardrobe = {
     },
 
     signExchange: function(exchangePacket) {
-        exchangePacket.signedBy[Tootsville.charName] = {
+        exchangePacket.signedBy[Tootsville.character.name] = {
             when: performance.now(),
             sign: 'TODO'
         };

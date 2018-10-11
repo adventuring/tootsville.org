@@ -2,7 +2,7 @@
 <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/shade.png"
      id="featured">
 
-<link href="https://fonts.googleapis.com/css?family=Creepster" rel="stylesheet"> 
+<link href="https://fonts.googleapis.com/css?family=Creepster" rel="stylesheet">
 <style>
   #builder-toot { display: none; }
   #featured { position: fixed;
@@ -19,71 +19,71 @@
   a:visited, a:link { color: lightblue; }
 
 
-#bwahaha {
-  color: rgba(255,0,0,0.5);
-  text-shadow: 0 0 5px rgba(0,0,0,0.5);
-  font-family: Creepster, Acme, sans-serif;
-  font-variant: small-caps;
-  letter-spacing: 2px;
-  font-size: 2em;
-  
-  position: fixed;
-  left: 50%;
-  top: 35%;
-  margin-left: -6rem;
-  
-  animation: horror-animation 5s infinite;
+  #bwahaha {
+      color: rgba(255,0,0,0.5);
+      text-shadow: 0 0 5px rgba(0,0,0,0.5);
+      font-family: Creepster, Acme, sans-serif;
+      font-variant: small-caps;
+      letter-spacing: 2px;
+      font-size: 2em;
 
-    cursor: default;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+      position: fixed;
+      left: 50%;
+      top: 35%;
+      margin-left: -6rem;
 
-}
+      animation: horror-animation 5s infinite;
 
-@keyframes horror-animation {
-0% {text-shadow: 0 0 10pt rgba(0,0,0,0.1); left: 51%; top: 36%;}
-5% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 50%; top: 35%;}
-10% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%; top: 34%;}
-15% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%; top: 35%;}
-16% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-17% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%;}
-20% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 49%}
-25% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 49%}
-30% {text-shadow: 0 0 10pt rgba(0,0,0,0.7); left: 50%}
-35% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
-36% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-37% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
-40% {text-shadow: 0 0 5pt rgba(0,0,0,0.9); left: 51%}
-45% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 51%}
-50% {text-shadow: 0 0 5pt rgba(0,0,0,0.7); left: 51%}
-55% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 50%}
-56% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-57% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 52%}
-60% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
-65% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%}
-70% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%}
-75% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
-76% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-77% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
-80% {text-shadow: 0 0 5pt rgba(0,0,0,0.1); left: 49%}
-85% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
-86% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-87% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
-90% {text-shadow: 0 0 5pt rgba(0,0,0,0.3); left: 51%}
-95% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 51%} 
-100% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%} 
-} 
+      cursor: default;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+  }
+
+  @keyframes horror-animation {
+      0% {text-shadow: 0 0 10pt rgba(0,0,0,0.1); left: 51%; top: 36%;}
+      5% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 50%; top: 35%;}
+      10% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%; top: 34%;}
+      15% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%; top: 35%;}
+      16% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+      17% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%;}
+      20% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 49%}
+      25% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 49%}
+      30% {text-shadow: 0 0 10pt rgba(0,0,0,0.7); left: 50%}
+      35% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
+      36% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+      37% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
+      40% {text-shadow: 0 0 5pt rgba(0,0,0,0.9); left: 51%}
+      45% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 51%}
+      50% {text-shadow: 0 0 5pt rgba(0,0,0,0.7); left: 51%}
+      55% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 50%}
+      56% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+      57% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 52%}
+      60% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
+      65% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%}
+      70% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%}
+      75% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
+      76% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+      77% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
+      80% {text-shadow: 0 0 5pt rgba(0,0,0,0.1); left: 49%}
+      85% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
+      86% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+      87% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
+      90% {text-shadow: 0 0 5pt rgba(0,0,0,0.3); left: 51%}
+      95% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 51%}
+      100% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
+  }
 </style>
 <h1> 500: Internal Error </h1>
 <h2 id="bwahaha">BWA HA HA HA HA HA!</h2>
 
 <p> An internal error occurred in the server software. </p>
 
-<a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Error_500">(Learn More…)</a> 
+<a href="https://wiki.tootsville.org/wiki/Error_500">(Learn More…)</a>
 
 <audio autoplay="t">
   <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.mp3" />
@@ -101,8 +101,8 @@
 
 <p>        We       appreciate        it        if       you        send
   an <a href="mailto:support@tootsville.org?subject=500%20error&body=%0d%0a%0d%0aI%20encountered%20a%20500%20Internal%20Server%20Error%20message%20from%20https://<!--#echo var="HTTP_HOST" --><!--#echo
-  var="HTTP_REQUEST_URI" -->.%0d%0aI%20was%20trying%20to%20_">email to
-  our  Support  mailbox</a> so  we  can  find  out about  this  problem.
+                                                                                                                                                                                           var="HTTP_REQUEST_URI" -->.%0d%0aI%20was%20trying%20to%20_">email to
+    our  Support  mailbox</a> so  we  can  find  out about  this  problem.
   Please  let   us  know  what   you  were   trying  to  do   when  this
   error occurred.</p>
 
@@ -114,12 +114,12 @@
 
 <p>     More      technical     details      can     be      seen     on
   the    <a    href="http://www.tootsville.org/development/">Development
-  board</a> (advanced users). </p>
+    board</a> (advanced users). </p>
 
 <h2> Learn more </h2>
 
 <p>    You    can   learn    more    about    this   kind    of    error
-  on <a href="https://wikiwiki.tootsville.adventuring.click/wikiwiki/Error_500">the
-  Wiki-Wiki page</a>. </p>
+  on <a href="https://wiki.tootsville.org/wiki/Error_500">the
+    Wiki-Wiki page</a>. </p>
 
-  <!--#include file="error-footer.htmlf"-->
+<!--#include file="error-footer.htmlf"-->
