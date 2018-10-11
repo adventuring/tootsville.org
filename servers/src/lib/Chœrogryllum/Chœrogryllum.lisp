@@ -13,7 +13,7 @@
 
 (in-package :Chœrogryllum)
 
-
+
 
 (defun holiday-on (year month day)
   (multiple-value-bind 
@@ -52,21 +52,21 @@
   (check-type number (integer 0 10))
   (coerce (list (elt "⁰¹²³⁴⁵⁶⁷⁸⁹†" number)) 'string))
 
-(defun cal-month/print-holiday-footnotes (year month holidays)
+(defun cal-month/print-holiday-footnotes (year month holidays stream)
   (when holidays
     (loop for holiday in (nreverse holidays)
        for i from 1
-       do (format s "~% *~a: ~a on ~a" (exponent-digit i)
+       do (format stream "~% *~a: ~a on ~a" (exponent-digit i)
                   (holiday-on year month holiday)
                   (date-string (encode*-universal-time 0 0 9 holiday month year))))
-    (terpri s)))
+    (terpri stream)))
 
 (defun first-weekday-of-month (year month)
   (nth-value 6 (decode*-universal-time (encode*-universal-time 0 0 9 1 month year))))
 
-(defun cal-month-header (year month)
+(defun cal-month-header (year month stream)
   (declare (ignore year))
-  (format s "~45@<~:@r. ~a  ~;---------------------------------------------~>
+  (format stream "~45@<~:@r. ~a  ~;---------------------------------------------~>
 
 ~{~a.~^ ~}~%"
           month (month* month)
@@ -76,7 +76,7 @@
   "Pretty-prints a one-month mini-calendar."
   (let ((first-weekday-of-month (first-weekday-of-month year month))) 
     (with-output-to-string (s)
-      (cal-month-header year month)
+      (cal-month-header year month s)
       (loop for pad-day below first-weekday-of-month
          do (princ "     " s))
       (let (holidays)
@@ -90,7 +90,7 @@
            when (zerop (mod (+ day first-weekday-of-month) 9))
            do (terpri s))
         (terpri s)
-        (cal-month/print-holiday-footnotes year month holidays)
+        (cal-month/print-holiday-footnotes year month holidays s)
         (princ "---------------------------------------------" s)
         (terpri s)))))
 
