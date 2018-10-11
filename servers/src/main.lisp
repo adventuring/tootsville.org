@@ -97,21 +97,24 @@ redirect to default host"
 
 (defun name-all-async-threads-idle ()
   (loop for thread in (slot-value *async-tasks*
-                       'cl-threadpool::threads)
+                                  'cl-threadpool::threads)
      for i fixnum from 1
-     with count = (taskmaster-max-thread-count taskmaster)
+     with count = (taskmaster-max-thread-count taskmaster) ;; FIXME
      do (setf (sb-thread:thread-name thread)
               (format nil "Idle Asyncronous Worker (#~d of ~d)" i count))))
 
+(defun swank-connected-p ()
+  (when (swank:connection-info) t))
+
 (defun init-async ()
-    (setf *async-tasks*
+  (setf *async-tasks*
         (cl-threadpool:make-threadpool
-          +async-worker-threads+
-          :max-queue-size 1024
-          :name "Asynchronous Workers"
-          :resignal-job-conditions (not (swank-connected-p))))
+         +async-worker-threads+
+         :max-queue-size 1024
+         :name "Asynchronous Workers"
+         :resignal-job-conditions (not (swank-connected-p))))
   (cl-threadpool:start *async-tasks*)
-  (name-all-threads-idle *async-tasks*))
+  (name-all-async-threads-idle))
 
 (defun run-async (function)
   (unless *async-tasks*
