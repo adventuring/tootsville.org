@@ -262,14 +262,17 @@ to keep the process running."
   (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, or exit the REPL.")
   (start-repl))
 
+(defparameter *trace-output-heartbeat-time* 90)
+
 (defun start-production (&key port)
   "Start a Hunchentoot  server via `START' and daemonize with Swank"
+  (disable-sbcl-ldb)
   (set-up-for-daemon/start-logging)
   (start :port port)
   (start-swank)
   (loop
      (trace-output-heartbeat)
-     (sleep 90))) 
+     (sleep *trace-output-heartbeat-time*))) 
 
 
 ;;; Recompilation
