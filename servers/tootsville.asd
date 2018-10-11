@@ -55,8 +55,8 @@ REST services for the front-end."
   :components
   ((:module "src"
             :components
-            ((:file "utils")
-             (:file "package" :depends-on ("utils"))
+            ((:file "package")
+             (:file "utils" :depends-on ("package"))
              (:file "config" :depends-on ("package" "types"))
              (:file "view" :depends-on ("config"))
              (:file "lib/Chœrogryllum/Chœrogryllum")

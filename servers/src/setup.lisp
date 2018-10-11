@@ -16,6 +16,14 @@
 #.(load (merge-pathnames "ensure-quicklisp.lisp"
                          *load-truename*))
 
+
+
+;;; Ensure that git submodules are checked-out
+
+(uiop:run-program "git submodule update --init")
+
+
+
 ;;; Bits that sometimes get lost in SBCL image dumping madness
 
 (ignore-errors (require 'sb-introspect))
@@ -25,20 +33,21 @@
 (unless (find-package :sb-rotate-byte)
   (load #p"SYS:CONTRIB;**;sb-rotate-byte.fasl.NEWEST"))
 
-;;; Ensure Swank is loaded.  (Does Buildapp try to blacklist it or
-;;; something?
+;;; Ensure  Swank  is  loaded.  (Does   Buildapp  try  to  blacklist  it
+;;; or something?
 
 (when (not (find-package "SWANK"))
   (ql:quickload :swank))
 
-;;; The Verbose (logging) library wants to start a new thread when it's
-;;; loaded by ASDF/Quicklisp, which is bad news during Buildapp and not
-;;; super-useful in debugging.  This feature flag keeps it from doing that.
+;;; The Verbose (logging) library wants to  start a new thread when it's
+;;; loaded by ASDF/Quicklisp, which is  bad news during Buildapp and not
+;;; super-useful  in   debugging.  This  feature  flag   keeps  it  from
+;;; doing that.
 
 (pushnew :verbose-no-init *features*)
 
-;;; Ensure that the ASD files of any submodules are loaded.  By convention,
-;;; we load submodules into lib/
+;;; Ensure  that   the  ASD   files  of   any  submodules   are  loaded.
+;;; By convention, we load submodules into lib/
 
 (let* ((src-dir (make-pathname
                  :directory

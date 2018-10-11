@@ -199,7 +199,7 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
              :wanted-uri uri :got-uri reply-uri :headers headers))))
 
 (defun rollbar-notify-deployment (&key user revision environment)
-  (http-successful-request "https://api.rollbar.com/api/1/deploy/" :method :post :content-type "application/json" 
+  (http-successful-request "https://api.rollbar.com/api/1/deploy/" :method :post :content-type "application/json"
                            :content (encode-json (list :access-token *access-token*
                                                        :local-username user
                                                        :revision revision

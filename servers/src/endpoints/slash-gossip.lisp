@@ -53,16 +53,16 @@
         (with-connection (:members)
           (or (datafly:retrieve-one
                (sxql:select (:*)
-                 :from :users
-                 :where '(:= :google-token token))
+                            :from :users
+                            :where '(:= :google-token token))
                :as 'gossip-user)
               (progn
                 (datafly:execute (sxql:insert-into :users
-                                   :google-token token))
+                                                   :google-token token))
                 (datafly:retrieve-one
                  (sxql:select (:*)
-                   :from :users
-                   :where '(:= :id (:last_insert_id)))
+                              :from :users
+                              :where '(:= :id (:last_insert_id)))
                  :as 'gossip-user)))))))
 
 (defun request-param-value (param)
@@ -94,7 +94,7 @@
 
 (defun find-user-from-session (&key (if-not-exists nil))
   (if-let ((google-token (hunchentoot:parameter "google-api-token")))
-    (find-user-by-google-token google-token)
+      (find-user-by-google-token google-token)
     (ecase if-not-exists
       (nil nil)
       (:error (error 'user-not-identified-error
@@ -116,18 +116,18 @@
                :toots (mapcar #'toot-info (player-toots))
                :offers (mapcar #'stringify (active-sdp-offers user)))))
     (if-let (answer (user-sdp-answer user))
-      (append (list :answer answer) partial)
+        (append (list :answer answer) partial)
       partial)))
 
 (defendpoint (:post "/gossip/answer" "application/json")
-  (let ((answeror (find-user-from-session))
-        (offeror (find-user-by-sdp (hunchentoot:parameter "offeror"))))
-    (declare (ignore answeror)) ; for now TODO
-    (cond ((user-sdp-answer offeror)
-           (list 409 nil '(:offeror "not-available")))
-          (t
-           (setf (user-sdp-answer offeror) (hunchentoot:parameter "answer"))
-           (list 202 nil (list :did "202 (TODO)"))))))
+    (let ((answeror (find-user-from-session))
+          (offeror (find-user-by-sdp (hunchentoot:parameter "offeror"))))
+      (declare (ignore answeror)) ; for now TODO
+      (cond ((user-sdp-answer offeror)
+             (list 409 nil '(:offeror "not-available")))
+            (t
+             (setf (user-sdp-answer offeror) (hunchentoot:parameter "answer"))
+             (list 202 nil (list :did "202 (TODO)"))))))
 
 (defmacro with-user (() &body body)
   `(let ((*user* (find-user-from-session)))
@@ -137,12 +137,12 @@
      ,@body))
 
 (defendpoint (:put "/gossip" "application/json")
-  (with-user ()
-    (list 201 '(:location "/gossip/fixme")
-          (user-info *user*))))
+    (with-user ()
+      (list 201 '(:location "/gossip/fixme")
+            (user-info *user*))))
 
 (defendpoint (:get "/gossip" "application/json")
-  (with-user ()
-    (if (member *user* *gossip-users* :test #'user=)
-        (list 200 nil (user-info))
-        (list 402 nil (:to-authenticate )))))
+    (with-user ()
+      (if (member *user* *gossip-users* :test #'user=)
+          (list 200 nil (user-info))
+          (list 402 nil (:to-authenticate )))))

@@ -5,7 +5,8 @@
   (:import-from :alexandria #:when-let #:if-let)
   (:import-from :fare-memoization #:define-memo-function)
   (:import-from :oliphaunt #:processor-count)
-  (:export #:thread-pool-taskmaster))
+  (:export #:thread-pool-taskmaster
+           #:*developmentp*))
 
 (in-package #:thread-pool-taskmaster)
 
@@ -85,6 +86,8 @@
 
 (defparameter *mulligans* 5)
 
+(defparameter *developmentp* nil)
+
 (defmacro with-mulligan-handlers ((name mulligan) &body body)
   `(handler-bind
        ((error
@@ -93,9 +96,7 @@
                           "Error signalled: worker ~a: ~:(~a~)~%~a"
                           ,name (class-of condition) condition)
            (cond
-             ((and (find-package :Tootsville)
-                   (fboundp (intern "DEVELOPMENTP" :Tootsville))
-                   (funcall (intern "DEVELOPMENTP" :Tootsville)))
+             (*developmentp*
               (signal condition))
              ((plusp (the fixnum ,mulligan))
               (verbose:info '(:thread-pool-worker :worker-mulligan)
@@ -161,12 +162,12 @@
 This version, unlike Hunchentoot's builtins, should work with IPv6 🤞"
   (if-let ((f-f (and (boundp 'hunchentoot::*request*)
                      (assoc :x-forwarded-for (hunchentoot::headers-in*)))))
-    (format nil "~a (via ~a:~d; local ~a:~d)"
-            (cdr f-f)
-            (usocket::host-to-hostname (usocket:get-peer-address socket))
-            (usocket:get-peer-port socket)
-            (usocket::host-to-hostname (usocket:get-local-address socket))
-            (usocket:get-local-port socket))
+      (format nil "~a (via ~a:~d; local ~a:~d)"
+              (cdr f-f)
+              (usocket::host-to-hostname (usocket:get-peer-address socket))
+              (usocket:get-peer-port socket)
+              (usocket::host-to-hostname (usocket:get-local-address socket))
+              (usocket:get-local-port socket))
     (format nil "~a:~d (local: ~a:~d)"
             (usocket::host-to-hostname (usocket:get-peer-address socket))
             (usocket:get-peer-port socket)
@@ -214,8 +215,8 @@ new incoming connection ~a: ~a"
                           cond)))))
     (cl-threadpool:add-job (taskmaster-thread-pool taskmaster)
                            (named-thread-pool-runner
-                               (:name (make-thread-name taskmaster socket))
-                             (handle-incoming-connection% taskmaster socket)))))
+                            (:name (make-thread-name taskmaster socket))
+                            (handle-incoming-connection% taskmaster socket)))))
 
 (defmethod start-thread ((taskmaster thread-pool-taskmaster)
                          thunk &key name)

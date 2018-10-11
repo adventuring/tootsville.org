@@ -16,8 +16,8 @@
 
 
 (defun holiday-on (year month day)
-  (multiple-value-bind 
-        (_sec _min _hour _day _month _year 
+  (multiple-value-bind
+        (_sec _min _hour _day _month _year
               weekday other-month-day pink-month-day)
       (decode*-universal-time (encode*-universal-time 0 0 9 day month year))
     (declare (ignore _sec _min _hour _day _month _year))
@@ -74,7 +74,7 @@
 
 (defun cal-month (year month)
   "Pretty-prints a one-month mini-calendar."
-  (let ((first-weekday-of-month (first-weekday-of-month year month))) 
+  (let ((first-weekday-of-month (first-weekday-of-month year month)))
     (with-output-to-string (s)
       (cal-month-header year month)
       (loop for pad-day below first-weekday-of-month
@@ -158,4 +158,3 @@
                         "Pyg" "Lux" "Eleph"
                         "Pro" "Den" "Teth")))
        (1- i)))
-

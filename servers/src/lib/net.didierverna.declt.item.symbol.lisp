@@ -489,15 +489,15 @@ Note that this only returns standalone (toplevel) generic writers."
          (when-let* ((macro (macro-function symbol))
                      (macro-definition
                       (make-macro-definition :symbol symbol :function macro)))
-           (when-let ((expander (sb-int:info :setf :expander symbol)))
-             (let ((expander-definition
-                    (make-setf-expander-definition
-                     :symbol symbol
-                     :access macro-definition
-                     :update expander)))
-               (setf (macro-definition-access-expander macro-definition)
-                     expander-definition)))
-           (add-definition symbol category macro-definition pool)))
+                    (when-let ((expander (sb-int:info :setf :expander symbol)))
+                      (let ((expander-definition
+                             (make-setf-expander-definition
+                              :symbol symbol
+                              :access macro-definition
+                              :update expander)))
+                        (setf (macro-definition-access-expander macro-definition)
+                              expander-definition)))
+                    (add-definition symbol category macro-definition pool)))
         (:compiler-macro
          (when-let ((compiler-macro (compiler-macro-function symbol)))
            (add-definition

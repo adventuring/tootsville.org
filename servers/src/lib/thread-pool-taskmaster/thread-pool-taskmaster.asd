@@ -5,14 +5,12 @@
   :author "Bruce-Robert Pocock <brpocock@ciwta.org>"
   :license "AGPL v3+"
   :description "Use a thread pool for a Taskmaster"
-
+  
   :depends-on (
                :alexandria
                :fare-memoization
                :hunchentoot
+               :oliphaunt
                :restas
                )
-  :components
-  ((:file "../../utils")
-   (:file "../../machine" :depends-on ("../../utils"))
-   (:file "thread-pool-taskmaster" :depends-on ("../../machine"))))
+  :components ((:file "thread-pool-taskmaster")))

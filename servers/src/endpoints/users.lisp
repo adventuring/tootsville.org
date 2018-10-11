@@ -40,7 +40,7 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
 (define-condition not-your-toot-error (error)
   ((name :initarg name :accessor which-toot-is-not-yours))
   (:report (lambda (c s)
-             (format s "You do not have a Toot named “~a.”" 
+             (format s "You do not have a Toot named “~a.”"
                      (which-toot-is-not-yours c)))))
 
 (defun assert-my-character (toot-name &optional (user *user*))
@@ -52,11 +52,11 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
     (error 'not-your-toot-error :name toot-name)))
 
 (defendpoint (:get "/users/me" "application/json")
-  (with-player ()
-    (list 200 nil
-          (list :hello "Hello, new user"
-                :fake "This is a totes fake response"
-                :toots "/users/me/toots.json"))))
+    (with-player ()
+      (list 200 nil
+            (list :hello "Hello, new user"
+                  :fake "This is a totes fake response"
+                  :toots "/users/me/toots.json"))))
 
 (defun days-ago (days)
   (local-time:timestamp- (local-time:now) days :day))
@@ -120,9 +120,9 @@ appearing on a parent's account."
                      (yesterday)))))
 
 (defendpoint (get "/users/me/toots" "application/json")
-  (with-player ()
-    (list 200 (list :last-modified (header-time (yesterday)))
-          (list :toots (player-toots)))))
+    (with-player ()
+      (list 200 (list :last-modified (header-time (yesterday)))
+            (list :toots (player-toots)))))
 
 (defun find-toot-by-name (toot-name)
   (check-type toot-name toot-name)
@@ -131,32 +131,32 @@ appearing on a parent's account."
                  (player-toots)))
 
 (defendpoint (put "/users/me/toots/:toot-name" "application/json")
-  (with-player ()
-    (assert-my-character toot-name)
-    (list 200 nil (toot-info (find-toot-by-name toot-name)))))
+    (with-player ()
+      (assert-my-character toot-name)
+      (list 200 nil (toot-info (find-toot-by-name toot-name)))))
 
 (defendpoint (post "/users/me/toots" "application/json")
-  (with-player ()
-    (error 'unimplemented)))
+    (with-player ()
+      (error 'unimplemented)))
 
 (defendpoint (delete "/users/me/toots/:toot-name" "application/json")
-  (with-player ()
-    (assert-my-character toot-name)
-    (error 'unimplemented)))
+    (with-player ()
+      (assert-my-character toot-name)
+      (error 'unimplemented)))
 
 (defendpoint (get "/toots/:toot-name" "application/json")
-  (check-arg-type toot-name toot-name)
+    (check-arg-type toot-name toot-name)
   (with-player ()
     (list 200
           `(:last-modified ,(header-time))
           (if-let (toot (find-toot-by-name toot-name))
-            (toot-info toot)
+              (toot-info toot)
             `(:is-a "toot"
-              :name ,(string-capitalize toot-name)
-              :avatar "ultraToot"
-              :child-p nil
-              :sensitive-p t
-              :online-p t
-              :last-seen ,(local-time:format-timestring
-                           nil (local-time:now))
-              :exists-p "maybe?")))))
+                    :name ,(string-capitalize toot-name)
+                    :avatar "ultraToot"
+                    :child-p nil
+                    :sensitive-p t
+                    :online-p t
+                    :last-seen ,(local-time:format-timestring
+                                 nil (local-time:now))
+                    :exists-p "maybe?")))))

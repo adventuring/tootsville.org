@@ -32,7 +32,7 @@ itself returns true."
                      (find (char string (- i 2)) char-bag))
            do (return-from three-chars-in-a-row-p i)))
       (loop for i from 2 below (length string)
-         when (char= (char string i) 
+         when (char= (char string i)
                      (char string (- i 1))
                      (char string (- i 2)))
          do (return-from three-chars-in-a-row-p i)))
@@ -61,7 +61,7 @@ Allowed characters are alphanumerics, apostrophe, hyphen, or space, but there ar
 
 Toot names must be:
 
-@itemize 
+@itemize
 @item
 From three to 32 characters in length, inclusive.
 @item
@@ -105,13 +105,13 @@ leftmost digit must be after the rightmost non-digit character.
 ;;; these are conditions that translate directly into HTTP errors.
 
 (deftype http-response-success-status-number ()
-  '(member 100 101 
-    200 201 202 203 204 205 206 207 
+  '(member 100 101
+    200 201 202 203 204 205 206 207
     300 301 302 303 304 305 307))
 
 (deftype http-response-failure-status-number ()
   '(member
-    400 401 402 403 404 405 406 407 408 409 
+    400 401 402 403 404 405 406 407 408 409
     410 411 412 413 414 415 416 417 420 424 428 429 431
     500 501 502 503 504 505 511))
 
@@ -146,7 +146,7 @@ leftmost digit must be after the rightmost non-digit character.
           :test #'string-equal))
 
 (deftype Toot-base-color-name ()
-  '(and string-designator 
+  '(and string-designator
     (satisfies Toot-base-color-name-p)))
 
 (define-constant +Toot-pads-color-names+
@@ -212,10 +212,10 @@ leftmost digit must be after the rightmost non-digit character.
 (define-memo-function  allowed-pattern-colors-on-base (base-color)
   (remove-if (curry #'equalp base-color) +Toot-pattern-color-names+))
 
-(defun check-pattern-on-base-color (pattern-color base-color 
+(defun check-pattern-on-base-color (pattern-color base-color
                                     &key Toot-name pads-color pattern address)
   (tagbody do-over
-     (restart-case 
+     (restart-case
          (progn
            (check-type base-color Toot-base-color-name "The name ofa Toot base color")
            (check-type pattern-color Toot-pattern-color-name "The name of a Toot pattern color")
@@ -225,7 +225,7 @@ leftmost digit must be after the rightmost non-digit character.
 ~@[, and pads color of ~:(~a~)~]~
 ~@[ for the Toot named ~a~]~
 ~@[ (player with e-mail ~a)~]."
-                    base-color pattern pads-color Toot-name address)) 
+                    base-color pattern pads-color Toot-name address))
            (list pattern-color base-color))
        (change-pattern-color (color)
          :report (lambda (s)
@@ -241,7 +241,7 @@ leftmost digit must be after the rightmost non-digit character.
          :interactive-function (lambda (s)
                                  (let ((bases (allowed-base-colors-under-pattern pattern-color)))
                                    (format s "~&Choose a new base color by name or number:")
-                                   (loop for color in bases 
+                                   (loop for color in bases
                                       for i from 1
                                       do (format s "~% [ ~d ] ~:(~a~)" i color))
                                    (format s "~% Base Color 🢩 ")
@@ -272,8 +272,8 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 
 (defun host-name-like-p (name)
   "Does NAME meet the general rules of being a DNS host name.
-  
-  TODO: Compare this against RFCs for DNS names."
+
+ TODO: Compare this against RFCs for DNS names."
   (check-type name string)
   (and (every #'host-name-char-p name)
        (not (char= #\- (char name 0)))
@@ -324,5 +324,3 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
   '(and string
     (satisfies string-length-2-p)
     (satisfies string-all-alpha-chars-p)))
-
-

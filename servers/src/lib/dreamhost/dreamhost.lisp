@@ -38,7 +38,7 @@ https://panel.dreamhost.com/?tree=home.api")
 
 
 (defgeneric validate-dns-value (type value)
-  (:documentation 
+  (:documentation
    "Returns VALUE in string form valid for a DNS record of type TYPE")
   (:method ((type (eql :a)) (value string))
     value)
@@ -62,9 +62,9 @@ https://panel.dreamhost.com/?tree=home.api")
 
 Adds  a  new  DNS record  to  a  domain  you  already have  hosted  with
 DreamHost.  However, you  cannot add  dreamhosters.com records.  Keep in
-mind DNS changes  may take a while to  propagate. 
+mind DNS changes  may take a while to  propagate.
 
-\textbf{type}: A, CNAME, NS, PTR, NAPTR, SRV, TXT, or AAAA 
+\textbf{type}: A, CNAME, NS, PTR, NAPTR, SRV, TXT, or AAAA
 
 \textbf{Result success:}
 record_added
@@ -97,7 +97,7 @@ dns-list_records
 Dump a list of all DNS records for all domains (not including registrations) on all accounts you have access to. Please note that this skips the dreamhosters.com, dreamhost.com, dreamhostps.com, and newdream.net zones.
 Command 	dns-list_records
 Values 	(none)
-Result 	
+Result
 
 success
 account_id zone record type value comment editable
@@ -129,16 +129,16 @@ dns-remove_record
 
 Removes an existing editable DNS record you have with DreamHost. However, you cannot remove dreamhosters.com records. Keep in mind DNS changes may take a while to propagate.
 Command 	dns-remove_record
-Values 	
+Values
 
 record : The full name of the record you'd like to remove, e.g., testing.groo.com
 type : The type (see dns-add_record) of the record you'd like to remove.
 value : The value (see dns-add_record) of the record you'd like to remove.
-Result 	
+Result
 
 success
 record_removed
-Possible errors 	
+Possible errors
 
 no_record
 no_type
@@ -177,7 +177,7 @@ yaml
 html
 
 account
-The account number to perform operations under. Defaults to your own account, or the first account you have access to otherwise. 
+The account number to perform operations under. Defaults to your own account, or the first account you have access to otherwise.
 
 
 Rate limit
@@ -203,7 +203,7 @@ If you are writing a simple bash script to interface with DreamHost's API, this 
 
 #!/bin/sh
 ####
-#### USE THIS SCRIPT AT YOUR OWN RISK.  
+#### USE THIS SCRIPT AT YOUR OWN RISK.
 ####
 
 PS=$1
@@ -213,13 +213,13 @@ UUID=`uuidgen`
 CMD=user-list_users_no_pw
 
 if [ $# -lt 1 ]; then
-echo "usage: `basename $0` [hostname]" 
+echo "usage: `basename $0` [hostname]"
 exit 1
 fi
 
 if [ "$PS" = "" ]; then
 PS=`hostname | cut -f1 -d.`
-fi 
+fi
 
 # ARGS='other_http_get_arguments_for_the_DreamHost_cmd_that_you_are_using=4&foo=123'
 LINK="https://api.dreamhost.com/?key=$KEY&unique_id=$UUID&cmd=$CMD&ps=$PS&$ARGS"
