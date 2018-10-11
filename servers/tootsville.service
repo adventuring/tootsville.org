@@ -6,9 +6,9 @@ After=network.target remote-fs.target nss-lookup.target httpd-init.service
 Type=simple
 Environment=LANG=C
 
-ExecStart=/usr/local/bin/Tootsville daemon
+ExecStart=sudo pil /usr/local/bin/Tootsville daemon
 #ExecReload=
-ExecStop=killall Tootsville
+ExecStop=sudo pil killall Tootsville
 #/usr/local/bin/Tootsville swank-send-stop
 
 [Install]
