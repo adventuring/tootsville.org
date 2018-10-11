@@ -15,29 +15,6 @@
 	            "Your child's name or nickname. (Used only for labelling Toots in your collection.)"
 	            "Your Google account's e-mail address")))))
 
-(defun translate-american-ish-date (created-at)
-  (register-groups-bind ((#'parse-integer month)
-                         (#'parse-integer day)
-                         (#'parse-integer year)
-                         (#'parse-integer hour)
-                         (#'parse-integer minute)
-                         (#'parse-integer second))
-      ("(\\d\\d)/(\\d\\d)/(201\\d) ([012]\\d):([0-5]\\d):([0-5]\\d)"
-       created-at :sharedp t)
-    (check-type year (integer 2015 2018))
-    (check-type month (integer 1 12))
-    (check-type day (integer 1 31))
-    (assert (<= day (case month
-                      ((4 6 9 11) 30)
-                      (2 (case year
-                           (2016 29)
-                           (otherwise 28)))
-                      ((1 3 5 7 8 10 12) 31))))
-    (check-type hour (integer 00 (24)))
-    (check-type minute (integer 0 (60)))
-    (check-type second (integer 0 (60)))
-    (encode-timestamp 0 second minute hour day month year)))
-
 (define-memo-function remove-parentheticals (string)
   (let ((s (copy-seq string)))
     (when (find #\( string)
