@@ -71,9 +71,7 @@ REST services for the front-end."
              (:file "logging" :depends-on ("package" "version"))
              (:file "write-docs" :depends-on ("package"))
              (:file "power-on-self-test" :depends-on ("web" "endpoints"))
-             (:file "version" :depends-on ("package" "config"))
              (:file "command-line" :depends-on ("main" "logging" "write-docs"))
-             (:file "db-player" :depends-on ("db" "package"))
              (:file "web"
                     :depends-on ("view" "db-player" "errors" "config"))
              (:file "http-error" :depends-on ("web"))
@@ -99,5 +97,5 @@ REST services for the front-end."
                                           ((:file "alexa")
                                            (:file "info" :depends-on ("alexa"))
                                            (:file "chat" :depends-on ("alexa"))
-                                           (:file "clock" :depends-on ("alexa"))))))))
-             (:file "power-on-self-test" :depends-on ("web" "endpoints"))))))
+                                           (:file "clock" :depends-on
+                                           ("alexa"))))))))))))
