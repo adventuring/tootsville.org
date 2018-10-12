@@ -60,7 +60,7 @@
                                                      (string-downcase variable))
                                         template
                                         (format nil "</tt>
-<fieldset><legend><label for=\"~:*~a\" class=\"var\">~:(~a~)</label></legend> ~
+<fieldset><legend><label for=\"~a\" class=\"var\">~:(~:*~a~)</label></legend> ~
 <input type=\"text\" name=\"~:*~a\"></fieldset><tt>" variable)))))
           (dolist (variable variables template)
             (setf template
@@ -68,7 +68,7 @@
                                               (string-downcase variable)
                                               "\\E")
                                  template
-                                 (format nil "<span class=\"var\">~:(~a~)</span>"
+                                 (format nil "</tt><span class=\"var\">~:(~a~)</span></tt>"
                                          variable)))))))
 
 (defun route->html (route)
