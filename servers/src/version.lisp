@@ -68,7 +68,7 @@ version 3.~%~%"
                                                        (t "unknown"))
                                   :developmentp (developmentp)
                                   :productionp (productionp))
-               :machine (list :version (unembarassing (machine-version))
+               :machine (list :version (oliphaunt::unembarassing (machine-version))
                               :type (machine-type)
                               :instance (string-capitalize (machine-instance)))
                :site (list :short-name (short-site-name)
