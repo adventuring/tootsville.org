@@ -5,7 +5,7 @@ all: play worker servers TODO.org TODO.scorecard
 clean:
 	$(MAKE) -C servers clean
 	find . -name \*~ -exec rm {} \;
-	-rm dist/play.js
+	-rm dist/play/play.js
 	-rm TODO.org TODO.scorecard	
 
 servers:	servers/Tootsville
@@ -18,36 +18,36 @@ doc:
 
 ####################
 
-worker:	dist/worker.js
+worker:	dist/play/worker.js
 
-dist/worker.js:	play/worker.js
-	mkdir -p dist/
-	closure-compiler --create_source_map dist/worker.map \
+dist/play/worker.js:	play/worker.js
+	mkdir -p dist/play/
+	closure-compiler --create_source_map dist/play/worker.map \
 		--language_out ECMASCRIPT5_STRICT \
 		--source_map_location_mapping 'play/|/play/' \
 		$< > $@
-	echo '//# sourceMappingURL=/play/worker.map' >> dist/worker.js
+	echo '//# sourceMappingURL=/play/worker.map' >> dist/play/worker.js
 
 ####################
 
-play:	dist/play.css \
-	dist/play.js
+play:	dist/play/play.css \
+	dist/play/play.js
 
 PLAYJS = $(shell ./bin/find-play-js)
 
-dist/play.map:	dist/play.js
+dist/play.map:	dist/play/play.js
 
 dist/play.css:	$(shell find play -name \*.less -and -not -name .\*)
-	mkdir -p dist/
-	lessc --strict-math=on --source-map play/play.less dist/play.css
+	mkdir -p dist/play/
+	lessc --strict-math=on --source-map play/play.less dist/play/play.css
 
-dist/play.js:	${PLAYJS}
-	mkdir -p dist/
-	closure-compiler --create_source_map dist/play.map \
+dist/play/play.js:	${PLAYJS}
+	mkdir -p dist/play/
+	closure-compiler --create_source_map dist/play/play.map \
 		--source_map_location_mapping 'play/|/play/' \
 		--language_out ECMASCRIPT5_STRICT \
 		$< > $@
-	echo '//# sourceMappingURL=/play/play.map' >> dist/play.js
+	echo '//# sourceMappingURL=/play/play.map' >> dist/play/play.js
 
 ####################
 
