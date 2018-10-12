@@ -307,7 +307,7 @@ git push --tags goethe
 echobig Checking version
 for host in users world gossip
 do
-    if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/about/ | grep ^Version: | cut -f2)" ]
+    if [ "$VERSION" = "$(curl -\# https://$host.$cluster/version/about.txt | grep ^Version: | cut -f2)" ]
     then
         echo $host.$cluster: $VERSION
     else
