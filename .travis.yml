@@ -23,7 +23,6 @@ install:
 #  - bin/ensure-sane-sbcl
 
 script:
-  - make -C servers Tootsville
   - make -C servers test
   
 addons:
