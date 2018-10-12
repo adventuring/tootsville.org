@@ -90,7 +90,15 @@
 
 (defmacro with-mulligan-handlers ((name mulligan) &body body)
   `(handler-bind
-       ((error
+       (#+sbcl
+        (Sb-Bsd-Sockets:Bad-File-Descriptor-Error
+         (lambda (condition)
+           (verbose:fatal '(:thread-pool-worker :peer-gone)
+                          "Error signalled: worker ~a: ~
+SB-BSD-Sockets:Bad-File-Descriptor-Error:~%~a"
+                          ,name condition)
+           (invoke-restart 'abandon)))
+        (error
          (lambda (condition)
            (verbose:fatal '(:thread-pool-worker :worker-error)
                           "Error signalled: worker ~a: ~:(~a~)~%~a"
