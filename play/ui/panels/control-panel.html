@@ -23,7 +23,7 @@
       
       <div>
         <input type="checkbox" id="fullscreen-toggle"
-               onChange="closeHUDPanel();setFullscreen(this.checked);">
+               onChange="Tootsville.hud.closePanel();setFullscreen(this.checked);">
         <label id="control-panel-fullscreen" for="fullscreen-toggle">
           Fullscreen
         </label>
@@ -42,7 +42,7 @@
       </div>
 
       <div id="control-panel-get-firefox"
-           onclick="closeHUDPanel();window.open('https://getfirefox.com/','get-firefox')">
+           onclick="Tootsville.hud.closePanel();window.open('https://getfirefox.com/','get-firefox')">
         <a href="https://getfirefox.com/" target="get-firefox">
           <i class="fab fa-firefox fa-fw"></i> Get Firefox
           <i class="fas fa-window-restore footnote-marker"></i>
@@ -53,16 +53,12 @@
       
       <hr>
 
-      <div id="control-panel-account" onclick="closeHUDPanel();accountSettings()">
+      <div id="control-panel-account" onclick="Tootsville.hud.closePanel();Tootsville.login.start()">
         <i class="fas fa-user fa-fw"></i>
-        Account Settings
+        Change Players or Toots
         <i class="fas fa-window-restore footnote-marker"></i>
       </div>
-      <div id="control-panel-switch-toots" onclick="closeHUDPanel();switchToots()">
-        <i class="fas fa-arrows-alt-h fa-fw"></i>
-        Switch Toots
-      </div>
-      <div id="control-panel-sign-out" onclick="closeHUDPanel();signOut()">
+      <div id="control-panel-sign-out" onclick="Tootsville.hud.closePanel();signOut()">
         <i class="fas fa-sign-out-alt fa-fw"></i>
         Quit
       </div>

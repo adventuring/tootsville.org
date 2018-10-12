@@ -25,7 +25,7 @@
         } else {
             if (ev.key == "Escape" || ev.key == "Attn" ||
                 ev.key == "Cancel" || ev.key == "Props" ) {
-                if (closeHUDPanel()) { done(ev); }
+                if (Tootsville.hud.closePanel()) { done(ev); }
             } if (ev.key == "ContextMenu") {
                 showHUDPanel('control-panel');
                 done(ev);
@@ -34,7 +34,7 @@
                     toggleHUDPanel('control-panel');
                     done(ev);
                 } else {
-                    if (closeHUDPanel()) { done(ev); }
+                    if (Tootsville.hud.closePanel()) { done(ev); }
                 }
             } else if (ev.key == "PageDown") {
                 showHUDPanel('contacts');

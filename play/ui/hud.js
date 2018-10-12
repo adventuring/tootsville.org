@@ -12,7 +12,7 @@ Tootsville.hud = {
         return null;
     },
 
-    closeHUDPanel: function() {
+    closePanel: function() {
         var panelPopup = Tootsville.hud.getOpenPanel();
         if (panelPopup) {
             var panelID = panelPopup.id;
@@ -74,7 +74,7 @@ Tootsville.hud = {
 
     loadHUDPanel: function(panelName, finish) {
         var spinnerDiv = Tootsville.hud.createHUDLoaderPanel(panelName);
-        loadHTML("/play/ui/panels/" + panelName + ".html").then((htmlf) => {
+        Tootsville.hud.loadHTML("/play/ui/panels/" + panelName + ".html").then((htmlf) => {
             var panelDiv = htmlf.getElementById(panelName);
             hud.appendChild(panelDiv);
             loadScriptIntoDiv('/play/ui/panels/' + panelName + '.js', panelDiv);
@@ -92,7 +92,7 @@ Tootsville.hud = {
             }
             if (div) {
                 if (Tootsville.hud.getOpenPanel() != div) {
-                    Tootsville.hud.closeHUDPanel();
+                    Tootsville.hud.closePanel();
                 }
                 div.style.opacity = 1;
                 div.style.maxHeight = '100vh';
@@ -101,7 +101,7 @@ Tootsville.hud = {
                 finish();
                 return;
             }
-            Tootsville.hud.closeHUDPanel();
+            Tootsville.hud.closePanel();
             Tootsville.hud.loadHUDPanel(panel, finish);
         });
     },
@@ -109,7 +109,7 @@ Tootsville.hud = {
     toggleHUDPanel: function(panel) {
         var div = document.getElementById(panel);
         if (div && Tootsville.hud.getOpenPanel() == div) {
-            Tootsville.hud.closeHUDPanel();
+            Tootsville.hud.closePanel();
             return false;
         } else {
             Tootsville.hud.showHUDPanel(panel, div);

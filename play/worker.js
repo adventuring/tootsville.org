@@ -1,4 +1,6 @@
-Tootsville.registerServiceWorkner = function () {
+if (!Tootsville) { Tootsville = {} }
+
+Tootsville.registerServiceWorker = function () {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('./worker.js').then(registration => {
@@ -12,3 +14,5 @@ Tootsville.registerServiceWorkner = function () {
         document.location = 'https://wiki.tootsville.org/wiki/Can_not_register_ServiceWorker';
     }
 }
+
+Tootsville.registerServiceWorker()

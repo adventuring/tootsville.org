@@ -66,22 +66,6 @@ Tootsville.ui = {
         document.location = url;
     },
 
-    switchToots: function() {
-        Tootsville.ui.confirmPretty("Switch Toot?",
-                                    "Do you want to quit playing as " + Tootsville.character.name +
-                                    " and pick a different character?",
-                                    "Quit and Switch").then(
-                                        reallyP => {
-                                            if (reallyP) {
-                                                Tootsville.ui.quitAndGoTo('https://play.' + Tootsville.cluster + '/login#switch-characters');
-                                            }
-                                        });
-    },
-
-    accountSettings: function() {
-        window.open('https://play.' + Tootsville.cluster + '/login#account-settings', 'login');
-    },
-
     signOut: function() {
         Tootsville.ui.confirmPretty("Quit?",
                                     "Are you sure you want to quit playing now?",

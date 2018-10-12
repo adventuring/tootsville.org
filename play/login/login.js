@@ -2,6 +2,15 @@ if (!Tootsville.login) {
     Tootsville.login = {};
 }
 
+Tootsville.login.overlay = function () {
+    Tootsville.hud.loadHTML("login")
+}
+
+Tootsville.login.start = function () {
+    Tootsvilel.hud.loadHTML("login");
+    // TODO
+}
+
 Tootsville.login.googleInit = function () {
     gapi.load('auth2', () => {
         gapi.auth2.init().then(
