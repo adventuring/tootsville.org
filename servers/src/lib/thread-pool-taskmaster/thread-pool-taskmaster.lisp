@@ -114,7 +114,7 @@ SB-BSD-Sockets:Bad-File-Descriptor-Error:~%~a"
               (invoke-restart 'restart))
              (t
               (verbose:info '(:thread-pool-worker :work-abandoned)
-                            "Out of mulligans, abandoning ~a")))))
+                            "Out of mulligans, abandoning ~a" ,name)))))
         (condition
          (lambda (condition)
            (verbose:debug '(:thread-pool-worker :worker-signal :work-abandoned)
