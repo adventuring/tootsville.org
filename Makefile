@@ -51,7 +51,9 @@ dist/play.js:	${PLAYJS}
 
 ####################
 
-TODO.org:	$(shell find */ -type f) README.org
+TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -name \\*.org -o \
+		   -name \\*.texi -o -name \\*.asd -o -name \\*.txt -o -name \\*.html) \
+		 README.org
 	-mv TODO.org TODO.org~ 2>/dev/null
 	echo '* TODO-type notes found $$(date +%Y-%m-%d)' > TODO.org
 	echo '' >> TODO.org
