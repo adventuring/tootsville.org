@@ -18,12 +18,6 @@
 
 
 
-;;; Ensure that git submodules are checked-out
-
-(uiop:run-program "git submodule update --init")
-
-
-
 ;;; Bits that sometimes get lost in SBCL image dumping madness
 
 (ignore-errors (require 'sb-introspect))
