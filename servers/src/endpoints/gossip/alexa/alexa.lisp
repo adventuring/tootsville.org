@@ -166,7 +166,7 @@ Alexa certificate chain URL"
 
 (defun extract-public-key-from-cert (cert)
   "Extract the public key from an X.509 certificate"
-  (CL+SSL::SSL-STREAM-KEY (cl+ssl:decode-certificate :der cert)))
+  (CL+SSL::SSL-STREAM-KEY (cl+ssl::certificate :der cert)))
 
 (defun decode-message (cyphertext key)
   "Decode the CYPHERTEXT with the KEY.
@@ -183,7 +183,7 @@ Alexa certificate chain URL"
     (trivial-utf-8:string-to-utf-8-bytes message))))
 
 (defun check-cert-dates-valid (x.509-cert)
-  (cl+ssl:decode-certificate :der x.509-cert)
+  (cl+ssl::certificate :der x.509-cert)
   (TODO))
 
 (defun check-x.509-san (x.509-cert name)
