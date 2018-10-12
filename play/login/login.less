@@ -35,13 +35,13 @@
     max-height: 50%;
     float: left;
 }
-#login>ul { 
+#login>ul {
     display: block;
     align-content: center;
     width: 33%;
     margin-left: 27.5%;
 }
-#login>ul>li { 
+#login>ul>li {
     display: block;
     align-content: center;
 }
@@ -56,10 +56,10 @@
     font-weight: bold;
     font-family: Acme, sans-serif;
     text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
     font-size: 2rem;
     letter-spacing: .2rem;
     font-variant: small-caps;
@@ -67,16 +67,16 @@
 }
 #login>ul>li>a:hover {
     box-shadow:
-    -.2rem -.2rem 0 #ffc636,
-    .2rem -.2rem 0 #ffc636,
-    -.2rem .2rem 0 #ffc636,
-    .2rem .2rem 0 #ffc636;
+        -.2rem -.2rem 0 #ffc636,
+        .2rem -.2rem 0 #ffc636,
+        -.2rem .2rem 0 #ffc636,
+        .2rem .2rem 0 #ffc636;
     color: #ffee6c;
 }
-#tootsvilleorg { background-color: #9669ad }
-#play-now { background-color: #9c0059 }
-#wiki-wiki { background-color: #7ac142 }
-#tootsbook { background-color: #0082c8 }
+#tootsvilleorg { background-color: @lavender }
+#play-now { background-color: @burgundy }
+#wiki-wiki { background-color: @green }
+#tootsbook { background-color: @blue }
 #trailer {
     clear: left;
     margin: 5rem 2rem 2rem 2rem;
@@ -128,7 +128,7 @@
 #login-kid {
     display: block;
     width: 40%;
-    margin-right: 4pt solid black;
+    border-right: 4pt solid black;
 }
 
 p {
@@ -139,9 +139,18 @@ p {
 
 
 @media (max-width:60em) {
-    body { margin: 1.25rem 0 5rem 0; }
-    h1 { display: block; position: relative; top: 0; left: 0 }
-    #tootsville { display: inline }
+    body {
+        margin: 1.25rem 0 5rem 0;
+    }
+    h1 {
+        display: block;
+        position: relative;
+        top: 0;
+        left: 0
+    }
+    #tootsville {
+        display: inline
+    }
     #builder-toot {
         position: absolute;
         top: 5rem;
@@ -173,13 +182,23 @@ p {
 
 @media screen and (max-height:30rem) {
     body { margin: 0 0 0 0 }
-    .post-footer { position: relative; top: 0; left: 0 }
-    #builder-toot { position: absolute;
-                    top: 0;
-                    right: 0;
-                    height: 100%;
-                    opacity: .20 }
-    #logo { display: inline-block; width: 4rem; margin: 1rex; }
+    .post-footer {
+        position: relative;
+        top: 0;
+        left: 0
+    }
+    #builder-toot {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        opacity: .20
+    }
+    #logo {
+        display: inline-block;
+        width: 4rem;
+        margin: .5rem;
+    }
     #login>ul {
         display: block;
         margin-left: 3rem;
@@ -188,11 +207,14 @@ p {
         max-width: calc(100% - 4rem);
         width: 20rem;
     }
-    #login>ul>li { display: inline-block; width: auto; }
+    #login>ul>li {
+        display: inline-block;
+        width: auto;
+    }
 }
 
 #toots-list {
-    diplay: block;
+    display: block;
     background-color: #ba9dca;
     border: 1pt solid black;
     border-radius: 1rem;
@@ -212,16 +234,16 @@ p {
     transition: .25s;
 }
 
-.toot-name { 
-    font-family: Acme, sans-serif; 
-    padding: 1rem; 
-    font-size: 2rem; 
+.toot-name {
+    font-family: Acme, sans-serif;
+    padding: 1rem;
+    font-size: 2rem;
 }
-.note { 
-    display: block; 
-    font-family: Cantarell, sans-serif; 
-    color: #333; 
-    font-size: .9em; 
+.note {
+    display: block;
+    font-family: Cantarell, sans-serif;
+    color: #333;
+    font-size: .9em;
 }
 #toots-list>li#new-toot {
     display: block;
@@ -253,7 +275,7 @@ p {
 strong.green-plus {
     display: inline-block;
     margin: 0
-    width: 1.5em;
+                width: 1.5em;
     height: 1.5em;
     border-radius: .75em;
     background-color: #6f6;
@@ -267,7 +289,7 @@ strong.green-plus {
     line-height: 1.5em;
     padding: 0;
 }
-    
+
 .two-buttons {
     display: block;
     text-align: right;
