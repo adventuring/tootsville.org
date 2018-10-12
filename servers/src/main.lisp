@@ -20,7 +20,8 @@
 (defun not-found-if-null (thing)
   "If THING is null, then abort with a 404 Not Found."
   (unless thing
-    (verbose:info :not-found "404: object not found")
+    (verbose:info :not-found "{~a} 404: object not found"
+                  (current-thread))
     (setf (hunchentoot:return-code*)
           hunchentoot:+http-not-found+)
     (hunchentoot:abort-request-handler))
