@@ -105,8 +105,8 @@ Returns one of:
                           (t :prod))))))
 
 (defun developmentp ()
-  "Returns true if this is a Test or QA cluster"
-  (member *cluster* '(:test :qa)))
+  "Returns true if this is a Test cluster"
+  (member *cluster* '(nil :test)))
 
 (defun productionp ()
   "Returns true if this is the Production cluster"
