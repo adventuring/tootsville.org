@@ -89,7 +89,7 @@ Tootsville.ui = {
                                         reallyP => {
                                             if (reallyP) {
                                                 Tootsville.ui.quitAndGoTo('https://play.' + Tootsville.cluster + '/login/logout');
-                                            }!
+                                            }
                                         }
                                     );
     },

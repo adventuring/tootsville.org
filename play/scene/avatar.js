@@ -39,10 +39,6 @@ Tootsville.Avatars.UltraTootBuilder = {
         proxyHead.setParent(modelRoot);
         proxyBody.setParent(modelRoot);
     },
-    importUltraToot: function(finish, meshes, foo, bar) {
-        // TODO: private
-        var modelRoot = new BABYLON.TransformNode('UltraToot', Tootsville.tank.scene, true);
-     },
     addMeshesToModelRoot: function(meshes) {
         try {
             if (meshes.length == 0) {
@@ -67,7 +63,6 @@ Tootsville.Avatars.UltraTootBuilder = {
         Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
         finish(Tootsville.Avatars.UltraTootBuilder.model);
         return;
-        }
     },
     importUltraToot: function(finish, meshes, foo, bar) {
         // XXX: private
@@ -130,15 +125,15 @@ Tootsville.Avatars.UltraTootBuilder = {
     makeToot: function (avatar) {
         return new Promise((finish) => {
             if (avatar.avatar == 'UltraToot') {
-                            Tootsville.Avatars.UltraTootBuilder.getBaseModel().then( (model) => {
-                                var toot = model.clone();
-                                toot.name = 'avatar/' + avatar.name;
-                                Tootsville.Avatars.UltraTootBuilder.enablePhysics(toot, avatar);
-                                Tootsville.Avatars.UltraTootBuilder.setColors(toot, avatar);
-                                Tootsville.Avatars.UltraTootBuilder.addClothes(toot, avatar);
-                                finish(toot);
-                                return;
-                            });
+                Tootsville.Avatars.UltraTootBuilder.getBaseModel().then( (model) => {
+                    var toot = model.clone();
+                    toot.name = 'avatar/' + avatar.name;
+                    Tootsville.Avatars.UltraTootBuilder.enablePhysics(toot, avatar);
+                    Tootsville.Avatars.UltraTootBuilder.setColors(toot, avatar);
+                    Tootsville.Avatars.UltraTootBuilder.addClothes(toot, avatar);
+                    finish(toot);
+                    return;
+                });
             } else {
                 Tootsville.warn("Avatar is not UltraToot: " + avatar.toSource());
                 var proxy = BABYLON.MeshBuilder.CreateSphere('proxy for ' + avatar.name,

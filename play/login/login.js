@@ -41,7 +41,6 @@ Tootsville.login.switchGoogleAccount = function () {
     }
 }
 
-
 Tootsville.login.drawAvatarOnCanvas = function (avatar,canvas) {
     canvas.height = 128;
     canvas.width = 128;

@@ -23,7 +23,7 @@ Tootsville.wardrobe = {
     },
 
     proposeExchange: function(tradePartner, offerItems, demandItems) {
-        Tootsville.character || return; // XXX assert?
+        if (! Tootsville.character) return; // XXX assert?
         return { exchange: {
             offers: [
                 {
