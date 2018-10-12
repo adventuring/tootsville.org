@@ -80,16 +80,31 @@
                                              (getf route :method))
                "</tt></li>" #(#\Newline)))
 
+(defun routes-prefixed (routes)
+  (let ((map (group-by routes :test 'equal
+                       :key (lambda (route)
+                              (format nil "~{~a~^/~}"
+                                      (butlast
+                                       (split-sequence #\/
+                                                       (getf route :template))))))))
+    (when (equal (caar map) "")
+      (setf (caar map) "/"))
+    (loop for row in map
+       for (prefix . routes) = row
+       when (search "maintenance" prefix)
+       do (setf (cdr row) nil))
+    map))
+
 (defendpoint (get "/meta-game/services" "text/html")
   (list 200 ()
         (reduce (curry #'concatenate 'string)
                 (flatten (list (endpoints-page-header)
-                               (mapcar #'route->html
-                                       (enumerate-routes))
+                               (mapcar (lambda (prefix-group)
+                                         (format nil "~%<h5>~a</h5>~{~%~a~}"
+                                                 (car prefix-group)
+                                                 (mapcar #'route->html (cdr prefix-group))))
+                                       (routes-prefixed (enumerate-routes)))
                                (endpoints-page-footer))))))
 
 (defendpoint (get "/meta-game/services" "application/json")
-  (list 200 ()
-        (reduce (curry #'concatenate 'string)
-                (list :services
-                      (enumerate-routes)))))
+  (list 200 () (list :services (enumerate-routes))))
