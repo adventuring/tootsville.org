@@ -29,7 +29,9 @@
 
 (defgeneric respond-to-error (condition)
   (:method ((error error))
-    (hunchentoot:maybe-invoke-debugger error)))
+    (hunchentoot:maybe-invoke-debugger error))
+  (:method ((error unimplemented))
+    (verbose:info :unimplemented "Unimplemented function called: ~s" error)))
 
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-restas-acceptor) request)
