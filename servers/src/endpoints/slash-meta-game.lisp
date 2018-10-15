@@ -11,7 +11,7 @@
 (defun endpoints-page-header ()
   (list "<!DOCTYPE html>
 <html><head><title>Services: "
-        (machine-instance)
+        (string-capitalize (machine-instance))
         " at "
         (long-site-name)
         "</title>
