@@ -284,8 +284,8 @@ This is basically just CHECK-TYPE for arguments passed by the user."
            (docstring (if (and (consp body) (stringp (first body)))
                           (first body)
                           (format nil
-                                  "Endpoint for URI's matching the pattern ~s~
-~@[ and accepting content-type ~a~]"
+                                  "Undocumented endpoint for URI's matching ~
+the pattern ~s ~@[ and accepting content-type ~a~]"
                                   uri content-type))))
       (list 'progn
             (defendpoint/make-endpoint-function :method method
