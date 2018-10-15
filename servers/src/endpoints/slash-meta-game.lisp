@@ -31,8 +31,12 @@
 (defun enumerate-routes ()
   (sort
    (sort
-    (mapcar #'hash-table-plist
-            (hash-table-values
+    (mapcar (lambda (pair)
+              (destructuring-bind (fn . attribs) pair
+                (list* :fn fn
+                       :docstring (documentation fn 'function)
+                       (hash-table-plist attribs))))
+            (hash-table-alist
              (gethash :routes
                       (restas::find-pkgmodule-traits :Tootsville))))
     #'string<
