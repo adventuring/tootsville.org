@@ -10,7 +10,11 @@
 
 (defun endpoints-page-header ()
   (list "<!DOCTYPE html>
-<html><head><title>Services</title>
+<html><head><title>Services: "
+        (machine-instance)
+        " at "
+        (long-site-name)
+        "</title>
 <link rel=\"stylesheet\"
  href=\"https://jumbo.tootsville.org/Assets/Styles/meta-game.services.css\"
  type=\"text/css\">
