@@ -305,6 +305,7 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
             (restas:reconnect-all-routes)))))
 
 (defendpoint (get "/" text/html)
+  "GET on the root redirects to the main web page (@url{https://Tootsville.org/})"
   (list 307 '(:location "https://Tootsville.org/") ""))
 
 

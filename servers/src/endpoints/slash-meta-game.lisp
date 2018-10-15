@@ -1,12 +1,6 @@
 (in-package :Tootsville)
 
-(defendpoint (get "/meta-game/headers" "application/json")
-  (list 200 ()
-        (list :headers-in
-              (alist-plist (hunchentoot::headers-in*)))))
 
-(defendpoint (get "/meta-game/ping" "text/plain")
-  (list 200 () "pong"))
 
 (defun endpoints-page-header ()
   (list "<!DOCTYPE html>
@@ -49,7 +43,23 @@
    :key (rcurry #'getf :template)))
 
 (defun docstring->html (docstring)
-  docstring)
+  (concatenate 'string
+               "<section><p>"
+               (regex-replace-pairs '(
+                                      ("&" "&amp;")
+                                      ("<" "&lt;")
+                                      ("\\n\\n" . "</p><p>")
+                                      ("`([A-Z0-9+/-])'" . "<b class=\"fn-ref\">\\1</b>")
+                                      ("([A-Z0-9+/-])" . "\\1")
+                                      ("@url{(.*?)}" . "<a href=\"\\1\">\\1</a>")
+                                      ("@begin enumerate" . "<ol>")
+                                      ("@begin itemize" . "<ul>")
+                                      ("@item" . "<li>")
+                                      ("@end enumerate" . "</ol>")
+                                      ("@end itemize" . "</ul>")
+                                      )
+                                    docstring)
+               "</p></section>"))
 
 (defun decorate-method-html (method)
   (format nil "<span class=\"method method-~(~a~)\">~:*~a</span>"
@@ -163,12 +173,18 @@
           (setf (gethash (getf plist key) hash nil) (list plist))))
     (hash-table-alist hash)))
 
+
+
 (defendpoint (get "/meta-game/services" "text/html")
+  "Provide a listing of services available in this cluster.
+
+This provides a browseable catalog of  web services that are provided by
+this machine or its siblings."
   (list 200 ()
         (reduce (curry #'concatenate 'string)
                 (flatten (list (endpoints-page-header)
                                (mapcar (lambda (prefix-group)
-                                         (format nil "~%<h5>~a</h5>~{~%~a~}"
+                                         (format nil "~%<h3>~a</h3>~{~%~a~}"
                                                  (car prefix-group)
                                                  (mapcar #'route->html
                                                          (cdr prefix-group))))
@@ -176,6 +192,9 @@
                                (endpoints-page-footer))))))
 
 (defendpoint (get "/meta-game/services" "application/json")
+  "This is a sketchy  sort of listing of services in  a JSON format that
+is not  anybody's standard. It  exists as  a stop-gap measure  until the
+OpenAPI form is working nicely."
   (list 200 () (list :services (enumerate-routes))))
 
 (defendpoint (get "/meta-game/services/users"
@@ -190,3 +209,15 @@
                       (mapcan #'path->openapi
                               (group-plists (enumerate-routes) :template))
                       :|components| #()))))
+
+(defendpoint (get "/meta-game/headers" "application/json")
+  "This method returns to the user, the headers that reached the application server.
+
+Note  that these  may have  been modified  by proxies  or load-balancers
+in transit."
+  (list 200 ()
+        (list :headers-in
+              (alist-plist (hunchentoot::headers-in*)))))
+
+(defendpoint (get "/meta-game/ping" "text/plain")
+  (list 200 () "pong"))
