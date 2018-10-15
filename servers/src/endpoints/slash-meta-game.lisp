@@ -107,25 +107,29 @@
                         "}"))))
 
 (defun route->openapi (route)
+  (check-type route proper-list)
   (list (string-downcase (getf route :method))
-        (list :|summary|
-              (getf route :docstring)
-              :|parameters|
-              (route-vars->openapi route)
-              :|responses|
-              (list "200"
-                    (list :|description|
-                          "success (results are not documented in OpenAPI correctly. TODO)")
-                    "default"
-                    (list :|description|
-                          "failure (results are not documented in OpenAPI correctly. TODO)")))))
+        (let ((partial (list :|summary|
+                             (getf route :docstring)
+                             :|responses|
+                             (list "200"
+                                   (list :|description|
+                                         "success (results are not documented in OpenAPI correctly. TODO)")
+                                   "default"
+                                   (list :|description|
+                                         "failure (results are not documented in OpenAPI correctly. TODO)")))))
+          (if (getf route :variables)
+              (list* :|parameters|
+                     (route-vars->openapi route)
+                     partial)
+              partial))))
 
 (defun path->openapi (route-group)
-  (destructuring-bind (path &rest routes) route-group
-    (list (template->openapi path)
-          (loop for route in routes
-             appending
-               (route->openapi route)))))
+  (destructuring-bind (uri &rest routes) route-group
+    (check-type uri string)
+    (check-type routes proper-list)
+    (list (template->openapi uri)
+          (mapcan #'route->openapi routes))))
 
 (defun route-vars->openapi (route)
   (loop for var in (getf route :variables)
