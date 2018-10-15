@@ -44,6 +44,9 @@
    #'string<
    :key (rcurry #'getf :template)))
 
+(defun docstring->html (docstring)
+  docstring)
+
 (defun decorate-method-html (method)
   (format nil "<span class=\"method method-~(~a~)\">~:*~a</span>"
           method))
