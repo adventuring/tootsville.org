@@ -28,12 +28,22 @@ is, of course, a subseq of \".json\" as well.)"
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun without-sem (string)
+    (if-let (sem (position #\; string))
+      (subseq string 0 sem)
+      string))
+  
+  (defun first-line (string)
+    (if-let (sem (position #\newline string))
+      (subseq string 0 sem)
+      string))
+  
   (defun defendpoint/make-endpoint-function (&key
                                                method fname content-type
                                                λ-list docstring uri body)
     `(defun ,fname (,@λ-list) ,docstring
             (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
-                    ,(concatenate 'string "{~a} Starting: " docstring)
+                    ,(concatenate 'string "{~a} Starting: " (first-line docstring))
                     (thread-name (current-thread)))
             ,(unless (consp content-type)
                `(setf (hunchentoot:content-type*)
@@ -45,7 +55,7 @@ is, of course, a subseq of \".json\" as well.)"
                          (block ,fname
                            ,@body))))))
               (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
-                      ,(concatenate 'string "{~a} Finished: " docstring)
+                      ,(concatenate 'string "{~a} Finished: " (first-line docstring))
                       (thread-name (current-thread)))
               (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
                       "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
@@ -104,7 +114,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
       :application/vnd.apple.installer+xml "mpkg"
       :application/vnd.mozilla.xul+xml "xul"
       :application/vnd.ms-fontobject "eot"
-      :application/vnd.oai.openapi "yaml"
+      :application/vnd.oai.openapi "json"
       :application/vnd.oasis.opendocument.presentation "odp"
       :application/vnd.oasis.opendocument.spreadsheet "ods"
       :application/vnd.oasis.opendocument.text "odt"
@@ -181,7 +191,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
   (defun extension-for-content-type (content-type)
     (getf *extensions-for-content-types*
-          (make-keyword (string-upcase content-type))))
+          (make-keyword (string-upcase (without-sem content-type)))))
 
   (defun name-for-content-type (content-type)
     (or (extension-for-content-type content-type)
@@ -266,12 +276,15 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                   uri (if (char= #\/ (last-elt uri))
                                           "index."
                                           ".")
-                                  extension)))
-      `(restas::register-route-traits
-        ',fname
-        (plist-hash-table (list :template ,typed-uri
-                                :method ,method
-                                :variables ,(lambda-list-as-variables λ-list))))))
+                                  extension))
+          (typed-fname (intern (concatenate 'string (string fname) "." extension))))
+      `(progn
+         (setf (fdefinition ',typed-fname) (fdefinition ',fname))
+         (restas::register-route-traits
+          ',typed-fname
+         (plist-hash-table (list :template ,typed-uri
+                                 :method ,method
+                                 :variables ,(lambda-list-as-variables λ-list)))))))
 
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)

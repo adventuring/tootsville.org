@@ -1,6 +1,6 @@
 (in-package :Tootsville)
 
-
+(require 'sb-introspect)
 
 (defun endpoints-page-header ()
   (list "<!DOCTYPE html>
@@ -12,9 +12,37 @@
 <link rel=\"stylesheet\"
  href=\"https://jumbo.tootsville.org/Assets/Styles/meta-game.services.css\"
  type=\"text/css\">
+<script>
+function perform_delete() {
+alert(\"This software is not trustworthy enough to allow DELETE testing.\");
+}
+function perform_get(form) {
+var uri = \"\";
+for (var i = 0; i < form.childNodes.length; ++i) {
+  var el = form.childNodes[i];
+  if (el.tagName == \"TT\")
+  { uri = uri + el.textContent; }
+  if (el.tagName == \"FIELDSET\" &&
+      el.childNodes[ el.childNodes.length - 1 ].tagName == \"INPUT\")
+  { uri = uri + el.childNodes[ el.childNodes.length - 1 ].value; }
+}
+  window.open(uri);
+}
+</script>
 </head><body>
 <h1>Services</h1>
-<h2>"
+
+<p> Services browser for this host.  Access to these services is subject
+to   the   terms  of   service   of   the   Tootsville  game;   see   <a
+href=\"https://tootsville.org/\">Tootsville.org</a>. </p>
+
+<p>  This documentation,  and much  more, can  also be  found in  the <a
+href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
+        (romance-ii-program-version)
+        "/Tootsville.pdf\">Reference
+        Manual</a>. </p>
+
+        <h2>"
         (cluster-name)
         "</h2><h3>"
         (machine-instance)
@@ -42,23 +70,97 @@
    #'string<
    :key (rcurry #'getf :template)))
 
-(defun docstring->html (docstring)
+(defun replace-texinfo-tables (string)
+  (substitute 
+   #\sub #\<
+   (with-output-to-string (o)
+     (with-input-from-string (s string)
+       (loop for line = (let ((l (read-line s nil nil)))
+                          (when l (string-trim " " l)))
+          until (and line
+                     (<= 6 (length line))
+                     (string-equal "@table" line :end2 6))
+          do (princ line o)
+          do (terpri o)
+          do (unless line
+               (return-from replace-texinfo-tables string)))
+       (princ "<dl>" o)
+       (let ((dtp nil))
+         (loop for line = (let ((l (read-line s nil nil)))
+                            (when l (string-trim " " l)))
+            until (and line
+                       (<= 10 (length line))
+                       (string-equal "@end table" line :end2 10))
+            do (when line
+                 (if (and (<= 5 (length line))
+                          (string-equal "@item" line :end2 5))
+                     (prog1
+                         (if dtp
+                             (princ line o)
+                             (format o "</dd><dt>~a" line))
+                       (setf dtp t))
+                     (prog1
+                         (if dtp
+                             (format o "</dt><dd>~a" line)
+                             (princ line o))
+                       (setf dtp nil))))
+            do (terpri o)
+            finally 
+              (progn
+                (if dtp 
+                    (princ "</dt></dl>" o)
+                    (princ "</dd></dl>" o))
+                (loop for line = (read-line s nil nil)
+                   while line 
+                   do (princ line o)
+                   do (terpri o)))))))))
+
+(defun docstring->html (docstring symbol)
+  (when (fboundp symbol)
+    (let ((first-line (subseq docstring 0 (position #\Newline docstring))))
+      (loop for word in (sb-introspect:function-lambda-list (fdefinition symbol))
+         unless (member word lambda-list-keywords)
+         do (setf first-line
+                  (regex-replace-all (concatenate
+                                      'string
+                                      "("
+                                      (string-upcase 
+                                       (etypecase word
+                                         (atom word)
+                                         (cons 
+                                          (etypecase (car word)
+                                            (atom (car word))
+                                            (cons (caar word))))))
+                                      ")")
+                                     first-line
+                                     "@var{\\1}")))
+      (setf docstring
+            (concatenate 'string first-line
+                         (subseq docstring (or (position #\Newline docstring) 
+                                               (length docstring)))))))
+  (when (search "@table" docstring)
+    (setf docstring (replace-texinfo-tables docstring)))
   (concatenate 'string
                "<section><p>"
                (regex-replace-pairs '(
                                       ("&" "&amp;")
-                                      ("<" "&lt;")
-                                      ("\\n\\n" . "</p><p>")
-                                      ("`([A-Z0-9+/-])'" . "<b class=\"fn-ref\">\\1</b>")
-                                      ("([A-Z0-9+/-])" . "\\1")
-                                      ("@url{(.*?)}" . "<a href=\"\\1\">\\1</a>")
-                                      ("@begin enumerate" . "<ol>")
-                                      ("@begin itemize" . "<ul>")
-                                      ("@item" . "<li>")
-                                      ("@end enumerate" . "</ol>")
-                                      ("@end itemize" . "</ul>")
-                                      )
-                                    docstring)
+        ("<" "&lt;")
+        (#.(string #\sub) . "<")
+        ("\\n\\n" . "</p><p>")
+        ("`([A-Z0-9+/-])'" . "<b class=\"fn-ref\">\\1</b>")
+        ("@url{(.*?)}" . "<a href=\"\\1\">\\1</a>")
+        ("@samp{(.*?)}" . "<tt>\\1</tt>")
+        ("@var{(.*?)}" . "<span class=\"var\">\\1</span>")
+        ("@section{(.*?)}" . "</section><section><h3>\\1</h3>")
+        ("@subsection{(.*?)}" . "<h4>\\1</h4>")
+        ("@subsubsection{(.*?)}" . "<h5>\\1</h5>")
+        ("@enumerate" . "<ol>")
+        ("@end enumerate" . "</ol>")
+        ("@itemize" . "<ul>")
+        ("@end itemize" . "</ul>")
+        ("@item" . "<li>")
+        )
+  docstring)
                "</p></section>"))
 
 (defun decorate-method-html (method)
@@ -70,26 +172,31 @@
       (if (eql :get method)
           (format nil "<a href=\"~a\">~:*~a</a>" template)
           template)
-      (if (eql :get method)
+      (if (member method '(:get :delete))
           (progn (setf template (concatenate 'string
-                                             "<form onsubmit=\"perform_get\">"
+                                             "<form  onsubmit=\"perform_"
+                                             (string-downcase method)
+                                             "(this)\">"
                                              template
-                                             "</form>"))
+                                             "</tt> &nbsp; <input type=\"submit\" class=\"submit-"
+                                             (string-downcase method)
+                                             "\" name=\"_\" value=\""
+                                             (string-capitalize method)
+                                             "\"></form><tt>"))
                  (dolist (variable variables template)
                    (setf template
                          (regex-replace (concatenate 'string "\\:"
                                                      (string-downcase variable))
                                         template
                                         (format nil "</tt>
-<fieldset><legend><label for=\"~a\" class=\"var\">~:(~:*~a~)</label></legend> ~
+<fieldset><legend><label for=\"~a\" class=\"var-label\">~:(~:*~a~)</label></legend> ~
 <input type=\"text\" name=\"~:*~a\"></fieldset><tt>" variable)))))
           (dolist (variable variables template)
             (setf template
-                  (regex-replace (concatenate 'string "\\Q:"
-                                              (string-downcase variable)
-                                              "\\E")
+                  (regex-replace (concatenate 'string "\\:"
+                                              (string-downcase variable))
                                  template
-                                 (format nil "</tt><span class=\"var\">~:(~a~)</span></tt>"
+                                 (format nil "</tt><span class=\"var\">~:(~a~)</span><tt>"
                                          variable)))))))
 
 (defun route->html (route)
@@ -100,7 +207,8 @@
                                              (getf route :variables)
                                              (getf route :method))
                "</tt> <br>"
-               (docstring->html (getf route :docstring))
+               (docstring->html (getf route :docstring)
+                                (getf route :fn))
                "</li>" #(#\Newline)))
 
 (defun template->openapi (template)
@@ -153,12 +261,10 @@
 (defun routes-prefixed (routes)
   (let ((map (group-by routes :test 'equal
                        :key (lambda (route)
-                              (format nil "~{~a~^/~}"
+                              (format nil "~{~a/~}"
                                       (butlast
                                        (split-sequence #\/
                                                        (getf route :template))))))))
-    (when (equal (caar map) "")
-      (setf (caar map) "/"))
     (loop for row in map
        for (prefix . routes) = row
        when (search "maintenance" prefix)
@@ -182,14 +288,24 @@ This provides a browseable catalog of  web services that are provided by
 this machine or its siblings."
   (list 200 ()
         (reduce (curry #'concatenate 'string)
-                (flatten (list (endpoints-page-header)
-                               (mapcar (lambda (prefix-group)
-                                         (format nil "~%<h3>~a</h3>~{~%~a~}"
-                                                 (car prefix-group)
-                                                 (mapcar #'route->html
-                                                         (cdr prefix-group))))
-                                       (routes-prefixed (enumerate-routes)))
-                               (endpoints-page-footer))))))
+                (flatten
+                 (list 
+                  (endpoints-page-header)
+                  (mapcar (lambda (prefix-group)
+                            (format nil "~%<h2>~a</h2>~{~%~a~}"
+                                    (car prefix-group)
+                                    (mapcar #'route->html
+                                            (sort 
+                                             (sort
+                                              (cdr prefix-group)
+                                              #'string-lessp
+                                              :key (rcurry #'getf :method))
+                                             #'string-lessp
+                                             :key (rcurry #'getf :template)))))
+                          (sort (routes-prefixed (enumerate-routes))
+                                #'string-lessp
+                                :key #'car))
+                  (endpoints-page-footer))))))
 
 (defendpoint (get "/meta-game/services" "application/json")
   "This is a sketchy  sort of listing of services in  a JSON format that
@@ -199,6 +315,15 @@ OpenAPI form is working nicely."
 
 (defendpoint (get "/meta-game/services/users"
                   "application/vnd.oai.openapi;version=3.0")
+  "Enumerate services for OpenAPI.
+
+Provide an  OpenAPI JSON dump  of the  same information seen  on this
+page, but in a machine-readable format.
+
+@subsection{Status: 200 OK}
+
+The data  returned is  in the  JSON encoded form  of OpenAPI  3.0.0; see
+@url{https://openapis.org/} for details."
   (list 200 () (jonathan:to-json
                 (list :|openapi| "3.0.0" 
                       :|info| (list :|version| (romance-ii-program-version)
@@ -220,4 +345,5 @@ in transit."
               (alist-plist (hunchentoot::headers-in*)))))
 
 (defendpoint (get "/meta-game/ping" "text/plain")
+  "This endpoint always returns the 4-character string: @samp{pong}"
   (list 200 () "pong"))

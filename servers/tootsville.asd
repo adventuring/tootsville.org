@@ -33,19 +33,16 @@ REST services for the front-end."
                :cl-memcached
                :cl-ppcre
                :cl-threadpool
-               :clouchdb  
-               :datafly
+               :clouchdb
                :drakma
                :envy
                :fare-memoization
                :restas
                :swank
-               :sxql
                :trivial-backtrace
                :trivial-ldap
                :uiop
                :uuid
-               :yason
 
                :oliphaunt
                :rollbar
@@ -61,11 +58,10 @@ REST services for the front-end."
              (:file "types" :depends-on ("utils"))
              (:file "config" :depends-on ("package" "types"))
              (:file "view" :depends-on ("config"))
-             (:file "db" :depends-on ("config"))
-             (:file "db-player" :depends-on ("db" "package"))
-             (:file "users" :depends-on ("utils" "db" "db-player"))
-             (:file "toots" :depends-on ("utils" "db"))
-             (:file "players" :depends-on ("utils" "db"))
+             (:file "ldap-player" :depends-on ("package"))
+             (:file "users" :depends-on ("utils" "ldap-player"))
+             (:file "toots" :depends-on ("utils" "users"))
+             (:file "players" :depends-on ("utils" "users"))
              (:file "errors" :depends-on ("package"))
              (:file "version" :depends-on ("package" "config"))
              (:file "logging" :depends-on ("package" "version"))
@@ -73,10 +69,10 @@ REST services for the front-end."
              (:file "power-on-self-test" :depends-on ("web" "endpoints"))
              (:file "command-line" :depends-on ("main" "logging" "write-docs"))
              (:file "web"
-                    :depends-on ("view" "db-player" "errors" "config"))
+                    :depends-on ("view" "players" "errors" "config"))
              (:file "http-error" :depends-on ("web"))
              (:file "redirect" :depends-on ("web"))
-             (:file "main" :depends-on ("config" "view" "db" "web" "package"))
+             (:file "main" :depends-on ("config" "view" "web" "package"))
              (:module "endpoints"
                       :depends-on ("web")
                       :components
