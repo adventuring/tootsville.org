@@ -8,10 +8,6 @@
   (:import-from :envy
                 #:config-env-var
                 #:defconfig)
-  (:import-from :datafly
-                #:*connection*
-                #:connect-cached
-                #:encode-json)
   (:import-from :trivial-backtrace #:print-backtrace)
   (:export
    #:*application-root*

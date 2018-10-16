@@ -50,20 +50,8 @@
                              (hunchentoot:remote-port*)))))))
     (or (find-if (curry #'equal token) *gossip-users*
                  :key #'user-google-token)
-        (with-connection (:members)
-          (or (datafly:retrieve-one
-               (sxql:select (:*)
-                            :from :users
-                            :where '(:= :google-token token))
-               :as 'gossip-user)
-              (progn
-                (datafly:execute (sxql:insert-into :users
-                                                   :google-token token))
-                (datafly:retrieve-one
-                 (sxql:select (:*)
-                              :from :users
-                              :where '(:= :id (:last_insert_id)))
-                 :as 'gossip-user)))))))
+        (or (trivial-ldap:search ldap (list :users :google-token token))
+            (trivial-ldap:add ldap (list :users :google-token token))))))
 
 (defun request-param-value (param)
   (hunchentoot:parameter param))
