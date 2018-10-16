@@ -37,8 +37,10 @@ REST services for the front-end."
                :drakma
                :envy
                :fare-memoization
+               :jonathan
                :restas
                :swank
+               :symbol-munger ;; TODO factor out
                :trivial-backtrace
                :trivial-ldap
                :uiop
@@ -47,7 +49,6 @@ REST services for the front-end."
                :oliphaunt
                :rollbar
                :thread-pool-taskmaster
-               
                )
   :components
   ((:module "src"
