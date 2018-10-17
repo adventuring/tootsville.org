@@ -1,4 +1,4 @@
-all: play worker servers TODO.org TODO.scorecard
+all: htaccess play worker servers TODO.org TODO.scorecard
 
 ####################
 
@@ -16,6 +16,11 @@ servers/Tootsville:	$(shell find servers \( -name \*.lisp -o -name \*.asd \) -an
 
 doc:
 	$(MAKE) -C servers doc
+
+####################
+
+htaccess:	htaccess.base bin/make-all-htaccess
+	bin/make-all-htaccess
 
 ####################
 
