@@ -144,6 +144,7 @@ rsync --exclude='*~' --exclude='*#' -ar \
 # each host copies error pages
 rsync --exclude='*~' --exclude='*#'  -ar \
       www/error dist/play/
+cp www/favicon.??? dist/play/
 # .htaccess generated above
 cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
 # Google auth linking
@@ -231,6 +232,7 @@ do
     # Update error pages. No need to be so careful, here.
     rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
        www/error $host.$cluster:/var/www/$host.$cluster/
+    scp www/favicon.??? $host.$cluster:/var/www/$host.$cluster/
 done
 
 ##########
