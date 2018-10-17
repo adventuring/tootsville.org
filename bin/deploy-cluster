@@ -122,6 +122,16 @@ fi
 
 ##########
 
+echo "Checking SSH connectivity"
+
+ssh play.$cluster ls -1d play.$cluster/
+ssh $cluster ls -1d $cluster/
+ssh users.$cluster sbcl --no-userinit --quit
+ssh gossip.$cluster sbcl --no-userinit --quit
+ssh world.$cluster sbcl --no-userinit --quit
+
+##########
+
 echobig Pre-deploy front-ends
 
 echo "Pre-deployment for play.$cluster:"
