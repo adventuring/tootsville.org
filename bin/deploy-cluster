@@ -124,11 +124,11 @@ fi
 
 echo "Checking SSH connectivity"
 
-ssh play.$cluster ls -1d play.$cluster/
-ssh $cluster ls -1d $cluster/
-ssh users.$cluster sbcl --no-userinit --quit
-ssh gossip.$cluster sbcl --no-userinit --quit
-ssh world.$cluster sbcl --no-userinit --quit
+ssh play.$cluster ls -1d play.$cluster/ | grep play.$cluster
+ssh $cluster ls -1d $cluster/ | grep $cluster
+ssh users.$cluster sbcl --no-userinit --quit | grep 'This is SBCL'
+ssh gossip.$cluster sbcl --no-userinit --quit | grep 'This is SBCL'
+ssh world.$cluster sbcl --no-userinit --quit | grep 'This is SBCL'
 
 ##########
 
