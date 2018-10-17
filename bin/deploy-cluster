@@ -144,12 +144,14 @@ rsync --exclude='*~' --exclude='*#' -ar \
 # each host copies error pages
 rsync --exclude='*~' --exclude='*#'  -ar \
       www/error dist/play/
+# each host copies favicons
 cp www/favicon.??? dist/play/
+# mapping to hosts in the cluster
+cp dist/htaccess.all/$cluster.cluster.json dist/play/cluster.json
 # .htaccess generated above
 cp dist/htaccess.all/play.$cluster.htaccess dist/play/.htaccess
-# Google auth linking
-### mkdir -p dist/play/.well-known
-### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
+
+# Stream a shar/unshar to the host at one go
 cat - \
  <( cd dist/ ; \
      shar -C xz -g 9 -M -Q -q -x \
@@ -160,9 +162,11 @@ cat - \
 rm -fr play.$cluster.prior-deploy && \
 rm -fr play.$cluster.before-deploy && \
 mv -u play.$cluster.new play.$cluster.prior-deploy 2>/dev/null ; \
+mkdir -p play.$cluster && \
 cp -a play.$cluster play.$cluster.new && \
 cd play.$cluster.new;
 PREAMBLE_END
+
 rm -r dist/play
 echo "done pre-deploying play.$cluster static files"
 echo ""
@@ -170,9 +174,8 @@ echo ""
 echo "Pre-deployment for www.$cluster:"
 # .htaccess generated above
 cp dist/htaccess.all/www.$cluster.htaccess www/.htaccess
-# Google auth linking
-### mkdir -p dist/play/.well-known
-### cp include/well-known.assetlinks.json dist/play/.well-known/assetlinks.json || exit 5
+
+# Stream a shar/unshar to the host at one go
 cat - \
  <( cd www;
     shar -C xz -g 9 -M -Q -q -x \
@@ -229,7 +232,7 @@ do
           $host.$cluster: || exit 6
     ssh $host.$cluster make -C servers Tootsville test || exit 6
     
-    # Update error pages. No need to be so careful, here.
+    # Update error pages and favicons. No need to be so careful, here.
     rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
        www/error $host.$cluster:/var/www/$host.$cluster/
     scp www/favicon.??? $host.$cluster:/var/www/$host.$cluster/
@@ -335,6 +338,9 @@ done
 
 echobig Posting docs to Goethe
 make -C servers doc-publish
+scp dist/htaccess.goethe goethe.tootsville.org/goethe.tootsville.org/.htaccess
+scp www/favicon.??? goethe.tootsville.org/goethe.tootsville.org/
+rsync -essh www/error goethe.tootsville.org/goethe.tootsville.org/
 
 ##########
 
