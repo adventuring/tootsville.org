@@ -47,23 +47,24 @@ echo "Deploy cluster: $1"
 echo "Initiated by $LOCAL_USERNAME@$(hostname) ($REALNAME)"
 date
 rm -fr .tmp.*
-if [ "$1" = tootsville.org ]
+
+cluster=$1
+
+if [ "$cluster" = tootsville.org ]
 then
     echo "That seems dangerous/stupid. Let's not." >&2
     exit 1
 fi
-if [ "x$1" = x ]
+if [ "x$cluster" = x ]
 then
-    echo "Cluster name required" >&2
+    echo "Cluster name required; eg $0 test.tootsville.org" >&2
     exit 2
 fi
-grep "$1" << VALID_CLUSTERS || ( echo "Cluster name not recognized ($1)" >&2 && exit 2 )
+if ! grep "$cluster" << VALID_CLUSTERS ; then echo "Cluster name not recognized ($1)" >&2; exit 3; fi
 tootsville.org
 test.tootsville.org
 qa.tootsville.org
 VALID_CLUSTERS
-
-cluster=$1
 
 cd "$(dirname $0)"/../
 
