@@ -5,7 +5,6 @@ Tootsville.game.hideWhenGameReady = function () {
     }
 }
 
-
 Tootsville.game.stopSlowLoadingWatchdogs = function () {
     clearTimeout(window.loadWatchdog1);
     clearTimeout(window.loadWatchdog2);

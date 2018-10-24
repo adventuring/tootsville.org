@@ -2,8 +2,6 @@
 
 
 
-
-
 (defun two-chars-in-a-row-p (string char-bag)
   "Do any two characters in CHAR-BAG occur together in STRING?"
   (check-type string string)
