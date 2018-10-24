@@ -1,4 +1,5 @@
 var Tootsville = {
+    /* Cluster name is hostname minus leading "play" */
     cluster: document.location.host.split('.').splice(1).join('.'),
     Worlds: {
         Tootanga: { Gravity: 9.81 },
@@ -14,14 +15,14 @@ var Tootsville = {
     createBoxAvatar: function () {
     },
     brickController: function () {},
-    Item: function(json) {
+    Item: function (json) {
         this.avatar = json.avatar || Tootsville.createBoxAvatar();
         this.controller = Tootsville.brickController();
         this.referenceFrame = json.referenceFrame || null;
         this.name = json.name;
         this.itemP = true;
     },
-    Character: function(json) {
+    Character: function (json) {
         Item.call(this, json);
         this.controller = json.controller;
         this.characterP = true;
