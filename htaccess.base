@@ -18,11 +18,29 @@ Redirect /form/reserve-legacy-toot-name https://goo.gl/forms/TSF6zTktKAsty7OR2
 Redirect /form/display-bug https://wiki.tootsville.org/wiki/The_Yes_it_is_ugly_Page
 Redirect /quiz/toots-quiz-201610 https://docs.google.com/forms/d/e/1FAIpQLSf3u024H6qDYC7U5dsMdORwOw7oYXXLoN2nJQJC3RFVljXYog/viewform
 
+<FilesMatch "\.txt$">
+  Header set Content-type "text/plain;charset=utf-8"
+</FilesMatch>
+<FilesMatch "\.csv$">
+  Header set Content-type "text/csv;charset=utf-8"
+</FilesMatch>
+<FilesMatch "\.css$">
+  Header set Content-type "text/css;charset=utf-8"
+</FilesMatch>
+<FilesMatch "\.text$">
+  Header set Content-type "text/plain;charset=utf-8"
+</FilesMatch>
+<FilesMatch "\.html$">
+  Header set Content-type "text/html;charset=utf-8"
+</FilesMatch>
 <FilesMatch "\.twiml$">
   Header set Content-type "application/xml;charset=utf-8"
 </FilesMatch>
 <FilesMatch "\.json$">
   Header set Content-type "application/json;charset=utf-8"
+</FilesMatch>
+<FilesMatch "\.js$">
+  Header set Content-type "application/javascript;charset=utf-8"
 </FilesMatch>
 <FilesMatch "\.babylon$">
   Header set Content-type "application/json;charset=utf-8"
