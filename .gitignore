@@ -23,10 +23,14 @@
 .#*
 *.tmp
 *.orig
+tmp.*
+dumper*.lisp
 
 # Output files
 dist/
+doc/*
 htaccess.all
 www/.htaccess
 TODO.org
 TODO.scorecard
+
