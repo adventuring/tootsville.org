@@ -1,6 +1,6 @@
 all: htaccess play worker servers TODO.org TODO.scorecard
 
-deploy: all deploy-www deploy-play deploy-servers
+deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 
 #################### vars
 
@@ -25,6 +25,8 @@ REALNAME:=$(shell if which finger &>/dev/null ;\
 	fi ;\
 	echo $$REALNAME)
 
+# Rollbar
+ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 
 #################### clean
 
@@ -40,10 +42,10 @@ clean:
 servers:	servers/Tootsville
 
 servers/Tootsville:	$(shell find servers \( -name \*.lisp -o -name \*.asd \) -and -not -name .\*)
-	$(MAKE) -C servers Tootsville
+	$(MAKE) -C servers Tootsville test
 
 doc:
-	$(MAKE) -C servers doc
+	$(MAKE) -C servers Toosville doc
 
 #################### htaccess
 
@@ -130,13 +132,46 @@ dist/www/2019.css:	$(shell echo www/*.less)
 #################### deploy
 
 deploy-play:	predeploy
-
+	ssh play.$(CLUSTER) "mv play.$(CLUSTER) play.$(CLUSTER).before-deploy && mv play.$(CLUSTER).new play.$(CLUSTER)"
+	curl https://api.rollbar.com/api/1/deploy/ \
+	     -F access_token=$(ACCESS_TOKEN) \
+	     -F environment=play.$(CLUSTER) \
+	     -F framework=deploy-cluster \
+	     -F notifier.name=deploy-cluster \
+	     -F revision=$(REVISION) \
+	     -F uuid=$(uuidgen) \
+	     -F local_username=$(LOCAL_USERNAME)
 
 deploy-servers:	predeploy
-
+	for host in users gossip world; \
+	do \
+		ssh $$host.$(CLUSTER) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
+cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
+sudo -n systemctl enable tootsville; \
+sudo -n systemctl restart tootsville; \
+sudo -n systemctl start tootsville" ;\
+		VERSION=$(shell servers/Tootsville version-info version) ;\
+		curl https://api.rollbar.com/api/1/deploy/ \
+		     -F access_token=$(ACCESS_TOKEN) \
+		     -F environment=$$host.$(CLUSTER) \
+		     -F framework=deploy-cluster \
+		     -F notifier.name=deploy-cluster \
+		     -F revision=$(REVISION) \
+		     -F comment="v $(VERSION)" \
+		     -F uuid=$(uuidgen) \
+		     -F local_username=$(LOCAL_USERNAME) ;\
+	done
 
 deploy-www:	predeploy
-
+	ssh www.$(CLUSTER) "mv www.$(CLUSTER) www.$(CLUSTER).before-deploy && mv www.$(CLUSTER).new www.$(CLUSTER)"
+	curl https://api.rollbar.com/api/1/deploy/ \
+	     -F access_token=$(ACCESS_TOKEN) \
+	     -F environment=www.$(CLUSTER) \
+	     -F framework=deploy-cluster \
+	     -F notifier.name=deploy-cluster \
+	     -F revision=$(REVISION) \
+	     -F uuid=$(uuidgen) \
+	     -F local_username=$(LOCAL_USERNAME)
 
 predeploy:	no-fixmes connectivity predeploy-play predeploy-www predeploy-servers remotes
 
@@ -230,7 +265,6 @@ predeploy-servers:	servers
 		scp www/favicon.??? $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;/
 	done
 
-
 quicklisp-update-servers:
 	for host in users gossip world
 	do
@@ -256,4 +290,42 @@ remotes:
 	then \
 		git remote add goethe goethe.tootsville.org:devel/git/tootsville.org ;\
 	fi
+
+
+git-tag-deployment:
+	VERSION=$$(servers/Tootsville version-info version) ;\
+	now=$$(date +%Y-%m-%d) ;\
+	msg="Deployed v$$VERSION to $$CLUSTER $$now" ;\
+	if git rev-parse v$$VERSION &>/dev/null ;\
+	then \
+	    echo "Previous tag v$$VERSION found, adding v$$VERSION-$$now" ;\
+	    if git rev-parse v$$VERSION-$$now &>/dev/null ;\
+	    then \
+	        now=$$(date +%Y-%m-%d.%H:%M) ;\
+	        msg="Deployed v$$VERSION to $$cluster $$now" ;\
+	        echo " - I meant v$$VERSION-$$now" ;\
+	        git submodule foreach git tag -a tootsville-v$$VERSION-$$now -m "for Tootsville.org: $$msg" ;\
+	        git tag -a v$$VERSION-$$now -m "$$msg" ;\
+	    else \
+	        git submodule foreach git tag -a tootsville-v$$VERSION-$$now -m "for Tootsville.org: $$msg" ;\
+	        git tag -a v$$VERSION-$$now -m "$$msg" ;\
+	    fi ;\
+	else \
+	    echo "First deploy of v$$VERSION, tagging" ;\
+	    git submodule foreach git tag -a tootsville-v$$VERSION -m "for Tootsville.org: $$msg" ;\
+	    git tag -a v$$VERSION -m "$$msg" ;\
+	fi
+
+	git push --tags origin
+	git submodule foreach git push --tags origin
+	git push --tags github
+	git push --tags gitlab
+	git push --tags goethe
+
+#################### deploy-docs
+
+	make -C servers doc-publish
+	scp dist/htaccess.goethe goethe.tootsville.org/goethe.tootsville.org/.htaccess
+	scp www/favicon.??? goethe.tootsville.org/goethe.tootsville.org/
+	rsync -essh www/error goethe.tootsville.org/goethe.tootsville.org/
 
