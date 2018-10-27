@@ -9,11 +9,11 @@
         speakIt: function() {
             document.getElementById('talk-speak').focus();
             return false; // Let <INPUT> edit handle it.
-        }
+        },
 
         clearTalk: function() {
             document.getElementById('talk-speak').value = '';
-        }
+        },
 
         onKeyDown: function (ev) {
             // TODO: numeric keypad to arrow mapping
