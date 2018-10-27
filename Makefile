@@ -1,4 +1,4 @@
-OAall: htaccess play worker servers TODO.org TODO.scorecard
+all: htaccess play worker servers TODO.org TODO.scorecard
 
 deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 
@@ -388,8 +388,11 @@ git-tag-deployment:
 	git push --tags origin
 	git submodule foreach git push --tags origin
 	git push --tags github
+	git submodule foreach git push --tags github
 	git push --tags gitlab
+	git submodule foreach git push --tags gitlab
 	git push --tags goethe
+	git submodule foreach git push --tags goethe
 
 #################### deploy-docs
 
