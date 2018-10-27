@@ -329,6 +329,9 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
 
 
 
+;;; Print-Object methods for routes and things.
+;; XXX: these could go upstream.
+
 (defmethod print-object ((route restas:route) stream)
   (print-unreadable-object (route stream :type t)
     (princ (string-capitalize (restas:route-symbol route)) stream)
