@@ -51,48 +51,51 @@ REST services for the front-end."
                :thread-pool-taskmaster
                )
   :components
-  ((:module "src"
-            :components
-            ((:file "lib/Chœrogryllum/Chœrogryllum")
-             (:file "package")
-             (:file "utils" :depends-on ("package"))
-             (:file "types" :depends-on ("utils"))
-             (:file "config" :depends-on ("package" "types"))
-             (:file "view" :depends-on ("config"))
-             (:file "ldap-player" :depends-on ("package"))
-             (:file "users" :depends-on ("utils" "ldap-player"))
-             (:file "toots" :depends-on ("utils" "users"))
-             (:file "players" :depends-on ("utils" "users"))
-             (:file "errors" :depends-on ("package"))
-             (:file "version" :depends-on ("package" "config"))
-             (:file "logging" :depends-on ("package" "version"))
-             (:file "write-docs" :depends-on ("package"))
-             (:file "power-on-self-test" :depends-on ("web" "endpoints"))
-             (:file "command-line" :depends-on ("main" "logging" "write-docs"))
-             (:file "web"
-                    :depends-on ("view" "players" "errors" "config"))
-             (:file "http-error" :depends-on ("web"))
-             (:file "redirect" :depends-on ("web"))
-             (:file "main" :depends-on ("config" "view" "web" "package"))
-             (:module "endpoints"
-                      :depends-on ("web")
-                      :components
-                      ((:file "slash-login")
-                       (:file "slash-version")
-                       (:file "slash-maintenance")
-                       (:file "slash-meta-game")
-                       
-                       (:file "slash-gossip")
-                       (:file "slash-toots")
-                       (:file "slash-users")
-                       (:file "slash-world")
-                       (:module "gossip"
-                                :depends-on ("slash-gossip")
-                                :components 
-                                ((:module "alexa"
-                                          :components
-                                          ((:file "alexa")
-                                           (:file "info" :depends-on ("alexa"))
-                                           (:file "chat" :depends-on ("alexa"))
-                                           (:file "clock" :depends-on
-                                           ("alexa"))))))))))))
+  ((:module
+    "src"
+    :components
+    ((:file "lib/Chœrogryllum/Chœrogryllum")
+     (:file "package")
+     (:file "utils" :depends-on ("package"))
+     (:file "types" :depends-on ("utils"))
+     (:file "config" :depends-on ("package" "types"))
+     (:file "view" :depends-on ("config"))
+     (:file "ldap-player" :depends-on ("package"))
+     (:file "users" :depends-on ("utils" "ldap-player"))
+     (:file "toots" :depends-on ("utils" "users"))
+     (:file "players" :depends-on ("utils" "users"))
+     (:file "errors" :depends-on ("package"))
+     (:file "version" :depends-on ("package" "config"))
+     (:file "logging" :depends-on ("package" "version"))
+     (:file "write-docs" :depends-on ("package"))
+     (:file "power-on-self-test" :depends-on ("web" "endpoints"))
+     (:file "command-line" :depends-on ("main" "logging" "write-docs"))
+     (:file "web"
+            :depends-on ("view" "players" "errors" "config"))
+     (:file "http-error" :depends-on ("web"))
+     (:file "redirect" :depends-on ("web"))
+     (:file "main" :depends-on ("config" "view" "web" "package"))
+     (:module
+      "endpoints"
+      :depends-on ("web")
+      :components
+      ((:file "slash-login")
+       (:file "slash-version")
+       (:file "slash-maintenance")
+       (:file "slash-meta-game")
+       
+       (:file "slash-gossip")
+       (:file "slash-toots")
+       (:file "slash-users")
+       (:file "slash-world")
+       (:module
+        "gossip"
+        :depends-on ("slash-gossip")
+        :components 
+        ((:module
+          "alexa"
+          :components
+          ((:file "alexa")
+           (:file "info" :depends-on ("alexa"))
+           (:file "chat" :depends-on ("alexa"))
+           (:file "clock" :depends-on ("alexa"))))))))))))
