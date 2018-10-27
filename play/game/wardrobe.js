@@ -25,7 +25,7 @@ Tootsville.wardrobe = {
     { for (var baseSlot in Tootsville.wardrobe.valences)
       { for (var j = 0; j < Tootsville.wardrobe.valences[ baseSlot ].length; ++j)
         { if (slot == Tootsville.wardrobe.valences[ baseSlot ][ j ])
-          { return baseSlot; }}}}
+          { return baseSlot; }}}},
     
     don: function (item, slot)
     { if (Tootsville.wardrobe.wearingP (item))
@@ -55,7 +55,7 @@ Tootsville.wardrobe = {
 
     readiedP: function (item) {
         return Tootsville.wardrobe.readied () == item;
-    }
+    },
 
     doff: function (item) {
         if (! Tootsville.wardrobe.wearingP(item))
@@ -65,14 +65,18 @@ Tootsville.wardrobe = {
 
     wearing: function () {
         if (! Tootsville.player) { return []; }
-        for (var i = 0; i < Tootsville.wardrobe.valences; ++i) {
-            for (var j = 0; 
-        }
-    },
+        var set = {};
+        for (var i = 0; i < Tootsville.wardrobe.valences; ++i)
+        { for (var j = 0; j < Tootsville.wardrobe.valences[i].length; ++j)
+          { var slot = Tootsville.wardrobe.valences[i][j];
+            var equipped;
+            if (equipped = Tootsville.player.equipped(slot))
+            { set[ slot ] = equipped }}}
+        return set; },
 
     wearingP: function (item) {
 
-    }
+    },
 
     refresh: function () {
         /* TODO */
