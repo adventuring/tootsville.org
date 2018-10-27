@@ -28,7 +28,7 @@ Tootsville.wardrobe = {
           { return baseSlot; }}}}
     
     don: function (item, slot)
-    { if (null == Tootsville.player || Tootsville.player.wearingP (item))
+    { if (Tootsville.wardrobe.wearingP (item))
       { return; }
       if (null == slot || undefined == slot)
       { slot = item.valenceSlot; }
@@ -41,25 +41,37 @@ Tootsville.wardrobe = {
     },
 
     ready: function (item) {
-        if (null == Tootsville.player || Tootsville.player.readiedP (item))
+        if (Tootsville.wardrobe.readiedP (item))
         { return; }
-        if (Tootsville.player.wearingP (item))
+        if (Tootsville.wardrobe.wearingP (item))
         { Tootsville.wardrobe.doff (item); }
+        
         Tootsville.wardrobe.don (item, 'readied');
     },
 
+    readied: function () {
+        return Tootsville.wardrobe.wearingAs ('readied');
+    },
+
+    readiedP: function (item) {
+        return Tootsville.wardrobe.readied () == item;
+    }
+
     doff: function (item) {
-        if (null == Tootsville.player || (! Tootsville.player.wearingP(item)))
+        if (! Tootsville.wardrobe.wearingP(item))
         { return; }
         /* TODO */
     },
 
     wearing: function () {
-        /* TODO */
+        if (! Tootsville.player) { return []; }
+        for (var i = 0; i < Tootsville.wardrobe.valences; ++i) {
+            for (var j = 0; 
+        }
     },
 
     wearingP: function (item) {
-        /* TODO */
+
     }
 
     refresh: function () {
