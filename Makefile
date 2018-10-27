@@ -1,4 +1,4 @@
-all: htaccess play worker servers TODO.org TODO.scorecard
+OAall: htaccess play worker servers TODO.org TODO.scorecard
 
 deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 
@@ -44,8 +44,77 @@ servers:	servers/Tootsville
 servers/Tootsville:	$(shell find servers \( -name \*.lisp -o -name \*.asd \) -and -not -name .\*)
 	$(MAKE) -C servers Tootsville test
 
-doc:
-	$(MAKE) -C servers Toosville doc
+#################### doc
+
+doc:	server-doc js-doc
+
+server-doc: \
+	doc/Tootsville.txt \
+	doc/Tootsville.pdf \
+	doc/Tootsville.html.tar.gz
+
+doc/Tootsville.texi:	servers/doc/Tootsville.texi
+	cp servers/doc/Tootsville.texi doc/
+
+servers/doc/Tootsville.texi: servers/Tootsville
+	$(MAKE) -C servers doc/Tootsville.texi
+
+doc/Tootsville.html.tar.gz:	doc/Tootsville.html.tar
+	gzip -9 -c < $< > $@
+
+doc/Tootsville.html.tar.Z:	doc/Tootsville.html.tar
+	compress -9 -c < $< > $@
+
+doc/Tootsville.html.tar.bz2:	doc/Tootsville.html.tar
+	bzip2 -9 -c < $< > $@
+
+doc/Tootsville.html.tar.xz:	doc/Tootsville.html.tar
+	xz -9 -c < $< > $@
+
+doc/Tootsville.html.tar:	doc/Tootsville.html.d/index.html
+	cd doc; tar cf Tootsville.html.tar Tootsville.html.d
+
+doc/Tootsville.html.zip:	doc/Tootsville.html.d/index.html
+	cd doc; zip -9 Tootsville.html.zip Tootsville.html.d
+
+doc/Tootsville.html.d/index.html:	doc/Tootsville.texi doc/doc.css
+	cd doc; makeinfo -o Tootsville.html.d/ \
+		--html --css-include=doc.css \
+		--split=node Tootsville.texi
+
+doc/Tootsville.ps:	doc/Tootsville.pdf
+	cd doc; pdf2ps Tootsville.pdf
+
+doc/Tootsville.pdf:	doc/Tootsville.texi
+	cd doc; PDFLATEX=xelatex texi2pdf Tootsville.texi 
+
+doc/Tootsville.txt:	doc/Tootsville.texi
+	cd doc; makeinfo --plaintext -o Tootsville.txt Tootsville.texi
+
+doc/Tootsville.info:	doc/Tootsville.texi
+	cd doc; makeinfo -o Tootsville.info Tootsville.texi
+
+doc/doc.css:	www/doc.less
+
+all-docs: \
+	doc/Tootsville.html.tar.gz	\
+	doc/Tootsville.html.tar.Z	\
+	doc/Tootsville.html.tar.bz2	\
+	doc/Tootsville.html.tar.xz	\
+	doc/Tootsville.html.zip	\
+	doc/Tootsville.ps	\
+	doc/Tootsville.pdf	\
+	doc/Tootsville.txt 	\
+	doc/Tootsville.info
+
+js-doc:	play-doc
+
+play-doc:
+# TODO. There  doesn't seem  to be  any elegant  way (yet)  to integrate
+# JSDoc, and,  in fact, I'm having  a hard time finding  a JSDoc-to-texi
+# compiler  at  all  and  may  have   to  write  one;  perhaps  look  at
+# post-processing the JSON output from Node.js doctrine, or just rolling
+# our own.
 
 #################### htaccess
 
