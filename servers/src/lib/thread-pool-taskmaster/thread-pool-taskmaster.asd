@@ -14,4 +14,7 @@
                :restas
                )
   :components
-  ((:file "thread-pool-taskmaster")))
+  ((:file "package")
+   (:file "thread-pool-taskmaster" :depends-on ("package"))))
+
+(asdf:load-system :oliphaunt)
