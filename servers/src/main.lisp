@@ -57,17 +57,17 @@ redirect to default host"
                             :port (restas::vhost-port
                                    restas:*default-host-redirect*)))
     (verbose:info :vhost "{~a} Request ~s on VHost ~s"
-           (thread-name (current-thread)) request vhost)
+                  (thread-name (current-thread)) request vhost)
     (not-found-if-null vhost)
     (multiple-value-bind (route bindings)
         (routes:match (slot-value vhost 'restas::mapper)
           (hunchentoot:request-uri*))
       (unless route
         (verbose::info :not-found "{~a} No match for requested URI ~s on vhost ~s"
-         (thread-name (current-thread))
+                       (thread-name (current-thread))
                        (hunchentoot:request-uri*) vhost)
         (verbose::info :not-found "{~a} Mapper: ~s"
-         (thread-name (current-thread))
+                       (thread-name (current-thread))
                        (slot-value vhost 'restas::mapper)))
       (verbose:info :route "{~a} Route is ~s"  (thread-name (current-thread)) route)
       (not-found-if-null route)
@@ -77,7 +77,7 @@ redirect to default host"
                         (abort)))
                      (error (lambda (c) (respond-to-error c))))
         (verbose:info :route "{~a} URI ~s leads to ~s"
-          (thread-name (current-thread))
+                      (thread-name (current-thread))
                       (hunchentoot:request-uri*) route)
         (verbose:info :route "{~a} Invoking endpoint for ~a" (thread-name (current-thread)) route)
         (prog1 (restas:process-route route bindings)
@@ -121,17 +121,17 @@ redirect to default host"
 
 (defun run-async (function)
   (unless *async-tasks*
-     (init-async))
+    (init-async))
   (cl-threadpool:add-job *async-tasks*
-    (lambda ()
-       (let ((idle-name (thread-name (current-thread))))
-         (setf (sb-thread:thread-name (current-thread)) (format nil "Async: run ~s" function))
-         (unwind-protect
-              (thread-pool-taskmaster::with-pool-thread-restarts ((thread-name (current-thread)))
-                (verbose:info '(:threadpool-worker :async-worker :worker-start) "{~a}: working" (thread-name (current-thread)))
-                (funcall function))
-           (verbose:info '(:threadpool-worker :async-worker :worker-finish) "{~a}: done" (thread-name (current-thread)))
-           (setf (sb-thread:thread-name (current-thread)) idle-name))))))
+                         (lambda ()
+                           (let ((idle-name (thread-name (current-thread))))
+                             (setf (sb-thread:thread-name (current-thread)) (format nil "Async: run ~s" function))
+                             (unwind-protect
+                                  (thread-pool-taskmaster::with-pool-thread-restarts ((thread-name (current-thread)))
+                                    (verbose:info '(:threadpool-worker :async-worker :worker-start) "{~a}: working" (thread-name (current-thread)))
+                                    (funcall function))
+                               (verbose:info '(:threadpool-worker :async-worker :worker-finish) "{~a}: done" (thread-name (current-thread)))
+                               (setf (sb-thread:thread-name (current-thread)) idle-name))))))
 
 
 (defun start (&key (host "localhost") (port 5000))
@@ -237,7 +237,8 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (restart-bind
       ((quit #'cl-user::exit
          :report-function (format *query-io* "Quit the REPL")))
-    (funcall (intern "REPL" (find-package :prepl)))))
+    (let ((*package* :Oliphaunt-User))
+      (funcall (intern "REPL" (find-package :prepl))))))
 
 
 ;;; Swank
@@ -258,20 +259,20 @@ process's PID."
 
 ;;; Web servers
 
-(defun start-hunchentoot (&key port)
+(defun start-hunchentoot (&key host port)
   "Start a Hunchentoot  server via `START' and fall through  into a REPL
 to keep the process running."
-  (start :port port)
+  (start :host host :port port)
   (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, or exit the REPL.")
   (start-repl))
 
 (defparameter *trace-output-heartbeat-time* 90)
 
-(defun start-production (&key port)
+(defun start-production (&key host port)
   "Start a Hunchentoot  server via `START' and daemonize with Swank"
   (disable-sbcl-ldb)
   (set-up-for-daemon/start-logging)
-  (start :port port)
+  (start :host host :port port)
   (start-swank)
   (loop
      (trace-output-heartbeat)
