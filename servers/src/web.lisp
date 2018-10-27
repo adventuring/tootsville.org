@@ -38,9 +38,8 @@ is, of course, a subseq of \".json\" as well.)"
       (subseq string 0 sem)
       string))
   
-  (defun defendpoint/make-endpoint-function (&key
-                                               method fname content-type
-                                               λ-list docstring uri body)
+  (defun defendpoint/make-endpoint-function (&key fname content-type
+                                                  λ-list docstring body)
     `(defun ,fname (,@λ-list) ,docstring
             (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
                     ,(concatenate 'string "{~a} Starting: " (first-line docstring))
@@ -140,8 +139,8 @@ This is basically just CHECK-TYPE for arguments passed by the user."
       :application/xhtml+xml "xhtml"
       :application/xml "xml"
       :application/zip "zip"
-      :audio/3gpp "3gp" ; * same as video, use care
-      :audio/3gpp2 "3g2" ; * same as audio, use care
+      :audio/3gpp "3gp"            ; * same as video, use care
+      :audio/3gpp2 "3g2"           ; * same as audio, use care
       :audio/aac "aac"
       :audio/basic "au"
       :audio/midi "midi"
@@ -204,7 +203,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
       (t (format nil "~{~a~^, ~}" value))))
 
   (defmacro rewrite-restas ((&key (jsonp nil)) &body body)
- ;;; TODO, maybe should be render-method in RESTAS?
+;;; TODO, maybe should be render-method in RESTAS?
     `(destructuring-bind (status headers content)
          (progn ,@body)
        (check-type status (integer 200 599))
@@ -282,10 +281,17 @@ This is basically just CHECK-TYPE for arguments passed by the user."
          (setf (fdefinition ',typed-fname) (fdefinition ',fname))
          (restas::register-route-traits
           ',typed-fname
-         (plist-hash-table (list :template ,typed-uri
-                                 :method ,method
-                                 :variables ,(lambda-list-as-variables λ-list)))))))
-
+          (plist-hash-table (list :template ,typed-uri
+                                  :method ,method
+                                  :variables ,(lambda-list-as-variables λ-list)))))))
+  
+  (defun defendpoint/make-route-with-no-extension (fname λ-list method uri content-type)
+    (defendpoint/register-restas-route :fname fname
+      :uri uri
+      :method method
+      :content-type content-type
+      :λ-list λ-list))
+  
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)
     (let* ((method (make-keyword (symbol-name method)))
@@ -300,22 +306,22 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                   "Undocumented endpoint for URI's matching ~
 the pattern ~s ~@[ and accepting content-type ~a~]"
                                   uri content-type))))
-      (list 'progn
-            (defendpoint/make-endpoint-function :method method
-              :fname fname
-              :content-type content-type
-              :λ-list λ-list
-              :docstring docstring
-              :uri uri
-              :body body)
-            (defendpoint/register-restas-route :fname fname
-              :uri uri
-              :method method
-              :content-type content-type
-              :λ-list λ-list)
-            (when-let (extension (extension-for-content-type content-type))
-              (defendpoint/make-extension-named-route fname λ-list method uri extension))
-            (restas:reconnect-all-routes)))))
+      (defendpoint/make-endpoint-function 
+          :fname fname
+        :content-type content-type
+        :λ-list λ-list
+        :docstring docstring
+        :body body)
+      (let ((extension (extension-for-content-type content-type)))
+        (labels ((no-ext () (defendpoint/make-route-with-no-extension fname λ-list method uri content-type))
+                 (c/ext () (defendpoint/make-extension-named-route fname λ-list method uri extension)))
+          (cond
+            ((null extension) (no-ext))
+            ((equal extension "json") (no-ext) (c/ext))
+            (t (c/ext))))
+        (restas:reconnect-all-routes)))))
+
+
 
 (defendpoint (get "/" text/html)
   "GET on the root redirects to the main web page (@url{https://Tootsville.org/})"
