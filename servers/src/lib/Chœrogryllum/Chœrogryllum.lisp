@@ -127,6 +127,11 @@
           (* sec (/ (* 60 60 24 270) (* 12 30 18 60 60))))))
 
 (defun decode*-universal-time (&optional (time (get-universal-time)))
+  "Returns multiple values with date and time decoded.
+
+Returns:
+(sec min hour day month year weekday other-month-day pink-month-day julian)
+"
   (let* ((year (- (floor time (* 60 60 24 270)) 10))
          (month (1+ (floor (mod time (* 60 60 24 270)) (/ (* 60 60 24 270) 12))))
          (day (1+ (floor (mod time (/ (* 60 60 24 270) 12)) (/ (* 60 60 24 270) (* 12 30)))))
