@@ -7,7 +7,7 @@
   :licence "AGPLv3" ; if this poses a problem, ask me for a waiver.
   :long-name "Rollbar access from Common Lisp"
 
-  :depends-on (:alexandria :drakma :trivial-backtrace)
+  :depends-on (:alexandria :drakma :jonathan :trivial-backtrace)
 
   :encoding :utf-8
 

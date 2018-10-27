@@ -4,6 +4,7 @@
 (require :trivial-backtrace)
 (defpackage rollbar
   (:use #:cl #:drakma #:alexandria)
+  (:import-from :jonathan #:to-json)
   (:export
    #:configure
    #:with-configuration
@@ -200,10 +201,10 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
 
 (defun rollbar-notify-deployment (&key user revision environment)
   (http-successful-request "https://api.rollbar.com/api/1/deploy/" :method :post :content-type "application/json"
-                           :content (encode-json (list :access-token *access-token*
-                                                       :local-username user
-                                                       :revision revision
-                                                       :environment environment))))
+                           :content (to-json (list :access-token *access-token*
+                                                   :local-username user
+                                                   :revision revision
+                                                   :environment environment))))
 
 (defun send-rollbar-notification (level message backtrace)
   "Send a notification to Rollbar."
@@ -211,7 +212,7 @@ For “info” or “debug,” returns *TRACE-OUTPUT*; otherwise
 
 (defun quoted (string)
   "Return a quoted version of String"
-  (print-to-string string))
+  (with-output-to-string (s) (print string s)))
 
 (defun redact-directory (directory)
   "Redact uninteresting parts of a directory pathname"
@@ -459,7 +460,6 @@ Calls `NOTIFY' like (NOTIFY \"" level "\" MESSAGE …).
 
 The ! in the name is so that ROLLBAR:ERROR! does not shadow CL:ERROR,
 and so that all levels share the same orthography.")
-      (message* &rest keys &key condition)
-      (apply #'notify ,level message* keys))))
+      (funcall #'notify ,level message* :condition condition))))
 
 (map nil #'make-level-notifier *valid-notifier-levels*)
