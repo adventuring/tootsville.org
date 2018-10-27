@@ -63,7 +63,8 @@
       (dolist (another-system-definition (directory asdf))
         (format *trace-output* "~&Found system definition ~S"
                 (uiop/pathname:enough-pathname another-system-definition src-dir))
-        (asdf:load-asd another-system-definition)))))
+        (asdf:load-asd another-system-definition)
+        #+run-without-any-quicklisp (asdf:load-system (pathname-name another-system-definition))))))
 
 (format *trace-output*
         "~2& Sytem Definitions registry:
