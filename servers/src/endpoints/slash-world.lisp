@@ -18,35 +18,35 @@ Your character must be able to observe that general area. No peeking!
 
 
 (defendpoint (GET "/world/clock/date" "text/plain")
-  (list 200 (choerogryllum:date-string (get-universal-time))))
+  (choerogryllum:date-string (get-universal-time)))
 
 (defendpoint (GET "/world/clock/date/long" "text/plain")
-  (list 200 (choerogryllum:date-string (get-universal-time))))
+  (choerogryllum:date-string (get-universal-time)))
 
 (defendpoint (GET "/world/clock/date/abbrev" "text/plain")
-  (list 200 (choerogryllum:date-string (get-universal-time) :form :abbrev)))
+  (choerogryllum:date-string (get-universal-time) :form :abbrev))
 
 (defendpoint (GET "/world/clock/time" "application/json")
   (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian) 
       (choerogryllum:decode*-universal-time (get-universal-time))
-    (list 200 (list :sec sec
-                    :min min
-                    :hour hour
-                    :day day
-                    :month month
-                    :year year
-                    :weekday weekday
-                    :other-month-day other-month-day
-                    :pink-month-day pink-month-day
-                    :julian julian
-                    :julian-270 (mod julian 270)
-                    :holiday (choerogryllum:holiday-on year month day)))))
+    (list :sec sec
+          :min min
+          :hour hour
+          :day day
+          :month month
+          :year year
+          :weekday weekday
+          :other-month-day other-month-day
+          :pink-month-day pink-month-day
+          :julian julian
+          :julian-270 (mod julian 270)
+          :holiday (choerogryllum:holiday-on year month day))))
 
 (defendpoint (GET "/world/clock/time" "text/plain")
   (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian) 
       (choerogryllum:decode*-universal-time (get-universal-time))
     (declare (ignore day month year weekday other-month-day pink-month-day julian))
-    (list 200 (format nil "~2,'0d:~2,'0d:~2,'0d" hour min sec))))
+    (format nil "~2,'0d:~2,'0d:~2,'0d" hour min sec)))
 
 (defun detailed-time (&optional (now (get-universal-time)))
   (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian) 
@@ -85,4 +85,4 @@ It is ~a.~]
             (choerogryllum:holiday-on year month day))))
 
 (defendpoint (GET "/world/clock/time/detailed" "text/plain")
-  (list 200 (detailed-time)))
+  (detailed-time))
