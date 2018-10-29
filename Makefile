@@ -325,7 +325,7 @@ predeploy-servers:	servers quicklisp-update-servers
 		mkdir -p dist/$$host.$(CLUSTER) ;\
 		cp dist/htaccess.all/$$host.$(CLUSTER).htaccess dist/$$host.$(CLUSTER) || exit 6 ;\
 		cp play/.well-known/assetlinks.json dist/$$host.$(CLUSTER) || exit 6 ;\
-		bin/shar-stream ./ servers $$host.$(CLUSTER) ;\
+		rsync -essh ./* $$host.$(CLUSTER):servers/ ;\
 		ssh $$host.$(CLUSTER) make -C servers clean Tootsville test || exit 6 ;\
 		rsync -zar -essh dist/$$host.$(CLUSTER) $$host.$(CLUSTER):/var/www/ ;\
 		rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
