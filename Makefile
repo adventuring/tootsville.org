@@ -205,8 +205,8 @@ deploy-play:	predeploy
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
 	     -F environment=play.$(CLUSTER) \
-	     -F framework=deploy-cluster \
-	     -F notifier.name=deploy-cluster \
+	     -F framework=gmake \
+	     -F notifier.name=gmake \
 	     -F revision=$(REVISION) \
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)
@@ -223,8 +223,8 @@ sudo -n systemctl start tootsville" ;\
 		curl https://api.rollbar.com/api/1/deploy/ \
 		     -F access_token=$(ACCESS_TOKEN) \
 		     -F environment=$$host.$(CLUSTER) \
-		     -F framework=deploy-cluster \
-		     -F notifier.name=deploy-cluster \
+		     -F framework=gmake \
+		     -F notifier.name=gmake \
 		     -F revision=$(REVISION) \
 		     -F comment="v $(VERSION)" \
 		     -F uuid=$(uuidgen) \
@@ -236,8 +236,8 @@ deploy-www:	predeploy
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
 	     -F environment=www.$(CLUSTER) \
-	     -F framework=deploy-cluster \
-	     -F notifier.name=deploy-cluster \
+	     -F framework=gmake \
+	     -F notifier.name=gmake \
 	     -F revision=$(REVISION) \
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)

@@ -93,9 +93,9 @@ without a known auth token. This is how we're implementing two features:
 
 *** Operations
 
- Deployment is spelled out in  the bin/deploy-cluster script. In general,
- the front-end Javascript applications are compiled down, compressed, and
- sent off to their respective ("dumb," static) servers.
+ Deployment is spelled out in  the Makefile.  In general, the front-end
+ Javascript applications are compiled down, compressed, and sent off to
+ their respective ("dumb," static) servers.
 
  The  back-end application  systems each  run  a respective  copy of  the
  monolithic Tootsville  executable. This is a  single executable compiled
