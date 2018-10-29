@@ -302,18 +302,21 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                   "Undocumented endpoint for URI's matching ~
 the pattern ~s ~@[ and accepting content-type ~a~]"
                                   uri content-type))))
-      ;;; FIXME: update/replace
-      (pushnew (list method template (length template) content-type fname) *paths*
-               :test (lambda (a b)
-                       (and (eql (first a) (first b))
-                            (equalp (second a) (second b))
-                            (equalp (fourth a) (fourth b)))))
-      (defendpoint/make-endpoint-function 
-          :fname fname
-        :content-type content-type
-        :λ-list λ-list
-        :docstring docstring
-        :body body))))
+      (prog1
+          (defendpoint/make-endpoint-function 
+              :fname fname
+            :content-type content-type
+            :λ-list λ-list
+            :docstring docstring
+            :body body)
+        (setf *paths* (concatenate 
+                       'list
+                       (remove-if (lambda (r)
+                                    (equal method (first r))
+                                    (equal template (second r))
+                                    (equal content-type (fourth r)))
+                                  *paths*)
+                       (cons (list method template (length template) content-type fname) nil)))))))
 
 
 
@@ -340,4 +343,7 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
     (write-char #\Space stream)
     (princ (hunchentoot:request-uri request) stream)))
 
+
 
+(defmethod jonathan::%to-json ((symbol symbol))
+  (jonathan.encode::string-to-json (string (symbol-munger:lisp->camel-case symbol))))

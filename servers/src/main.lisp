@@ -84,31 +84,22 @@
                                    :remove-empty-subseqs t))
         (ua-accept (request-accept-types)))
     (labels ((maybe-dispatch (path allow-wildcard-p)
-               (destructuring-bind (method template length accept function) path
-                 (when (and (or (eql method (hunchentoot:request-method*))
-                                (v:info :path "Method mismatch, ~s vs ~s"
-                                        method (hunchentoot:request-method*)))
-                            (or (= length (length uri-parts))
-                                (v:info :path "Length of URI parts ~s doesn't match template ~s"
-                                        uri-parts template))
-                            (or (member accept ua-accept :test (rcurry #'accept-type-equal
-                                                                       :allow-wildcard-p allow-wildcard-p))
-                                (v:info :path "Accept-type ~s ∉ ~s" accept ua-accept)))
-                   (when-let (bound (template-match template uri-parts))
-                     (verbose:info :path "Matched ~s to (~s ~s)"
-                                   (hunchentoot:request-uri request) function bound)
-                     (return-from dispatch-request% (if (eql t bound)
-                                                        (funcall function)
-                                                        (apply function bound))))
-                   (v:info :path "Template did not match: ~s vs ~s"
-                           uri-parts template)))))
-      (dolist (path *paths*)
-        (maybe-dispatch path nil))
-      (v:info :path "Tried all non-wildcard accept content-types, now wildcards")
-      (dolist (path *paths*)
-        (maybe-dispatch path t)))
-    (setf (hunchentoot:return-code*)
-          hunchentoot:+http-not-found+)
+               (when path
+                 (destructuring-bind (method template length accept function) path
+                   (when (and (eql method (hunchentoot:request-method*))
+                              (= length (length uri-parts))
+                              (member accept ua-accept :test (rcurry #'accept-type-equal
+                                                                     :allow-wildcard-p allow-wildcard-p)))
+                     (when-let (bound (template-match template uri-parts))
+                       (verbose:info :path "Matched ~s to (~s ~s)"
+                                     (hunchentoot:request-uri request) function bound)
+                       (return-from dispatch-request% (if (eql t bound)
+                                                          (funcall function)
+                                                          (apply function bound)))))))))
+      (dolist (path *paths*) (maybe-dispatch path nil))
+      (dolist (path *paths*) (maybe-dispatch path t)))
+    (verbose:info :path "No match for ~s accepting ~s" uri-parts ua-accept)
+    (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
     (hunchentoot:abort-request-handler)))
 
 (defmethod hunchentoot:acceptor-dispatch-request
