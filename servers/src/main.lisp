@@ -2,17 +2,16 @@
 
 
 
-(defclass Tootsville-restas-acceptor (restas:restas-acceptor)
+(defclass Tootsville-REST-acceptor (hunchentoot:easy-acceptor)
   ((hunchentoot::taskmaster
     :initform (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
   (:default-initargs
-   :request-class 'restas::restas-request
-    :error-template-directory (config :templates :errors)
+   :error-template-directory (config :templates :errors)
     :access-log-destination (config :log :access)
     :message-log-destination (config :log :message)))
 
 (defmethod initialize-instance :after
-    ((acceptor Tootsville-restas-acceptor) &rest initargs)
+    ((acceptor Tootsville-REST-acceptor) &rest initargs)
   (declare (ignore initargs))
   (setf (slot-value acceptor 'hunchentoot::taskmaster)
         (make-instance 'thread-pool-taskmaster:thread-pool-taskmaster)))
@@ -33,61 +32,59 @@
   (:method ((error unimplemented))
     (verbose:info :unimplemented "Unimplemented function called: ~s" error)))
 
+(defun strip-after-sem (s)
+  (if-let (sem (position #\; s))
+    (subseq s sem)
+    s))
+
+(defun request-accept-types ()
+  (when-let (accept (assoc :accept (hunchentoot:headers-in*)))
+    (mapcar #'strip-after-sem
+            (mapcar (curry #'string-trim +whitespace+)
+                    (split-sequence #\, (second accept))))))
+
+(defun template-match (template list)
+  (loop for tmpl in template
+     for el in list
+     with result = nil
+     do (etypecase tmpl
+          (string (unless (string= tmpl el)
+                    (return nil)))
+          (symbol (push el result)))
+     finally (return result)))
+
+(defun dispatch-request% (&optional (request hunchentoot:*request*))
+  (let ((uri-parts (cddr (split-sequence #\/ (hunchentoot:request-uri request)
+                                         :remove-empty-subseqs t)))
+        (ua-accept (request-accept-types)))
+    (dolist (path *paths*)
+      (destructuring-bind (method template length accept function) path
+        (when (and (eql method (hunchentoot:request-method*))
+                   (= length (length uri-parts))
+                   (member accept ua-accept :test #'string-equal))
+          (when-let (bound (template-match template uri-parts))
+            (return-from dispatch-request% (funcall function bound))))))
+    (setf (hunchentoot:return-code*)
+          hunchentoot:+http-not-found+)
+    (hunchentoot:abort-request-handler)))
+
 (defmethod hunchentoot:acceptor-dispatch-request
-    ((acceptor Tootsville-restas-acceptor) request)
+    ((acceptor Tootsville-REST-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
   (verbose:info :request "Dispatching request ~s via acceptor ~s"
                 request acceptor)
-  (let ((vhost (restas::find-vhost
-                (restas::request-hostname-port acceptor request)))
-        (hunchentoot:*request* request))
-    (verbose:info :route "Mapping ~{~a:~a~} to ~s"
-                  (destructuring-bind (host . port)
-                      (restas::request-hostname-port acceptor request)
-                    (list host port))
-                  vhost)
-    (when (and (null vhost)
-               restas:*default-host-redirect*)
-      (verbose:info :route "Unrecognized hostname and port ~s; ~
-redirect to default host"
-                    (restas::request-hostname-port acceptor request))
-      (hunchentoot:redirect (hunchentoot:request-uri*)
-                            :host (restas::vhost-hostname
-                                   restas:*default-host-redirect*)
-                            :port (restas::vhost-port
-                                   restas:*default-host-redirect*)))
-    (verbose:info :vhost "{~a} Request ~s on VHost ~s"
-                  (thread-name (current-thread)) request vhost)
-    (not-found-if-null vhost)
-    (multiple-value-bind (route bindings)
-        (routes:match (slot-value vhost 'restas::mapper)
-          (hunchentoot:request-uri*))
-      (unless route
-        (verbose::info :not-found "{~a} No match for requested URI ~s on vhost ~s"
-                       (thread-name (current-thread))
-                       (hunchentoot:request-uri*) vhost)
-        (verbose::info :not-found "{~a} Mapper: ~s"
-                       (thread-name (current-thread))
-                       (slot-value vhost 'restas::mapper)))
-      (verbose:info :route "{~a} Route is ~s"  (thread-name (current-thread)) route)
-      (not-found-if-null route)
-      (handler-bind ((sb-int:closed-stream-error
-                      (lambda (c)
-                        (verbose:info :disconnect "~a" c)
-                        (abort)))
-                     (error (lambda (c) (respond-to-error c))))
-        (verbose:info :route "{~a} URI ~s leads to ~s"
-                      (thread-name (current-thread))
-                      (hunchentoot:request-uri*) route)
-        (verbose:info :route "{~a} Invoking endpoint for ~a" (thread-name (current-thread)) route)
-        (prog1 (restas:process-route route bindings)
-          (verbose:info :route "{~a} Done processing route ~a" (thread-name (current-thread)) route))))))
+  (let ((hunchentoot:*request* request))
+    (verbose:info :request "{~a} Accepting request ~s"
+                  (thread-name (current-thread)) request)
+    (dispatch-request%)))
 
+
+(defvar *acceptors* nil)
 
 (defun find-acceptor (host port)
   "Find an active Acceptor running on the given HOST address and PORT"
-  (dolist (acceptor restas::*acceptors*)
-    (when (and (typep acceptor 'Tootsville-restas-acceptor)
+  (dolist (acceptor *acceptors*)
+    (when (and (typep acceptor 'Tootsville-REST-acceptor)
                (equal host
                       (hunchentoot:acceptor-address acceptor))
                (= port
@@ -99,12 +96,13 @@ redirect to default host"
 (defconstant +async-worker-threads+ 2)
 
 (defun name-all-async-threads-idle ()
-  (loop for thread in (slot-value *async-tasks*
-                                  'cl-threadpool::threads)
-     for i fixnum from 1
-     with count = (taskmaster-max-thread-count taskmaster) ;; FIXME
-     do (setf (sb-thread:thread-name thread)
-              (format nil "Idle Asyncronous Worker (#~d of ~d)" i count))))
+  (let ((length (length (slot-value *async-tasks*
+                                    'cl-threadpool::threads))))
+    (loop for thread in (slot-value *async-tasks*
+                                    'cl-threadpool::threads)
+       for i fixnum from 1
+       do (setf (sb-thread:thread-name thread)
+                (format nil "Idle Asyncronous Worker (#~d of ~d)" i length)))))
 
 (defun swank-connected-p ()
   (when (swank:connection-info) t))
@@ -160,39 +158,29 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
           hunchentoot:*show-lisp-errors-p* t
           hunchentoot:*show-lisp-backtraces-p* t))
   (restart-case
-      (if (config :ssl)
-          (restas:start 'Tootsville
-                        :port port
-                        :address host
-                        :hostname host
-                        :ssl-certificate-file (config :ssl :certificate-file)
-                        :ssl-privatekey-file (config :ssl :private-key-file)
-                        :ssl-privatekey-password (config :ssl :private-key-password)
-                        :acceptor-class 'Tootsville-restas-acceptor)
-          (restas:start 'Tootsville
-                        :port port
-                        :address host
-                        :hostname host
-                        :acceptor-class 'Tootsville-restas-acceptor))
+      (push (let ((acceptor
+                   (hunchentoot:start
+                    (if (config :ssl)
+                        (make-instance 'Tootsville-REST-SSL-Acceptor
+                                       :ssl-certificate-file (config :ssl :certificate-file)
+                                       :ssl-privatekey-file (config :ssl :private-key-file)
+                                       :ssl-privatekey-password (config :ssl :private-key-password)
+                                       :address host
+                                       :port port)
+                        (make-instance 'Tootsville-REST-Acceptor
+                                       :address host
+                                       :port port)))))
+              (setf (hunchentoot:acceptor-name acceptor)
+                    (format nil "Tootsville ~:[Non-TLS ~;~](~a port ~d)"
+                            (config :ssl) host port)))
+            *acceptors*)
     (change-port (port*)
       :report "Use a different port"
       (start :host host :port port*))
     (stonith ()
       :report "Shoot the other node in the head (kill listening process)"
       (stonith :host host :port port)
-      (start :host host :port port)))
-  (let ((vhost (restas::find-vhost (cons host port))))
-    (cond (vhost
-           (setf restas:*default-host-redirect* vhost))
-          (t (error "Can't find the default VHost?"))))
-  (let ((acceptor (find-acceptor host port)))
-    (cond (acceptor
-           (setf (hunchentoot:acceptor-name acceptor)
-                 (format nil "Tootsville ~:[Non-TLS ~;~](~a port ~d)"
-                         (config :ssl) host port))
-           acceptor)
-          (t
-           (error "Did that even work? Acceptor seems not to have started.")))))
+      (start :host host :port port))))
 
 
 
@@ -200,15 +188,14 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
 (defmethod usocket:socket-close ((socket null))
   (warn "Ignoring request to close NIL"))
 
-(defun stop (&optional (acceptor (first restas::*acceptors*)))
+(defun stop (&optional (acceptor (first *acceptors*)))
   "Stop the Hunchentoot server process started by `START'"
   (when acceptor
     (ignore-errors
       (hunchentoot:stop acceptor :soft t))
     ;; TODO: wait for process to really be done
-    (setf restas::*acceptors*
-          (delete-if (curry #'eql acceptor)
-                     restas::*acceptors*))))
+    (setf *acceptors* (delete-if (curry #'eql acceptor)
+                                 *acceptors*))))
 
 
 
@@ -237,7 +224,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (restart-bind
       ((quit #'cl-user::exit
          :report-function (format *query-io* "Quit the REPL")))
-    (let ((*package* :Oliphaunt-User))
+    (let ((*package* (find-package :Oliphaunt-User)))
       (funcall (intern "REPL" (find-package :prepl))))))
 
 

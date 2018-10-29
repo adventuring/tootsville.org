@@ -1,5 +1,7 @@
 (in-package :Tootsville)
 
+(defvar *paths* nil)
+
 
 
 (defun accepts-content-type-p (content-type)
@@ -44,15 +46,56 @@ is, of course, a subseq of \".json\" as well.)"
             (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
                     ,(concatenate 'string "{~a} Starting: " (first-line docstring))
                     (thread-name (current-thread)))
-            ,(unless (consp content-type)
-               `(setf (hunchentoot:content-type*)
-                      ,(add-charset content-type)))
-            (let ((content-bytes
-                   (rewrite-restas (:jsonp ,(equal content-type "application/json"))
-                     (catch 'endpoint
-                       (block endpoint
-                         (block ,fname
-                           ,@body))))))
+            (setf (hunchentoot:content-type*)
+                  ,(add-charset content-type))
+            (let ((reply 
+                   (catch 'endpoint
+                     (block endpoint
+                       (block ,fname
+                         ,@body))))
+                  (content-bytes #()))
+              (cond
+                ((stringp reply)
+                 (setf (hunchentoot:return-code*) 200
+                       content-bytes (flexi-streams:string-to-octets reply
+                                                                     :external-format :utf-8)))
+                ((vectorp reply)
+                 (setf (hunchentoot:return-code*) 200 
+                       content-bytes reply))
+                ((and (listp reply) 
+                      (not (numberp (first reply))))
+                 (setf (hunchentoot:return-code*) 200 
+                       content-bytes (flexi-streams:string-to-octets (jonathan:to-json reply)
+                                                                     :external-format :utf-8)))
+                ((= 2 (length reply))
+                 (destructuring-bind (status contents) reply
+                   (check-type status (integer 200 599))
+                   (setf (hunchentoot:return-code*) status
+                         content-bytes 
+                         (etypecase contents
+                           (string (flexi-streams:string-to-octets contents :external-format :utf-8))
+                           (vector contents)
+                           (list (flexi-streams:string-to-octets (jonathan:to-json contents)
+                                                                 :external-format :utf-8))))))
+                ((= 3 (length reply))
+                 (destructuring-bind (status headers contents) reply
+                   (check-type status (integer 200 599))
+                   (assert (every (lambda (x)
+                                    (or (stringp x) (symbolp x)))
+                                  headers)
+                           (headers)
+                           "Headers should be given as strings or symbols; got ~s"
+                           headers)
+                   (loop for (header . value) on headers by #'cddr
+                      do (setf (hunchentoot:header-out header)
+                               (atom-or-comma-list value)))
+                   (setf (hunchentoot:return-code*) status
+                         content-bytes 
+                         (etypecase contents
+                           (string (flexi-streams:string-to-octets contents :external-format :utf-8))
+                           (vector contents)
+                           (list (flexi-streams:string-to-octets (jonathan:to-json contents)
+                                                                 :external-format :utf-8)))))))
               (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
                       ,(concatenate 'string "{~a} Finished: " (first-line docstring))
                       (thread-name (current-thread)))
@@ -63,16 +106,6 @@ is, of course, a subseq of \".json\" as well.)"
                       (length (hunchentoot:headers-out*))
                       (length content-bytes))
               content-bytes)))
-
-  (defun defendpoint/register-restas-route (&key fname uri method
-                                                 content-type λ-list)
-    `(restas::register-route-traits
-      ',fname
-      (plist-hash-table
-       (list :template ,uri
-             :method ,method
-             :content-type ,content-type
-             :variables ,(lambda-list-as-variables λ-list)))))
 
   (defun after-slash (s)
     "Splits a string S at a slash. Useful for getting the end of a content-type."
@@ -202,29 +235,6 @@ This is basically just CHECK-TYPE for arguments passed by the user."
       ((= 1 (length value)) (first value))
       (t (format nil "~{~a~^, ~}" value))))
 
-  (defmacro rewrite-restas ((&key (jsonp nil)) &body body)
-;;; TODO, maybe should be render-method in RESTAS?
-    `(destructuring-bind (status headers content)
-         (progn ,@body)
-       (check-type status (integer 200 599))
-       (check-type headers (or null cons))
-       (check-type content (or cons string array))
-       (assert (every (lambda (x)
-                        (or (stringp x) (symbolp x)))
-                      headers)
-               (headers)
-               "Headers should be given as strings or symbols; got ~s"
-               headers)
-       (setf (hunchentoot:return-code*) status)
-       (loop for (header . value) on headers by #'cddr
-          do (setf (hunchentoot:header-out header)
-                   (atom-or-comma-list value)))
-       ,(if jsonp
-            `(if (consp content)
-                 (render-json content)
-                 content)
-            '(flexi-streams:string-to-octets content :external-format :utf-8))))
-
   (defun add-charset (content-type)
     "Adds the ;charset=UTF-8 type to the end of text and JS/JSON CONTENT-TYPEs"
     (if (member content-type
@@ -268,58 +278,40 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                               (list 'quote var))
                             λ-list))
         'nil))
-
-  (defun defendpoint/make-extension-named-route (fname λ-list
-                                                 method uri extension)
-    (let ((typed-uri (concatenate 'string
-                                  uri (if (char= #\/ (last-elt uri))
-                                          "index."
-                                          ".")
-                                  extension))
-          (typed-fname (intern (concatenate 'string (string fname) "." extension))))
-      `(progn
-         (setf (fdefinition ',typed-fname) (fdefinition ',fname))
-         (restas::register-route-traits
-          ',typed-fname
-          (plist-hash-table (list :template ,typed-uri
-                                  :method ,method
-                                  :variables ,(lambda-list-as-variables λ-list)))))))
   
-  (defun defendpoint/make-route-with-no-extension (fname λ-list method uri content-type)
-    (defendpoint/register-restas-route :fname fname
-      :uri uri
-      :method method
-      :content-type content-type
-      :λ-list λ-list))
+  (defun parse-uri-as-template (uri)
+    (let ((parts (split-sequence #\/ uri :remove-empty-subseqs t)))
+      (loop for part in parts
+         collecting (if (and (< 2 (length part))
+                             (char= #\: (char part 0)))
+                        (make-keyword (string-upcase (subseq part 1)))
+                        part))))
   
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)
     (let* ((method (make-keyword (symbol-name method)))
            (fname (make-endpoint-function-name method uri content-type))
            (content-type (string-downcase content-type))
-           (λ-list (mapcar (compose #'intern #'symbol-name)
-                           (routes:template-variables
-                            (routes:parse-template uri))))
+           (template (parse-uri-as-template uri))
+           (λ-list (remove-if-not #'symbolp template))
            (docstring (if (and (consp body) (stringp (first body)))
                           (first body)
                           (format nil
                                   "Undocumented endpoint for URI's matching ~
 the pattern ~s ~@[ and accepting content-type ~a~]"
                                   uri content-type))))
+      ;;; FIXME: update/replace
+      (pushnew (list method template (length template) content-type fname) *paths*
+               :test (lambda (a b)
+                       (and (eql (first a) (first b))
+                            (equalp (second a) (second b))
+                            (equalp (fourth a) (fourth b)))))
       (defendpoint/make-endpoint-function 
           :fname fname
         :content-type content-type
         :λ-list λ-list
         :docstring docstring
-        :body body)
-      (let ((extension (extension-for-content-type content-type)))
-        (labels ((no-ext () (defendpoint/make-route-with-no-extension fname λ-list method uri content-type))
-                 (c/ext () (defendpoint/make-extension-named-route fname λ-list method uri extension)))
-          (cond
-            ((null extension) (no-ext))
-            ((equal extension "json") (no-ext) (c/ext))
-            (t (c/ext))))
-        (restas:reconnect-all-routes)))))
+        :body body))))
 
 
 
@@ -330,25 +322,6 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
 
 
 ;;; Print-Object methods for routes and things.
-;; XXX: these could go upstream.
-
-(defmethod print-object ((route restas:route) stream)
-  (print-unreadable-object (route stream :type t)
-    (princ (string-capitalize (restas:route-symbol route)) stream)
-    (write-char #\Space stream)
-    (format stream "~{~:(~a~): ~a~^ ~}" (restas::route-headers route))
-    (write-char #\Space stream)
-
-    (write-char #\Space stream)
-    (princ (restas::route-arbitrary-requirement route) stream)))
-
-
-(defmethod print-object ((vhost restas::vhost) stream)
-  (print-unreadable-object (vhost stream :type t)
-    (destructuring-bind (hostname . port) (restas::vhost-hostname-port vhost)
-      (princ hostname stream)
-      (write-char #\: stream)
-      (princ port stream))))
 
 (defmethod print-object ((request hunchentoot:request) stream)
   (print-unreadable-object (request stream :type t)
@@ -356,10 +329,4 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
     (write-char #\Space stream)
     (princ (hunchentoot:request-uri request) stream)))
 
-(defmethod print-object ((template routes:uri-component-template) stream)
-  (print-unreadable-object (template stream :type t)
-    (princ (slot-value template 'routes::spec) stream)))
 
-(defmethod print-object ((template routes:or-template) stream)
-  (print-unreadable-object (template stream :type t)
-    (format stream "~{~a~^ or ~}" (slot-value template 'routes::spec))))
