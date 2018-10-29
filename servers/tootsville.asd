@@ -39,9 +39,8 @@ REST services for the front-end."
                :clouchdb
                :drakma
                :envy
-               :fare-memoization
+                :fare-memoization
                :jonathan
-               :restas
                :swank
                :symbol-munger ;; TODO factor out
                :trivial-backtrace
