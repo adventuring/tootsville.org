@@ -11,7 +11,6 @@
                :fare-memoization
                :hunchentoot
                :oliphaunt
-               :restas
                )
   :components
   ((:file "package")

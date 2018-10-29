@@ -57,18 +57,17 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
 (defun enumerate-routes ()
   (sort
    (sort
-    (mapcar (lambda (pair)
-              (destructuring-bind (fn . attribs) pair
-                (list* :fn fn
-                       :docstring (documentation fn 'function)
-                       (hash-table-plist attribs))))
-            (hash-table-alist
-             (gethash :routes
-                      (restas::find-pkgmodule-traits :Tootsville))))
+    (mapcar (lambda (path)
+              (destructuring-bind (method template length accept function) path
+                (declare (ignore length))
+                (list :method method :template template :content-type accept
+                      :fn function
+                      :docstring (documentation function 'function))))
+            *paths*)
     #'string<
     :key (rcurry #'getf :method))
    #'string<
-   :key (rcurry #'getf :template)))
+   :key (lambda (r) (format nil "~{/~a~}" (getf r :template)))))
 
 (defun replace-texinfo-tables (string)
   (substitute 
@@ -144,23 +143,23 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                "<section><p>"
                (regex-replace-pairs '(
                                       ("&" "&amp;")
-        ("<" "&lt;")
-        (#.(string #\sub) . "<")
-        ("\\n\\n" . "</p><p>")
-        ("`([A-Z0-9+/-])'" . "<b class=\"fn-ref\">\\1</b>")
-        ("@url{(.*?)}" . "<a href=\"\\1\">\\1</a>")
-        ("@samp{(.*?)}" . "<tt>\\1</tt>")
-        ("@var{(.*?)}" . "<span class=\"var\">\\1</span>")
-        ("@section{(.*?)}" . "</section><section><h3>\\1</h3>")
-        ("@subsection{(.*?)}" . "<h4>\\1</h4>")
-        ("@subsubsection{(.*?)}" . "<h5>\\1</h5>")
-        ("@enumerate" . "<ol>")
-        ("@end enumerate" . "</ol>")
-        ("@itemize" . "<ul>")
-        ("@end itemize" . "</ul>")
-        ("@item" . "<li>")
-        )
-  docstring)
+                                      ("<" "&lt;")
+                                      (#.(string #\sub) . "<")
+                                      ("\\n\\n" . "</p><p>")
+                                      ("`([A-Z0-9+/-])'" . "<b class=\"fn-ref\">\\1</b>")
+                                      ("@url{(.*?)}" . "<a href=\"\\1\">\\1</a>")
+                                      ("@samp{(.*?)}" . "<tt>\\1</tt>")
+                                      ("@var{(.*?)}" . "<span class=\"var\">\\1</span>")
+                                      ("@section{(.*?)}" . "</section><section><h3>\\1</h3>")
+                                      ("@subsection{(.*?)}" . "<h4>\\1</h4>")
+                                      ("@subsubsection{(.*?)}" . "<h5>\\1</h5>")
+                                      ("@enumerate" . "<ol>")
+                                      ("@end enumerate" . "</ol>")
+                                      ("@itemize" . "<ul>")
+                                      ("@end itemize" . "</ul>")
+                                      ("@item" . "<li>")
+                                      )
+                                    docstring)
                "</p></section>"))
 
 (defun decorate-method-html (method)
@@ -203,8 +202,8 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
   (concatenate 'string "<li>"
                (decorate-method-html (getf route :method))
                " <tt class=\"uri\">"
-               (decorate-route-template-html (getf route :template)
-                                             (getf route :variables)
+               (decorate-route-template-html (format nil "~{/~a~}" (getf route :template))
+                                             (remove-if-not #'symbolp (getf route :template))
                                              (getf route :method))
                "</tt> <br>"
                (docstring->html (getf route :docstring)
@@ -213,7 +212,7 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
 
 (defun template->openapi (template)
   (regex-replace-all "\\:([a-zA-Z0-9-]*)"
-                     template
+                     (format nil "~{/~a~}" template)
                      (lambda (whole _ __ match-start match-end ___ ____)
                        (declare (ignore _ __ ___ ____))
                        (concatenate
@@ -301,7 +300,8 @@ this machine or its siblings."
                                               #'string-lessp
                                               :key (rcurry #'getf :method))
                                              #'string-lessp
-                                             :key (rcurry #'getf :template)))))
+                                             :key (lambda (r)
+                                                    (format nil "~{/~a~}" (getf r :template)))))))
                           (sort (routes-prefixed (enumerate-routes))
                                 #'string-lessp
                                 :key #'car))

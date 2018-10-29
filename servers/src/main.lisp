@@ -32,38 +32,81 @@
   (:method ((error unimplemented))
     (verbose:info :unimplemented "Unimplemented function called: ~s" error)))
 
-(defun strip-after-sem (s)
-  (if-let (sem (position #\; s))
-    (subseq s sem)
-    s))
-
 (defun request-accept-types ()
   (when-let (accept (assoc :accept (hunchentoot:headers-in*)))
-    (mapcar #'strip-after-sem
-            (mapcar (curry #'string-trim +whitespace+)
-                    (split-sequence #\, (second accept))))))
+    (mapcar (curry #'string-trim +whitespace+)
+            (split-sequence #\, (rest accept)))))
 
 (defun template-match (template list)
-  (loop for tmpl in template
-     for el in list
-     with result = nil
-     do (etypecase tmpl
-          (string (unless (string= tmpl el)
-                    (return nil)))
-          (symbol (push el result)))
-     finally (return result)))
+  (if (every #'stringp template)
+      (equalp template list)
+      (loop for tmpl in template
+         for el in list
+         with result = nil
+         do (etypecase tmpl
+              (string (unless (string= tmpl el)
+                        (return nil)))
+              (symbol (push el result)))
+         finally (return (nreverse result)))))
+
+(assert (template-match '("foo" "bar" "baz") '("foo" "bar" "baz")))
+(assert (equalp '("42" "99")
+                (template-match '("foo" :bar :baz) '("foo" "42" "99"))))
+
+(defun strip-after-sem (s)
+  (if-let ((sem (position #\; s :Test #'char=)))
+    (subseq s 0 sem)
+    s))
+
+(defun accept-type-equal (a b &key (allow-wildcard-p t))
+  (let ((a (strip-after-sem a))
+        (b (strip-after-sem b)))
+    (or (string-equal a b)
+        (and allow-wildcard-p
+             (or (and (string-ends "/*" a)
+                      (let ((slash (position #\/ a)))
+                        (string-equal a b :end1 slash :end2 slash)))
+                 (and (string-ends "/*" b)
+                      (let ((slash (position #\/ b))) 
+                        (string-equal a b :end1 slash :end2 slash)))
+                 (equal a "*/*")
+                 (equal b "*/*"))))))
+
+(assert (accept-type-equal "text/html" "text/html"))
+(assert (accept-type-equal "text/html" "text/html;charset=utf-8"))
+(assert (accept-type-equal "text/html" "text/*"))
+(assert (accept-type-equal "text/html" "text/*;charset=utf-8"))
+(assert (accept-type-equal "text/html" "*/*"))
+(assert (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun dispatch-request% (&optional (request hunchentoot:*request*))
-  (let ((uri-parts (cddr (split-sequence #\/ (hunchentoot:request-uri request)
-                                         :remove-empty-subseqs t)))
+  (let ((uri-parts (split-sequence #\/ (hunchentoot:request-uri request)
+                                   :remove-empty-subseqs t))
         (ua-accept (request-accept-types)))
-    (dolist (path *paths*)
-      (destructuring-bind (method template length accept function) path
-        (when (and (eql method (hunchentoot:request-method*))
-                   (= length (length uri-parts))
-                   (member accept ua-accept :test #'string-equal))
-          (when-let (bound (template-match template uri-parts))
-            (return-from dispatch-request% (funcall function bound))))))
+    (labels ((maybe-dispatch (path allow-wildcard-p)
+               (destructuring-bind (method template length accept function) path
+                 (when (and (or (eql method (hunchentoot:request-method*))
+                                (v:info :path "Method mismatch, ~s vs ~s"
+                                        method (hunchentoot:request-method*)))
+                            (or (= length (length uri-parts))
+                                (v:info :path "Length of URI parts ~s doesn't match template ~s"
+                                        uri-parts template))
+                            (or (member accept ua-accept :test (rcurry #'accept-type-equal
+                                                                       :allow-wildcard-p allow-wildcard-p))
+                                (v:info :path "Accept-type ~s ∉ ~s" accept ua-accept)))
+                   (when-let (bound (template-match template uri-parts))
+                     (verbose:info :path "Matched ~s to (~s ~s)"
+                                   (hunchentoot:request-uri request) function bound)
+                     (return-from dispatch-request% (if (eql t bound)
+                                                        (funcall function)
+                                                        (apply function bound))))
+                   (v:info :path "Template did not match: ~s vs ~s"
+                           uri-parts template)))))
+      (dolist (path *paths*)
+        (maybe-dispatch path nil))
+      (v:info :path "Tried all non-wildcard accept content-types, now wildcards")
+      (dolist (path *paths*)
+        (maybe-dispatch path t)))
     (setf (hunchentoot:return-code*)
           hunchentoot:+http-not-found+)
     (hunchentoot:abort-request-handler)))

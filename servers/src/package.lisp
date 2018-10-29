@@ -1,6 +1,6 @@
 (cl:in-package :cl-user)
 (in-package :cl-user)
-(restas:define-module Tootsville
+(defpackage Tootsville
   (:documentation  "Let's make some noise!")
   (:use :alexandria :cl :local-time :bordeaux-threads
         :oliphaunt)

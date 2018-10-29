@@ -1,7 +1,5 @@
 (in-package :Tootsville)
 
-(defvar *paths* nil)
-
 
 
 (defun accepts-content-type-p (content-type)
@@ -30,6 +28,8 @@ is, of course, a subseq of \".json\" as well.)"
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *paths* nil)
+  
   (defun without-sem (string)
     (if-let (sem (position #\; string))
       (subseq string 0 sem)
@@ -293,7 +293,9 @@ This is basically just CHECK-TYPE for arguments passed by the user."
            (fname (make-endpoint-function-name method uri content-type))
            (content-type (string-downcase content-type))
            (template (parse-uri-as-template uri))
-           (λ-list (remove-if-not #'symbolp template))
+           (λ-list (mapcar (lambda (s) 
+                             (intern (symbol-name s) (symbol-package fname)))
+                           (remove-if-not #'symbolp template)))
            (docstring (if (and (consp body) (stringp (first body)))
                           (first body)
                           (format nil
@@ -318,6 +320,15 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
 (defendpoint (get "/" text/html)
   "GET on the root redirects to the main web page (@url{https://Tootsville.org/})"
   (list 307 '(:location "https://Tootsville.org/") ""))
+
+(defendpoint (get "/favicon.png")
+  (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.png") ""))
+
+(defendpoint (get "/favicon.ico")
+  (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.ico") ""))
+
+(defendpoint (get "/favicon.gif")
+  (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.gif") ""))
 
 
 
