@@ -25,7 +25,7 @@ clean:
 	find . -name \*.fasl -exec rm {} \;
 	find . -name dumper\*.lisp -exec rm {} \;
 	find . -name \*~ -exec rm {} \;
-	git gc --auto
+	git gc --auto || true
 
 deps:	.deps-installed~ modules
 

@@ -253,12 +253,10 @@ connectivity:
 
 
 no-fixmes:	TODO.scorecard
-	TOOT_TODO = $$(grep TODO TODO.scorecard | wc -l) ;\
-	TOOT_FIXME = $$(grep FIXME TODO.scorecard | wc -l) ;\
+	TOOT_TODO=$$(grep TODO TODO.scorecard | wc -l) ;\
+	TOOT_FIXME=$$(grep FIXME TODO.scorecard | wc -l) ;\
 	if [[ $$TOOT_FIXME -gt 0 ]] ;\
 	then \
-		while true ;\
-		do \
 			clear ;\
 			echo "There are $$TOOT_FIXME FIXME comments!" ;\
 			if [[ "$(CLUSTER)" = tootsville.org ]] ;\
@@ -271,21 +269,23 @@ no-fixmes:	TODO.scorecard
 			echo "when there are $$TOOT_FIXME FIXME notes and $$TOOT_TODO TODOs?" ;\
 			echo "" ;\
 			read -p "Deploy anyway? (Y/N) ⇒ " -n 1 yorn ;\
-			if [[ "$${yorn_}" = "y" ]] ;\
+			if [[ "$${yorn}" = "y" ]] ;\
 			then \
 				echo "" ;\
 				echobig Overridden ;\
 				echo "" ;\
 				echo "Override accepted. Good luck …" ;\
 				break ;\
-			elif [[ "$${yorn_}" = "n" ]] ;\
+			elif [[ "$${yorn}" = "n" ]] ;\
 			then \
 				echo "" ;\
 				echo "That seems wise. Exiting." ;\
 				echo "" ;\
 				exit 8 ;\
+			else \
+				echo "Only y or n work. Treading $$yorn as No." ; \
+				exit 8; \
 			fi ;\
-		done ;\
 	fi
 
 predeploy-play:	play worker htaccess
@@ -325,23 +325,23 @@ predeploy-servers:	servers quicklisp-update-servers
 		mkdir -p dist/$$host.$(CLUSTER) ;\
 		cp dist/htaccess.all/$$host.$(CLUSTER).htaccess dist/$$host.$(CLUSTER) || exit 6 ;\
 		cp play/.well-known/assetlinks.json dist/$$host.$(CLUSTER) || exit 6 ;\
-		bin/shar-stream ./ servers/ $$host.$(CLUSTER) ;\
+		bin/shar-stream ./ servers $$host.$(CLUSTER) ;\
 		ssh $$host.$(CLUSTER) make -C servers clean Tootsville test || exit 6 ;\
 		rsync -zar -essh dist/$$host.$(CLUSTER) $$host.$(CLUSTER):/var/www/ ;\
 		rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
-			www/error $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;/
-		scp www/favicon.??? $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;/
+			www/error $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
+		scp www/favicon.??? $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
 	done
 
 quicklisp-update-servers:
-	for host in users gossip world
-	do
+	for host in users gossip world; \
+	do \
 	    ssh $$host.$(CLUSTER) \
 	        sbcl --non-interactive \
 	        --no-inform \
 	        --eval "'(ql:update-client)'" \
 	        --eval "'(ql:update-all-dists)'" \
-	        --quit
+	        --quit ;\
 	done
 
 
