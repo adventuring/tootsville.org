@@ -311,16 +311,15 @@ predeploy-www:	htaccess dist/www/2019.css
 	cp dist/www/2019.css dist/www.$(CLUSTER)/2019.css
 	if [ "$(CLUSTER)" = "test.tootsville.org" ]; \
 	then \
-		cp www/index.test.html www.$(CLUSTER)/index.html ;\
+		cp www/index.test.html dist/www.$(CLUSTER)/index.html ;\
 	fi
 	if [ "$(CLUSTER)" = "qa.tootsville.org" ]; \
 	then \
-		cp www/index.qa.html www.$(CLUSTER)/index.html ;\
+		cp www/index.qa.html dist/www.$(CLUSTER)/index.html ;\
 	fi
 	bin/shar-stream dist/ www.$(CLUSTER) www.$(CLUSTER)
 
-predeploy-servers:	servers
-	quicklisp-update-servers
+predeploy-servers:	servers quicklisp-update-servers
 	for host in users gossip world ;\
 	do \
 		mkdir -p dist/$$host.$(CLUSTER) ;\
