@@ -69,7 +69,7 @@ is, of course, a subseq of \".json\" as well.)"
                                                                      :external-format :utf-8)))
                 ((= 2 (length reply))
                  (destructuring-bind (status contents) reply
-                   (check-type status (integer 200 599))
+                   (check-type status http-response-status-number)
                    (setf (hunchentoot:return-code*) status
                          content-bytes 
                          (etypecase contents
@@ -79,7 +79,7 @@ is, of course, a subseq of \".json\" as well.)"
                                                                  :external-format :utf-8))))))
                 ((= 3 (length reply))
                  (destructuring-bind (status headers contents) reply
-                   (check-type status (integer 200 599))
+                   (check-type status http-response-status-number)
                    (assert (every (lambda (x)
                                     (or (stringp x) (symbolp x)))
                                   headers)
@@ -309,14 +309,15 @@ the pattern ~s ~@[ and accepting content-type ~a~]"
             :λ-list λ-list
             :docstring docstring
             :body body)
-        (setf *paths* (concatenate 
-                       'list
-                       (remove-if (lambda (r)
-                                    (equal method (first r))
-                                    (equal template (second r))
-                                    (equal content-type (fourth r)))
-                                  *paths*)
-                       (cons (list method template (length template) content-type fname) nil)))))))
+        (pushnew (list method template (length template) content-type fname)
+                 *paths*
+                 :test (lambda (a b)
+                         (eql (first a) (first b)) ; method
+                         (mapcar #'string= (second a) (second b)) ; URI template
+                         (equal (fourth a) (fourth b)) ; content-type
+                         ))
+        (format *trace-output* "~2& • New endpoint: ~a ~{/~a~} ~a~%~s"
+                method template content-type *paths*)))))
 
 
 
