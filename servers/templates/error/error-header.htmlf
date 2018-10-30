@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> Error … Tootsville </title>
+    <link rel="stylesheet"
+          href="/error/simple-error.2017.css"
+          type="text/css">
+
+    <link href="https://plus.google.com/+TootsvilleOrg" rel="publisher">
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="https://jumbo.tootsville.org/Assets/Icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png"
+          href="https://jumbo.tootsville.org/Assets/Icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png"
+          href="https://jumbo.tootsville.org/Assets/Icons/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png"
+          href="https://jumbo.tootsville.org/Assets/Icons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest"
+          href="https://www.tootsville.org/manifest.json">
+    <meta name="msapplication-TileColor" content="#0082c8">
+    <meta name="msapplication-TileImage"
+          content="https://jumbo.tootsville.org/Assets/Icons/mstile-144x144.png">
+    <meta name="theme-color" content="#9669ad">
+
+  </head>
+  <body>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                               m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                              })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-80917352-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/"-->
+
+    <section style="border: 3pt solid red; padding: 0; width: auto; display:
+                    inline-block">
+      This is Tootsville.GA. <small>(see note below)</small>
+    </section>
+
+    <!--#endif-->
+    <img
+      src="https://jumbo.tootsville.org/Assets/Icons/tootsville-logo.svg"
+      id="tootsville"
+      alt="Tootsville">
+    <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/toot-engineer.svg" id="builder-toot">
