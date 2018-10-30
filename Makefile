@@ -127,12 +127,27 @@ worker:	dist/play/worker.js
 dist/play/worker.js:	play/worker.js
 	mkdir -p dist/play/
 	closure-compiler --create_source_map dist/play/worker.map \
-		--language_out ECMASCRIPT5_STRICT \
-		--source_map_location_mapping 'play/|/play/' \
-		$< > $@
-	echo '//# sourceMappingURL=/play/worker.map' >> dist/play/worker.js
+		--third_party					  \
+		--language_out ECMASCRIPT5_STRICT		  \
+		--language_in ECMASCRIPT6 			  \
+		--source_map_location_mapping 'play/|/play/' 	  \
+		--js $<                                           \
+		--js_output_file $@
+	echo '//# sourceMappingURL=/play/worker.map' >> $@
 
 #################### play/play.js
+
+dist/play/play.js:	${PLAYJS}
+	mkdir -p dist/play/
+	cat ${PLAYJS} > dist/play/play.max.js
+	closure-compiler --create_source_map dist/play/play.map \
+		--third_party                                   \
+		--source_map_location_mapping 'play/|/play/'    \
+		--language_in ECMASCRIPT6                       \
+		--language_out ECMASCRIPT5_STRICT               \
+		--js $<                                         \
+		--js_output_file $@
+	echo '//# sourceMappingURL=/play/play.map' >> $@
 
 play:	dist/play/play.css \
 	dist/play/play.js
@@ -144,15 +159,6 @@ dist/play/play.map:	dist/play/play.js
 dist/play/play.css:	$(shell find play -name \*.less -and -not -name .\*)
 	mkdir -p dist/play/
 	lessc --strict-math=on --source-map play/play.less dist/play/play.css
-
-dist/play/play.js:	${PLAYJS}
-	mkdir -p dist/play/
-	cat ${PLAYJS} > dist/play/play.max.js
-	closure-compiler --create_source_map dist/play/play.map \
-		--source_map_location_mapping 'play/|/play/' \
-		--language_out ECMASCRIPT5_STRICT \
-		dist/play/play.max.js > $@
-	echo '//# sourceMappingURL=/play/play.map' >> dist/play/play.js
 
 #################### TODO
 
