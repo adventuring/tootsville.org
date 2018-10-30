@@ -72,6 +72,7 @@
         asdf:*central-registry*)
 
 ;;; misc
+#+sbcl
 (setf sb-impl::*default-external-format* :utf-8)
 
 
