@@ -33,9 +33,8 @@ ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 clean:
 	$(MAKE) -C servers clean
 	find . -name \*~ -exec rm {} \;
-	-rm dist/play/play.js
-	-rm dist/play/worker.js
-	-rm TODO.org TODO.scorecard	
+	rm -rf dist/ ; mkdir -p dist/
+	rm -f TODO.org TODO.scorecard	
 
 #################### servers
 
