@@ -79,7 +79,7 @@ REST services for the front-end."
             :depends-on ("view" "players" "errors" "config"))
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
-     (:file "http-status-messages" :depends-on "package")
+     (:file "http-status-messages" :depends-on ("package"))
      (:file "acceptor" :depends-on "web" "http-status-messages")
      (:file "main" :depends-on ("config" "view" "package" "acceptor"))
      (:module
