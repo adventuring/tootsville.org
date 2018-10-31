@@ -4,17 +4,6 @@
   (:use :cl :asdf))
 (in-package :Tootsville-ASD)
 
-(defvar *setup* nil)
-
-(unless *setup*
-  (load (merge-pathnames
-         #p"./src/setup.lisp"
-         (make-pathname
-          :directory
-          (pathname-directory (or *load-pathname*
-                                  *compile-file-pathname*
-                                  *default-pathname-defaults*))))))
-
 
 
 (defsystem Tootsville
@@ -39,7 +28,7 @@ REST services for the front-end."
                :clouchdb
                :drakma
                :envy
-                :fare-memoization
+               :fare-memoization
                :jonathan
                :swank
                :symbol-munger ;; TODO factor out
@@ -79,7 +68,9 @@ REST services for the front-end."
             :depends-on ("view" "players" "errors" "config"))
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
-     (:file "main" :depends-on ("config" "view" "web" "package"))
+     (:file "http-status-messages" :depends-on ("package"))
+     (:file "acceptor" :depends-on ("web" "http-status-messages"))
+     (:file "main" :depends-on ("config" "view" "package" "acceptor"))
      (:module
       "endpoints"
       :depends-on ("web")

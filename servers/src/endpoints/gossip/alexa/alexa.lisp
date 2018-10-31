@@ -420,7 +420,7 @@ ServerAlias to your server's configuration file.
       (throw 'endpoint (list 400 () (stringify c))))))
 
 (defmacro define-alexa-endpoint (name (&optional arg) &body body)
-  `(defendpoint (post ,(format nil "/gossip/alexa/~(~a~)/region=:region" name) "application/json")
+  `(defendpoint (post ,(format nil "/gossip/alexa/~(~a~)/region/:region" name) "application/json")
        ,(when (stringp (first body))
           (first body))
      (let ,(when arg

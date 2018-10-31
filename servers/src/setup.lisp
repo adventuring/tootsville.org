@@ -67,11 +67,12 @@
         #+run-without-any-quicklisp (asdf:load-system (pathname-name another-system-definition))))))
 
 (format *trace-output*
-        "~2& Sytem Definitions registry:
+        "~2& System Definitions registry:
 ~{~& • ~a~}"
         asdf:*central-registry*)
 
 ;;; misc
+#+sbcl
 (setf sb-impl::*default-external-format* :utf-8)
 
 

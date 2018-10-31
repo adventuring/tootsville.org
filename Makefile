@@ -206,6 +206,7 @@ dist/www/2019.css:	$(shell echo www/*.less)
 #################### deploy
 
 deploy-play:	predeploy
+	echo " » Deploy play.$(CLUSTER)"
 	ssh play.$(CLUSTER) "mv play.$(CLUSTER) play.$(CLUSTER).before-deploy && mv play.$(CLUSTER).new play.$(CLUSTER)"
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
@@ -219,6 +220,7 @@ deploy-play:	predeploy
 deploy-servers:	predeploy
 	for host in users gossip world; \
 	do \
+		echo " » Deploy $$host.$(CLUSTER)" ;\
 		ssh $$host.$(CLUSTER) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
 cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
 sudo -n systemctl enable tootsville; \
@@ -237,6 +239,7 @@ sudo -n systemctl start tootsville" ;\
 	done
 
 deploy-www:	predeploy
+	echo " » Deploy www.$(CLUSTER)"
 	ssh www.$(CLUSTER) "mv www.$(CLUSTER) www.$(CLUSTER).before-deploy && mv www.$(CLUSTER).new www.$(CLUSTER)"
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
@@ -250,6 +253,7 @@ deploy-www:	predeploy
 predeploy:	no-fixmes connectivity predeploy-play predeploy-www predeploy-servers remotes
 
 connectivity:
+	echo " » Test connectivity"
 	ssh play.$(CLUSTER) ls -1d play.$(CLUSTER)/ | grep play.$(CLUSTER)
 	ssh $(CLUSTER) ls -1d $(CLUSTER)/ | grep $(CLUSTER)
 	ssh users.$(CLUSTER) sbcl --no-userinit --quit | grep 'This is SBCL'
@@ -294,6 +298,7 @@ no-fixmes:	TODO.scorecard
 	fi
 
 predeploy-play:	play worker htaccess
+	echo " » Pre-deploy play.$(CLUSTER)"
 	mkdir -p dist/play.$(CLUSTER)
 #	copy in most files
 	rsync --exclude='*~' --exclude='*#' -ar \
@@ -310,6 +315,7 @@ predeploy-play:	play worker htaccess
 	bin/shar-stream dist/ play.$(CLUSTER) play.$(CLUSTER)
 
 predeploy-www:	htaccess dist/www/2019.css
+	echo " » Pre-deploy www.$(CLUSTER)"
 	mkdir -p dist/www.$(CLUSTER)
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      www/* dist/www.$(CLUSTER)/
@@ -327,20 +333,25 @@ predeploy-www:	htaccess dist/www/2019.css
 predeploy-servers:	servers quicklisp-update-servers
 	for host in users gossip world ;\
 	do \
+		echo " » Pre-deploy $$host.$(CLUSTER)" ;\
 		mkdir -p dist/$$host.$(CLUSTER) ;\
 		cp dist/htaccess.all/$$host.$(CLUSTER).htaccess dist/$$host.$(CLUSTER) || exit 6 ;\
 		cp play/.well-known/assetlinks.json dist/$$host.$(CLUSTER) || exit 6 ;\
-		rsync -zar -essh servers $$host.$(CLUSTER): ;\
-		scp www/favicon.??? $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
-		ssh $$host.$(CLUSTER) make -C servers clean Tootsville test || exit 6 ;\
+		rsync -essh -zar servers $$host.$(CLUSTER): ;\
+		ssh $$host.$(CLUSTER) make -C servers clean || exit 6 ;\
+		ssh $$host.$(CLUSTER) make -C servers Tootsville || exit 6 ;\
+		ssh $$host.$(CLUSTER) make -C servers test || exit 6 ;\
+		echo " » Deploying static HTML bits of $$host.$(CLUSTER)" ;\
 		rsync -zar -essh dist/$$host.$(CLUSTER) $$host.$(CLUSTER):/var/www/ ;\
 		rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
 			www/error $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
+		scp www/favicon.??? $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
 	done
 
 quicklisp-update-servers:
 	for host in users gossip world; \
 	do \
+		echo " » Ensure latest Quicklisp on $$host.$(CLUSTER)" ;\
 	    ssh $$host.$(CLUSTER) \
 	        sbcl --non-interactive \
 	        --no-inform \

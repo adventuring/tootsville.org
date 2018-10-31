@@ -22,9 +22,11 @@ all:	bin doc
 clean:
 	-rm -f Tootsville Tootsville.new \
 		doc/* bin/buildapp
+	-rm -rf $$HOME/.cache/common-lisp/*/$$(pwd)
 	find . -name \*.fasl -exec rm {} \;
 	find . -name dumper\*.lisp -exec rm {} \;
 	find . -name \*~ -exec rm {} \;
+	find . -name \*.orig -exec rm {} \;
 	git gc --auto || true
 
 deps:	.deps-installed~ modules
