@@ -96,6 +96,11 @@ quicklisp-manifest.tmp:	tootsville.asd \
 		--load tootsville.asd \
 		--eval '(ql:quickload :Tootsville)' \
 		--eval '(ql:write-asdf-manifest-file "quicklisp-manifest.tmp")'
+	for asd in src/lib/*/*.asd ; \
+	do \
+		echo $$(pwd)/$$asd >> quicklisp-manifest.tmp ;\
+	done
+	echo $$(pwd) >> quicklisp-manifest.tmp
 
 test:	bin
 	./Tootsville check

@@ -30,8 +30,9 @@ REST services for the front-end."
                :envy
                :fare-memoization
                :jonathan
+               :pngload
                :swank
-               :symbol-munger ;; TODO factor out
+               :symbol-munger ;; XXX factor out
                :trivial-backtrace
                :trivial-ldap
                :uiop
@@ -59,6 +60,7 @@ REST services for the front-end."
      (:file "toots" :depends-on ("utils" "users"))
      (:file "players" :depends-on ("utils" "users"))
      (:file "errors" :depends-on ("package"))
+     (:file "terrain" :depends-on ("package"))
      (:file "version" :depends-on ("package" "config"))
      (:file "logging" :depends-on ("package" "version"))
      (:file "write-docs" :depends-on ("package"))
@@ -75,7 +77,7 @@ REST services for the front-end."
      (:file "main" :depends-on ("config" "view" "package" "acceptor"))
      (:module
       "endpoints"
-      :depends-on ("web")
+      :depends-on ("web" "terrain")
       :components
       ((:file "slash-login")
        (:file "slash-version")

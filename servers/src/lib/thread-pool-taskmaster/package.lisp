@@ -6,5 +6,6 @@
   (:import-from :fare-memoization #:define-memo-function)
   (:import-from :oliphaunt #:processor-count)
   (:export #:thread-pool-taskmaster
-           #:*developmentp*))
+           #:*developmentp*
+           #:with-thread-pool-restarts))
 

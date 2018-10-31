@@ -77,43 +77,42 @@
 (assert (accept-type-equal "text/html" "*/*"))
 (assert (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
-(defun dispatch-request% (&optional (request hunchentoot:*request*))
-  (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
-  (let ((method (hunchentoot:request-method*))
-        (uri-parts (split-sequence #\/ (hunchentoot:request-uri request)
-                                   :remove-empty-subseqs t))
-        (ua-accept (request-accept-types)))
-    (if-let (match (find-best-endpoint method uri-parts ua-accept)) 
-      (destructuring-bind (endpoint &rest bindings) match
-        (verbose:info :request "Calling ~s" match)
-        (apply (fdefinition (endpoint-function endpoint)) bindings))
-      (progn 
-        (verbose:info :request "No match for ~s ~{/~a~} accepting ~s" method uri-parts ua-accept)
-        (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
-        (hunchentoot:abort-request-handler)))))
+(defvar *user*)
+
+(defun find-user-for-headers (headers)
+  (when-let (auth-header (assoc headers "X-Tootsville-OpenID"))
+    (validate-open-id (cdr auth-header))))
 
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-REST-acceptor) request)
-  (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
-  (verbose:info :request "Dispatching request ~s via acceptor ~s"
-                request acceptor)
-  (let ((hunchentoot:*request* request))
-    (verbose:info :request "{~a} Accepting request ~s"
-                  (thread-name (current-thread)) request)
-    (dispatch-request%)))
+  (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
+  (verbose:info :request "{~A} Dispatching request ~s via acceptor ~s"
+                (thread-name (current-thread)) request acceptor)
+  (let ((hunchentoot:*request* request)
+        (*user* (find-user-for-headers (hunchentoot:headers-in request))))
+    (let ((method (hunchentoot:request-method*))
+          (uri-parts (split-sequence #\/ (namestring (hunchentoot:request-pathname request))
+                                     :remove-empty-subseqs t))
+          (ua-accept (request-accept-types)))
+      (if-let (match (find-best-endpoint method uri-parts ua-accept)) 
+        (destructuring-bind (endpoint &rest bindings) match
+          (verbose:info :request "Calling ~s" match)
+          (apply (fdefinition (endpoint-function endpoint)) bindings))
+        (progn
+          (verbose:info :request "No match for ~s ~{/~a~} accepting ~s" method uri-parts ua-accept)
+          (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
+          (hunchentoot:abort-request-handler))))))
 
 (defmethod hunchentoot:acceptor-status-message 
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
      &rest _ &key &allow-other-keys)
   (declare (ignore _))
-  (unless (wants-json-p)
-    (call-next-method))
-  (when (< HTTP-status-code 400)
-    (call-next-method))
+  (unless (wants-json-p) (call-next-method))
+  (when (< HTTP-status-code 400) (call-next-method))
   
   (setf (hunchentoot:content-type*) "application/json;charset=utf-8"
         (hunchentoot:header-out "X-Tootsville-Machine") (machine-instance)
-        (hunchentoot:header-out "X-Romance-II-Version") (romance-ii-program/version)
+        (hunchentoot:header-out "X-Romance-II-Version") (romance-ii-program-name/version)
         (hunchentoot:header-out "X-Lisp-Version") (format nil "~a/~a"
                                                           (lisp-implementation-type)
                                                           (lisp-implementation-version))
@@ -122,7 +121,6 @@
              Hunchentoot::*show-lisp-errors-p*)
     ;; TODO: stack trace info
     ())
-  
   
   (format nil "{\"error\": ~d, \"status\":\"~a\"}" 
           HTTP-status-code (gethash HTTP-status-code *http-status-message*)))

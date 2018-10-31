@@ -344,3 +344,21 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 (defmethod jonathan::%to-json ((symbol symbol))
   (jonathan.encode::string-to-json (string (symbol-munger:lisp->camel-case symbol))))
+
+
+
+(defun query-string->plist (query-string)
+  (mapcan (lambda (pair)
+            (destructuring-bind (key value) 
+                (split-sequence #\= pair)
+              (list 
+               (make-keyword (substitute #\- #\_ 
+                                         (string-upcase key)))
+               value)))
+          (split-sequence #\& query-string)))
+
+(defun query-params ()
+  (let ((uri (hunchentoot:request-uri*)))
+    (when-let (qq (position #\? uri))
+      (let* ((query-string (subseq uri qq)))
+        (query-string->plist query-string)))))

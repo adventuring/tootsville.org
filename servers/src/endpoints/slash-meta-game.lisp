@@ -206,7 +206,9 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                (decorate-route-template-html (format nil "~{/~a~}" (getf route :template))
                                              (remove-if-not #'symbolp (getf route :template))
                                              (getf route :method))
-               "</tt> <br>"
+               "</tt> (→ "
+               (string-downcase (getf route :content-type))
+               ") <br>"
                (docstring->html (getf route :docstring)
                                 (getf route :fn))
                "</li>" #(#\Newline)))
@@ -284,8 +286,8 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
 (defendpoint (get "/meta-game/services" "text/html")
   "Provide a listing of services available in this cluster.
 
-This provides a browseable catalog of  web services that are provided by
-this machine or its siblings."
+  This provides a browseable catalog of  web services that are provided by
+  this machine or its siblings."
   (list 200 ()
         (reduce (curry #'concatenate 'string)
                 (flatten
@@ -310,8 +312,8 @@ this machine or its siblings."
 
 (defendpoint (get "/meta-game/services" "application/json")
   "This is a sketchy  sort of listing of services in  a JSON format that
-is not  anybody's standard. It  exists as  a stop-gap measure  until the
-OpenAPI form is working nicely."
+  is not  anybody's standard. It  exists as  a stop-gap measure  until the
+  OpenAPI form is working nicely."
   (list 200 () (list :services (enumerate-routes))))
 
 (defendpoint (get "/meta-game/services/users"

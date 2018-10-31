@@ -45,16 +45,20 @@
 (defun run-async (function)
   (unless *async-tasks*
     (init-async))
-  (cl-threadpool:add-job *async-tasks*
-                         (lambda ()
-                           (let ((idle-name (thread-name (current-thread))))
-                             (setf (sb-thread:thread-name (current-thread)) (format nil "Async: run ~s" function))
-                             (unwind-protect
-                                  (thread-pool-taskmaster::with-pool-thread-restarts ((thread-name (current-thread)))
-                                    (verbose:info '(:threadpool-worker :async-worker :worker-start) "{~a}: working" (thread-name (current-thread)))
-                                    (funcall function))
-                               (verbose:info '(:threadpool-worker :async-worker :worker-finish) "{~a}: done" (thread-name (current-thread)))
-                               (setf (sb-thread:thread-name (current-thread)) idle-name))))))
+  (cl-threadpool:add-job 
+   *async-tasks*
+   (lambda ()
+     (let ((idle-name (thread-name (current-thread))))
+       (setf (sb-thread:thread-name (current-thread)) (format nil "Async: run ~s" function))
+       (unwind-protect
+            (thread-pool-taskmaster:with-pool-thread-restarts
+             ((thread-name (current-thread)))
+             (verbose:info '(:threadpool-worker :async-worker :worker-start)
+                           "{~a}: working" (thread-name (current-thread)))
+             (funcall function))
+         (verbose:info '(:threadpool-worker :async-worker :worker-finish)
+                       "{~a}: done" (thread-name (current-thread)))
+         (setf (sb-thread:thread-name (current-thread)) idle-name))))))
 
 
 (defun start (&key (host "localhost") (port 5000))

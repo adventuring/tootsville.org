@@ -1,8 +1,5 @@
 (in-package :Tootsville)
 
-(defvar *gossip-users* nil)
-(defvar *user*)
-
 (defclass gossip-user ()
   ((google-token :type string
                  :accessor user-google-token
