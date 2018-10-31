@@ -300,7 +300,7 @@ no-fixmes:	TODO.scorecard
 predeploy-play:	play worker htaccess
 	echo " » Pre-deploy play.$(CLUSTER)"
 	mkdir -p dist/play.$(CLUSTER)
-#	copy in most files  
+#	copy in most files
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      play/* play/.well-known dist/play.$(CLUSTER)/
 # 	each host copies error pages and favicons
