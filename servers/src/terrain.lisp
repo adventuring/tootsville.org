@@ -104,6 +104,8 @@
 (defmethod generate-terrain-features (contour (habitat (eql :rocky))))
 (defmethod generate-terrain-features (contour (habitat (eql :ice))))
 
+
+
 (defgeneric generate-terrain-contour (9-elevations habitat x y scale))
 
 (defun copy-terrain-edge-horz (start-x y end-x dest-x dest-y)
@@ -147,21 +149,17 @@
                         (global-heightmap-corner (+ xi x) (+ yi y 1)))
                      8))))))
 
-(defun terrain-exists-p (x y)
-  ;; FIXME
-  nil)
-
 (defun generate-blank-contour (9-elevations x y)
-  (if (terrain-exists-p (1- x) y)
+  (if (terrain-exists-p :Tootanga (1- x) y)
       (copy-terrain-edge-vert (1- x) y (+ y 200) x y)
       (generate-terrain-blank-edge-vert (1- x) (1- y) (+ y 200) (aref 9-elevations 0 1)))
-  (if (terrain-exists-p (+ x 200) y)
+  (if (terrain-exists-p :Tootanga (+ x 200) y)
       (copy-terrain-edge-vert (+ x 200) y (+ y 200) x y)
       (generate-terrain-blank-edge-vert (+ x 200) (1- y) (+ y 200) (aref 9-elevations 2 1)))
-  (if (terrain-exists-p x (1- y))
+  (if (terrain-exists-p :Tootanga x (1- y))
       (copy-terrain-edge-horz (1- x) (1- y) (+ x 200) x y)
       (generate-terrain-blank-edge-horz (1- x) (1- y) (+ x 200) (aref 9-elevations 1 0)))
-  (if (terrain-exists-p x (+ y 200))
+  (if (terrain-exists-p :Tootanga x (+ y 200))
       (copy-terrain-edge-horz (1- x) (+ y 200) (+ x 200) x y)
       (generate-terrain-blank-edge-horz (1- x) (+ y 200) (+ x 200) (aref 9-elevations 1 2)))
   (fill-blank-contour x y (aref 9-elevations 1 1))
@@ -261,4 +259,13 @@
   
   )
 
+
 
+(defun terrain-exists-p (planet x y)
+ ;; TODO does terrain exist? Return it.
+ ;; TODO ClouchDB->fetch->blah
+  nil)
+
+(defun terrain (planet x y)
+  (or (terrain-exists-p planet x y))
+      (spawn-terrain planet x y))
