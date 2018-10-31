@@ -310,8 +310,9 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                    (apply-extension-to-template template extension)
                                    content-type))
         (add-or-replace-endpoint fname method template content-type)
-        (format *trace-output* "~2& ★ New endpoint: ~a ~a → ~a~% All endpoints: ~{~% •~s~}"
-                method uri content-type (enumerate-endpoints))))))
+        ;; (format *trace-output* "~2& ★ New endpoint: ~a ~a → ~a~% All endpoints: ~{~% •~s~}"
+        ;;         method uri content-type (enumerate-endpoints))
+        ))))
 
 
 

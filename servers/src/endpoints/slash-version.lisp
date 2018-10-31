@@ -72,16 +72,16 @@ the following. Values are case-insensitive.
   (if param
       (list 200 nil
             (version-info-report-string
-             (uiop:split-string param :separator "/")))
+             (uiop:split-string param :separator ".")))
       (list 400 nil
             "You forgot to ask anything.")))
 
 (defendpoint (:get "/version/about/detail/:param" "application/json")
   "Returns (as a JSON object) the info specified by PARAM.
 
-See the endpoint GET /version/about/:param.txt  for a list  of possible
+See the endpoint GET /version/about/detail/:param.txt  for a list  of possible
 values of PARAM."
   (list 200 nil
         (list param
               (version-info-report-string
-               (uiop:split-string param :separator "/")))))
+               (uiop:split-string param :separator ".")))))
