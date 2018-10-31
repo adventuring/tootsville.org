@@ -239,7 +239,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
       ((atom value) value)
       ((= 1 (length value)) (first value))
       (t (format nil "~{~a~^, ~}" value))))
-
+  
   (defun add-charset (content-type)
     "Adds the ;charset=UTF-8 type to the end of text and JS/JSON CONTENT-TYPEs"
     (if (member content-type

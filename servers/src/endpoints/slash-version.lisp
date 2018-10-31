@@ -3,13 +3,13 @@
 
 (defendpoint (:get "/version/about" "application/json")
   "Returns all version information about this host."
-  (list 200 nil (plist-alist (version-info-list))))
+  (list 200 nil (version-info-list)))
 
 (defendpoint (:get "/version/about" "text/plain")
   "Returns all version information about this host."
   (list 200 nil (version-info-report-string '(:*))))
 
-(defendpoint (:get "/version/about/:param" "text/plain")
+(defendpoint (:get "/version/about/detail/:param" "text/plain")
   "Returns (as plain text) the info specified by PARAM.
 
 The values available can be  seen by GET /version/about.txt, but include
@@ -76,7 +76,7 @@ the following. Values are case-insensitive.
       (list 400 nil
             "You forgot to ask anything.")))
 
-(defendpoint (:get "/version/about/:param" "application/json")
+(defendpoint (:get "/version/about/detail/:param" "application/json")
   "Returns (as a JSON object) the info specified by PARAM.
 
 See the endpoint GET /version/about/:param.txt  for a list  of possible
