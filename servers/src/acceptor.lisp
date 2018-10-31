@@ -78,28 +78,19 @@
 (assert (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun dispatch-request% (&optional (request hunchentoot:*request*))
-  (let ((uri-parts (split-sequence #\/ (hunchentoot:request-uri request)
+  (declare (optimize (speed 3) (safety 1) (space 0) (debug 0)))
+  (let ((method (hunchentoot:request-method*))
+        (uri-parts (split-sequence #\/ (hunchentoot:request-uri request)
                                    :remove-empty-subseqs t))
         (ua-accept (request-accept-types)))
-    (labels ((maybe-dispatch (path allow-wildcard-p)
-               (when path
-                 (destructuring-bind (method template length accept function) path
-                   (when (and (eql method (hunchentoot:request-method*))
-                              (= length (length uri-parts))
-                              (member accept ua-accept
-                                      :test (rcurry #'accept-type-equal
-                                                    :allow-wildcard-p allow-wildcard-p)))
-                     (when-let (bound (template-match template uri-parts))
-                       (verbose:info :path "Matched ~s to (~s ~s)"
-                                     (hunchentoot:request-uri request) function bound)
-                       (return-from dispatch-request% (if (eql t bound)
-                                                          (funcall function)
-                                                          (apply function bound)))))))))
-      (dolist (path *paths*) (maybe-dispatch path nil))
-      (dolist (path *paths*) (maybe-dispatch path t)))
-    (verbose:info :path "No match for ~s accepting ~s" uri-parts ua-accept)
-    (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
-    (hunchentoot:abort-request-handler)))
+    (if-let (match (find-best-endpoint method uri-parts ua-accept)) 
+      (destructuring-bind (endpoint &rest bindings) match
+        (verbose:info :request "Calling ~s" match)
+        (apply (fdefinition (endpoint-function endpoint)) bindings))
+      (progn 
+        (verbose:info :request "No match for ~s ~{/~a~} accepting ~s" method uri-parts ua-accept)
+        (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
+        (hunchentoot:abort-request-handler)))))
 
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-REST-acceptor) request)

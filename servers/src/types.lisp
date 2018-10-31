@@ -94,10 +94,17 @@ leftmost digit must be after the rightmost non-digit character.
 
 
 
-;;; HunchenToot  doesn't define  this, probably  because it's  a Twitter
-;;; innovation for REST, and not an IETF RFC (yet? I think?)
+;;; HTTP Request Methods (aka verbs)
 
-(hunchenToot::def-http-return-code hunchenToot::+http-continue+ 420 "Enhance Your Calm")
+(deftype http-request-method ()
+  '(member :get :head :post :put :delete :trace :options :connect :patch))
+
+(deftype http-safe-request-method ()
+  '(member :get :head :options :trace))
+
+(deftype http-idempotent-request-method ()
+  '(member :get :head :options :trace  :put :delete))
+
 
 ;;; Conditions  that are  returned to  be  handled by  the client;  i.e.
 ;;; these are conditions that translate directly into HTTP errors.
@@ -110,15 +117,15 @@ leftmost digit must be after the rightmost non-digit character.
 (deftype http-response-failure-status-number ()
   '(member
     400 401 402 403 404 405 406 407 408 409
-    410 411 412 413 414 415 416 417 420 424 428 429 431
+    410 411 412 413 414 415 416 417 424 428 429 431
     500 501 502 503 504 505 511))
 
 (deftype http-response-status-number ()
   '(or http-response-success-status-number
-    htttp-response-failure-status-number))
+    http-response-failure-status-number))
 
 (define-condition http-client-error (error)
-  ((http-status-code :type http-response-status-number)))
+  ((http-status-code :type http-response-failure-status-number)))
 
 (define-condition not-your-Toot-error (http-client-error)
   ((name :initarg name :accessor which-Toot-is-not-yours))
@@ -129,6 +136,10 @@ leftmost digit must be after the rightmost non-digit character.
 
 (define-condition unimplemented (http-client-error)
   ()
+  (:report (lambda (c s)
+             (declare (ignore c))
+             (format s "The requested feature has not been implemented.")))
+  (:default-initargs :http-status-code hunchenToot:+http-not-implemented+)
   (:documentation "Signals that a feature has not been inmplemented yet"))
 
 

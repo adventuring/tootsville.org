@@ -47,12 +47,12 @@ in HTTP headers and such."
 Tootsville Ⅴ, version ~a.
 
 Copyright © 2016,2017, Bruce-Robert Pocock
-Copyright  ©  2018~@[-~d~],  the  Corporation  for  Inter-World  Tourism
+Copyright  ©  2018~@[-~*~d~],  the  Corporation  for  Inter-World  Tourism
 and Adventuring (ciwta.org).
 
 Licensed  under the  terms of  the  GNU Affero  General Public  License,
 version 3.~%~%"
-          (romance-ii-version)
+          (romance-ii-program-version)
           (= 2018 *romance-ii-copyright-latest*)
           *romance-ii-copyright-latest*))
 

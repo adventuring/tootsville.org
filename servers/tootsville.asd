@@ -64,12 +64,14 @@ REST services for the front-end."
      (:file "write-docs" :depends-on ("package"))
      (:file "power-on-self-test" :depends-on ("web" "endpoints"))
      (:file "command-line" :depends-on ("main" "logging" "write-docs"))
+     (:file "endpoint" :depends-on ("package"))
      (:file "web"
-            :depends-on ("view" "players" "errors" "config"))
+            :depends-on ("view" "players" "errors" "config" "endpoint"))
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
      (:file "http-status-messages" :depends-on ("package"))
-     (:file "acceptor" :depends-on ("web" "http-status-messages"))
+     (:file "acceptor" :depends-on ("types" "endpoint" "web"
+                                            "http-status-messages"))
      (:file "main" :depends-on ("config" "view" "package" "acceptor"))
      (:module
       "endpoints"

@@ -54,16 +54,17 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
 (defun endpoints-page-footer ()
   "</ul></body></html>")
 
+(defun endpoint->plist (endpoint)
+  (list :method (endpoint-method endpoint)
+        :template (endpoint-template endpoint)
+        :content-type (endpoint-content-type endpoint)
+        :fn (endpoint-function endpoint)
+        :docstring (documentation (endpoint-function endpoint) 'function)))
+
 (defun enumerate-routes ()
   (sort
    (sort
-    (mapcar (lambda (path)
-              (destructuring-bind (method template length accept function) path
-                (declare (ignore length))
-                (list :method method :template template :content-type accept
-                      :fn function
-                      :docstring (documentation function 'function))))
-            *paths*)
+    (mapcar #'endpoint->plist (enumerate-endpoints))
     #'string<
     :key (rcurry #'getf :method))
    #'string<
