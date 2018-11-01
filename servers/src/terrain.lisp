@@ -23,6 +23,11 @@
     :moon :pink-moon :moon-base :city :farm
     :manatee-city :beachside :space :asteroid-field))
 
+(deftype map-places ()
+  '(member :tootanga
+    :moon :other-moon :pink-moon
+    :orbit))
+
 
 
 ;; Reading map data from images
@@ -194,16 +199,20 @@ Should return true  if a body of water exists  which enters the space
 (defun generate-blank-contour (9-elevations x y)
   (if (terrain-exists-p :Tootanga (1- x) y)
       (copy-terrain-edge-vert (1- x) y (+ y 200) x y)
-      (generate-terrain-blank-edge-vert (1- x) (1- y) (+ y 200) (aref 9-elevations 0 1)))
+      (generate-terrain-blank-edge-vert (1- x) (1- y) (+ y 200)
+                                        (aref 9-elevations 0 1)))
   (if (terrain-exists-p :Tootanga (+ x 200) y)
       (copy-terrain-edge-vert (+ x 200) y (+ y 200) x y)
-      (generate-terrain-blank-edge-vert (+ x 200) (1- y) (+ y 200) (aref 9-elevations 2 1)))
+      (generate-terrain-blank-edge-vert (+ x 200) (1- y) (+ y 200)
+                                        (aref 9-elevations 2 1)))
   (if (terrain-exists-p :Tootanga x (1- y))
       (copy-terrain-edge-horz (1- x) (1- y) (+ x 200) x y)
-      (generate-terrain-blank-edge-horz (1- x) (1- y) (+ x 200) (aref 9-elevations 1 0)))
+      (generate-terrain-blank-edge-horz (1- x) (1- y) (+ x 200)
+                                        (aref 9-elevations 1 0)))
   (if (terrain-exists-p :Tootanga x (+ y 200))
       (copy-terrain-edge-horz (1- x) (+ y 200) (+ x 200) x y)
-      (generate-terrain-blank-edge-horz (1- x) (+ y 200) (+ x 200) (aref 9-elevations 1 2)))
+      (generate-terrain-blank-edge-horz (1- x) (+ y 200) (+ x 200)
+                                        (aref 9-elevations 1 2)))
   (fill-blank-contour x y (aref 9-elevations 1 1))
   (smoothe-contour-200×200 x y 30))
 
@@ -258,7 +267,8 @@ Should return true  if a body of water exists  which enters the space
                                    shift))))))
     (smoothe-contour-200×200 x y)
     
-    ;; (format *trace-output* "~& After contour randomization on ~D×~:*~D square~p:" scale (floor 200 scale))
+    ;; (format  *trace-output*   "~&  After  contour   randomization  on
+    ;; ~D×~:*~D     square~p:"     scale      (floor     200     scale))
     ;; (dump-global-heightmap x y)
     )
   
@@ -290,7 +300,8 @@ Should return true  if a body of water exists  which enters the space
         (*global-heightmap-y% (1- y))
         (*features%))
     (destructuring-bind (elevation habitat) (get-9-terrain-tiles x y)
-      (verbose:info :terrain "~& Generating map at (~:d,~:d) in habitat ~:(~A~) with elevations ~S"
+      (verbose:info :terrain "~& Generating map at (~:d,~:d) ~
+in habitat ~:(~A~) with elevations ~S"
                     x y (aref habitat 1 1) elevation)
       (let* ((contour (generate-terrain-contour elevation habitat x y 0))
              (features (generate-terrain-features contour (aref habitat 1 1)))))
@@ -305,16 +316,10 @@ Should return true  if a body of water exists  which enters the space
 
 
 (defun terrain-db-key (place x y)
-  (check-type place (member :tootanga :moon :other-moon :pink-moon :orbit))
+  (check-type place map-places)
   (check-type x integer)
   (check-type y integer)
-  (assert (zerop (mod x 200)) (x)
-          "Map tiles align to 200m×200m; got x = ~:D (~:D off)"
-          x (mod x 200))
-  (assert (zerop (mod y 200)) (y)
-          "Map tiles align to 200m×200m; got y = ~:D (~:D off)"
-          y (mod y 200))
-  (format nil "World/~:(~a~)/~x×~x" place (/ x 200) (/ y 200)))
+  (format nil "World/~:(~a~)/~x×~x" place (floor x 200) (floor y 200)))
 
 (defun terrain-exists-p (place x y)
   "If terrain has been previously defined at the tile given, return it.
