@@ -7,5 +7,5 @@
   (:import-from :oliphaunt #:processor-count)
   (:export #:thread-pool-taskmaster
            #:*developmentp*
-           #:with-thread-pool-restarts))
+           #:with-pool-thread-restarts))
 
