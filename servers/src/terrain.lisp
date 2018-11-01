@@ -17,6 +17,12 @@
 (defvar *global-heightmap-y%)
 (defvar *features%)
 
+(deftype kind-of-habitat ()
+  '(member :shaddow :rocky :swamp :grassland
+    :desert :savannah :forest :ocean :ice
+    :moon :pink-moon :moon-base :city :farm
+    :manatee-city :beachside :space :asteroid-field))
+
 
 
 ;; Reading map data from images
@@ -65,40 +71,76 @@
 ;;; Adding features
 
 (defun terrain/connect-streams ()
-  "Connect up to any stream in an adjacent square. If no adjacent aquare
-  has yet been spawned, small chance of creating a new stream.")
+  "Connect up to any stream in an adjacent tile. 
 
-(defun terrain/add-random-tree ())
-(defun terrain/add-mushrooms ())
-(defun terrain/add-log ())
-(defun terrain/add-flowers ())
+If no adjacent tile has yet been spawned, small chance of creating a new
+  stream.  If streams  enter  from more  than one  side,  connect up  as
+  a branching stream. "
+  (TODO))
+
+(defun terrain/add-tree ()
+  "Adds a random tree or bush."
+  (TODO))
+(defun terrain/add-mushrooms ()
+  "Adds a cluster of mushrooms or similar."
+  (TODO))
+(defun terrain/add-log ()
+  "Adds a fallen log or similar feature."
+  (TODO))
+(defun terrain/add-flowers ()
+  "Add a random cluster of appropriate flowers or herbs."
+  (TODO))
+(defun terrain/stream-present-p ()
+  "Does a stream bisect the currently-active space?
+
+Should return true  if a body of water exists  which enters the space
+  from any  side and  bisects the  space into  two disjoint  land areas.
+  Terminus of  a stream  or completely underwater  are not  “streams” by
+  this definition."
+  (TODO))
+(defun point-underwater-p (x y)
+  (TODO))
+(defun find-random-point-if (function)
+  (loop 
+     for x = (/ (random 20000) 100)
+     for y = (/ (random 20000) 100)
+     until (funcall function x y)
+     finally (return (list x y))))
+
 (defun terrain/add-small-pond ()
-  (let ((x (random 200))
-        (y (random 200)))
-    (if (terrain/stream-present-p)
-        (loop until (point-underwater-p x y)
-             (setf x (random 200) y (random 200))))))
+  "Create a pool of water smaller than the tile and contained within it."
+  (if (terrain/stream-present-p)
+      (destructuring-bind (x y)
+          (find-random-point-if #'point-underwater-p))))
+
+(defun terrain/add-shaddow-bush ()
+  (TODO))
+(defun terrain/add-shaddow-pit ()
+  (TODO))
+
+
+;;; Per-habitat generation rules.
 
 (defgeneric generate-terrain-features (contour habitat))
 
 (defmethod generate-terrain-features :before (contour habitat)
   (terrain/connect-streams))
 
-(defmethod generate-terrain-features (contour (habitat (eql :shaddow))))
+(defmethod generate-terrain-features (contour (habitat (eql :shaddow)))
+  (loop repeat (random 100) do (terrain/add-shaddow-bush))
+  (loop repeat (random 25) do (terrain/add-shaddow-pit)))
+
 (defmethod generate-terrain-features (contour (habitat (eql :swamp))))
 (defmethod generate-terrain-features (contour (habitat (eql :ocean))))
 (defmethod generate-terrain-features (contour (habitat (eql :grassland))))
+
 (defmethod generate-terrain-features (contour (habitat (eql :forest)))
-  (dotimes (i (random 25))
-    (terrain/add-random-tree))
-  (dotimes (i (random 10))
-    (terrain/add-mushrooms))
-  (dotimes (i (random 5))
-    (terrain/add-log))
-  (dotimes (i (random 5))
-    (terrain/add-flowers))
-  (when (random 20)
-    (terrain/add-small-pond)))
+  (loop repeat (random 200) do (terrain/add-tree))
+  (loop repeat (random 10) do (terrain/add-mushrooms))
+  (loop repeat (random 10) do (terrain/add-log))
+  (loop repeat (random 5) do (terrain/add-flowers))
+  (loop repeat (random 5) do (terrain/add-small-pond)))
+
 (defmethod generate-terrain-features (contour (habitat (eql :desert))))
 (defmethod generate-terrain-features (contour (habitat (eql :savannah))))
 (defmethod generate-terrain-features (contour (habitat (eql :rocky))))
@@ -234,8 +276,9 @@
 
 ;;; Spawn new, never-before-seen terrain block
 ;;
-;;; Terrain blocks are 200m×200m and  can potentially be on Chœorgryllum
-;;; (:Tootanga) or one of the moons (:Moon, :Other-Moon, :Pink-Moon).
+;;; Terrain blocks are 200m×200m and  can potentially be on Chœrogryllum
+;;; (:Tootanga), in the  near-Chœrogryllum orbit (:Oribt), or  on one of
+;;; the moons (:Moon, :Other-Moon, :Pink-Moon).
 
 (defgeneric spawn-terrain (place x-coord y-coord))
 
@@ -261,11 +304,29 @@
 
 
 
-(defun terrain-exists-p (planet x y)
- ;; TODO does terrain exist? Return it.
- ;; TODO ClouchDB->fetch->blah
-  nil)
+(defun terrain-db-key (place x y)
+  (check-type place (member :tootanga :moon :other-moon :pink-moon :orbit))
+  (check-type x integer)
+  (check-type y integer)
+  (assert (zerop (mod x 200)) (x)
+          "Map tiles align to 200m×200m; got x = ~:D (~:D off)"
+          x (mod x 200))
+  (assert (zerop (mod y 200)) (y)
+          "Map tiles align to 200m×200m; got y = ~:D (~:D off)"
+          y (mod y 200))
+  (format nil "World/~:(~a~)/~x×~x" place (/ x 200) (/ y 200)))
 
-(defun terrain (planet x y)
-  (or (terrain-exists-p planet x y))
-      (spawn-terrain planet x y))
+(defun terrain-exists-p (place x y)
+  "If terrain has been previously defined at the tile given, return it.
+
+Use `TERRAIN' generally instead."
+  (clouchdb:get-document (terrain-db-key place x y)))
+
+(defun terrain (place x y)
+  "Obtain the terrain tile in PLACE at X,Y
+
+PLACE is one of :Tootanga, :Moon, :Other-Moon, :Pink-Moon.
+
+X and Y must be aligned to 200m increments."
+  (or (terrain-exists-p place x y)
+      (spawn-terrain place x y)))
