@@ -215,3 +215,33 @@ Hopefully you've already tested the changes?"
                               (user-homedir-pathname)))))
   (ql:quickload :Tootsville))
 
+
+
+(defun connect-databases ()
+  (dolist (thread (mapcar (lambda (n)
+                            (make-thread n :name (string-capitalize n)))
+                          '(connect-mixer connect-directory connect-cache)))
+    (join-thread thread)))
+
+(defun connect-mixer ()
+  (setf clouchdb:*couchdb* 
+        (clouchdb:make-db :host (or "localhost" (config :mixer :host))
+                          :port (or (config :mixer :port) "5984")
+                          :user (config :mixer :admin :name)
+                          :password (config :mixer :admin :password)
+                          :name "tootsville/5"))
+  (v:info :mixer "MOTD from Mixer: ~a" (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
+
+(defun connect-directory ())
+(defun connect-cache ()
+  (setf cl-memcached:*memcache*
+        (cl-memcached:make-memcache :ip (config :cache :host)
+                                    :port (or (config :cache :port) 11211)
+                                    :name (cluster-name)))
+  (let ((n (princ-to-string (random (expt 2 63))))
+        (key (format nil "~a.~a" (machine-instance) (cluster-name))))
+    (cl-memcached:mc-set key n)
+    (let ((m (cl-memcached:mc-get key)))
+      (assert (= n m) ()
+              "MemCacheD did not return the random number (~x) for key ~a" 
+              n key))))

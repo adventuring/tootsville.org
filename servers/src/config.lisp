@@ -45,11 +45,12 @@
 
 
 
-(defun config (&optional key &rest sub-keys)
+(defun config (&rest keys)
   "Obtain the configuration value at the path KEY + SUB-KEYS"
-  (if sub-keys
-      (extract (config key) sub-keys)
-      (envy:config #.(package-name *package*) key)))
+  (cond
+    (keys (apply #'extract (config) keys))
+    (t (ecase (cluster)
+         (:test |test|)))))
 
 (defun cluster-name ()
   "Get the name of the active cluster.
@@ -67,7 +68,7 @@ tootsville.org
 "
   (or (uiop:getenv (config-env-var #.(package-name *package*)))
       (case *cluster*
-        (:test "test.tootsville.org")
+        ((nil :test) "test.tootsville.org")
         (:qa "qa.tootsville.org")
         (:production "tootsville.org")
         (otherwise (format nil "Cluster ~a" *cluster*)))))
@@ -106,7 +107,8 @@ Returns one of:
 
 (defun developmentp ()
   "Returns true if this is a Test cluster"
-  (member *cluster* '(nil :test)))
+  (or (eql (cluster-name) :test)
+      (null (cluster-name))))
 
 (defun productionp ()
   "Returns true if this is the Production cluster"

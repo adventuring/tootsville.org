@@ -151,8 +151,8 @@
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0))
            (type list uri-parts ua-accept)
            (type symbol method))
-  (v:info :endpoint "{~a} Look for exact match ~a ~{/~a~} accepting ~s"
-          (current-thread) method uri-parts ua-accept)
+  #+ (or) (v:info :endpoint "{~a} Look for exact match ~a ~{/~a~} accepting ~s"
+                  (current-thread) method uri-parts ua-accept)
   (let* ((arity (length uri-parts))
          (maybes (the proper-list
                       (remove
@@ -161,17 +161,17 @@
                        :test (complement #'equalp)
                        :key #'endpoint-close-key))))
     (dolist (maybe maybes)
-      (v:info :endpoint "Looking closer at ~s" maybe)
+      #+ (or) (v:info :endpoint "Looking closer at ~s" maybe)
       (when-let (match (endpoint-template-match maybe uri-parts))
-        (v:info :endpoint "Match! Return ~s" match)
+        #+ (or) (v:info :endpoint "Match! Return ~s" match)
         (return-from find-exact-endpoint match)))))
 
 (defun find-kinda-endpoint (method uri-parts)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0))
            (type list uri-parts)
            (type symbol method))
-  (v:info :endpoint "{~a} Look for acceptable match ~a ~{/~a~}"
-          (current-thread) method uri-parts)
+  #+ (or) (v:info :endpoint "{~a} Look for acceptable match ~a ~{/~a~}"
+                  (current-thread) method uri-parts)
   (let* ((arity (length uri-parts))
          (maybes (the proper-list
                       (remove
@@ -180,9 +180,9 @@
                        :test (complement #'equalp)
                        :key #'endpoint-kinda-key))))
     (dolist (maybe maybes)
-      (v:info :endpoint "Looking closer at ~s" maybe)
+      #+ (or) (v:info :endpoint "Looking closer at ~s" maybe)
       (when-let (match (endpoint-template-match maybe uri-parts))
-        (v:info :endpoint "Match! Return ~s" match)
+        #+ (or) (v:info :endpoint "Match! Return ~s" match)
         (return-from find-kinda-endpoint match)))))
 
 (defun find-best-endpoint (method uri-parts ua-accept)

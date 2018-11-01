@@ -2,6 +2,141 @@
 
 
 
+(defvar *user* nil
+  "The currently-signed-in user, if any")
+
+(defclass user ()
+  ((display-name :accessor user-display-name
+                 :initarg :display-name
+                 :type string)
+   (given-name :accessor user-given-name
+               :initarg :given-name
+               :type string)
+   (middle-name :accessor user-middle-name
+                :initarg :middle-name
+                :type (or string null))
+   (surname :accessor user-surname
+            :initarg :surname
+            :type (or string null))
+   (face :accessor user-face
+         :initarg :face
+         :type (or puri:uri null))
+   (uuid :accessor user-id
+         :initarg :uuid
+         :initform (uuid:make-v4-uuid)
+         :type uuid:uuid)))
+
+(defun user->alist (user)
+  (list (cons :|displayName| (user-display-name user))
+        (cons :|givenName|   (user-given-name user))
+        (cons :|middleName|  (user-middle-name user))
+        (cons :|surname|     (user-surname user))
+        (cons :|face|        (user-face user))
+        (cons :|uuid|        (user-id user))))
+
+(defclass credentials ()
+  ((user :type user
+         :initarg :user
+         :reader credentials-user)))
+
+(defclass openid-credentials (credentials)
+  ((issuer :type string
+           :initarg :issuer
+           :initarg :iss
+           :reader credentials-issuer
+           :reader openid-iss)
+   (subject :type string
+            :initarg :subject
+            :initarg :sub
+            :reader credentials-subject-code
+            :reader openid-sub)
+   (authorized-party :type string
+                     :initarg :authorized-party
+                     :initarg :azp
+                     :reader openid-authorized-party
+                     :reader openid-azp)
+   (audience :type string
+             :initarg :audience
+             :initarg :aud
+             :reader openid-audience
+             :reader openid-aud)
+   (issued-at :type timestamp
+              :initarg :issued-at
+              :initarg :iat
+              :reader openid-issued-at
+              :reader openid-iat)
+   (expires :type timestamp
+            :initarg :expires
+            :initarg :exp
+            :reader openid-expires
+            :reader openid-exp)
+   (user-id :type uuid
+            :initarg :user
+            :reader credentials-user)))
+
+(defclass openid-token ()
+  ((access-token :type string
+                 :initarg :access-token
+                 :accessor openid-access-token)
+   (token-type :type string
+               :initarg :token-type
+               :initform "Bearer"
+               :accessor openid-token-type)
+   (refresh-token :type string
+                  :initarg :token-type
+                  :accessor openid-refresh-token)
+   (token-expires :type timestamp
+                  :initarg :token-expires
+                  :accessor openid-token-expires)
+   (id-token :type string
+             :initarg :id-token
+             :accessor openid-id-token)))
+
+(defclass toot ()
+  ((name :accessor toot-name 
+         :initarg :name
+         :type toot-name)
+   (note :accessor toot-note
+         :initarg :note
+         :type string)
+   (avatar :accessor toot-avatar
+           :initarg :avatar
+           :initform "UltraToot"
+           :type string)
+   (base-color :accessor toot-base-color
+               :initarg :base-color
+               :type toot-base-color-name)
+   (pattern :accessor toot-pattern
+            :initarg :pattern
+            :type toot-pattern-name)
+   (pattern-color :accessor toot-pattern-color
+                  :initarg :pattern-color
+                  :type toot-pattern-color-name)
+   (pads-color :accessor toot-pads-color
+               :initarg :pads-color
+               :type toot-pads-color-name)
+   (owner-id :accessor toot-owner-id
+             :initarg :owner-id
+             :type uuid-string)
+   (childp :accessor toot-child-p
+           :initarg :childp
+           :type (member t nil))
+   (sensitivep :accessor toot-sensitive-p
+               :initarg :sensitivep
+               :type (member t nil))
+   (onlinep :accessor toot-online-p
+            :initarg :onlinep
+            :type (member t nil))
+   (created :reader toot-created
+            :initform (now)
+            :type timestamp)
+   (last-seen :accessor toot-last-seen
+              :initarg :last-seen
+              :initform (now)
+              :type timestamp)))
+
+
+
 ;;; Toot character data.
 
 (defun find-toot-by-name (toot-name)

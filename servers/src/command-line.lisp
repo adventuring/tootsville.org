@@ -37,6 +37,7 @@ a verb (case-insensitive) from the hard-coded table in this function."
                                  (t argv))) :keyword)
     (load-config)
     (banner)
+    (connect-databases)
     ((:fcgi :fast-cgi) (or #-common-lisp (fastcgi-entry) (error 'unimplemented)))
     ((:devel :server) (start-hunchentoot :port (if (and (consp argv)
                                                         (< 2 (length argv)))

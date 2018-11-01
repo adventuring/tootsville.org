@@ -125,22 +125,49 @@ leftmost digit must be after the rightmost non-digit character.
     http-response-failure-status-number))
 
 (define-condition http-client-error (error)
-  ((http-status-code :type http-response-failure-status-number)))
+  ((http-status-code :type http-response-failure-status-number
+                     :reader http-status-code)))
+
+(defun pretty-print-html-error (c)
+  (format nil "<!DOCTYPE html><html><head>
+<meta charset=\"utf-8\">
+<title> Error ~D — Tootsville</title>
+<link rel=\"stylesheet\" href=\"https://www.tootsville.org/error/simple-error.2017.css\">
+</head>
+<body>
+<h2> Error ~:*~D </h2>
+<h1> ~A </h1>
+</body>
+</html>"
+          (http-status-code c) c))
 
 (define-condition not-your-Toot-error (http-client-error)
-  ((name :initarg name :accessor which-Toot-is-not-yours))
+  ((http-status-code :initform 404)
+   (name :initarg name :accessor which-Toot-is-not-yours))
   (:report (lambda (c s)
              (format s "You do not have a Toot named “~a.”"
-                     (which-Toot-is-not-yours c))))
-  (:default-initargs :http-status-code hunchenToot:+http-not-found+))
+                     (which-Toot-is-not-yours c)))))
 
 (define-condition unimplemented (http-client-error)
-  ()
+  ((http-status-code :initform 501)
+   (feature :initarg :feature :accessor unimplemented-feature
+            :initform "The feature you tried to access"))
   (:report (lambda (c s)
-             (declare (ignore c))
-             (format s "The requested feature has not been implemented.")))
-  (:default-initargs :http-status-code hunchenToot:+http-not-implemented+)
+             (format s "~a has not been implemented." (unimplemented-feature c))))
   (:documentation "Signals that a feature has not been inmplemented yet"))
+
+(define-condition not-found (http-client-error)
+  ((http-status-code :initform 404)
+   (thing :initarg :thing :initarg :object :initarg :item :initarg :the
+          :initform "The requested object"
+          :accessor not-found-thing))
+  (:report (lambda (c s)
+             (format s "~a was not found." (not-found-thing c)))))
+
+(define-condition gone (not-found)
+  ((http-status-code :initform 402))
+  (:report (lambda (c s)
+             (format s "~a is gone." (not-found-thing c)))))
 
 
 

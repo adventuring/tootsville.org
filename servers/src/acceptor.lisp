@@ -77,11 +77,27 @@
 (assert (accept-type-equal "text/html" "*/*"))
 (assert (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
-(defvar *user*)
-
 (defun find-user-for-headers (headers)
-  (when-let (auth-header (assoc headers "X-Tootsville-OpenID"))
-    (validate-open-id (cdr auth-header))))
+  (when-let (auth-header (assoc "Authorization" headers))
+    (when-let (credentials (validate-auth-header (cdr auth-header)))
+      (find-user-for-credentials credentials))))
+
+(defun gracefully-report-http-client-error (c)
+  (if (wants-json-p)
+      (encode-endpoint-reply 
+       (list (http-status-code c)
+             '(:content-type "application/json; charset=utf-8")
+             (jonathan.encode:to-json (list :error (http-status-code c)
+                                            :error-message (princ-to-string c)))))
+      (encode-endpoint-reply 
+       (list (http-status-code c)
+             '(:content-type "text/html; charset=utf-8")
+             (pretty-print-html-error c)))))
+
+(defmacro with-http-conditions (() &body body)
+  `(handler-case (progn ,@body)
+     (http-client-error (c)
+       (gracefully-report-http-client-error c))))
 
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-REST-acceptor) request)
@@ -94,14 +110,15 @@
           (uri-parts (split-sequence #\/ (namestring (hunchentoot:request-pathname request))
                                      :remove-empty-subseqs t))
           (ua-accept (request-accept-types)))
-      (if-let (match (find-best-endpoint method uri-parts ua-accept)) 
-        (destructuring-bind (endpoint &rest bindings) match
-          (verbose:info :request "Calling ~s" match)
-          (apply (fdefinition (endpoint-function endpoint)) bindings))
-        (progn
-          (verbose:info :request "No match for ~s ~{/~a~} accepting ~s" method uri-parts ua-accept)
-          (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
-          (hunchentoot:abort-request-handler))))))
+      (with-http-conditions ()
+        (if-let (match (find-best-endpoint method uri-parts ua-accept)) 
+          (destructuring-bind (endpoint &rest bindings) match
+            (verbose:info :request "Calling ~s" match)
+            (apply (fdefinition (endpoint-function endpoint)) bindings))
+          (progn
+            (verbose:info :request "No match for ~s ~{/~a~} accepting ~s"
+                          method uri-parts ua-accept)
+            (error 'not-found :the (format nil "The URI you requsted"))))))))
 
 (defmethod hunchentoot:acceptor-status-message 
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code

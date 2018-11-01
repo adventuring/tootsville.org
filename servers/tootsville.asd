@@ -72,9 +72,14 @@ REST services for the front-end."
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
      (:file "http-status-messages" :depends-on ("package"))
-     (:file "acceptor" :depends-on ("types" "endpoint" "web"
+     (:file "acceptor" :depends-on ("types" "endpoint" "web" "auth"
                                             "http-status-messages"))
      (:file "main" :depends-on ("config" "view" "package" "acceptor"))
+     (:module "auth"
+              :depends-on ("package" "users")
+              :components
+              ((:file "auth-oauth2")
+               (:file "auth-google" :depends-on ("auth-oauth2"))))
      (:module
       "endpoints"
       :depends-on ("web" "terrain")

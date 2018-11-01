@@ -20,8 +20,6 @@ Looks   for   some    odd   synonyms   as   well    as   the   canonical
 is, of course, a subseq of \".json\" as well.)"
   (let ((accept (hunchentoot:header-in* :accept)))
     (or (search "application/json" accept)
-        (search "text/json" accept)
-        (search "application/x-json" accept)
         (search ".js" (hunchentoot:request-uri*)))))
 
 
