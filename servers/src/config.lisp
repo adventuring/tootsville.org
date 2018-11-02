@@ -67,11 +67,19 @@ tootsville.org
 @end itemize
 "
   (or (uiop:getenv (config-env-var #.(package-name *package*)))
-      (case *cluster*
+      (case (cluster)
         ((nil :test) "test.tootsville.org")
         (:qa "qa.tootsville.org")
-        (:production "tootsville.org")
-        (otherwise (format nil "Cluster ~a" *cluster*)))))
+        (:prod "tootsville.org")
+        (otherwise (format nil "Cluster.~a" *cluster*)))))
+
+(defun cluster-net-name ()
+  (or (uiop:getenv (config-env-var #.(package-name *package*)))
+      (case (cluster)
+        ((nil :test) "test.tootsville.net")
+        (:qa "qa.tootsville.net")
+        (:prod "tootsville.net")
+        (otherwise (format nil "Cluster.~a" *cluster*)))))
 
 (defvar *cluster* nil
   "Cache for `CLUSTER' (qv)")
