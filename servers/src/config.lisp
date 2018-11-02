@@ -50,7 +50,18 @@
   (cond
     (keys (apply #'extract (config) keys))
     (t (ecase (cluster)
-         (:test |test|)))))
+         (:devel (unless (boundp '|devel|)
+                   (load-config))
+                 |devel|)
+         (:test (unless (boundp '|test|)
+                  (load-config))
+                |test|)
+         (:qa (unless (boundp '|qa|)
+                (load-config))
+              |qa|)
+         (:prod (unless (boundp '|production|)
+                  (load-config))
+                |production|)))))
 
 (defun cluster-name ()
   "Get the name of the active cluster.
