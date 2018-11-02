@@ -145,7 +145,7 @@ dist/play/play.js:	${PLAYJS}
 		--source_map_location_mapping 'play/|/play/'    \
 		--language_in ECMASCRIPT6                       \
 		--language_out ECMASCRIPT5_STRICT               \
-		--js $<                                         \
+		--js ${PLAYJS}                                  \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 
