@@ -98,14 +98,14 @@ Returns one of:
 @end itemize"
   (or *cluster*
       (let ((testp (let ((hostname (string-downcase (machine-instance))))
-                     (or (search "test.tootsville.org" hostname)
+                     (or (search "test.tootsville.net" hostname)
                          (search "dev." hostname)
                          (search "-dev" hostname)
                          (search "builder" hostname)
                          ;; personal workstations, etc:
                          (not (search "tootsville" hostname)))))
             (qa-p (let ((hostname (string-downcase (machine-instance))))
-                    (or (search "qa.tootsville.org" hostname)
+                    (or (search "qa.tootsville.net" hostname)
                         (search "qa." hostname)
                         (search "-qa" hostname)))))
         (setf *cluster* (cond
