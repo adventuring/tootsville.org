@@ -22,22 +22,25 @@ help — print this
 
 
 
-(defun entry (argv)
+(defun entry (&optional argv)
   "Top-level  entry-point  for  the  compiled  executable  binary  form.
 
 Dispatches   based   upon   the   single  argument,   expected   to   be
 a verb (case-insensitive) from the hard-coded table in this function."
-  (when (probe-file (default-config-file))
-    (load-config))
   (case (intern (string-upcase (typecase argv
                                  (cons (if (< 1 (length argv))
                                            (second argv)
                                            "REPL"))
                                  (null "HELP")
                                  (t argv))) :keyword)
-    (load-config)
+    (if (probe-file (default-config-file))
+        (load-config)
+        (error "No config file found"))
     (banner)
+    (force-output)
     (connect-databases)
+    (unless *endpoint-list*
+      (cerror "try anyway" "All of my endpoints are missing"))
     ((:fcgi :fast-cgi) (or #-common-lisp (fastcgi-entry) (error 'unimplemented)))
     ((:devel :server) (start-hunchentoot :port (if (and (consp argv)
                                                         (< 2 (length argv)))
