@@ -36,11 +36,11 @@
 
     </script>
 
-    <!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/"-->
+    <!--#if expr="%{HTTP_HOST} =~ /test.tootsville/"-->
 
     <section style="border: 3pt solid red; padding: 0; width: auto; display:
                     inline-block">
-      This is Tootsville.GA. <small>(see note below)</small>
+      This is Test.Tootsville.org. <small>(see note below)</small>
     </section>
 
     <!--#endif-->

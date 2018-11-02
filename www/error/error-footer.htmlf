@@ -17,13 +17,13 @@
   </ul>
 </section>
 
-<!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/"-->
+<!--#if expr="%{HTTP_HOST} =~ /test.tootsville/"-->
 
 <section style="border: 3pt solid red; padding: 1rem">
 
-  <h3>Tootsville.GA note</h3>
+  <h3>Test.Tootsville.org note</h3>
 
-  <p> Tootsville.GA is where we test software experiments. <strong>This is not
+  <p> Test.Tootsville.org is where we test software experiments. <strong>This is not
       the real game.</strong> If you just want to play in Tootsville, you want to
     visit <a href="https://tootsville.org/">Tootsville.org</a> instead. If you
     are helping to test the latest experiments, then you're in the right place.
