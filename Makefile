@@ -400,14 +400,14 @@ git-tag-deployment:
 	    git tag -a v$$VERSION -m "$$msg" ;\
 	fi
 
-	git push --tags origin
-	git submodule foreach git push --tags origin
-	git push --tags github
-	git submodule foreach git push --tags github
-	git push --tags gitlab
-	git submodule foreach git push --tags gitlab
-	git push --tags goethe
-	git submodule foreach git push --tags goethe
+	git push --tags origin ||:
+	git submodule foreach --recursive 'git push --tags origin ||:'
+	git push --tags github ||:
+	git submodule foreach --recursive 'git push --tags github ||:'
+	git push --tags gitlab ||:
+	git submodule foreach --recursive 'git push --tags gitlab ||:'
+	git push --tags goethe ||:
+	git submodule foreach --recursive 'git push --tags goethe ||:'
 
 #################### deploy-docs
 
