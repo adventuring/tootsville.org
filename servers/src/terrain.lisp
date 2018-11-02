@@ -81,20 +81,23 @@
 If no adjacent tile has yet been spawned, small chance of creating a new
   stream.  If streams  enter  from more  than one  side,  connect up  as
   a branching stream. "
-  (TODO))
+  (error 'unimplemented))
+
+(defun terrain/add-cactus ()
+  (error 'unimplemented))
 
 (defun terrain/add-tree ()
   "Adds a random tree or bush."
-  (TODO))
+  (error 'unimplemented))
 (defun terrain/add-mushrooms ()
   "Adds a cluster of mushrooms or similar."
-  (TODO))
+  (error 'unimplemented))
 (defun terrain/add-log ()
   "Adds a fallen log or similar feature."
-  (TODO))
+  (error 'unimplemented))
 (defun terrain/add-flowers ()
   "Add a random cluster of appropriate flowers or herbs."
-  (TODO))
+  (error 'unimplemented))
 (defun terrain/stream-present-p ()
   "Does a stream bisect the currently-active space?
 
@@ -102,9 +105,9 @@ Should return true  if a body of water exists  which enters the space
   from any  side and  bisects the  space into  two disjoint  land areas.
   Terminus of  a stream  or completely underwater  are not  “streams” by
   this definition."
-  (TODO))
+  (error 'unimplemented))
 (defun point-underwater-p (x y)
-  (TODO))
+  (error 'unimplemented))
 (defun find-random-point-if (function)
   (loop 
      for x = (/ (random 20000) 100)
@@ -119,9 +122,9 @@ Should return true  if a body of water exists  which enters the space
           (find-random-point-if #'point-underwater-p))))
 
 (defun terrain/add-shaddow-bush ()
-  (TODO))
+  (error 'unimplemented))
 (defun terrain/add-shaddow-pit ()
-  (TODO))
+  (error 'unimplemented))
 
 
 ;;; Per-habitat generation rules.
