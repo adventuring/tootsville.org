@@ -8,12 +8,12 @@ deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 #	make CLUSTER=qa
 #	make CLUSTER=.
 CLUSTER:=test
-ifeq($(CLUSTER),.)
-  clusterorg=Tootsville.org
-  clusternet=Tootsville.net
+ifeq ($(CLUSTER),.)
+clusterorg=Tootsville.org
+clusternet=Tootsville.net
 else
-  clusterorg=$(CLUSTER).Tootsville.org
-  clusternet=$(CLUSTER).Tootsville.net
+clusterorg=$(CLUSTER).Tootsville.org
+clusternet=$(CLUSTER).Tootsville.net
 endif
 
 LOCAL_USERNAME=$(shell whoami)
@@ -212,7 +212,7 @@ dist/www/2019.css:	$(shell echo www/*.less)
 
 #################### deploy
 
-deploy-play:	predeploy
+deploy-play:	predeploy-play
 	echo " » Deploy play.$(clusterorg)"
 	ssh play.$(CLUSTER) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
 	curl https://api.rollbar.com/api/1/deploy/ \
@@ -225,7 +225,7 @@ deploy-play:	predeploy
 	     -F local_username=$(LOCAL_USERNAME)
 
 deploy-servers:	predeploy
-	for host in users gossip world; \
+	for host in game1 game2; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
 		ssh $$host.$(clusternet) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
@@ -263,9 +263,8 @@ connectivity:
 	echo " » Test connectivity"
 	ssh play.$(clusterorg) ls -1d play.$(clusterorg)/ | grep play.$(clusterorg)
 	ssh $(clusterorg) ls -1d $(clusterorg)/ | grep $(clusterorg)
-	ssh users.$(clusterorg) sbcl --no-userinit --quit | grep 'This is SBCL'
-	ssh gossip.$(clusterorg) sbcl --no-userinit --quit | grep 'this is sbcl'
-	ssh world.$(clusterorg) sbcl --no-userinit --quit | grep 'This is SBCL'
+	ssh game1.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
+	ssh game2.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
 
 
 no-fixmes:	TODO.scorecard
@@ -306,10 +305,12 @@ no-fixmes:	TODO.scorecard
 
 predeploy-play:	play worker htaccess
 	echo " » Pre-deploy play.$(clusterorg)"
-	mkdir -p dist/play.$(clusterorg)
+	mkdir -p dist/play.$(clusterorg)/play
 #	copy in most files
 	rsync --exclude='*~' --exclude='*#' -ar \
-	      play/* play/.well-known dist/play.$(clusterorg)/
+	      play/* play/.well-known dist/play.$(clusterorg)/play/
+	rsync --exclude='*~' --exclude='*#' -ar \
+	      dist/play/* dist/play.$(clusterorg)/play/
 # 	each host copies error pages and favicons
 	rsync --exclude='*~' --exclude='*#'  -ar \
 	      www/favicon.??? www/error dist/play.$(clusterorg)/
@@ -338,25 +339,17 @@ predeploy-www:	htaccess dist/www/2019.css
 	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
 
 predeploy-servers:	servers quicklisp-update-servers
-	for host in users gossip world ;\
+	for host in game1 game2 ;\
 	do \
 		echo " » Pre-deploy $$host.$(clusternet)" ;\
-		mkdir -p dist/$$host.$(clusternet) ;\
-		cp dist/htaccess.all/$$host.$(clusternet).htaccess dist/$$host.$(clusternet) || exit 6 ;\
-		cp play/.well-known/assetlinks.json dist/$$host.$(clusternet) || exit 6 ;\
 		rsync -essh -zar servers $$host.$(clusternet): ;\
 		ssh $$host.$(clusternet) make -C servers clean || exit 6 ;\
 		ssh $$host.$(clusternet) make -C servers Tootsville || exit 6 ;\
 		ssh $$host.$(clusternet) make -C servers test || exit 6 ;\
-		echo " » Deploying static HTML bits of $$host.$(clusternet)" ;\
-		rsync -zar -essh dist/$$host.$(clusternet) $$host.$(clusternet):/var/www/ ;\
-		rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
-			www/error $$host.$(clusternet):/var/www/$$host.$(clusternet) ;\
-		scp www/favicon.??? $$host.$(clusternet):/var/www/$$host.$(clusternet) ;\
 	done
 
 quicklisp-update-servers:
-	for host in users gossip world; \
+	for host in game1 game2; \
 	do \
 		echo " » Ensure latest Quicklisp on $$host.$(clusternet)" ;\
 	    ssh $$host.$(clusternet) \
