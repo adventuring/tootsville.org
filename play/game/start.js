@@ -21,4 +21,6 @@ window.addEventListener('load', () => {
     Tootsville.game.stopSlowLoadingWatchdogs();
 
     Tootsville.tank.start3D();
+
+    setInterval(function(){Tootsville.updateClock();},250);
 });
