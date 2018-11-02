@@ -219,7 +219,7 @@ Hopefully you've already tested the changes?"
 (defun connect-databases ()
   (dolist (thread (mapcar (lambda (n)
                             (make-thread n :name (string-capitalize n)))
-                          '(connect-mixer connect-directory connect-cache)))
+                          '(connect-mixer connect-directory #+ (or) connect-cache)))
     (join-thread thread)))
 
 (defun connect-mixer ()
@@ -232,6 +232,7 @@ Hopefully you've already tested the changes?"
   (v:info :mixer "MOTD from Mixer: ~a" (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
 
 (defun connect-directory ())
+#+ (or)
 (defun connect-cache ()
   (setf cl-memcached:*memcache*
         (cl-memcached:make-memcache :ip (config :cache :host)
