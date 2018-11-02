@@ -149,7 +149,6 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
 
 (defun start-repl ()
   "Starts a PREPL REPL."
-  (ql:quickload :prepl)
   (restart-bind
       ((quit #'cl-user::exit
          :report-function (format *query-io* "Quit the REPL")))
