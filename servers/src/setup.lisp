@@ -49,7 +49,7 @@
                                          *compile-file-pathname*
                                          *default-pathname-defaults*))))
        (lib-dirs (merge-pathnames (make-pathname :directory '(:relative "lib")
-                                                 :name :wild)
+                                                 :name :wild :type :wild)
                                   src-dir)))
   (let ((*setup* t))
     (asdf:load-asd (merge-pathnames (make-pathname :directory '(:relative :up)
@@ -63,8 +63,9 @@
       (dolist (another-system-definition (directory asdf))
         (format *trace-output* "~&Found system definition ~S"
                 (uiop/pathname:enough-pathname another-system-definition src-dir))
-        (asdf:load-asd another-system-definition)
-        #+run-without-any-quicklisp (asdf:load-system (pathname-name another-system-definition))))))
+        (pushnew lib-dir asdf:*central-registry*)
+        #+ (or) (asdf:load-asd another-system-definition)
+        #+ (or) (asdf:load-system (pathname-name another-system-definition))))))
 
 (format *trace-output*
         "~2& System Definitions registry:
