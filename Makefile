@@ -5,9 +5,16 @@ deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 #################### vars
 
 # To target alternate clusters:
-#	make CLUSTER=qa.tootsville.org deploy
-#	make CLUSTER=tootsville.org deploy
-CLUSTER:=test.tootsville.org
+#	make CLUSTER=qa
+#	make CLUSTER=.
+CLUSTER:=test
+ifeq($(CLUSTER),.)
+  clusterorg=Tootsville.org
+  clusternet=Tootsville.net
+else
+  clusterorg=$(CLUSTER).Tootsville.org
+  clusternet=$(CLUSTER).Tootsville.net
+endif
 
 LOCAL_USERNAME=$(shell whoami)
 REVISION=$(shell git log -n 1 --pretty=format:"%H")
@@ -206,11 +213,11 @@ dist/www/2019.css:	$(shell echo www/*.less)
 #################### deploy
 
 deploy-play:	predeploy
-	echo " » Deploy play.$(CLUSTER)"
-	ssh play.$(CLUSTER) "mv play.$(CLUSTER) play.$(CLUSTER).before-deploy && mv play.$(CLUSTER).new play.$(CLUSTER)"
+	echo " » Deploy play.$(clusterorg)"
+	ssh play.$(CLUSTER) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
-	     -F environment=play.$(CLUSTER) \
+	     -F environment=play.$(clusterorg) \
 	     -F framework=gmake \
 	     -F notifier.name=gmake \
 	     -F revision=$(REVISION) \
@@ -220,8 +227,8 @@ deploy-play:	predeploy
 deploy-servers:	predeploy
 	for host in users gossip world; \
 	do \
-		echo " » Deploy $$host.$(CLUSTER)" ;\
-		ssh $$host.$(CLUSTER) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
+		echo " » Deploy $$host.$(clusternet)" ;\
+		ssh $$host.$(clusternet) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
 cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
 sudo -n systemctl enable tootsville; \
 sudo -n systemctl restart tootsville; \
@@ -229,7 +236,7 @@ sudo -n systemctl start tootsville" ;\
 		VERSION=$(shell servers/Tootsville version-info version) ;\
 		curl https://api.rollbar.com/api/1/deploy/ \
 		     -F access_token=$(ACCESS_TOKEN) \
-		     -F environment=$$host.$(CLUSTER) \
+		     -F environment=$$host.$(clusternet) \
 		     -F framework=gmake \
 		     -F notifier.name=gmake \
 		     -F revision=$(REVISION) \
@@ -239,11 +246,11 @@ sudo -n systemctl start tootsville" ;\
 	done
 
 deploy-www:	predeploy
-	echo " » Deploy www.$(CLUSTER)"
-	ssh www.$(CLUSTER) "mv www.$(CLUSTER) www.$(CLUSTER).before-deploy && mv www.$(CLUSTER).new www.$(CLUSTER)"
+	echo " » Deploy www.$(clusterorg)"
+	ssh www.$(clusterorg) "mv www.$(clusterorg) www.$(clusterorg).before-deploy && mv www.$(clusterorg).new www.$(clusterorg)"
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
-	     -F environment=www.$(CLUSTER) \
+	     -F environment=www.$(clusterorg) \
 	     -F framework=gmake \
 	     -F notifier.name=gmake \
 	     -F revision=$(REVISION) \
@@ -254,11 +261,11 @@ predeploy:	no-fixmes connectivity predeploy-play predeploy-www predeploy-servers
 
 connectivity:
 	echo " » Test connectivity"
-	ssh play.$(CLUSTER) ls -1d play.$(CLUSTER)/ | grep play.$(CLUSTER)
-	ssh $(CLUSTER) ls -1d $(CLUSTER)/ | grep $(CLUSTER)
-	ssh users.$(CLUSTER) sbcl --no-userinit --quit | grep 'This is SBCL'
-	ssh gossip.$(CLUSTER) sbcl --no-userinit --quit | grep 'This is SBCL'
-	ssh world.$(CLUSTER) sbcl --no-userinit --quit | grep 'This is SBCL'
+	ssh play.$(clusterorg) ls -1d play.$(clusterorg)/ | grep play.$(clusterorg)
+	ssh $(clusterorg) ls -1d $(clusterorg)/ | grep $(clusterorg)
+	ssh users.$(clusterorg) sbcl --no-userinit --quit | grep 'This is SBCL'
+	ssh gossip.$(clusterorg) sbcl --no-userinit --quit | grep 'this is sbcl'
+	ssh world.$(clusterorg) sbcl --no-userinit --quit | grep 'This is SBCL'
 
 
 no-fixmes:	TODO.scorecard
@@ -268,13 +275,13 @@ no-fixmes:	TODO.scorecard
 	then \
 			clear ;\
 			echo "There are $$TOOT_FIXME FIXME comments!" ;\
-			if [[ "$(CLUSTER)" = tootsville.org ]] ;\
+			if [[ "$(CLUSTER)" = . ]] ;\
 			then \
 				echo " ✗ Refusing to deploy to Production with FIXME notes" ;\
 				exit 8 ;\
 			fi ;\
 			echo "" ;\
-			echo "$(REALNAME), are you sure you want to deploy to $(CLUSTER)" ;\
+			echo "$(REALNAME), are you sure you want to deploy to $(clusterorg)" ;\
 			echo "when there are $$TOOT_FIXME FIXME notes and $$TOOT_TODO TODOs?" ;\
 			echo "" ;\
 			read -p "Deploy anyway? (Y/N) ⇒ " -n 1 yorn ;\
@@ -298,61 +305,61 @@ no-fixmes:	TODO.scorecard
 	fi
 
 predeploy-play:	play worker htaccess
-	echo " » Pre-deploy play.$(CLUSTER)"
-	mkdir -p dist/play.$(CLUSTER)
+	echo " » Pre-deploy play.$(clusterorg)"
+	mkdir -p dist/play.$(clusterorg)
 #	copy in most files
 	rsync --exclude='*~' --exclude='*#' -ar \
-	      play/* play/.well-known dist/play.$(CLUSTER)/
+	      play/* play/.well-known dist/play.$(clusterorg)/
 # 	each host copies error pages and favicons
 	rsync --exclude='*~' --exclude='*#'  -ar \
-	      www/favicon.??? www/error dist/play.$(CLUSTER)/
+	      www/favicon.??? www/error dist/play.$(clusterorg)/
 # 	mapping to hosts in the cluster
-	cp dist/htaccess.all/$(CLUSTER).cluster.json dist/play.$(CLUSTER)/cluster.json
+	cp dist/htaccess.all/$(CLUSTER).cluster.json dist/play.$(clusterorg)/cluster.json
 # 	.htaccess generated above
-	cp dist/htaccess.all/play.$(CLUSTER).htaccess dist/play.$(CLUSTER)/.htaccess
+	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
 #
 #	Stream a shar/unshar to the host at one go
-	bin/shar-stream dist/ play.$(CLUSTER) play.$(CLUSTER)
+	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
 
 predeploy-www:	htaccess dist/www/2019.css
-	echo " » Pre-deploy www.$(CLUSTER)"
-	mkdir -p dist/www.$(CLUSTER)
+	echo " » Pre-deploy www.$(clusterorg)"
+	mkdir -p dist/www.$(clusterorg)
 	rsync --exclude='*~' --exclude='*#' -ar \
-	      www/* dist/www.$(CLUSTER)/
-	cp dist/www/2019.css dist/www.$(CLUSTER)/2019.css
-	if [ "$(CLUSTER)" = "test.tootsville.org" ]; \
+	      www/* dist/www.$(clusterorg)/
+	cp dist/www/2019.css dist/www.$(clusterorg)/2019.css
+	if [ "$(CLUSTER)" = "test" ]; \
 	then \
-		cp www/index.test.html dist/www.$(CLUSTER)/index.html ;\
+		cp www/index.test.html dist/www.$(clusterorg)/index.html ;\
 	fi
-	if [ "$(CLUSTER)" = "qa.tootsville.org" ]; \
+	if [ "$(CLUSTER)" = "qa" ]; \
 	then \
-		cp www/index.qa.html dist/www.$(CLUSTER)/index.html ;\
+		cp www/index.qa.html dist/www.$(clusterorg)/index.html ;\
 	fi
-	bin/shar-stream dist/ www.$(CLUSTER) www.$(CLUSTER)
+	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
 
 predeploy-servers:	servers quicklisp-update-servers
 	for host in users gossip world ;\
 	do \
-		echo " » Pre-deploy $$host.$(CLUSTER)" ;\
-		mkdir -p dist/$$host.$(CLUSTER) ;\
-		cp dist/htaccess.all/$$host.$(CLUSTER).htaccess dist/$$host.$(CLUSTER) || exit 6 ;\
-		cp play/.well-known/assetlinks.json dist/$$host.$(CLUSTER) || exit 6 ;\
-		rsync -essh -zar servers $$host.$(CLUSTER): ;\
-		ssh $$host.$(CLUSTER) make -C servers clean || exit 6 ;\
-		ssh $$host.$(CLUSTER) make -C servers Tootsville || exit 6 ;\
-		ssh $$host.$(CLUSTER) make -C servers test || exit 6 ;\
-		echo " » Deploying static HTML bits of $$host.$(CLUSTER)" ;\
-		rsync -zar -essh dist/$$host.$(CLUSTER) $$host.$(CLUSTER):/var/www/ ;\
+		echo " » Pre-deploy $$host.$(clusternet)" ;\
+		mkdir -p dist/$$host.$(clusternet) ;\
+		cp dist/htaccess.all/$$host.$(clusternet).htaccess dist/$$host.$(clusternet) || exit 6 ;\
+		cp play/.well-known/assetlinks.json dist/$$host.$(clusternet) || exit 6 ;\
+		rsync -essh -zar servers $$host.$(clusternet): ;\
+		ssh $$host.$(clusternet) make -C servers clean || exit 6 ;\
+		ssh $$host.$(clusternet) make -C servers Tootsville || exit 6 ;\
+		ssh $$host.$(clusternet) make -C servers test || exit 6 ;\
+		echo " » Deploying static HTML bits of $$host.$(clusternet)" ;\
+		rsync -zar -essh dist/$$host.$(clusternet) $$host.$(clusternet):/var/www/ ;\
 		rsync --exclude='*~' --exclude='*#' -zar -essh --delete \
-			www/error $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
-		scp www/favicon.??? $$host.$(CLUSTER):/var/www/$$host.$(CLUSTER) ;\
+			www/error $$host.$(clusternet):/var/www/$$host.$(clusternet) ;\
+		scp www/favicon.??? $$host.$(clusternet):/var/www/$$host.$(clusternet) ;\
 	done
 
 quicklisp-update-servers:
 	for host in users gossip world; \
 	do \
-		echo " » Ensure latest Quicklisp on $$host.$(CLUSTER)" ;\
-	    ssh $$host.$(CLUSTER) \
+		echo " » Ensure latest Quicklisp on $$host.$(clusternet)" ;\
+	    ssh $$host.$(clusternet) \
 	        sbcl --non-interactive \
 	        --no-inform \
 	        --eval "'(ql:update-client)'" \
@@ -364,29 +371,29 @@ quicklisp-update-servers:
 remotes:
 	if ! git remote -v | grep github &>/dev/null ;\
 	then \
-		git remote add github git@github.com:adventuring/tootsville.org ;\
+		git remote add github git@github.com:adventuring/Tootsville.org ;\
 	fi
 	if ! git remote -v | grep gitlab &>/dev/null ;\
 	then \
-		git remote add gitlab git@gitlab.com:adventuring/tootsville.org ;\
+		git remote add gitlab git@gitlab.com:adventuring/Tootsville.org ;\
 	fi
 	if ! git remote -v | grep goethe &>/dev/null ;\
 	then \
-		git remote add goethe goethe.tootsville.org:devel/git/tootsville.org ;\
+		git remote add goethe goethe.Tootsville.org:devel/git/Tootsville.org ;\
 	fi
 
 
 git-tag-deployment:
 	VERSION=$$(servers/Tootsville version-info version) ;\
 	now=$$(date +%Y-%m-%d) ;\
-	msg="Deployed v$$VERSION to $$CLUSTER $$now" ;\
+	msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	if git rev-parse v$$VERSION &>/dev/null ;\
 	then \
 	    echo "Previous tag v$$VERSION found, adding v$$VERSION-$$now" ;\
 	    if git rev-parse v$$VERSION-$$now &>/dev/null ;\
 	    then \
 	        now=$$(date +%Y-%m-%d.%H:%M) ;\
-	        msg="Deployed v$$VERSION to $$cluster $$now" ;\
+	        msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	        echo " - I meant v$$VERSION-$$now" ;\
 	        git submodule foreach git tag -a tootsville-v$$VERSION-$$now -m "for Tootsville.org: $$msg" ;\
 	        git tag -a v$$VERSION-$$now -m "$$msg" ;\
@@ -412,7 +419,7 @@ git-tag-deployment:
 #################### deploy-docs
 
 	make -C servers doc-publish
-	scp dist/htaccess.goethe goethe.tootsville.org/goethe.tootsville.org/.htaccess
-	scp www/favicon.??? goethe.tootsville.org/goethe.tootsville.org/
-	rsync -essh www/error goethe.tootsville.org/goethe.tootsville.org/
+	scp dist/htaccess.goethe goethe.Tootsville.org/goethe.Tootsville.org/.htaccess
+	scp www/favicon.??? goethe.Tootsville.org/goethe.Tootsville.org/
+	rsync -essh www/error goethe.Tootsville.org/goethe.Tootsville.org/
 
