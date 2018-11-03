@@ -11,7 +11,7 @@ var _rollbarConfig = {
         connectivity: true
     },
     payload: {
-        environment: document.location.host.split('.').splice(1)
+        environment: document.location.host.split('.').splice(1).join('.')
     }
 };
 // Rollbar Snippet
