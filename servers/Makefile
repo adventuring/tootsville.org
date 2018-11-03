@@ -110,5 +110,8 @@ doc/Tootsville.texi:	Tootsville
 	./Tootsville write-docs
 
 install:	tootsville.service Tootsville
-	cp Tootsville /usr/local/bin/
-	cp tootsville.service /usr/lib/systemd/system/
+	cp Tootsville --backup=simple -f /usr/local/bin/
+	cp tootsville.service --backup=simple -f /usr/lib/systemd/system/
+	sudo -n systemctl enable tootsville
+	sudo -n systemctl restart tootsville
+	sudo -n systemctl start tootsville

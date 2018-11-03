@@ -343,7 +343,7 @@ predeploy-servers:	servers quicklisp-update-servers
 	for host in game1 game2 ;\
 	do \
 		echo " » Pre-deploy $$host.$(clusternet)" ;\
-		rsync -essh -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
+		rsync -essh --delete -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers clean || exit 6 ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers Tootsville || exit 6 ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers test || exit 6 ;\
