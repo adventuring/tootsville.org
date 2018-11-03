@@ -46,7 +46,7 @@ in HTTP headers and such."
           "~&~|
 Tootsville Ⅴ, version ~a.
 
-Copyright © 2016,2017, Bruce-Robert Pocock
+Copyright © 2006-2017, Bruce-Robert Pocock
 Copyright  ©  2018~@[-~*~d~],  the  Corporation  for  Inter-World  Tourism
 and Adventuring (ciwta.org).
 
