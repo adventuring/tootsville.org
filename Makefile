@@ -213,11 +213,38 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 dist/www/2019.css:	$(shell echo www/*.less)
 	lessc --strict-math=on --source-map www/2019.less dist/www/2019.css
 
+#################### dev-test
+
+dev-test:	dev-play
+
+dev-play:	dist/play.$(clusterorg) dist/play/httpd.pid
+	xdg-open http://localhost:5002/play/
+
+dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
+	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); fi
+	httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf
+
+dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
+	bin/dev-play-httpd-conf $(clusterorg)
+
+dist/play.$(clusterorg):	play worker htaccess
+	mkdir -p dist/play.$(clusterorg)/play
+#	copy in most files
+	rsync --exclude='*~' --exclude='*#' -ar \
+	      play/* play/.well-known dist/play.$(clusterorg)/play/
+	rsync --exclude='*~' --exclude='*#' -ar \
+	      dist/play/* dist/play.$(clusterorg)/play/
+# 	each host copies error pages and favicons
+	rsync --exclude='*~' --exclude='*#'  -ar \
+	      www/favicon.??? www/error dist/play.$(clusterorg)/
+# 	.htaccess generated above
+	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
+
 #################### deploy
 
 deploy-play:	predeploy-play
 	echo " » Deploy play.$(clusterorg)"
-	ssh play.$(CLUSTER) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
+	ssh play.$(clusterorg) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
 	     -F environment=play.$(clusterorg) \
@@ -231,11 +258,7 @@ deploy-servers:	predeploy
 	for host in game1 game2; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
-		ssh $$host.$(clusternet) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
-cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
-sudo -n systemctl enable tootsville; \
-sudo -n systemctl restart tootsville; \
-sudo -n systemctl start tootsville" ;\
+		ssh $$host.$(clusternet) make -C tootsville.org/servers install ;\
 		VERSION=$(shell servers/Tootsville version-info version) ;\
 		curl https://api.rollbar.com/api/1/deploy/ \
 		     -F access_token=$(ACCESS_TOKEN) \
@@ -306,19 +329,8 @@ no-fixmes:	TODO.scorecard
 			fi ;\
 	fi
 
-predeploy-play:	play worker htaccess
+predeploy-play:	dist/play/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
-	mkdir -p dist/play.$(clusterorg)/play
-#	copy in most files
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      play/* play/.well-known dist/play.$(clusterorg)/play/
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      dist/play/* dist/play.$(clusterorg)/play/
-# 	each host copies error pages and favicons
-	rsync --exclude='*~' --exclude='*#'  -ar \
-	      www/favicon.??? www/error dist/play.$(clusterorg)/
-# 	.htaccess generated above
-	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
 #
 #	Stream a shar/unshar to the host at one go
 	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
