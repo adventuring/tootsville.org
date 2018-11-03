@@ -78,7 +78,7 @@ need to be expanded a great deal to increase confidence in these tests."
 ~[no other serious conditions~;~:*~r other serious condition~:p~], ~
  and~[ no warnings~; ~:*~r warning~:p~].~&"
             (now) errors serious warnings)
-    (cond ((or (and (productionp) (plusp errors))
+    (cond ((or (and (eql :prod (cluster)) (plusp errors))
                (> serious 6)
                (> errors 4)
                (> warnings 8))

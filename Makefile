@@ -12,8 +12,8 @@ ifeq ($(CLUSTER),.)
 clusterorg=Tootsville.org
 clusternet=Tootsville.net
 else
-clusterorg=$(CLUSTER).Tootsville.org
-clusternet=$(CLUSTER).Tootsville.net
+clusterorg=$(CLUSTER).tootsville.org
+clusternet=$(CLUSTER).tootsville.net
 endif
 
 LOCAL_USERNAME=$(shell whoami)
@@ -188,7 +188,10 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	git grep -Hn ☠☠☠: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
-TODO.scorecard:	$(shell find */ -type f) README.org
+TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
+	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
+	-o -name \*.shtml \) -and -not -name .\*) \
+	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
 	git grep FIXME: */ README.org | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
@@ -287,7 +290,7 @@ no-fixmes:	TODO.scorecard
 			if [[ "$${yorn}" = "y" ]] ;\
 			then \
 				echo "" ;\
-				echobig Overridden ;\
+				echo "Overridden" ;\
 				echo "" ;\
 				echo "Override accepted. Good luck …" ;\
 				break ;\
@@ -314,8 +317,6 @@ predeploy-play:	play worker htaccess
 # 	each host copies error pages and favicons
 	rsync --exclude='*~' --exclude='*#'  -ar \
 	      www/favicon.??? www/error dist/play.$(clusterorg)/
-# 	mapping to hosts in the cluster
-	cp dist/htaccess.all/$(CLUSTER).cluster.json dist/play.$(clusterorg)/cluster.json
 # 	.htaccess generated above
 	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
 #
