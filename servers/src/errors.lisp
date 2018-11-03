@@ -49,7 +49,7 @@
   (jonathan.encode:%to-json
    `(:is-a "pathname"
            :host ,(typecase (pathname-host pathname)
-                    (sb-impl::unix-host (machine-instance))
+                    #+sbcl (sb-impl::unix-host (machine-instance))
                     (t (princ-to-string (pathname-host pathname))))
            :device ,(pathname-device pathname)
            :directory ,(uiop:split-string (pathname-directory pathname)

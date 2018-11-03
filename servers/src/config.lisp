@@ -32,8 +32,11 @@
 (defun load-config (&optional (config-file (default-config-file)))
   "Load the configuration from CONFIG-FILE."
   (load config-file)
-  (when (developmentp)
-    (setf thread-pool-taskmaster:*developmentp* t))
+  ;; configure other packages
+  (setf thread-pool-taskmaster:*developmentp* (config :devel :taskmaster)
+        hunchentoot:*show-lisp-errors-p* (config :devel :hunchentoot :show-errors)
+        hunchentoot:*show-lisp-backtraces-p* (config :devel :hunchentoot :show-backtraces))
+  (apply #'rollbar:configure (config :rollbar))
   (setf *config-file* (list :path config-file
                             :truename (truename config-file)
                             :read (get-universal-time)
@@ -50,7 +53,12 @@
   (cond
     (keys (apply #'extract (config) keys))
     (t (ecase (cluster)
-         (:test |test|)))))
+         (:devel |devel|)
+         (:test |test|)
+         (:qa |qa|)
+         (:prod |prod|)))))
+
+(defvar |devel|) (defvar |test|) (defvar |qa|) (defvar |prod|)
 
 (defun cluster-name ()
   "Get the name of the active cluster.
@@ -74,12 +82,11 @@ tootsville.org
         (otherwise (format nil "Cluster.~a" *cluster*)))))
 
 (defun cluster-net-name ()
-  (or (uiop:getenv (config-env-var #.(package-name *package*)))
-      (case (cluster)
-        ((nil :test) "test.tootsville.net")
-        (:qa "qa.tootsville.net")
-        (:prod "tootsville.net")
-        (otherwise (format nil "Cluster.~a" *cluster*)))))
+  (case (cluster)
+    ((nil :test) "test.tootsville.net")
+    (:qa "qa.tootsville.net")
+    (:prod "tootsville.net")
+    (:devel (format nil "devel.~a" *cluster*))))
 
 (defvar *cluster* nil
   "Cache for `CLUSTER' (qv)")
@@ -97,27 +104,14 @@ Returns one of:
 :prod
 @end itemize"
   (or *cluster*
-      (let ((testp (let ((hostname (string-downcase (machine-instance))))
-                     (or (search "test.tootsville.org" hostname)
-                         (search "dev." hostname)
-                         (search "-dev" hostname)
-                         (search "builder" hostname)
-                         ;; personal workstations, etc:
-                         (not (search "tootsville" hostname)))))
-            (qa-p (let ((hostname (string-downcase (machine-instance))))
-                    (or (search "qa.tootsville.org" hostname)
-                        (search "qa." hostname)
-                        (search "-qa" hostname)))))
-        (setf *cluster* (cond
-                          (testp :test)
-                          (qa-p :qa)
-                          (t :prod))))))
+      (setf *cluster* (let ((hostname (string-downcase (machine-instance))))
+                        (cond (((or (search "dev" hostname)
+                                    (search "builder" hostname)
+                                    ;; personal workstations, etc:
+                                    (not (search "tootsville" hostname))) :devel)
+                               ((search "test" hostname) :test)
+                               ((search "qa" hostname) :qa)
+                               ((search ".tootsville.net" hostname) :prod)
+                               (t (warn "Could not identify the cluster")
+                                  ())))))))
 
-(defun developmentp ()
-  "Returns true if this is a Test cluster"
-  (or (eql (cluster-name) :test)
-      (null (cluster-name))))
-
-(defun productionp ()
-  "Returns true if this is the Production cluster"
-  (not (developmentp)))

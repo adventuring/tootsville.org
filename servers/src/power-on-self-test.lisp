@@ -43,7 +43,7 @@ a moment and try that again.~%" c)
                                         (signal c))))
                 (sleep 1/2)        ; start time
 ;;; something that appears on the version page, but no error pages.
-                (let ((reply (prog1 (post/read-version-page port)
+                (let ((reply (prog1 (ensure-string (post/read-version-page port))
                                (stop))))
                   (unless (search "Bruce-Robert Pocock" reply)
                     (error "Failed POST~%got~%~a" reply)

@@ -1,14 +1,22 @@
 (cl:in-package :cl-user)
 (in-package :cl-user)
+
+#+sbcl
+(require 'sb-introspect)
+
 (defpackage Tootsville
   (:documentation  "Let's make some noise!")
   (:use :alexandria :cl :local-time :bordeaux-threads
         :oliphaunt)
-  (:shadowing-import-from :cl-fad #:copy-file #:copy-stream) ; conflicts with Alexandria.
+  (:shadowing-import-from :cl-fad
+                          #:copy-file #:copy-stream ; conflicts with Alexandria.
+                          #:directory-pathname-p)
   (:import-from :envy
                 #:config-env-var
                 #:defconfig)
   (:import-from :trivial-backtrace #:print-backtrace)
+  (:import-from :sb-introspect #:function-lambda-expression)
+  (:import-from :uiop #:run-program)
   (:export
    #:*application-root*
    #:*compiled*
