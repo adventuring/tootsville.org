@@ -83,7 +83,7 @@
     (encode-json
      `(:error ,(princ-to-string condition)
               :condition ,(condition-name condition)
-              :location ,(if (Tootsville:developmentp)
+              :location ,(if hunchentoot:*show-lisp-backtraces-p*
                              backtrace
                              (nth 0 backtrace))
               :slots ,(slot-values condition)

@@ -84,11 +84,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
         (start :host host :port port*))))
   (setf hunchentoot:*log-lisp-errors-p* t
         hunchentoot:*log-lisp-backtraces-p* t
-        hunchentoot:*log-lisp-warnings-p* t)
-  (when (developmentp)
-    (setf hunchentoot:*catch-errors-p* nil
-          hunchentoot:*show-lisp-errors-p* t
-          hunchentoot:*show-lisp-backtraces-p* t))
+        hunchentoot:*log-lisp-warnings-p* t) 
   (restart-case
       (push (let ((acceptor
                    (hunchentoot:start

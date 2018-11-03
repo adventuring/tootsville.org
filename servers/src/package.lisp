@@ -10,10 +10,7 @@
         :oliphaunt)
   (:shadowing-import-from :cl-fad
                           #:copy-file #:copy-stream ; conflicts with Alexandria.
-                          #:directory-pathname-p)
-  (:import-from :envy
-                #:config-env-var
-                #:defconfig)
+                          #:directory-pathname-p) 
   (:import-from :trivial-backtrace #:print-backtrace)
   (:import-from :sb-introspect #:function-lambda-expression)
   (:import-from :uiop #:run-program)
@@ -23,13 +20,11 @@
    #:config
    #:connection-settings
    #:db
-   #:developmentp
    #:entry
    #:journal
    #:middleware
    #:power-on-self-test
-   #:print-help
-   #:productionp
+   #:print-help 
    #:rebuild-myself
    #:render-json
    #:start
