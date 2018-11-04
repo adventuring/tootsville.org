@@ -72,7 +72,7 @@ Tootsville.ui = {
                                     "Quit").then(
                                         reallyP => {
                                             if (reallyP) {
-                                                Tootsville.ui.quitAndGoTo('https://play.' + Tootsville.cluster + '/login/logout');
+                                                Tootsville.ui.quitAndGoTo(Tootsville.host.play + '/login/logout');
                                             }
                                         }
                                     );
@@ -115,7 +115,7 @@ Tootsville.ui = {
                 "wait and see if it improves?",
             "Keep Waiting", "Read Troubleshooting Tips").then( waitP => {
                 if (! waitP) {
-                    document.location = 'https://wikiwiki.tootsville.aventuring.click/wikiki/PlayNotLoading';
+                    document.location = 'https://wiki.tootsville.org/wikiki/PlayNotLoading';
                 }
             });
     }

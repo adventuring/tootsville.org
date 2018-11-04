@@ -218,7 +218,7 @@ dist/www/2019.css:	$(shell echo www/*.less)
 dev-test:	dev-play
 
 dev-play:	dist/play.$(clusterorg) dist/play/httpd.pid
-	xdg-open http://localhost:5002/play/
+	firefox --devtools --new-tab "http://localhost:5002/play/"
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); fi
