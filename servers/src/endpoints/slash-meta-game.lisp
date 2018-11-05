@@ -1,7 +1,5 @@
 (in-package :Tootsville)
 
-(require 'sb-introspect)
-
 (defun endpoints-page-header ()
   (list "<!DOCTYPE html>
 <html><head><title>Services: "
@@ -118,7 +116,7 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
 (defun docstring->html (docstring symbol)
   (when (fboundp symbol)
     (let ((first-line (subseq docstring 0 (position #\Newline docstring))))
-      (loop for word in (sb-introspect:function-lambda-list (fdefinition symbol))
+      (loop for word in (function-lambda-list (fdefinition symbol))
          unless (member word lambda-list-keywords)
          do (setf first-line
                   (regex-replace-all (concatenate

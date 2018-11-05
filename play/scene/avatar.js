@@ -5,7 +5,7 @@ if (! Tootsville.Avatars) {
 Tootsville.Avatars.getAvatar = function (character) {
     var xhr = new XMLHttpRequest;
     // should be https://users.{cluster}/toots/{name}
-    xhr.open('GET', 'https://users.'  + Tootsville.cluster + '/users/me/toots.json');
+    xhr.open('GET', Tootsville.host.users + '/users/me/toots.json');
     return new Promise( (finish) => {
         xhr.onload = () => {
             toots = JSON.parse(xhr.response).toots;

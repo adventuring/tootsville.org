@@ -43,7 +43,7 @@ a moment and try that again.~%" c)
                                         (signal c))))
                 (sleep 1/2)        ; start time
 ;;; something that appears on the version page, but no error pages.
-                (let ((reply (prog1 (post/read-version-page port)
+                (let ((reply (prog1 (ensure-string (post/read-version-page port))
                                (stop))))
                   (unless (search "Bruce-Robert Pocock" reply)
                     (error "Failed POST~%got~%~a" reply)
@@ -78,7 +78,7 @@ need to be expanded a great deal to increase confidence in these tests."
 ~[no other serious conditions~;~:*~r other serious condition~:p~], ~
  and~[ no warnings~; ~:*~r warning~:p~].~&"
             (now) errors serious warnings)
-    (cond ((or (and (productionp) (plusp errors))
+    (cond ((or (and (eql :prod (cluster)) (plusp errors))
                (> serious 6)
                (> errors 4)
                (> warnings 8))

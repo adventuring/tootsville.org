@@ -13,19 +13,20 @@
 
 ;;; Ensure Quicklisp is installed.
 
-#.(load (merge-pathnames "ensure-quicklisp.lisp"
-                         *load-truename*))
+#.(load (merge-pathnames "ensure-quicklisp.lisp" (or *load-truename*
+                                                     *compile-file-truename*
+                                                     *default-pathname-defaults*)))
 
 
 
 ;;; Bits that sometimes get lost in SBCL image dumping madness
-
-(ignore-errors (require 'sb-introspect))
-(unless (find-package :sb-introspect)
-  (load #p"SYS:CONTRIB;**;sb-introspect.fasl.NEWEST"))
-(ignore-errors (require 'sb-rotate-byte))
-(unless (find-package :sb-rotate-byte)
-  (load #p"SYS:CONTRIB;**;sb-rotate-byte.fasl.NEWEST"))
+#+sbcl (progn
+         (ignore-errors (require 'sb-introspect))
+         (unless (find-package :sb-introspect)
+           (load #p"SYS:CONTRIB;**;sb-introspect.fasl.NEWEST"))
+         (ignore-errors (require 'sb-rotate-byte))
+         (unless (find-package :sb-rotate-byte)
+           (load #p"SYS:CONTRIB;**;sb-rotate-byte.fasl.NEWEST")))
 
 ;;; Ensure  Swank  is  loaded.  (Does   Buildapp  try  to  blacklist  it
 ;;; or something?
@@ -51,26 +52,16 @@
        (lib-dirs (merge-pathnames (make-pathname :directory '(:relative "lib")
                                                  :name :wild :type :wild)
                                   src-dir)))
-  (let ((*setup* t))
-    (asdf:load-asd (merge-pathnames (make-pathname :directory '(:relative :up)
-                                                   :name "tootsville"
-                                                   :type "asd")
-                                    src-dir)))
-  (dolist (lib-dir (directory lib-dirs))
-    (let ((asdf (merge-pathnames (make-pathname :name :wild
-                                                :type "asd")
-                                 lib-dir)))
-      (dolist (another-system-definition (directory asdf))
-        (format *trace-output* "~&Found system definition ~S"
-                (uiop/pathname:enough-pathname another-system-definition src-dir))
-        (pushnew lib-dir asdf:*central-registry*)
-        #+ (or) (asdf:load-asd another-system-definition)
-        #+ (or) (asdf:load-system (pathname-name another-system-definition))))))
+  (pushnew (truename (merge-pathnames (make-pathname :directory '(:relative :up))
+                                      src-dir)) 
+           asdf:*central-registry*) 
+  (dolist (dir (directory lib-dirs)) 
+    (pushnew (truename dir) asdf:*central-registry*)))
 
 (format *trace-output*
         "~2& System Definitions registry:
-~{~& • ~a~}"
-        asdf:*central-registry*)
+~{~& •  ~a~}"
+        (mapcar #'enough-namestring asdf:*central-registry*))
 
 ;;; misc
 #+sbcl

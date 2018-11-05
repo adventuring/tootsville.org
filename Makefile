@@ -12,8 +12,8 @@ ifeq ($(CLUSTER),.)
 clusterorg=Tootsville.org
 clusternet=Tootsville.net
 else
-clusterorg=$(CLUSTER).Tootsville.org
-clusternet=$(CLUSTER).Tootsville.net
+clusterorg=$(CLUSTER).tootsville.org
+clusternet=$(CLUSTER).tootsville.net
 endif
 
 LOCAL_USERNAME=$(shell whoami)
@@ -131,35 +131,34 @@ htaccess:	htaccess.base bin/make-all-htaccess
 
 worker:	dist/play/worker.js
 
-dist/play/worker.js:	play/worker.js
-	mkdir -p dist/play/
-	closure-compiler --create_source_map dist/play/worker.map \
+dist/worker.js:	worker/worker.js
+	mkdir -p dist/
+	closure-compiler --create_source_map dist/worker.map \
 		--third_party					  \
 		--language_out ECMASCRIPT5_STRICT		  \
 		--language_in ECMASCRIPT6 			  \
-		--source_map_location_mapping 'play/|/play/' 	  \
 		--js $<                                           \
 		--js_output_file $@
-	echo '//# sourceMappingURL=/play/worker.map' >> $@
+	echo '//# sourceMappingURL=/worker.map' >> $@
 
 #################### play/play.js
 
-dist/play/play.js:	${PLAYJS}
+dist/play/play.js:	dist/play/js.order
 	mkdir -p dist/play/
-	cat ${PLAYJS} > dist/play/play.max.js
-	closure-compiler --create_source_map dist/play/play.map \
+	closure-compiler --create_source_map dist/play/play.map   \
 		--third_party                                   \
-		--source_map_location_mapping 'play/|/play/'    \
+		--source_map_location_mapping 'play/|/play/'        \
 		--language_in ECMASCRIPT6                       \
 		--language_out ECMASCRIPT5_STRICT               \
-		--js ${PLAYJS}                                  \
+		$$(< dist/play/js.order )                        \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 
 play:	dist/play/play.css \
 	dist/play/play.js
 
-PLAYJS = $(shell ./bin/find-play-js)
+dist/play/js.order:	$(shell find play -name \*.js)
+	./bin/find-play-js > dist/play/js.order
 
 dist/play/play.map:	dist/play/play.js
 
@@ -188,7 +187,10 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	git grep -Hn ☠☠☠: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
-TODO.scorecard:	$(shell find */ -type f) README.org
+TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
+	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
+	-o -name \*.shtml \) -and -not -name .\*) \
+	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
 	git grep FIXME: */ README.org | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
@@ -210,11 +212,40 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 dist/www/2019.css:	$(shell echo www/*.less)
 	lessc --strict-math=on --source-map www/2019.less dist/www/2019.css
 
+#################### dev-test
+
+dev-test:	dev-play
+
+dev-play:	dist/play.$(clusterorg) dist/play/httpd.pid
+	firefox --devtools --new-tab "http://localhost:5002/play/"
+
+dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
+	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); else \
+		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
+	fi
+
+dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
+	bin/dev-play-httpd-conf $(clusterorg)
+
+dist/play.$(clusterorg):	play worker htaccess
+	mkdir -p dist/play.$(clusterorg)/play
+#	copy in most files
+	rsync --exclude='*~' --exclude='*#' -ar \
+	      play/* play/.well-known dist/play.$(clusterorg)/play/
+	rsync --exclude='*~' --exclude='*#' -ar \
+	      dist/play/* dist/play.$(clusterorg)/play/
+# 	each host copies error pages and favicons
+	rsync --exclude='*~' --exclude='*#'  -ar \
+	      www/favicon.??? www/error dist/play.$(clusterorg)/
+# 	.htaccess generated above
+	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
+
 #################### deploy
 
 deploy-play:	predeploy-play
 	echo " » Deploy play.$(clusterorg)"
-	ssh play.$(CLUSTER) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
+	ssh play.$(clusterorg) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
+# TODO: status ∈ "started" "succeeded" "failed" — currently only success is reported
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
 	     -F environment=play.$(clusterorg) \
@@ -228,11 +259,7 @@ deploy-servers:	predeploy
 	for host in game1 game2; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
-		ssh $$host.$(clusternet) "cp servers/Tootsville --backup=simple -f /usr/local/bin/; \
-cp servers/tootsville.service --backup=simple -f /usr/lib/systemd/user/; \
-sudo -n systemctl enable tootsville; \
-sudo -n systemctl restart tootsville; \
-sudo -n systemctl start tootsville" ;\
+		ssh $$host.$(clusternet) make -C tootsville.org/servers install ;\
 		VERSION=$(shell servers/Tootsville version-info version) ;\
 		curl https://api.rollbar.com/api/1/deploy/ \
 		     -F access_token=$(ACCESS_TOKEN) \
@@ -287,7 +314,7 @@ no-fixmes:	TODO.scorecard
 			if [[ "$${yorn}" = "y" ]] ;\
 			then \
 				echo "" ;\
-				echobig Overridden ;\
+				echo "Overridden" ;\
 				echo "" ;\
 				echo "Override accepted. Good luck …" ;\
 				break ;\
@@ -303,21 +330,8 @@ no-fixmes:	TODO.scorecard
 			fi ;\
 	fi
 
-predeploy-play:	play worker htaccess
+predeploy-play:	dist/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
-	mkdir -p dist/play.$(clusterorg)/play
-#	copy in most files
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      play/* play/.well-known dist/play.$(clusterorg)/play/
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      dist/play/* dist/play.$(clusterorg)/play/
-# 	each host copies error pages and favicons
-	rsync --exclude='*~' --exclude='*#'  -ar \
-	      www/favicon.??? www/error dist/play.$(clusterorg)/
-# 	mapping to hosts in the cluster
-	cp dist/htaccess.all/$(CLUSTER).cluster.json dist/play.$(clusterorg)/cluster.json
-# 	.htaccess generated above
-	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
 #
 #	Stream a shar/unshar to the host at one go
 	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
@@ -342,7 +356,7 @@ predeploy-servers:	servers quicklisp-update-servers
 	for host in game1 game2 ;\
 	do \
 		echo " » Pre-deploy $$host.$(clusternet)" ;\
-		rsync -essh -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
+		rsync -essh --delete -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers clean || exit 6 ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers Tootsville || exit 6 ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers test || exit 6 ;\
@@ -385,7 +399,7 @@ git-tag-deployment:
 	    echo "Previous tag v$$VERSION found, adding v$$VERSION-$$now" ;\
 	    if git rev-parse v$$VERSION-$$now &>/dev/null ;\
 	    then \
-	        now=$$(date +%Y-%m-%d.%H:%M) ;\
+	        now=$$(date +%Y-%m-%d.%H%M) ;\
 	        msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	        echo " - I meant v$$VERSION-$$now" ;\
 	        git submodule foreach git tag -a tootsville-v$$VERSION-$$now -m "for Tootsville.org: $$msg" ;\
@@ -412,7 +426,7 @@ git-tag-deployment:
 #################### deploy-docs
 
 	make -C servers doc-publish
-	scp dist/htaccess.goethe goethe.Tootsville.org/goethe.Tootsville.org/.htaccess
+	scp dist/goethe.tootsville.net.htaccess goethe.Tootsville.org/goethe.Tootsville.org/.htaccess
 	scp www/favicon.??? goethe.Tootsville.org/goethe.Tootsville.org/
 	rsync -essh www/error goethe.Tootsville.org/goethe.Tootsville.org/
 

@@ -46,7 +46,7 @@ in HTTP headers and such."
           "~&~|
 Tootsville Ⅴ, version ~a.
 
-Copyright © 2016,2017, Bruce-Robert Pocock
+Copyright © 2006-2017, Bruce-Robert Pocock
 Copyright  ©  2018~@[-~*~d~],  the  Corporation  for  Inter-World  Tourism
 and Adventuring (ciwta.org).
 
@@ -61,13 +61,10 @@ version 3.~%~%"
   (let ((basics
          (list :product (romance-ii-program-name)
                :version (romance-ii-program-version)
-               :copyright (format nil "© ~d Bruce-Robert Pocock"
+               :copyright (format nil "© 2016-2017 Bruce-Robert Pocock; ~
+© 2018-~d the Corporation for Inter-World Tourism and Adventuring"
                                   (romance-ii-copyright-latest))
-               :environment (list :configuration (cond ((developmentp) "development")
-                                                       ((productionp) "production")
-                                                       (t "unknown"))
-                                  :developmentp (developmentp)
-                                  :productionp (productionp))
+               :cluster (cluster-name)
                :machine (list :version (oliphaunt::unembarassing (machine-version))
                               :type (machine-type)
                               :instance (string-capitalize (machine-instance)))
@@ -78,6 +75,7 @@ version 3.~%~%"
                :software (list :type (software-type)
                                :version (software-version))
                :copyright-latest (romance-ii-copyright-latest)
+               :git-head #.(run-program "git rev-parse HEAD")
                :build-date tootsville::*build-date*
                :compiled tootsville::*compiled*)))
     (when (and (boundp 'hunchentoot:*request*) hunchentoot:*request*)

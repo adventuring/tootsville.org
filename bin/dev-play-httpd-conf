@@ -1,0 +1,28 @@
+#!/usr/bin/bash
+
+clusterorg=$1
+mkdir -p dist/play/{logs,conf} dist/play.$clusterorg/play
+ln -sf /etc/httpd/modules/ dist/play/
+ln -sf /etc/mime.types dist/play/conf/
+
+cat <<END > dist/play/dev-play.httpd.conf
+ServerName $(hostnamectl --transient).local
+PIDFile "$(pwd)/dist/play/httpd.pid"
+ServerRoot "$(pwd)/dist/play/"
+Listen 5002
+User $(whoami)
+Group $(groups|cut -d ' ' -f 1)
+Include /etc/httpd/conf.modules.d/*.conf
+<Directory />
+  AllowOverride none
+  Require all denied
+</Directory>
+DocumentRoot "$(pwd)/dist/play.$clusterorg"
+<Directory "$(pwd)/dist/play.$clusterorg">
+  Options Indexes FollowSymLinks Includes MultiViews
+  Require all granted
+</Directory>
+<IfModule dir_module>
+    DirectoryIndex index.html
+</IfModule>
+END

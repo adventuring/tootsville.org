@@ -20,13 +20,16 @@
 
 (defconstant +async-worker-threads+ 2)
 
+(defun (setf thread-name) (name thread)
+  #+sbcl (setf (sb-thread:thread-name thread) name))
+
 (defun name-all-async-threads-idle ()
   (let ((length (length (slot-value *async-tasks*
                                     'cl-threadpool::threads))))
     (loop for thread in (slot-value *async-tasks*
                                     'cl-threadpool::threads)
        for i fixnum from 1
-       do (setf (sb-thread:thread-name thread)
+       do (setf (thread-name thread)
                 (format nil "Idle Asyncronous Worker (#~d of ~d)" i length)))))
 
 (defun swank-connected-p ()
@@ -49,13 +52,13 @@
    *async-tasks*
    (lambda ()
      (let ((idle-name (thread-name (current-thread))))
-       (setf (sb-thread:thread-name (current-thread)) (format nil "Async: run ~s" function))
+       (setf (thread-name (current-thread)) (format nil "Async: run ~s" function))
        (unwind-protect
             (thread-pool-taskmaster:with-pool-thread-restarts
-             ((thread-name (current-thread)))
-             (verbose:info '(:threadpool-worker :async-worker :worker-start)
-                           "{~a}: working" (thread-name (current-thread)))
-             (funcall function))
+                ((thread-name (current-thread)))
+              (verbose:info '(:threadpool-worker :async-worker :worker-start)
+                            "{~a}: working" (thread-name (current-thread)))
+              (funcall function))
          (verbose:info '(:threadpool-worker :async-worker :worker-finish)
                        "{~a}: done" (thread-name (current-thread)))
          (setf (sb-thread:thread-name (current-thread)) idle-name))))))
@@ -81,11 +84,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
         (start :host host :port port*))))
   (setf hunchentoot:*log-lisp-errors-p* t
         hunchentoot:*log-lisp-backtraces-p* t
-        hunchentoot:*log-lisp-warnings-p* t)
-  (when (developmentp)
-    (setf hunchentoot:*catch-errors-p* nil
-          hunchentoot:*show-lisp-errors-p* t
-          hunchentoot:*show-lisp-backtraces-p* t))
+        hunchentoot:*log-lisp-warnings-p* t) 
   (restart-case
       (push (let ((acceptor
                    (hunchentoot:start
@@ -224,7 +223,7 @@ Hopefully you've already tested the changes?"
 
 (defun connect-mixer ()
   (setf clouchdb:*couchdb* 
-        (clouchdb:make-db :host (or "localhost" (config :mixer :host))
+        (clouchdb:make-db :host (or (config :mixer :host))
                           :port (or (config :mixer :port) "5984")
                           :user (config :mixer :admin :name)
                           :password (config :mixer :admin :password)

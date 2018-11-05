@@ -1,20 +1,8 @@
 (in-package :Tootsville)
 
-(setf (config-env-var) "TOOTSVILLE")
-
 (defparameter *application-root*
   (asdf:system-source-directory :Tootsville)
   "The location in which the application source code is installed.")
-
-(defconfig :common
-    `(:databases ((:maindb :sqlite3 :database-name ":memory:"))
-                 :on-error-mail (:from-name "Tootsville Support"
-                                            :from-address "support@Tootsville.org"
-                                            :to-address "support@Tootsville.org"
-                                            :smtp-server "localhost"
-                                            :subject-prefix "Error")
-                 :run-dir '(:home "run")
-                 :log-dir '(:home "logs" "Tootsville")))
 
 (defun default-config-file ()
   "Returns the name of the default configuration file."
@@ -32,8 +20,16 @@
 (defun load-config (&optional (config-file (default-config-file)))
   "Load the configuration from CONFIG-FILE."
   (load config-file)
-  (when (developmentp)
-    (setf thread-pool-taskmaster:*developmentp* t))
+  ;; configure other packages
+  (setf thread-pool-taskmaster:*developmentp* (config :taskmaster :devel)
+        hunchentoot:*log-lisp-warnings-p* (config :hunchentoot :log-warnings)
+        hunchentoot:*log-lisp-errors-p* (config :hunchentoot :log-errors)
+        hunchentoot:*log-lisp-backtraces-p* (config :hunchentoot :log-backtraces)
+        hunchentoot:*show-lisp-errors-p* (config :hunchentoot :show-errors)
+        hunchentoot:*show-lisp-backtraces-p* (config :hunchentoot :show-backtraces))
+  (apply #'rollbar:configure (config :rollbar))
+  (rollbar:configure :environment (cluster-net-name)
+                     :code-version #.(run-program "git rev-parse HEAD"))
   (setf *config-file* (list :path config-file
                             :truename (truename config-file)
                             :read (get-universal-time)
@@ -43,27 +39,19 @@
 
 
 
-
-
 (defun config (&rest keys)
   "Obtain the configuration value at the path KEY + SUB-KEYS"
   (cond
     (keys (apply #'extract (config) keys))
     (t (ecase (cluster)
-         (:devel (unless (boundp '|devel|)
-                   (load-config))
-                 |devel|)
-         (:test (unless (boundp '|test|)
-                  (load-config))
-                |test|)
-         (:qa (unless (boundp '|qa|)
-                (load-config))
-              |qa|)
-         (:prod (unless (boundp '|production|)
-                  (load-config))
-                |production|)))))
+         (:devel |devel|)
+         (:test |test|)
+         (:qa |qa|)
+         (:prod |prod|)))))
 
-(defun cluster-name ()
+(defvar |devel| nil) (defvar |test| nil) (defvar |qa| nil) (defvar |prod| nil)
+
+(defun cluster-name (&optional prefix)
   "Get the name of the active cluster.
 
 Currently one of:
@@ -77,20 +65,18 @@ qa.tootsville.org
 tootsville.org
 @end itemize
 "
-  (or (uiop:getenv (config-env-var #.(package-name *package*)))
       (case (cluster)
-        ((nil :test) "test.tootsville.org")
-        (:qa "qa.tootsville.org")
-        (:prod "tootsville.org")
-        (otherwise (format nil "Cluster.~a" *cluster*)))))
+    (:test (format nil "~@[~a.~]test.tootsville.org" prefix))
+    (:qa (format nil "~@[~a.~]qa.tootsville.org" prefix))
+    (:prod (format nil "~@[~a.~]tootsville.org" prefix))
+    (:devel (machine-instance))))
 
-(defun cluster-net-name ()
-  (or (uiop:getenv (config-env-var #.(package-name *package*)))
+(defun cluster-net-name (&optional prefix)
       (case (cluster)
-        ((nil :test) "test.tootsville.net")
-        (:qa "qa.tootsville.net")
-        (:prod "tootsville.net")
-        (otherwise (format nil "Cluster.~a" *cluster*)))))
+    (:test (format nil "~@[~a.~]test.tootsville.net" prefix))
+    (:qa (format nil "~@[~a.~]qa.tootsville.net" prefix))
+    (:prod (format nil "~@[~a.~]tootsville.net" prefix))
+    (:devel (machine-instance))))
 
 (defvar *cluster* nil
   "Cache for `CLUSTER' (qv)")
@@ -108,27 +94,14 @@ Returns one of:
 :prod
 @end itemize"
   (or *cluster*
-      (let ((testp (let ((hostname (string-downcase (machine-instance))))
-                     (or (search "test.tootsville.net" hostname)
-                         (search "dev." hostname)
-                         (search "-dev" hostname)
+      (setf *cluster* (let ((hostname (string-downcase (machine-instance))))
+                        (cond ((or (search "dev" hostname)
                          (search "builder" hostname)
                          ;; personal workstations, etc:
-                         (not (search "tootsville" hostname)))))
-            (qa-p (let ((hostname (string-downcase (machine-instance))))
-                    (or (search "qa.tootsville.net" hostname)
-                        (search "qa." hostname)
-                        (search "-qa" hostname)))))
-        (setf *cluster* (cond
-                          (testp :test)
-                          (qa-p :qa)
-                          (t :prod))))))
+                                   (not (search "tootsville" hostname))) :devel)
+                              ((search "test" hostname) :test)
+                              ((search "qa" hostname) :qa)
+                              ((search ".tootsville.net" hostname) :prod)
+                              (t (warn "Could not identify the cluster")
+                                 ()))))))
 
-(defun developmentp ()
-  "Returns true if this is a Test cluster"
-  (or (eql (cluster-name) :test)
-      (null (cluster-name))))
-
-(defun productionp ()
-  "Returns true if this is the Production cluster"
-  (not (developmentp)))

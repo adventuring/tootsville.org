@@ -62,6 +62,7 @@ Pick a character
 
 *** Servers
 
+**** Load Balancer
 **** Users
 
  The Users application is a REST server providing human and Toot user

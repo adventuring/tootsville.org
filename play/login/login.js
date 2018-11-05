@@ -138,7 +138,7 @@ Tootsville.login.dimUnpickedCharacters = function (picked) {
 
 Tootsville.login.playWithCharacter = function (name) {
     Tootsville.login.serverLinkTokenToCharacter(name).then(() => {
-        document.location = 'https://play.' + Tootsville.cluster + '/play/';
+        document.location = Tootsville.host.play + '/play/'; // FIXME start playing
     });
 }
 

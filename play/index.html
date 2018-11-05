@@ -5,8 +5,11 @@
     <title>Tootsville</title>
     <script>
       window.loadWatchdog2 = setTimeout( () => {
-        document.location =
-          'https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading';
+      if (parseInt(window.location.port) > 5000)
+      { alert("Slow Loading watchdog fired"); }
+      else
+      { document.location =
+          'https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading'; }
       },
       60000);
     </script>
