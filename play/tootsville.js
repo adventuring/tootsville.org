@@ -1,12 +1,6 @@
 var Tootsville = {
     /* Cluster name is hostname minus leading "play" */
     cluster: document.location.host.split('.').splice(1).join('.'),
-    host:
-    { www: 'https://www.' + Tootsville.cluster,
-      play: 'https://play' + Tootsville.cluster,
-      users: 'https://users' + Tootsville.cluster.replace('.org','.net'),
-      gossip: 'https://gossip' + Tootsville.cluster.replace('.org','.net'),
-      world: 'https://world' + Tootsville.cluster.replace('.org','.net') },
     Worlds:
     { Tootanga: { Gravity: 9.81 },
       TheMoon: { Gravity: 0.32 },
@@ -31,17 +25,24 @@ var Tootsville = {
     game: {},
     ui: {} };
 
-if (! (('test.tootsville.org' == Tootsville.cluster) ||
-      ('qa.tootsville.org' == Tootsville.cluster) ||
-       ('tootsville.org' == Tootsville.cluster)))
+if (('test.tootsville.org' == Tootsville.cluster) ||
+    ('qa.tootsville.org' == Tootsville.cluster) ||
+    ('tootsville.org' == Tootsville.cluster))
+{ Tootsville.host =
+    { www: 'https://www.' + Tootsville.cluster,
+      play: 'https://play' + Tootsville.cluster,
+      users: 'https://users' + Tootsville.cluster.replace('.org','.net'),
+      gossip: 'https://gossip' + Tootsville.cluster.replace('.org','.net'),
+      world: 'https://world' + Tootsville.cluster.replace('.org','.net') };
+  document.domain = Tootsville.cluster; }
+else
 { Tootsville.cluster = 'local';
-  Tootsville.host.www = 'http://localhost:5001';
-  Tootsville.host.play = 'http://localhost:5002';
-  Tootsville.host.users = 'http://localhost:5000';
-  Tootsville.host.gossip = 'http://localhost:5000';
-  Tootsville.host.world = 'http://localhost:5000'; }
-
-document.domain = Tootsville.cluster;
+  Tootsville.host =
+  { www: 'http://localhost:5001',
+    play: 'http://localhost:5002',
+    users: 'http://localhost:5000',
+    gossip: 'http://localhost:5000',
+    world: 'http://localhost:5000' }; }
 
 window.addEventListener('Tootsville/Login', function (ev)
  { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,

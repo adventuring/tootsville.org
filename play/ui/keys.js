@@ -1,105 +1,140 @@
-(function () {
+(function() {
 
     function done (ev) {
         ev.preventDefault();
     }
+
+    if (! 'Tootsville' in window) { Tootsville = { ui: { keys: {} }}; }
+    if (! 'ui' in Tootsville) { Tootsville.ui = { keys: {} }; }
+    if (! 'keys' in Tootsville.ui) { Tootsville.ui.keys = {}; }
     
-    Tootsville.ui.keys = {
-
-        speakIt: function() {
-            document.getElementById('talk-speak').focus();
-            return false; // Let <INPUT> edit handle it.
-        },
-
-        clearTalk: function() {
-            document.getElementById('talk-speak').value = '';
-        },
-
-        onKeyDown: function (ev) {
-            // TODO: numeric keypad to arrow mapping
-            if (ev.char != "") {
-                if (ev.ctrlKey || ev.altKey || ev.metaKey) {
-                    // TODO
-                } else {
-                    return Tootsville.ui.keys.speakIt();
-                }
-            } else {
-                if (ev.key == "Escape" || ev.key == "Attn" ||
-                    ev.key == "Cancel" ) {
-                    if (Tootsville.hud.closePanel()) { done(ev); }
-                } else if (ev.key == "Props") {
-                    Tootsville.hud.toggleHUDPanel('control-panel');
-                    done(ev);
-                } else if (ev.key == "ContextMenu") {
-                    Tootsville.hud.showHUDPanel('control-panel');
-                    done(ev);
-                } else if (ev.key == "PageUp") {
-                    if (ev.ctrlKey) {
-                        Tootsville.hud.toggleHUDPanel('control-panel');
-                        done(ev);
-                    } else {
-                        if (Tootsville.hud.closePanel()) { done(ev); }
-                    }
-                } else if (ev.key == "PageDown") {
-                    Tootsville.hud.showHUDPanel('contacts');
-                    done(ev);
-                } else if (ev.key == "Home") {
-                    if (Tootsville.ui.talkBoxOpenP) {
-                        return Tootsville.ui.keys.speakIt();
-                    } else {
-                        // TODO: Open talk box
-                    }
-                } else if (ev.key == "End") {
-                    if (Tootsville.ui.talkBoxOpenP) {
-                        // TODO: Close talk box
-                    } else {
-                        // TODO: "bump" animation to evidence that it's closed
-                    }
-                } else if (ev.key == "Clear") {
-                    Tootsville.ui.keys.clearTalk();
-                    done(ev);
-                } else
-                    // keys to *always* pass to input.
-                    if (ev.key == "Backspace" ||
-                        ev.key == "Copy" || ev.key == "Cut" ||
-                        ev.key == "Delete" || ev.key == "ExSel" ||
-                        ev.key == "Paste" || ev.key == "Redo" ||
-                        ev.key == "Undo" || ev.key == "AllCandidates" ||
-                        ev.key == "Alphanumeric" || ev.key == "CodeInput" ||
-                        ev.key == "Compose" || ev.key == "Convert" ||
-                        ev.key == "Dead" || ev.key == "FinalMode" ||
-                        ev.key == "GroupFirst" || ev.key == "GroupLast" ||
-                        ev.key == "GroupNext" || ev.key == "GroupPrevious" ||
-                        ev.key == "ModeChange" || ev.key == "NextCandidate" ||
-                        ev.key == "NonConvert" || ev.key == "PreviousCandidate" ||
-                        ev.key == "Process" || ev.key == "SingleCandidate" ||
-                        ev.key == "AltGraph"
-                       ) {
-                        return speakIt();
-                    } else if (ev.key == "CrSel" || ev.key == "Accept" || ev.key == "Select") {
-                        // TODO
-                    } else if (ev.key == "Insert") {
-                        // TODO
-                    } else if (ev.key == "Help" || ev.key == "F1") {
-                        Tootsville.hud.showHUDPanel('help');
-                    } else if (ev.key == "PrintScreen") {
-                        // TODO
-                    } else if (ev.key == "BrowserBack") {
-                        done(ev);
-                    } else if (ev.key == "BrowserStop") {
-                        // TODO
-                    } else if (ev.key == "New" || ev.key == "F5") {
-                        // TODO
-                    } else if (ev.key == "Execute" || ev.key == "F7") {
-                        // TODO
-                    } else if (ev.key == "MailSend" || ev.key == "F8") {
-                        Tootsville.hud.showHUDPanel('debug');
-                    }
-
-            }
-        }
-
+    Tootsville.ui.keys.speakIt = function()
+    { document.getElementById('talk-speak').focus();
+      return false; // Let <INPUT> edit handle it.
     };
 
-    document.addEventListener('keydown', Tootsville.ui.keys.onKeyDown);
-})();
+    Tootsville.ui.keys.clearTalk = function()
+    { document.getElementById('talk-speak').value = ''; };;
+
+    Tootsville.ui.keys.bindings =
+        { single: {
+            Tab: null,
+            Enter: 'speak-line',
+            ArrowDown: null,
+            ArrowLeft: 'backward-char',
+            ArrowRight: 'forward-char',
+            ArrowUp: null,
+            End: 'end-of-line',
+            Home: 'beginning-of-line',
+            PageDown: null,
+            PageUp: null,
+            Backspace: 'delete-backward',
+            Clear: 'clear',
+            Copy: 'kill-ring-save',
+            Cut: 'kill-region',
+            Delete: 'delete',
+            EraseEof: 'kill-line',
+            Insert: null,
+            Paste: 'yank',
+            Redo: null,
+            Undo: null,
+            Accept: null,
+            Again: null,
+            Attn: null,
+            Cancel: null,
+            ContextMenu: 'toggle-control-panel',
+            Escape: 'close-all-panels',
+            Execute: 'execute-extended-command',
+            Find: 'isearch',
+            Finish: null,
+            Help: 'help',
+            Pause: null,
+            Play: null,
+            Props: 'show-paperdoll',
+            Select: null,
+            ZoomIn: null,
+            ZoomOut: null,
+            PrintScreen: 'show-camera',
+            WakeUp: null,
+            F1: 'help',
+            F2: null,
+            F3: null,
+            F4: null,
+            F5: null,
+            F6: null,
+            F7: null,
+            F8: null,
+            F9: null,
+            F10: null,
+            F11: null,
+            F12: null,
+            F13: null,
+            F14: null,
+            F15: null,
+            F16: null,
+            F17: null,
+            F18: null,
+            F19: null,
+            F20: null,
+            Soft1: null,
+            Soft2: null,
+            Soft3: null,
+            Soft4: null,
+            ChannelDown: null,
+            ChannelUp: null,
+            MediaFastForward: null,
+            MediaPause: null,
+            MediaPlay: null,
+            MediaPlayPause: null,
+            MediaRecord: null,
+            MediaRewind: null,
+            MediaStop: null,
+            MediaTrackNext: null,
+            MediaTrackPrevious: null
+        },
+          withControl:
+          { 'a': 'beginning-of-line',
+            'b': 'backward-word',
+            'c': 'prefix C-c',
+            'd': 'delete',
+            'e': 'end-of-line',
+            'f': 'forward-char',
+            'g': 'keyboard-quit',
+            'h': 'help',
+            'k': 'kill-line',
+            'n': 'next-history-line',
+            'p': 'prior-history-line',
+            'r': 'isearch-backward',
+            's': 'isearch',
+            't': 'transpose-chars',
+            'w': 'kill-region',
+            'x': 'prefix-C-x',
+            'y': 'yank'
+          },
+          withMeta: {
+
+          },
+          withHyper: {},
+          withSuper: {},
+          afterControlX:
+          { single: {},
+            withControl: {},
+            withMeta: {} },
+          afterControlC:
+          { single: {},
+            withControl: {},
+            withMeta: {} }};
+
+    Tootsville.ui.keys.prefixed = false;
+    
+    Tootsville.ui.keys.onKeyDown = function(ev)
+    { var coda = 'single';
+      if (ev.altKey || ev.metaKey ) { coda = 'withMeta'; }
+      else if (ev.ctrlKey) { coda = 'withControl'; }
+      if (Tootsville.ui.keys.prefixed)
+      { boundKey(Tootsville.ui.keys.bindings["afterControl" + Tootsville.ui.keys.prefixed][coda]); }
+      else
+      { boundKey(Tootsville.ui.keys.bindings[coda]); }}
+
+    document.addEventListener('keydown', Tootsville.ui.keys.onKeyDown);})();
+

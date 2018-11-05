@@ -26,7 +26,7 @@ Tootsville.util.assertValidHostName = function (hostName) {
 }
 
 Tootsville.util.rest = function (uri, post, headers) {
-    var hostName = .uri.split('/').[0];
+    var hostName = uri.split('/')[0];
     Tootsville.util.assertValidHostName(hostName);
     return Tootsville.util.postJSONforJSON(Tootsville.host[hostName] + uri.slice(1),
                                            post, headers);

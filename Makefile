@@ -131,35 +131,34 @@ htaccess:	htaccess.base bin/make-all-htaccess
 
 worker:	dist/play/worker.js
 
-dist/play/worker.js:	play/worker.js
-	mkdir -p dist/play/
-	closure-compiler --create_source_map dist/play/worker.map \
+dist/worker.js:	worker/worker.js
+	mkdir -p dist/
+	closure-compiler --create_source_map dist/worker.map \
 		--third_party					  \
 		--language_out ECMASCRIPT5_STRICT		  \
 		--language_in ECMASCRIPT6 			  \
-		--source_map_location_mapping 'play/|/play/' 	  \
 		--js $<                                           \
 		--js_output_file $@
-	echo '//# sourceMappingURL=/play/worker.map' >> $@
+	echo '//# sourceMappingURL=/worker.map' >> $@
 
 #################### play/play.js
 
-dist/play/play.js:	${PLAYJS}
+dist/play/play.js:	dist/play/js.order
 	mkdir -p dist/play/
-	cat ${PLAYJS} > dist/play/play.max.js
-	closure-compiler --create_source_map dist/play/play.map \
+	closure-compiler --create_source_map dist/play/play.map   \
 		--third_party                                   \
-		--source_map_location_mapping 'play/|/play/'    \
+		--source_map_location_mapping 'play/|/play/'        \
 		--language_in ECMASCRIPT6                       \
 		--language_out ECMASCRIPT5_STRICT               \
-		--js ${PLAYJS}                                  \
+		$$(< dist/play/js.order )                        \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 
 play:	dist/play/play.css \
 	dist/play/play.js
 
-PLAYJS = $(shell ./bin/find-play-js)
+dist/play/js.order:	$(shell find play -name \*.js)
+	./bin/find-play-js > dist/play/js.order
 
 dist/play/play.map:	dist/play/play.js
 
@@ -221,8 +220,9 @@ dev-play:	dist/play.$(clusterorg) dist/play/httpd.pid
 	firefox --devtools --new-tab "http://localhost:5002/play/"
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
-	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); fi
-	httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf
+	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); else \
+		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
+	fi
 
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
@@ -245,6 +245,7 @@ dist/play.$(clusterorg):	play worker htaccess
 deploy-play:	predeploy-play
 	echo " » Deploy play.$(clusterorg)"
 	ssh play.$(clusterorg) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
+# TODO: status ∈ "started" "succeeded" "failed" — currently only success is reported
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
 	     -F environment=play.$(clusterorg) \
@@ -329,7 +330,7 @@ no-fixmes:	TODO.scorecard
 			fi ;\
 	fi
 
-predeploy-play:	dist/play/play.$(clusterorg)
+predeploy-play:	dist/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
 #
 #	Stream a shar/unshar to the host at one go
@@ -398,7 +399,7 @@ git-tag-deployment:
 	    echo "Previous tag v$$VERSION found, adding v$$VERSION-$$now" ;\
 	    if git rev-parse v$$VERSION-$$now &>/dev/null ;\
 	    then \
-	        now=$$(date +%Y-%m-%d.%H:%M) ;\
+	        now=$$(date +%Y-%m-%d.%H%M) ;\
 	        msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	        echo " - I meant v$$VERSION-$$now" ;\
 	        git submodule foreach git tag -a tootsville-v$$VERSION-$$now -m "for Tootsville.org: $$msg" ;\
@@ -425,7 +426,7 @@ git-tag-deployment:
 #################### deploy-docs
 
 	make -C servers doc-publish
-	scp dist/htaccess.goethe goethe.Tootsville.org/goethe.Tootsville.org/.htaccess
+	scp dist/goethe.tootsville.net.htaccess goethe.Tootsville.org/goethe.Tootsville.org/.htaccess
 	scp www/favicon.??? goethe.Tootsville.org/goethe.Tootsville.org/
 	rsync -essh www/error goethe.Tootsville.org/goethe.Tootsville.org/
 

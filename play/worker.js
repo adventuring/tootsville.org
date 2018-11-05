@@ -1,9 +1,9 @@
-if (!Tootsville) { Tootsville = {} }
+if (!window['Tootsville']) { window.Tootsville = {} }
 
 Tootsville.registerServiceWorker = function () {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('./worker.js').then(registration => {
+            navigator.serviceWorker.register('/worker.js').then(registration => {
                 Tootsville.inform('ServiceWorker registration successful with scope: ', registration.scope);
             }, err => {
                 Tootsville.error('ServiceWorker registration failed: ', err);
@@ -15,4 +15,4 @@ Tootsville.registerServiceWorker = function () {
     }
 }
 
-Tootsville.registerServiceWorker()
+Tootsville.registerServiceWorker();

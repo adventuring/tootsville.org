@@ -10,7 +10,7 @@ Tootsville.decodeTime = function ()
     var min = Math.floor((universalTime%3600)/60);
     var sec = Math.floor(universalTime%60);
     var julian = day+(month*30)+(year*270);
-    var weekday = (3*julian)%9;
+    var weekday = (3+julian)%9;
     var otherMonthDay = 1+(37+julian)%71;
     var pinkMonthDay = 1+(29+julian)%53;
     return { year: year, month: month, day: day, hour: hour, min: min, sec: sec,
