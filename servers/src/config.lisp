@@ -17,19 +17,34 @@
 (defvar *config-file* nil
   "Metadata about the configuration file last loaded")
 
-(defun load-config (&optional (config-file (default-config-file)))
-  "Load the configuration from CONFIG-FILE."
-  (load config-file)
-  ;; configure other packages
+(defgeneric apply-config progn ()
+ (:documentation "Whenever the configuration is loaded, these methods are called
+ to allow “external” packages (which may not use this configuration mechanism)
+ to apply settings."))
+
+(defmethod apply-config progn ()
+  "Set up Hunchentoot and the taskmaster from configuration"
   (setf thread-pool-taskmaster:*developmentp* (config :taskmaster :devel)
         hunchentoot:*log-lisp-warnings-p* (config :hunchentoot :log-warnings)
         hunchentoot:*log-lisp-errors-p* (config :hunchentoot :log-errors)
         hunchentoot:*log-lisp-backtraces-p* (config :hunchentoot :log-backtraces)
         hunchentoot:*show-lisp-errors-p* (config :hunchentoot :show-errors)
-        hunchentoot:*show-lisp-backtraces-p* (config :hunchentoot :show-backtraces))
+        hunchentoot:*show-lisp-backtraces-p* (config :hunchentoot :show-backtraces)))
+
+(defmethod apply-config progn ()
+  "Apply configuration to Rollbar"
   (apply #'rollbar:configure (config :rollbar))
   (rollbar:configure :environment (cluster-net-name)
-                     :code-version #.(run-program "git rev-parse HEAD"))
+                     :code-version #.(run-program "git rev-parse HEAD")))
+
+
+(defmethod apply-config progn ()
+  "Set site name from configuration") 
+
+(defun load-config (&optional (config-file (default-config-file)))
+  "Load the configuration from CONFIG-FILE."
+  (load config-file)
+  (apply-config)
   (setf *config-file* (list :path config-file
                             :truename (truename config-file)
                             :read (get-universal-time)
