@@ -13,15 +13,15 @@
  * <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-if (! 'Tootsville' in window) { Tootsville = {}; }
-if (! 'ui' in Tootsville) { Tootsville.ui = {}; }
-if (! 'gamepad' in Tootsville.ui) { Tootsville.ui.gamepad = {}; }
+if (!('Tootsville' in window)) { Tootsville={ui:{gamepad:{}}}; }
+if (!('ui' in Tootsville)) { Tootsville.ui={gamepad:{}}; }
+if (!('gamepad' in Tootsville.ui)) { Tootsville.ui.gamepad={}; }
 
 Tootsville.ui.gamepad.controllers = {};
 Tootsville.ui.gamepad.controllerState = {};
 
 Tootsville.ui.gamepad.connectHandler = function (ev)
-{ Tootsville.ui.gamepad.addGamepad(ev.gamepad); }
+{ Tootsville.ui.gamepad.addGamepad(ev.gamepad); };
 
 Tootsville.ui.gamepad.addGamepad = function (gamepad)
 { Tootsville.ui.gamepad.controllers[gamepad.index] = gamepad;
@@ -30,14 +30,14 @@ Tootsville.ui.gamepad.addGamepad = function (gamepad)
   { Tootsville.ui.gamepad.controllerState[gamepad.index]["b" + i] = null; }
   for (i=0; i<gamepad.axes.length; i++)
   { Tootsville.ui.gamepad.controllerState[gamepad.index]["a" + i] = 0; }
-  window.requestAnimationFrame(updateStatus); }
+  window.requestAnimationFrame(Tootsville.ui.gamepad.updateStatus); };
 
 Tootsville.ui.gamepad.disconnectHandler = function (e)
-{ Tootsville.ui.gamepad.removeGamepad(e.gamepad); }
+{ Tootsville.ui.gamepad.removeGamepad(e.gamepad); };
 
 Tootsville.ui.gamepad.removeGamepad = function (gamepad)
 { delete Tootsville.ui.gamepad.controllers[gamepad.index];
-  delete Tootsville.ui.gamepad.controllerState[gamepad.index]; }
+  delete Tootsville.ui.gamepad.controllerState[gamepad.index]; };
 
 Tootsville.ui.gamepad.updateStatus = function ()
 { for (j in Tootsville.ui.gamepad.controllers)
@@ -53,10 +53,8 @@ Tootsville.ui.gamepad.updateStatus = function ()
     { var val = controller.axes[i];
       if (Math.abs(Tootsville.ui.gamepad.controllerState[j]['a'+i] - val) > 0.01)
       { Tootsville.ui.gamepad.controllerState[j]['a'+i] = val;
-        Tootsville.ui.gamepad.axisEvent(j, i); }}
-  }
-  window.requestAnimationFrame(Tootsville.ui.gamepad.updateStatus);
-}
+        Tootsville.ui.gamepad.axisEvent(j, i); }}}
+  window.requestAnimationFrame(Tootsville.ui.gamepad.updateStatus); };
 
 Tootsville.ui.gamepad.scanGamepads = function ()
 { var gamepads = (navigator.getGamepads
@@ -69,7 +67,7 @@ Tootsville.ui.gamepad.scanGamepads = function ()
     { if (!(gamepads[i].index in controllers))
       { Tootsville.ui.gamepad.addGamepad(gamepads[i]); }
       else
-      { Tootsville.ui.gamepad.controllers[gamepads[i].index] = gamepads[i]; }}}}
+      { Tootsville.ui.gamepad.controllers[gamepads[i].index] = gamepads[i]; }}}};
 
 (function ()
  { if ('GamepadEvent' in window)

@@ -3,7 +3,7 @@ if (!Tootsville.login) {
 }
 
 Tootsville.login.overlay = function () {
-    Tootsville.hud.loadHTML("login")
+    Tootsville.ui.hud.loadHTML("login")
 }
 
 Tootsville.login.start = function () {

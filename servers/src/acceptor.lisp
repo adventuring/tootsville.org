@@ -130,6 +130,8 @@
   (setf (hunchentoot:content-type*) "application/json;charset=utf-8"
         (hunchentoot:header-out "X-Tootsville-Machine") (machine-instance)
         (hunchentoot:header-out "X-Romance-II-Version") (romance-ii-program-name/version)
+        (hunchentoot:header-out "Access-Control-Allow-Origin") (format nil "~a, ~a"
+                                                                       (cluster-name) (cluster-net-name))
         (hunchentoot:header-out "X-Lisp-Version") (format nil "~a/~a"
                                                           (lisp-implementation-type)
                                                           (lisp-implementation-version))

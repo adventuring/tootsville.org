@@ -129,21 +129,23 @@ htaccess:	htaccess.base bin/make-all-htaccess
 
 #################### play/worker.js
 
-worker:	dist/play/worker.js
+worker:	dist/worker.js
 
-dist/worker.js:	worker/worker.js
+dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.js
 	mkdir -p dist/
 	closure-compiler --create_source_map dist/worker.map \
-		--third_party					  \
-		--language_out ECMASCRIPT5_STRICT		  \
-		--language_in ECMASCRIPT6 			  \
-		--js $<                                           \
+		--third_party			   \
+		--language_out ECMASCRIPT5_STRICT	   \
+		--language_in ECMASCRIPT6 	             \
+		--js worker/TootsvilleWorker.js            \
+		--js worker/Worker.js                      \
+		--js worker/WorkerStart.js                 \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/worker.map' >> $@
 
 #################### play/play.js
 
-dist/play/play.js:	build/js.order
+dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	mkdir -p dist/play/
 	closure-compiler --create_source_map dist/play/play.map   \
 		--third_party                                   \
@@ -229,6 +231,7 @@ dist/play.$(clusterorg):	play worker htaccess
 #	copy in most files
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      play/* play/.well-known dist/play.$(clusterorg)/play/
+	cp dist/worker.js dist/play.$(clusterorg)/worker.js
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      dist/play/* dist/play.$(clusterorg)/play/
 # 	each host copies error pages and favicons
