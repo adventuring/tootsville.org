@@ -17,10 +17,11 @@
 (defvar *config-file* nil
   "Metadata about the configuration file last loaded")
 
-(defgeneric apply-config progn ()
- (:documentation "Whenever the configuration is loaded, these methods are called
+(defgeneric apply-config ()
+  (:documentation "Whenever the configuration is loaded, these methods are called
  to allow “external” packages (which may not use this configuration mechanism)
- to apply settings."))
+ to apply settings.")
+  (:method-combination progn))
 
 (defmethod apply-config progn ()
   "Set up Hunchentoot and the taskmaster from configuration"
