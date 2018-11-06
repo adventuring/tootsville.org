@@ -143,22 +143,19 @@ dist/worker.js:	worker/worker.js
 
 #################### play/play.js
 
-dist/play/play.js:	dist/play/js.order
+dist/play/play.js:	build/js.order
 	mkdir -p dist/play/
 	closure-compiler --create_source_map dist/play/play.map   \
 		--third_party                                   \
 		--source_map_location_mapping 'play/|/play/'        \
 		--language_in ECMASCRIPT6                       \
 		--language_out ECMASCRIPT5_STRICT               \
-		$$(< dist/play/js.order )                        \
+		$$(< build/js.order )                        \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 
 play:	dist/play/play.css \
 	dist/play/play.js
-
-dist/play/js.order:	$(shell find play -name \*.js)
-	./bin/find-play-js > dist/play/js.order
 
 dist/play/play.map:	dist/play/play.js
 
