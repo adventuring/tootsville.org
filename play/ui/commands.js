@@ -1,6 +1,7 @@
-if (! 'Tootsville' in window) { Tootsville = { ui: { keys: {}}}; }
-else if (! 'ui' in Tootsville) { Tootsville.ui = { keys: {}}; }
-else if (! 'keys' in Tootsville) { Tootsville.ui.keys = {}; }
+if ( (!('ui' in Tootsville)) ||
+     (!('keys' in Tootsville.ui)) ||
+     (!('hud' in Tootsville.ui)))
+{ throw new Error("Can't map without keys and HUD"); }
 
 Tootsville.ui.commands =
         { 'beginning-of-line': Tootsville.ui.keys.beginningOfLine,
@@ -26,11 +27,11 @@ Tootsville.ui.commands =
           'begin-whispering': Tootsville.ui.keys.beginWhispering,
           'begin-shouting': Tootsville.ui.keys.beginShouting,
           'clear-hud': Tootsville.ui.hud.clearHUD,
-          'control-panel': Tootsville.hud.showControlPanel,
-          'toggle-control-panel': Tootsville.hud.toggleControlPanel,
-          'contacts': Tootsville.hud.showContacts,
-          'mobile': Tootsville.hud.showMobile,
-          'camera': Tootsville.hud.showCamera,
+          'control-panel': Tootsville.ui.hud.showControlPanel,
+          'toggle-control-panel': Tootsville.ui.hud.toggleControlPanel,
+          'contacts': Tootsville.ui.hud.showContacts,
+          'mobile': Tootsville.ui.hud.showMobile,
+          'camera': Tootsville.ui.hud.showCamera,
           'open-talk': Tootsville.ui.openTalkBox,
           'toggle-talk': Tootsville.ui.toggleTalkBox,
           'close-talk': Tootsville.ui.closeTalkBox,
@@ -40,7 +41,7 @@ Tootsville.ui.commands =
           'capitalize-word': Tootsville.ui.keys.capitalizeWord,
           'upcase-word': Tootsville.ui.keys.upcaseWord,
           'downcase-word': Tootsville.ui.keys.downcaseWord,
-          'backward-sentence': Tootsville.ui.kays.backwardSentence,
+          'backward-sentence': Tootsville.ui.keys.backwardSentence,
           'forward-sentence': Tootsville.ui.keys.forwardSentence,
           'select-all': Tootsville.ui.keys.selectAll,
           'kill-sentence': Tootsville.ui.keys.killSentence,
@@ -55,4 +56,3 @@ Tootsville.ui.commands =
 Tootsville.ui.runCommand = function (command, event)
 { var cmd = Tootsville.ui.commands[ command ];
   if (cmd) { (cmd)(event); } }
-

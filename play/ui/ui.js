@@ -44,7 +44,7 @@ Tootsville.ui = {
           hud.appendChild(Tootsville.ui.makePrettyDialog(title,text,accept,cancel,resolve)); }); },
     forceQuit: function()
     { Tootsville.tank.destroy3DScene();
-      Tootsville.hud.destroyHUD(); },
+      Tootsville.ui.hud.destroyHUD(); },
     quitAndGoTo: function(url)
     { Tootsville.ui.forceQuit();
       document.location = url; },
