@@ -226,19 +226,42 @@ dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
 
-dist/play.$(clusterorg):	play worker htaccess
-	mkdir -p dist/play.$(clusterorg)/play
-#	copy in most files
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      play/* play/.well-known dist/play.$(clusterorg)/play/
-	cp dist/worker.js dist/play.$(clusterorg)/worker.js
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      dist/play/* dist/play.$(clusterorg)/play/
-# 	each host copies error pages and favicons
+dist/play.$(clusterorg)/play/.well-known/assetlinks.json: play/.well-known/assetlinks.json
+	mkdir -p dist/play.$(clusterorg)/
+	cp $< $@
+
+dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
+	mkdir -p dist/play.$(clusterorg)/play/
+	cp $$(< build/js.order) dist/play.$(clusterorg)/play/
+
+dist/play.$(clusterorg)/play/play.js:	play/play.js
+	mkdir -p dist/play.$(clusterorg)/play/
+	cp $< $@
+
+dist/play.$(clusterorg)/worker.js:	dist/worker.js
+	mkdir -p dist/play.$(clusterorg)/
+	cp $< $@
+
+dist/play.$(clusterorg)/.htaccess:	dist/htaccess.all/play.$(clusterorg).htaccess
+	mkdir -p dist/play.$(clusterorg)
+	cp $< $@
+
+dist/htaccess.all/play.$(clusterorg).htaccess:	htaccess
+
+dist/play.$(clusterorg)/favicon.%:	www/favicon.%
+	mkdir -p dist/play.$(clusterorg)/
+	cp $< $@
+dist/play.$(clusterorg)/error/404.var:	$(shell echo www/error/*.{var,shtml,json} )
 	rsync --exclude='*~' --exclude='*#'  -ar \
-	      www/favicon.??? www/error dist/play.$(clusterorg)/
-# 	.htaccess generated above
-	cp dist/htaccess.all/play.$(clusterorg).htaccess dist/play.$(clusterorg)/.htaccess
+	      www/error dist/play.$(clusterorg)/
+
+
+dist/play.$(clusterorg):	play worker htaccess \
+	dist/play.$(clusterorg)/play/tootsville.js \
+	dist/play.$(clusterorg)/play/.well-known/assetlinks.json \
+	dist/play.$(clusterorg)/play/play.js \
+	dist/play.$(clusterorg)/.htaccess \
+	dist/play.$(clusterorg)/error/404.var
 
 #################### deploy
 
