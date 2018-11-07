@@ -4,6 +4,27 @@
     <li> <a id="tootsvilleorg"
             href="https://www.tootsville.org/">Tootsville.org</a>
       <br> Fun, free, for everyone! </li>
+<!--#if expr="%{HTTP_HOST} =~ /test.tootsville/"-->
+    <audio controls autoplay width="100%">
+      <source
+        src="//jumbo.tootsville.org/Assets/Voices/Phrases/Testing-1-2-3-4.wav"
+        />
+    </audio>
+    <li> <a id="play-now"
+            href="https://play.test.tootsville.org/play">Playtest
+        Now</a>
+      <br> in our Test region </li>
+<!--#elif expr="%{HTTP_HOST} =~ /qa.tootsville/"-->
+    <audio controls autoplay width="100%">
+      <source
+        src="//jumbo.tootsville.org/Assets/Voices/Phrases/Testing-1-2-3-4.wav"
+        />
+    </audio>
+    <li> <a id="play-now"
+            href="https://play.qa.tootsville.org/play">Do QA
+        Now</a>
+      <br> in our QA region </li>
+<!--#endif-->
     <li> <a id="play-now"
             href="https://play.tootsville.org/play">Play
         Now</a>
@@ -24,17 +45,43 @@
   <h3>Test.Tootsville.org note</h3>
 
   <p> Test.Tootsville.org is where we test software experiments. <strong>This is not
-      the real game.</strong> If you just want to play in Tootsville, you want to
-    visit <a href="https://tootsville.org/">Tootsville.org</a> instead. If you
-    are helping to test the latest experiments, then you're in the right place.
+      the real game.</strong> If you just want to play in Tootsville, you
+      want to visit <a href="https://tootsville.org/">Tootsville.org</a>
+      instead.  If you are helping to test the latest experiments, then
+      you're in the right place.
+  </p>
+
+</section>
+
+<!--#if expr="%{HTTP_HOST} =~ /qa.tootsville/"-->
+
+<section style="border: 3pt solid red; padding: 1rem">
+
+  <h3>QA.Tootsville.org note</h3>
+
+  <p> QA.Tootsville.org is where we ensure that our software meets our
+      quality standards.  <strong>This is not the real game.</strong> If you
+      just want to play in Tootsville, you want to visit <a
+      href="https://tootsville.org/">Tootsville.org</a> instead.  If you are
+      helping to test our current QA project, then you're in the right
+      place.
   </p>
 
 </section>
 
 <!--#endif-->
 
-<br> <small> This is the host <tt><!--#echo var="HTTP_HOST"--></tt> (server <tt><!--#echo
-                                                                                    var="SERVER_NAME"--></tt>). </small>
+<br> <small> This is the host serving <tt><!--#echo var="HTTP_HOST"--></tt> (server
+     <tt><!--#echo var="SERVER_NAME"--></tt> is <tt><!--#exec cmd="hostname"--></tt>). </small>
+
+    <p class="post-footer">
+      © 2016,2017 Bruce-Robert Pocock.  © 2018 <a
+      href="https://www.ciwta.org/">CIWTA</a>.  Use is subject to our <a
+      href="//wiki.tootsville.org/wiki/Core:TOS">Terms
+        of Service</a>. We protect
+      your <a href="//wiki.tootsville.org/wiki/Core:Privacy">Privacy</a>
+      in meaningful ways.
+    </p>
 
 </body>
 </html>

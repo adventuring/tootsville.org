@@ -99,27 +99,28 @@
 
 <h2> Report the error </h2>
 
-<p>        We       appreciate        it        if       you        send
-  an <a href="mailto:support@tootsville.org?subject=500%20error&body=%0d%0a%0d%0aI%20encountered%20a%20500%20Internal%20Server%20Error%20message%20from%20https://<!--#echo var="HTTP_HOST" --><!--#echo
-                                                                                                                                                                                           var="HTTP_REQUEST_URI" -->.%0d%0aI%20was%20trying%20to%20_">email to
-    our  Support  mailbox</a> so  we  can  find  out about  this  problem.
-  Please  let   us  know  what   you  were   trying  to  do   when  this
-  error occurred.</p>
+<p> We appreciate it if you send an
+
+<a href="mailto:support@tootsville.org?subject=500%20error&body=%0d%0a%0d%0aI%20encountered%20a%20500%20Internal%20Server%20Error%20message%20from%20https://<!--#echo
+ var="HTTP_HOST" --><!--#echo    var="HTTP_REQUEST_URI"
+    -->.%0d%0aI%20was%20trying%20to%20_">email to our Support mailbox</a> so
+    we can find out about this problem.  Please let
+  us know what you were trying to do when this error occurred.</p>
 
 <h2> When will it be fixed? </h2>
 
-<p>    Technical   problems    like   this    are   usually    mentioned
-  on  <a   href="https://www.tootsbook.com/">Tootsbook</a>,  along  with
-  information about when we expect them to be corrected. </p>
+<p>    Technical   problems    like   this    are   usually    mentioned on
+  <a href="https://www.tootsbook.com/">Tootsbook</a>, along with information
+  about when we expect them to be corrected.  </p>
 
-<p>     More      technical     details      can     be      seen     on
-  the    <a    href="http://www.tootsville.org/development/">Development
-    board</a> (advanced users). </p>
+<p>     More      technical     details      can     be      seen     on the
+  <a href="http://www.tootsville.org/development/">Development
+    board</a> (advanced users).  </p>
 
 <h2> Learn more </h2>
 
-<p>    You    can   learn    more    about    this   kind    of    error
-  on <a href="https://wiki.tootsville.org/wiki/Error_500">the
+<p>    You    can   learn    more    about    this   kind    of    error on
+  <a href="https://wiki.tootsville.org/wiki/Error_500">the
     Wiki-Wiki page</a>. </p>
 
 <!--#include file="error-footer.htmlf"-->

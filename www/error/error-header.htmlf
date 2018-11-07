@@ -37,10 +37,18 @@
     </script>
 
     <!--#if expr="%{HTTP_HOST} =~ /test.tootsville/"-->
-
+    <br clear="left">
     <section style="border: 3pt solid red; padding: 0; width: auto; display:
                     inline-block">
       This is Test.Tootsville.org. <small>(see note below)</small>
+    </section>
+
+    <!--#endif-->
+    <!--#if expr="%{HTTP_HOST} =~ /qa.tootsville/"-->
+    <br clear="left">
+    <section style="border: 3pt solid red; padding: 0; width: auto; display:
+                    inline-block">
+      This is QA.Tootsville.org. <small>(see note below)</small>
     </section>
 
     <!--#endif-->
