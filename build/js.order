@@ -4,12 +4,12 @@ play/google-analytics.js
 play/scene/scene.js
 play/scene/avatar.js
 play/time.js
+play/db.js
 play/db-migration-1.js
 play/gossip/gossip.js
 play/login/login.js
 play/lib/chrome-app.js
 play/rollbar.js
-play/db.js
 play/game/stop-watchdogs.js
 play/game/wardrobe.js
 play/worker.js
