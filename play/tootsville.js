@@ -30,10 +30,10 @@ if (('test.tootsville.org' == Tootsville.cluster) ||
     ('tootsville.org' == Tootsville.cluster))
 { Tootsville.host =
     { www: 'https://www.' + Tootsville.cluster,
-      play: 'https://play' + Tootsville.cluster,
-      users: 'https://users' + Tootsville.cluster.replace('.org','.net'),
-      gossip: 'https://gossip' + Tootsville.cluster.replace('.org','.net'),
-      world: 'https://world' + Tootsville.cluster.replace('.org','.net') };
+      play: 'https://play.' + Tootsville.cluster,
+      users: 'https://users.' + Tootsville.cluster.replace('.org','.net'),
+      gossip: 'https://gossip.' + Tootsville.cluster.replace('.org','.net'),
+      world: 'https://world.' + Tootsville.cluster.replace('.org','.net') };
   document.domain = Tootsville.cluster; }
 else
 { Tootsville.cluster = 'local';
