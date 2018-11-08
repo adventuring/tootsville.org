@@ -5,10 +5,10 @@ if (! Tootsville.Avatars) {
 Tootsville.Avatars.getAvatar = function (character) {
     var xhr = new XMLHttpRequest;
     // should be https://users.{cluster}/toots/{name}
-    xhr.open('GET', Tootsville.host.users + '/users/me/toots.json');
+    xhr.open('GET', Tootsville.host.users + '/users/me/toots/' + character);
     return new Promise( (finish) => {
         xhr.onload = () => {
-            toots = JSON.parse(xhr.response).toots;
+            var toots = JSON.parse(xhr.response).toots;
             for (var i = 0; i < toots.length; ++i) {
                 if (toots[i].name == character) {
                     finish(toots[i]);
