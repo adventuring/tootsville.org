@@ -8,12 +8,18 @@
 <p> The  collection of  back-end workers that  should have  handled your
   request was <tt><!--#echo var="HTTP_HOST"--></tt>. </p>
 
-<!--#if expr="%{HTTP_HOST} =~ /test.tootsville.org/" -->
-<p> <q>Tootsville.ga</q> are testing servers. It's possible that a software
-  experiment is being tested right now that has caused a disruption. </p>
-<!--#endif-->
+<!--#if expr="%{HTTP_HOST} =~ /test.tootsville/" -->
 
-<!--#if expr="%{HTTP_HOST} =~ /tootsville.org/" -->
+ <p> Those are testing servers.  It's possible that a software experiment is
+being tested right now that has caused a disruption.  </p>
+
+<!--#elif expr="%{HTTP_HOST} =~ /qa.tootsville/" -->
+
+ <p> Those are QA (Quality Assurance testing) servers.  It's possible that a
+software experiment is being tested right now that has caused a disruption. 
+</p>
+
+<!--#else-->
 <p> <q>Tootsville.org</q> are our main servers. Unfortunately, a disruption
   like this will probably affect many or most of our players. We'll attempt to
   restore service quickly; check <a
