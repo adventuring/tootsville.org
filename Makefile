@@ -1,6 +1,13 @@
 all: htaccess play worker servers TODO.org TODO.scorecard
 
+test: all servers-test
+
 deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
+
+####################
+
+servers-test:	servers/Tootsville
+	servers/Tootsville check
 
 #################### vars
 
@@ -134,9 +141,7 @@ worker:	dist/worker.js
 dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.js
 	mkdir -p dist/
 	closure-compiler --create_source_map dist/worker.map \
-		--third_party			   \
-		--language_out ECMASCRIPT5_STRICT	   \
-		--language_in ECMASCRIPT6 	             \
+                    $(< build/closure-compiler.opts)           \
 		--js worker/TootsvilleWorker.js            \
 		--js worker/Worker.js                      \
 		--js worker/WorkerStart.js                 \
@@ -149,10 +154,11 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	mkdir -p dist/play/
 	closure-compiler --create_source_map dist/play/play.map   \
 		--third_party                                   \
+                    $(< build/closure-compiler.opts)                \
 		--source_map_location_mapping 'play/|/play/'        \
-		--language_in ECMASCRIPT6                       \
-		--language_out ECMASCRIPT5_STRICT               \
-		$$(< build/js.order )                        \
+		--language_in ECMASCRIPT6                        \
+		--language_out ECMASCRIPT5_STRICT                \
+		$$(< build/js.order )                            \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 

@@ -7,17 +7,14 @@ git:
 env:
   matrix:
     - LISP=sbcl
-    - LISP=ecl
     - LISP=ccl
 
 install:
-  - curl -L https://github.com/luismbo/cl-travis/raw/master/install.sh | sh
-  - sh -c 'make deps || true'
   - sudo apt install $LISP
-#  - bin/ensure-sane-sbcl
+  - make -C servers deps
 
 script:
-  - make -C servers test
+  - make test
   
 addons:
   srcclr: true
