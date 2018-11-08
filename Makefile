@@ -226,7 +226,7 @@ dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
 
-dist/play.$(clusterorg):	play worker htaccess
+dist/play.$(clusterorg):	dist/play/play.js play worker dist/worker.js htaccess
 	mkdir -p dist/play.$(clusterorg)/play
 #	copy in most files
 	rsync --exclude='*~' --exclude='*#' -ar \
