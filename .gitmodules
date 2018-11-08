@@ -1,6 +1,6 @@
 [submodule "oliphaunt"]
 	path = servers/src/lib/oliphaunt
-	url = git@github.com:romance-ii/elephant
+	url = git@github.com:adventuring/oliphaunt
         branch = .
 
 [submodule "jscl"]
