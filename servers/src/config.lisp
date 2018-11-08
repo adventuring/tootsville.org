@@ -36,8 +36,8 @@
   "Apply configuration to Rollbar"
   (apply #'rollbar:configure (config :rollbar))
   (rollbar:configure :environment (cluster-net-name)
-                     :code-version #.(run-program "git rev-parse HEAD")))
-
+                     :code-version #.(run-program "git rev-parse HEAD" :output :string)
+                     :framework (romance-ii-program-name/version)))
 
 (defmethod apply-config progn ()
   "Set site name from configuration") 
