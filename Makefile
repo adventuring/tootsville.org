@@ -16,8 +16,8 @@ servers-test:	servers/Tootsville
 #	make CLUSTER=.
 CLUSTER:=test
 ifeq ($(CLUSTER),.)
-clusterorg=Tootsville.org
-clusternet=Tootsville.net
+clusterorg=tootsville.org
+clusternet=tootsville.net
 else
 clusterorg=$(CLUSTER).tootsville.org
 clusternet=$(CLUSTER).tootsville.net
@@ -131,7 +131,9 @@ play-doc:
 
 #################### htaccess
 
-htaccess:	htaccess.base bin/make-all-htaccess
+htaccess:	dist/htaccess.all/play.$(clusterorg).htaccess
+
+dist/htaccess.all/play.$(clusterorg).htaccess:	htaccess.base bin/make-all-htaccess
 	bin/make-all-htaccess
 
 #################### play/worker.js
@@ -264,14 +266,15 @@ dist/play.$(clusterorg)/.htaccess:	dist/htaccess.all/play.$(clusterorg).htaccess
 	mkdir -p dist/play.$(clusterorg)
 	cp $< $@
 
-dist/htaccess.all/play.$(clusterorg).htaccess:	htaccess
-
 dist/play.$(clusterorg)/favicon.%:	www/favicon.%
 	mkdir -p dist/play.$(clusterorg)/
 	cp $< $@
-dist/play.$(clusterorg)/error/404.var:	$(shell echo www/error/*.{var,shtml,json} )
-	rsync --exclude='*~' --exclude='*#' -ar \
-	      www/error dist/play.$(clusterorg)/
+
+errordocs=$(shell echo www/error/*.{var,shtml,json,htmlf} )
+
+dist/play.$(clusterorg)/error/404.var:	$(errordocs)
+	mkdir -p dist/play.$(clusterorg)/error/
+	cp $(errordocs) dist/play.$(clusterorg)/error/
 
 dist/play.$(clusterorg)/play/index.html: play/index.html
 	cp $< $@
