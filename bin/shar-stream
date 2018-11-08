@@ -10,7 +10,7 @@ then
 fi
 
 cat - \
- <( cd "$wd" && \
+ <( cd "$wd/$copydir" && \
      shar -C xz -g 9 -M -Q -q -x \
           -n "$copydir at $(hostname) on $(date)" \
           "$copydir"/ ) \
