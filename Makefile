@@ -270,9 +270,14 @@ dist/play.$(clusterorg)/error/404.var:	$(shell echo www/error/*.{var,shtml,json}
 dist/play.$(clusterorg)/play/index.html: play/index.html
 	cp $< $@
 
+dist/play.$(clusterorg)/play/ui/panels/control-panel.html:	$(shell ls -1 play/ui/panels/*)
+	mkdir -p dist/play.$(clusterorg)/play/ui/panels
+	cp -ar play/ui/panels/* dist/play.$(clusterorg)/play/ui/panels
+
 dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/play/tootsville.js \
 	dist/play.$(clusterorg)/.well-known/assetlinks.json \
+	dist/play.$(clusterorg)/play/ui/panels/control-panel.html \
 	dist/play.$(clusterorg)/play/play.css \
 	dist/play.$(clusterorg)/play/play.css.map \
 	dist/play.$(clusterorg)/play/play.js \
@@ -285,7 +290,7 @@ dist/play.$(clusterorg):	worker htaccess \
 
 deploy-play:	predeploy-play
 	echo " » Deploy play.$(clusterorg)"
-	ssh play.$(clusterorg) "mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)"
+	ssh play.$(clusterorg) "rm -rf play.$(clusterorg).before-deploy && mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)" || exit 9
 # TODO: status ∈ "started" "succeeded" "failed" — currently only success is reported
 	curl https://api.rollbar.com/api/1/deploy/ \
 	     -F access_token=$(ACCESS_TOKEN) \
