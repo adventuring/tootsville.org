@@ -88,6 +88,7 @@ Requires a body with fields to be changed, and their new values. TODO.
   (with-player ()
     (list 200 (list :last-modified (header-time (yesterday)))
           (list :toots (player-toots)))))
+
 (defendpoint (put "/users/me/toots/:toot-name" "application/json")
   "Create a new Toot character named TOOT-NAME.
 

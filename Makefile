@@ -143,7 +143,7 @@ dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.j
 		--js_output_file $@
 	echo '//# sourceMappingURL=/worker.map' >> $@
 
-#################### play/play.js
+#################### dist/play/play.js
 
 dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	mkdir -p dist/play/
@@ -156,8 +156,7 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 
-play:	dist/play/play.css \
-	dist/play/play.js
+play:	dist/play.$(clusterorg)
 
 dist/play/play.map:	dist/play/play.js
 
@@ -226,17 +225,30 @@ dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
 
-dist/play.$(clusterorg)/play/.well-known/assetlinks.json: play/.well-known/assetlinks.json
-	mkdir -p dist/play.$(clusterorg)/
+dist/play.$(clusterorg)/.well-known/assetlinks.json: play/.well-known/assetlinks.json
+	mkdir -p dist/play.$(clusterorg)/.well-known
 	cp $< $@
 
 dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp $$(< build/js.order) dist/play.$(clusterorg)/play/
 
-dist/play.$(clusterorg)/play/play.js:	play/play.js
+dist/play.$(clusterorg)/play/play.js:	dist/play/play.js
 	mkdir -p dist/play.$(clusterorg)/play/
-	cp $< $@
+	cp dist/play/play.js dist/play.$(clusterorg)/play/
+
+dist/play.$(clusterorg)/play/play.map:	dist/play/play.map
+	mkdir -p dist/play.$(clusterorg)/play/
+	cp dist/play/play.map dist/play.$(clusterorg)/play/
+	for file in $(< build/js.order) ; do cp $file dist/play.$(clusterorg)/$file ; done
+
+dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
+	mkdir -p dist/play.$(clusterorg)/play/
+	cp dist/play/play.css dist/play.$(clusterorg)/play/
+
+dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
+	mkdir -p dist/play.$(clusterorg)/play/
+	cp dist/play/play.css.map dist/play.$(clusterorg)/play/
 
 dist/play.$(clusterorg)/worker.js:	dist/worker.js
 	mkdir -p dist/play.$(clusterorg)/
@@ -255,11 +267,17 @@ dist/play.$(clusterorg)/error/404.var:	$(shell echo www/error/*.{var,shtml,json}
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      www/error dist/play.$(clusterorg)/
 
+dist/play.$(clusterorg)/play/index.html: play/index.html
+	cp $< $@
 
-dist/play.$(clusterorg):	play worker htaccess \
+dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/play/tootsville.js \
-	dist/play.$(clusterorg)/play/.well-known/assetlinks.json \
+	dist/play.$(clusterorg)/.well-known/assetlinks.json \
+	dist/play.$(clusterorg)/play/play.css \
+	dist/play.$(clusterorg)/play/play.css.map \
 	dist/play.$(clusterorg)/play/play.js \
+	dist/play.$(clusterorg)/play/play.map \
+	dist/play.$(clusterorg)/play/index.html \
 	dist/play.$(clusterorg)/.htaccess \
 	dist/play.$(clusterorg)/error/404.var
 

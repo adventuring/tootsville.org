@@ -87,8 +87,12 @@
       (encode-endpoint-reply 
        (list (http-status-code c)
              '(:content-type "application/json; charset=utf-8")
-             (jonathan.encode:to-json (list :error (http-status-code c)
-                                            :error-message (princ-to-string c)))))
+             (if hunchentoot:*show-lisp-backtraces-p*
+                 (jonathan.encode:to-json (list :error (http-status-code c)
+                                                :error-message (princ-to-string c)
+                                                :trace (rollbar::find-appropriate-backtrace c)))
+                 (jonathan.encode:to-json (list :error (http-status-code c)
+                                                :error-message (princ-to-string c))))))
       (encode-endpoint-reply 
        (list (http-status-code c)
              '(:content-type "text/html; charset=utf-8")
@@ -130,8 +134,11 @@
   (setf (hunchentoot:content-type*) "application/json;charset=utf-8"
         (hunchentoot:header-out "X-Tootsville-Machine") (machine-instance)
         (hunchentoot:header-out "X-Romance-II-Version") (romance-ii-program-name/version)
-        (hunchentoot:header-out "Access-Control-Allow-Origin") (format nil "~a, ~a"
-                                                                       (cluster-name) (cluster-net-name))
+        (hunchentoot:header-out "Access-Control-Allow-Origin") 
+        (case (cluster)
+          (:devel "*")
+          (otherwise (format nil "~a, ~a"
+                             (cluster-name) (cluster-net-name))))
         (hunchentoot:header-out "X-Lisp-Version") (format nil "~a/~a"
                                                           (lisp-implementation-type)
                                                           (lisp-implementation-version))

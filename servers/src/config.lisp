@@ -81,14 +81,14 @@ qa.tootsville.org
 tootsville.org
 @end itemize
 "
-      (case (cluster)
+  (case (cluster)
     (:test (format nil "~@[~a.~]test.tootsville.org" prefix))
     (:qa (format nil "~@[~a.~]qa.tootsville.org" prefix))
     (:prod (format nil "~@[~a.~]tootsville.org" prefix))
     (:devel (machine-instance))))
 
 (defun cluster-net-name (&optional prefix)
-      (case (cluster)
+  (case (cluster)
     (:test (format nil "~@[~a.~]test.tootsville.net" prefix))
     (:qa (format nil "~@[~a.~]qa.tootsville.net" prefix))
     (:prod (format nil "~@[~a.~]tootsville.net" prefix))
@@ -110,14 +110,15 @@ Returns one of:
 :prod
 @end itemize"
   (or *cluster*
-      (setf *cluster* (let ((hostname (string-downcase (machine-instance))))
-                        (cond ((or (search "dev" hostname)
+      (setf *cluster* 
+            (let ((hostname (string-downcase (machine-instance))))
+              (cond ((or (search "dev" hostname)
                          (search "builder" hostname)
                          ;; personal workstations, etc:
-                                   (not (search "tootsville" hostname))) :devel)
-                              ((search "test" hostname) :test)
-                              ((search "qa" hostname) :qa)
-                              ((search ".tootsville.net" hostname) :prod)
-                              (t (warn "Could not identify the cluster")
-                                 ()))))))
+                         (not (search "tootsville" hostname))) :devel)
+                    ((search "test" hostname) :test)
+                    ((search "qa" hostname) :qa)
+                    ((search ".tootsville.net" hostname) :prod)
+                    (t (warn "could not identify the cluster")
+                       :devel))))))
 

@@ -201,12 +201,10 @@ appearing on a parent's account."
 (defmacro with-player (() &body body)
   "Ensure that a recognized player is connected
 using `FIND-PLAYER-OR-DIE' and bind *USER*"
-  `(multiple-value-bind  (foundp *user*)
-       (find-player-or-die)
+  `(multiple-value-bind  (foundp *user*) (find-player-or-die)
      (cond (foundp
             ,@body)
-           (t (return-from endpoint
-                (list 403 nil *403.json-bytes*))))))
+           (t (throw 'endpoint (list 403 nil *403.json-bytes*))))))
 
 
 
