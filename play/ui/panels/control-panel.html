@@ -23,26 +23,26 @@
       
       <div>
         <input type="checkbox" id="fullscreen-toggle"
-               onChange="Tootsville.hud.closePanel();setFullscreen(this.checked);">
+               onChange="Tootsville.ui.hud.closePanel();setFullscreen(this.checked);">
         <label id="control-panel-fullscreen" for="fullscreen-toggle">
           Fullscreen
         </label>
       </div>
       <div id="control-panel-gamepad" 
-           onclick="showHUDPanel('gamepad')">
+           onclick="Tootsville.ui.hud.showHUDPanel('gamepad')">
         <i class="fas fa-gamepad"></i>
         Gamepad
       </div>
 
       <!-- Help -->
       
-      <div id="control-panel-help" onclick="showHUDPanel('help');">
+      <div id="control-panel-help" onclick="Tootsville.ui.hud.showHUDPanel('help');">
         <i class="fas fa-life-ring fa-fw"></i>
         Help
       </div>
 
       <div id="control-panel-get-firefox"
-           onclick="Tootsville.hud.closePanel();window.open('https://getfirefox.com/','get-firefox')">
+           onclick="Tootsville.ui.hud.closePanel();window.open('https://getfirefox.com/','get-firefox')">
         <a href="https://getfirefox.com/" target="get-firefox">
           <i class="fab fa-firefox fa-fw"></i> Get Firefox
           <i class="fas fa-window-restore footnote-marker"></i>
@@ -53,12 +53,11 @@
       
       <hr>
 
-      <div id="control-panel-account" onclick="Tootsville.hud.closePanel();Tootsville.login.start()">
+      <div id="control-panel-account" onclick="Tootsville.ui.hud.closePanel();Tootsville.login.start()">
         <i class="fas fa-user fa-fw"></i>
         Change Players or Toots
-        <i class="fas fa-window-restore footnote-marker"></i>
       </div>
-      <div id="control-panel-sign-out" onclick="Tootsville.hud.closePanel();signOut()">
+      <div id="control-panel-sign-out" onclick="Tootsville.ui.hud.closePanel();signOut()">
         <i class="fas fa-sign-out-alt fa-fw"></i>
         Quit
       </div>

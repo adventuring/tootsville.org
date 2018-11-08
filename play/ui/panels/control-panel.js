@@ -6,10 +6,9 @@ Tootsville.ui.setFullscreenFromNavigator();
 
 if (navigator.userAgent.indexOf("Firefox/") > 0) {
     var ffox = document.getElementById('control-panel-get-firefox');
-    ffox.innerHTML =
-        '<i class="fab fa-firefox fa-fw"></i> Got Firefox ✓ ' +
-        '<i class="fas fa-window-restore footnote-marker"></i>';
-    ffox.style.opacity = .7;
+    ffox.outerHTML = '';
 }
 
 Tootsville.audio.updateVolumeUI();
+
+
