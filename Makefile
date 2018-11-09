@@ -168,9 +168,13 @@ play:	dist/play.$(clusterorg)
 
 dist/play/play.map:	dist/play/play.js
 
+#################### dist/play/play.css
+
 dist/play/play.css:	$(shell find play -name \*.less -and -not -name .\*)
 	mkdir -p dist/play/
 	lessc --strict-math=on --source-map play/play.less dist/play/play.css
+
+dist/play/play.css.map:	dist/play/play.css
 
 #################### TODO
 
