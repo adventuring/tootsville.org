@@ -20,7 +20,7 @@
 all:	bin doc
 
 clean:
-	-rm -f Tootsville Tootsville.new \
+	-rm -rf Tootsville Tootsville.new \
 		doc/* bin/buildapp
 	-rm -rf $$HOME/.cache/common-lisp/*/$$(pwd)
 	find . -name \*.fasl -exec rm {} \;
