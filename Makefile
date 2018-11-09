@@ -1,8 +1,15 @@
-all: htaccess play worker servers TODO.org TODO.scorecard
+all: .deps~ htaccess play worker servers TODO.org TODO.scorecard
 
 test: all servers-test
 
 deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
+
+####################
+
+.deps~:	build/build-deps bin/do-install-deps
+	bin/do-install-deps
+	>> ~/.sbclrc
+	>.deps~
 
 ####################
 

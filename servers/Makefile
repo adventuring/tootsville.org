@@ -29,8 +29,6 @@ clean:
 	find . -name \*.orig -exec rm {} \;
 	git gc --auto || true
 
-deps:	.deps-installed~
-
 modules:	../.gitmodules $(shell  grep '\[submodule "' ../.gitmodules | \
 			cut -d '"' -f 2 | sed -e 's,^,../.git/modules/,g' -e 's,$$,/config,g')
 	if [ -d ../.git ]; then cd .. ; git submodule update --init; fi
@@ -40,11 +38,6 @@ modules:	../.gitmodules $(shell  grep '\[submodule "' ../.gitmodules | \
 
 TAGS:	$(shell find . -name \*.lisp)
 	ctags --languages=lisp -e -R -f TAGS
-
-.deps-installed~:	build-deps bin/do-install-deps
-	bin/do-install-deps
-	>> ~/.sbclrc
-	>.deps-installed~
 
 deploy:	bin test server-push doc-publish
 
@@ -62,7 +55,7 @@ bin:	Tootsville
 ../.gitmodules:
 	>> ../.gitmodules
 
-bin/buildapp:	deps
+bin/buildapp:
 	if which buildapp; \
 	then \
 		ln -s $$(which buildapp) -f bin/buildapp; \
