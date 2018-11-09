@@ -1,3 +1,5 @@
-self.addEventListener('install', function (event) {
-    return event.waitUntil(new Promise(() => { return true; }));
-});
+this.addEventListener('install', event => {
+    event.waitUntil(new Promise( () => {
+        /* do something interesting */
+        return true; }));});
+
