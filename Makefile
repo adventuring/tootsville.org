@@ -220,9 +220,12 @@ dist/www/2019.css:	$(shell echo www/*.less)
 
 #################### dev-test
 
-dev-test:	dev-play
+devel-test:	devel-serve devel-play
 
-dev-play:	dist/play.$(clusterorg) dist/play/httpd.pid
+devel-serve:	servers/Tootsville
+	servers/Tootsville server
+
+devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
 	firefox --devtools --new-tab "http://localhost:5002/play/"
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
