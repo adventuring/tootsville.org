@@ -13,7 +13,7 @@ cloud, inverted. (A host that costs 35¢ / hour would instead be 1/0.35.
 The assignment algorithm goes as follows:
 
 @itemize
-@item 
+@item
 
 For the given server-type, there should be at least 2 clouds represented
 if  there are  at least  2  hosts running.  This means,  if all  running

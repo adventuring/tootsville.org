@@ -93,7 +93,7 @@
              :accessor openid-id-token)))
 
 (defclass toot ()
-  ((name :accessor toot-name 
+  ((name :accessor toot-name
          :initarg :name
          :type toot-name)
    (note :accessor toot-note
@@ -234,5 +234,3 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
    (etypecase time
      (number (local-time:universal-to-timestamp time))
      (local-time:timestamp time))))
-
-

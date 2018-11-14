@@ -154,7 +154,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 <h2> Error ~:*~D </h2>
 <h1> ~A </h1>
 <ul>
-<li> 
+<li>
   <a href=\"http://wiki.tootsville.org/wiki/Error_~0@*~D\">More info…</a>~*
 </li>
 <li>
@@ -167,8 +167,8 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 </dl>~]
 </body>
 </html>"
-          (http-status-code condition) 
-          (if hunchentoot:*show-lisp-errors-p* 
+          (http-status-code condition)
+          (if hunchentoot:*show-lisp-errors-p*
               condition
               (gethash (http-status-code condition) *http-status-message*))
           (cluster-name)
@@ -176,7 +176,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
               (trivial-backtrace:backtrace-string)
               "More information is in the server logs")
           (if hunchentoot:*show-lisp-backtraces-p*
-              (mapcar 
+              (mapcar
                (lambda (restart)
                  (list restart (princ-to-string restart))); TODO report?
                (compute-restarts condition))

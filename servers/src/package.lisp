@@ -10,7 +10,7 @@
         :oliphaunt)
   (:shadowing-import-from :cl-fad
                           #:copy-file #:copy-stream ; conflicts with Alexandria.
-                          #:directory-pathname-p) 
+                          #:directory-pathname-p)
   (:import-from :trivial-backtrace #:print-backtrace)
   (:import-from :sb-introspect #:function-lambda-expression)
   (:import-from :uiop #:run-program)
@@ -24,7 +24,7 @@
    #:journal
    #:middleware
    #:power-on-self-test
-   #:print-help 
+   #:print-help
    #:rebuild-myself
    #:render-json
    #:start
@@ -41,7 +41,7 @@
 
 (assert (macro-function 'Tootsville::define-memo-function) ()
         "Did not import symbols correctly; `DEFINE-MEMO-FUNCTION' should ~
-        be a macro, but it is not.
+ be a macro, but it is not.
 
 Got: ~a"
         (with-output-to-string (*standard-output*)

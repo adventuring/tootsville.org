@@ -48,7 +48,7 @@
 (defun run-async (function)
   (unless *async-tasks*
     (init-async))
-  (cl-threadpool:add-job 
+  (cl-threadpool:add-job
    *async-tasks*
    (lambda ()
      (let ((idle-name (thread-name (current-thread))))
@@ -84,7 +84,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
         (start :host host :port port*))))
   (setf hunchentoot:*log-lisp-errors-p* t
         hunchentoot:*log-lisp-backtraces-p* t
-        hunchentoot:*log-lisp-warnings-p* t) 
+        hunchentoot:*log-lisp-warnings-p* t)
   (restart-case
       (push (let ((acceptor
                    (hunchentoot:start
@@ -166,7 +166,7 @@ process's PID."
   (v:info :swank "~&Starting Swank listener on port ~d" port)
   (swank:create-server :port port :dont-close t)
   (ensure-directories-exist "~/run/")
-  (with-output-to-file (s (format nil "~~/run/~D.swank.port" 
+  (with-output-to-file (s (format nil "~~/run/~D.swank.port"
                                   (swank/backend:getpid))))
   port)
 
@@ -190,7 +190,7 @@ to keep the process running."
   (start-swank)
   (loop
      (trace-output-heartbeat)
-     (sleep *trace-output-heartbeat-time*))) 
+     (sleep *trace-output-heartbeat-time*)))
 
 
 ;;; Recompilation
@@ -222,7 +222,7 @@ Hopefully you've already tested the changes?"
     (join-thread thread)))
 
 (defun connect-mixer ()
-  (setf clouchdb:*couchdb* 
+  (setf clouchdb:*couchdb*
         (clouchdb:make-db :host (or (config :mixer :host))
                           :port (or (config :mixer :port) "5984")
                           :user (config :mixer :admin :name)
@@ -242,5 +242,5 @@ Hopefully you've already tested the changes?"
     (cl-memcached:mc-set key n)
     (let ((m (cl-memcached:mc-get key)))
       (assert (= n m) ()
-              "MemCacheD did not return the random number (~x) for key ~a" 
+              "MemCacheD did not return the random number (~x) for key ~a"
               n key))))

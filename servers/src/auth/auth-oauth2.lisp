@@ -42,7 +42,7 @@
                (uuid:format-as-urn nil uuid)))
 
 (defun get-user-by-uuid (uuid)
-  (when-let (found (clouchdb:get-document 
+  (when-let (found (clouchdb:get-document
                     (key-for-uuid "User" uuid)))
     (make-instance 'user
                    :display-name (assoc-value found :|displayName|)

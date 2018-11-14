@@ -22,27 +22,27 @@
     (when (find #\/ s)
       (setf s (subseq s 0 (position #\/ s))))
     (setf s (string-trim +whitespace+ s))
-    (when (not (blank-string-p s)) 
+    (when (not (blank-string-p s))
       s)))
 
 (defun parse-line/reservations (line)
   (destructuring-bind (created-at$ Toot-name
                                    base-color$ pads-color$ pattern-color$
                                    pattern-name$
-                                   age-range 
+                                   age-range
                                    gmail1
                                    child-name gmail2)
       (mapcar (curry #'string-trim +whitespace+) (split-sequence #\Tab line))
     (let* ((created-at (translate-american-ish-date created-at$))
            (base-color (or (remove-parentheticals base-color$)
-                           (random-elt +Toot-base-color-names+))) 
+                           (random-elt +Toot-base-color-names+)))
            (pads-color (or (remove-parentheticals pads-color$)
-                           (random-elt +Toot-pads-color-names+))) 
+                           (random-elt +Toot-pads-color-names+)))
            (pattern-color (or (remove-parentheticals pattern-color$)
                               (random-elt (allowed-pattern-colors-on-base base-color))))
            (pattern-name (or (remove-parentheticals pattern-name$)
                              (random-elt +Toot-basic-pattern-names+)))
-           (own-toot-p (or (blank-string-p age-range) 
+           (own-toot-p (or (blank-string-p age-range)
                            (search "13" age-range)))
            (gmail (if own-toot-p gmail2 gmail1)))
       (check-Toot-name Toot-name)
@@ -76,7 +76,7 @@
            (restart-case
                (progn
                  (push (parse-line/reservations line) roster)
-                 (format t "~&~:(~25a~)  for ~:[child of ~;~]~a" 
+                 (format t "~&~:(~25a~)  for ~:[child of ~;~]~a"
                          (getf (parse-line/reservations line) :toot-name)
                          (getf (parse-line/reservations line) :own-toot-p)
                          (getf (parse-line/reservations line) :gmail)))

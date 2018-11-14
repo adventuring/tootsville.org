@@ -130,40 +130,40 @@ reasons, eg, COPPA."
            (if had-birthday-p 1 0))))))
 
 (defun player-age (player)
-(check-type player player)
-(let ((dob (player-date-of-birth player)))
-(if dob
-(let ((legal-age (legal-age dob))
-(recorded-age (player-age% player)))
-(unless (and recorded-age (= legal-age recorded-age))
-(setf (player-age% player) legal-age))
-legal-age)
-(or (player-age% player)
-(warn "Player's age is unknown")))))
+  (check-type player player)
+  (let ((dob (player-date-of-birth player)))
+    (if dob
+        (let ((legal-age (legal-age dob))
+              (recorded-age (player-age% player)))
+          (unless (and recorded-age (= legal-age recorded-age))
+            (setf (player-age% player) legal-age))
+          legal-age)
+        (or (player-age% player)
+            (warn "Player's age is unknown")))))
 
 (defun nation-child-age (nation)
-(check-type nation two-letter-string "ISO country code (2 letters)")
-(unless (equalp "us" nation)
-(warn "Nation's age of childhood not known: ~a" nation))
-13)
+  (check-type nation two-letter-string "ISO country code (2 letters)")
+  (unless (equalp "us" nation)
+    (warn "Nation's age of childhood not known: ~a" nation))
+  13)
 
 (defun nation-adult-age (nation)
-(check-type nation two-letter-string "ISO country code (2 letters)")
-(unless (equalp "us" nation)
-(warn "Nation's age of childhood not known: ~a" nation))
-18)
+  (check-type nation two-letter-string "ISO country code (2 letters)")
+  (unless (equalp "us" nation)
+    (warn "Nation's age of childhood not known: ~a" nation))
+  18)
 
 (defun player-child-p (player)
-"Is PLAYER legally a (protected) child?
+  "Is PLAYER legally a (protected) child?
 
 For US, this means under age 13.
 
 When age is not known, returns (VALUES NIL :NO-AGE)"
-(if (player-age player)
-(< (player-age player) (nation-child-age (player-nation player)))
-(values nil :no-age)))
+  (if (player-age player)
+      (< (player-age player) (nation-child-age (player-nation player)))
+      (values nil :no-age)))
 (defun player-adult-p (player)
-"Is PLAYER legally an adult?
+  "Is PLAYER legally an adult?
 
 For US, this means age 18+.
 

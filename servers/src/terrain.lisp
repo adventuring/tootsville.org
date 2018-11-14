@@ -13,7 +13,7 @@
   :test 'equalp)
 
 (defvar *global-heightmap%)
-(defvar *global-heightmap-x%) 
+(defvar *global-heightmap-x%)
 (defvar *global-heightmap-y%)
 (defvar *features%)
 
@@ -63,7 +63,7 @@
       (dotimes (iy 3)
         (setf (aref elevation ix iy)
               (aref (pngload:data *elevation-map*) (+ x-offset ix) (+ y-offset iy) 2)
-              
+
               (aref habitat ix iy)
               (habitat<-pixel
                (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 0)
@@ -76,11 +76,11 @@
 ;;; Adding features
 
 (defun terrain/connect-streams ()
-  "Connect up to any stream in an adjacent tile. 
+  "Connect up to any stream in an adjacent tile.
 
 If no adjacent tile has yet been spawned, small chance of creating a new
-  stream.  If streams  enter  from more  than one  side,  connect up  as
-  a branching stream. "
+ stream.  If streams  enter  from more  than one  side,  connect up  as
+ a branching stream. "
   (error 'unimplemented))
 
 (defun terrain/add-cactus ()
@@ -102,14 +102,14 @@ If no adjacent tile has yet been spawned, small chance of creating a new
   "Does a stream bisect the currently-active space?
 
 Should return true  if a body of water exists  which enters the space
-  from any  side and  bisects the  space into  two disjoint  land areas.
-  Terminus of  a stream  or completely underwater  are not  “streams” by
-  this definition."
+ from any  side and  bisects the  space into  two disjoint  land areas.
+ Terminus of  a stream  or completely underwater  are not  “streams” by
+ this definition."
   (error 'unimplemented))
 (defun point-underwater-p (x y)
   (error 'unimplemented))
 (defun find-random-point-if (function)
-  (loop 
+  (loop
      for x = (/ (random 20000) 100)
      for y = (/ (random 20000) 100)
      until (funcall function x y)
@@ -222,13 +222,13 @@ Should return true  if a body of water exists  which enters the space
 
 (defun (setf global-heightmap-corner) (elevation x y)
   (setf (aref *global-heightmap%
-              (- x *global-heightmap-x%) 
+              (- x *global-heightmap-x%)
               (- y *global-heightmap-y%))
         elevation))
 
 (defun global-heightmap-corner (x y)
   (aref *global-heightmap%
-        (- x *global-heightmap-x%) 
+        (- x *global-heightmap-x%)
         (- y *global-heightmap-y%)))
 
 (defmethod generate-terrain-contour (9-elevations habitat x y (scale (eql 0)))
@@ -269,12 +269,12 @@ Should return true  if a body of water exists  which enters the space
                                    (+ y (* yi scale) yj)
                                    shift))))))
     (smoothe-contour-200×200 x y)
-    
+
     ;; (format  *trace-output*   "~&  After  contour   randomization  on
     ;; ~D×~:*~D     square~p:"     scale      (floor     200     scale))
     ;; (dump-global-heightmap x y)
     )
-  
+
   (generate-terrain-contour 9-elevations habitat x y (1- step)))
 
 (defun dump-global-heightmap (x y)
@@ -299,7 +299,7 @@ Should return true  if a body of water exists  which enters the space
   (assert (<= -80000 x 80000))
   (assert (<= -60000 y 60000))
   (let ((*global-heightmap% (make-array (list 202 202) :element-type '(unsigned-byte 8)))
-        (*global-heightmap-x% (1- x)) 
+        (*global-heightmap-x% (1- x))
         (*global-heightmap-y% (1- y))
         (*features%))
     (destructuring-bind (elevation habitat) (get-9-terrain-tiles x y)
@@ -313,7 +313,7 @@ in habitat ~:(~A~) with elevations ~S"
       ))
   ;; apply sea level
   ;; save to map database
-  
+
   )
 
 

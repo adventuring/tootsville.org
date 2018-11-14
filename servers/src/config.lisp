@@ -40,7 +40,7 @@
                      :framework (romance-ii-program-name/version)))
 
 (defmethod apply-config progn ()
-  "Set site name from configuration") 
+  "Set site name from configuration")
 
 (defun load-config (&optional (config-file (default-config-file)))
   "Load the configuration from CONFIG-FILE."
@@ -110,7 +110,7 @@ Returns one of:
 :prod
 @end itemize"
   (or *cluster*
-      (setf *cluster* 
+      (setf *cluster*
             (let ((hostname (string-downcase (machine-instance))))
               (cond ((or (search "dev" hostname)
                          (search "builder" hostname)
@@ -121,4 +121,3 @@ Returns one of:
                     ((search ".tootsville.net" hostname) :prod)
                     (t (warn "could not identify the cluster")
                        :devel))))))
-

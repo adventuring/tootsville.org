@@ -21,7 +21,7 @@
    (template-arity :type (integer 0 100)
                    :reader endpoint-template-arity)
    (content-type :type symbol
-                 :initarg :content-type 
+                 :initarg :content-type
                  :reader endpoint-content-type)))
 
 (defvar *endpoints* (make-hash-table))
@@ -54,7 +54,7 @@
 
 (defgeneric endpoint-hash (endpoint-identifier)
   (:method ((endpoint endpoint))
-    (sxhash (format nil "~a ~a → ~a" 
+    (sxhash (format nil "~a ~a → ~a"
                     (endpoint-method endpoint)
                     (endpoint-template-string endpoint)
                     (endpoint-content-type endpoint))))
@@ -66,7 +66,7 @@
                       (string-upcase content-type))))))
 
 (defun endpoints-equal (a b)
-  (and (eql (endpoint-method a) 
+  (and (eql (endpoint-method a)
             (endpoint-method b))
        (= (endpoint-template-arity a)
           (endpoint-template-arity b))
