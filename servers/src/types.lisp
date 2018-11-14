@@ -106,14 +106,17 @@ leftmost digit must be after the rightmost non-digit character.
 ;;; HTTP Request Methods (aka verbs)
 
 (deftype http-request-method ()
+  "All HTTP request methods (aka verbs) defined in an IETF RFC."
   '(member :get :head :post :put :delete :trace :options :connect :patch))
 
 (deftype http-safe-request-method ()
+  "HTTP request methods that make no changes, so can be replayed ad infinitum."
   '(member :get :head :options :trace))
 
 (deftype http-idempotent-request-method ()
-  '(member :get :head :options :trace  :put :delete))
-
+  "HTTP request methods which, if replayed, do no harm, but may yield an
+harmless  error   message  on  the  second   and  subsequent  attempts."
+  '(member :get :head :options :trace :put :delete))
 
 ;;; Conditions  that are  returned to  be  handled by  the client;  i.e.
 ;;; these are conditions that translate directly into HTTP errors.
