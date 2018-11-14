@@ -459,6 +459,11 @@ remotes:
 		git remote add goethe goethe.Tootsville.org:devel/git/Tootsville.org ;\
 	fi
 
+bump-next-version:
+	git status | grep modified: | grep servers/tootsville.asd && exit 9 || :
+	perl -pne 's/:version "(\d+\.\d+)\.(\d+)"/ ":version \"$$1." . (1+ $$2) . "\"" /e' -i servers/tootsville.asd
+	git add servers/tootsville.asd
+	git commit -m "bump version number for next build"
 
 git-tag-deployment:
 	VERSION=$$(servers/Tootsville version-info version) ;\
@@ -493,10 +498,13 @@ git-tag-deployment:
 	git push --tags goethe ||:
 	git submodule foreach --recursive 'git push --tags goethe ||:'
 
+	$(MAKE) bump-next-version
+
 #################### deploy-docs
 
+deploy-docs:
 	make -C servers doc-publish
-	scp dist/goethe.tootsville.net.htaccess goethe.Tootsville.org/goethe.Tootsville.org/.htaccess
-	scp www/favicon.??? goethe.Tootsville.org/goethe.Tootsville.org/
-	rsync -essh www/error goethe.Tootsville.org/goethe.Tootsville.org/
+	scp dist/htaccess.all/goethe.tootsville.net.htaccess goethe.Tootsville.org:goethe.tootsville.org/.htaccess
+	scp www/favicon.??? goethe.Tootsville.org:goethe.tootsville.org/
+	rsync -essh www/error goethe.Tootsville.org:goethe.tootsville.org/
 
