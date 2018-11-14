@@ -296,21 +296,21 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                           (format nil
                                   "Undocumented endpoint for ~a ~a → ~s"
                                   method uri content-type))))
-      (progn
-        (defendpoint/make-endpoint-function 
-            :fname fname
-          :content-type content-type
-          :λ-list λ-list
-          :docstring docstring
-          :body body)
-        (when-let (extension (extension-for-content-type (string content-type)))
-          `(add-or-replace-endpoint ',fname ,method 
-                                    ',(apply-extension-to-template template extension)
-                                    ,content-type))
-        `(add-or-replace-endpoint ',fname ,method ',template ,content-type)
-        ;; (format *trace-output* "~2& ★ New endpoint: ~a ~a → ~a~% All endpoints: ~{~% •~s~}"
-        ;;         method uri content-type (enumerate-endpoints))
-        ))))
+      `(progn
+         ,(defendpoint/make-endpoint-function 
+              :fname fname
+            :content-type content-type
+            :λ-list λ-list
+            :docstring docstring
+            :body body)
+         ,(when-let (extension (extension-for-content-type (string content-type)))
+            `(add-or-replace-endpoint ',fname ,method 
+                                      ',(apply-extension-to-template template extension)
+                                      ,content-type))
+         (add-or-replace-endpoint ',fname ,method ',template ,content-type)
+         ;; (format *trace-output* "~2& ★ New endpoint: ~a ~a → ~a~% All endpoints: ~{~% •~s~}"
+         ;;         method uri content-type (enumerate-endpoints))
+         ))))
 
 
 
