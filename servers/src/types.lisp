@@ -42,7 +42,16 @@ itself returns true."
 (defun check-Toot-name (name)
   "Check if NAME is allowed as a Toot name; offering restarts to correct it, if not.
 
-This is generally intended for accepting new Toot names, versus validating REST calls, for example.")
+This  is  generally  intended  for  accepting  new  Toot  names,  versus
+validating REST calls, for example."
+  (restart-bind
+      (#+ (or) (auto-rename () ; TODO
+                 (:report (lambda (s) (format s "Find a similar name which is not in use")))
+                 (error 'unimplemented))
+          #+ (or) (provide-new-name (name) ; TODO
+                    (:report (lambda (s) (format s "Supply a new name")))
+                    (error 'unimplemented)))
+    (check-type name toot-name)))
 
 (define-memo-function potential-Toot-name-character-p (character)
   "Is CHARACTER allowed in a Toot name at all?
