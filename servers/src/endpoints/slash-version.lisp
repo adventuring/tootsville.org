@@ -17,7 +17,7 @@ the following. Values are case-insensitive.
 
 @itemize
 
-@item 
+@item
 @samp{Product}
 @item
  @samp{Version}

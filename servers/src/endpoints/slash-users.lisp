@@ -143,7 +143,7 @@ prevent immediate impersonation).
 
 Requires player authentication.
 
-@subsection{Status:  202 Toot  deletion in  progress} 
+@subsection{Status:  202 Toot  deletion in  progress}
 
 The  Toot  will  be  deleted,  but   it  may  not  have  completed  yet.
 A subsequent, identical request can confirm.
@@ -161,7 +161,7 @@ The user credentials presented were not recognized.
 
 @subsection{Status: 404 Not Found}
 
-The Toot named does not exist. 
+The Toot named does not exist.
 
 @subsection{Status: 405 Not Allowed}
 
@@ -172,6 +172,3 @@ main owner of. This is usually a child account.
   (with-player ()
     (assert-my-character toot-name)
     (error 'unimplemented)))
-
-
-

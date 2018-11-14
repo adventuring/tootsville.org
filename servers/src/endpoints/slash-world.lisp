@@ -10,7 +10,7 @@ The terrain and objects in that area, characters, &c. will be returned.
 
 Your character must be able to observe that general area. No peeking!
 "
-  (if-let (doc (clouchdb:get-document 
+  (if-let (doc (clouchdb:get-document
                 (format nil "T:~36R,~36R,~36R" x-coord y-coord z-coord) ))
     doc
     (spawn-terrain :tootanga x-coord y-coord z-coord)))
@@ -27,7 +27,7 @@ Your character must be able to observe that general area. No peeking!
   (choerogryllum:date-string (get-universal-time) :form :abbrev))
 
 (defendpoint (GET "/world/clock/time" "application/json")
-  (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian) 
+  (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian)
       (choerogryllum:decode*-universal-time (get-universal-time))
     (list :sec sec
           :min min
@@ -43,13 +43,13 @@ Your character must be able to observe that general area. No peeking!
           :holiday (choerogryllum:holiday-on year month day))))
 
 (defendpoint (GET "/world/clock/time" "text/plain")
-  (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian) 
+  (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian)
       (choerogryllum:decode*-universal-time (get-universal-time))
     (declare (ignore day month year weekday other-month-day pink-month-day julian))
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour min sec)))
 
 (defun detailed-time (&optional (now (get-universal-time)))
-  (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian) 
+  (multiple-value-bind (sec min hour day month year weekday other-month-day pink-month-day julian)
       (choerogryllum:decode*-universal-time now)
     (format nil "~
 Currently the universal time code is ~:d.
@@ -58,7 +58,7 @@ On the planet Chœorgryllum, it is ~2,'0d:~2,'0d:~2,'0d in the ~
 ~[wee hours of the morning~;morning~;afternoon~;evening~] on
 ~a.
 
-That's the ~:r day of the nine-day week, and the ~:r month 
+That's the ~:r day of the nine-day week, and the ~:r month
 of the twelve months of the year.
 
 ~[It is new moon for The Moon.~:;~

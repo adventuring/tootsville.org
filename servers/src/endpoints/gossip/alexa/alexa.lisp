@@ -421,8 +421,8 @@ ServerAlias to your server's configuration file.
 
 (defmacro define-alexa-endpoint (name (&optional arg) &body body)
   `(defendpoint (post ,(format nil "/gossip/alexa/~(~a~)/region/:region" name) "application/json")
-       ,(when (stringp (first body))
-          (first body))
+     ,(when (stringp (first body))
+        (first body))
      (let ,(when arg
              `((,arg (st-json:read-json-from-string
                       (hunchentoot:raw-post-data :force-text t)))))

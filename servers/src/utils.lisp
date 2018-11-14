@@ -13,4 +13,3 @@
     sb-alien:void)
 #-sbcl
 (defun enable-sbcl-ldb ())
-

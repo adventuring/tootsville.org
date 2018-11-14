@@ -53,9 +53,9 @@
                                                  :name :wild :type :wild)
                                   src-dir)))
   (pushnew (truename (merge-pathnames (make-pathname :directory '(:relative :up))
-                                      src-dir)) 
-           asdf:*central-registry*) 
-  (dolist (dir (directory lib-dirs)) 
+                                      src-dir))
+           asdf:*central-registry*)
+  (dolist (dir (directory lib-dirs))
     (pushnew (truename dir) asdf:*central-registry*)))
 
 (format *trace-output*
