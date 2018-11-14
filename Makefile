@@ -361,7 +361,7 @@ predeploy:	no-fixmes connectivity predeploy-play predeploy-www predeploy-servers
 connectivity:
 	echo " » Test connectivity"
 	ssh play.$(clusterorg) ls -1d play.$(clusterorg)/ | grep play.$(clusterorg)
-	ssh $(clusterorg) ls -1d $(clusterorg)/ | grep $(clusterorg)
+	ssh www.$(clusterorg) ls -1d www.$(clusterorg)/ | grep $(clusterorg)
 	ssh game1.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
 	ssh game2.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
 
@@ -404,8 +404,6 @@ no-fixmes:	TODO.scorecard
 
 predeploy-play:	dist/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
-#
-#	Stream a shar/unshar to the host at one go
 	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
 
 predeploy-www:	htaccess dist/www/2019.css
