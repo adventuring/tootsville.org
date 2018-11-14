@@ -84,11 +84,11 @@ Tootsville.login.serverQueryCharacters = function () {
             want: [ 'avatar', 'name', 'note', 'child-p', 'sensitive-p' ],
             order: 'last-seen'
         }).then( response => {
-                      if (response.toots.length == 0) {
-                          reject();
-                      } else {
-                          finish(response.toots);
-                      }
+            if (response.toots.length == 0) {
+                reject();
+            } else {
+                finish(response.toots);
+            }
         }, Tootsville.login.criticalFailure);
     });
 }
@@ -200,7 +200,7 @@ Tootsville.login.appendChildMode = function (li, tag, label, checkedP) {
 Tootsville.login.appendChildSensitiveRadioSet = function (li) {
     li.innerHTML += '<br clear="left"><hr>';
     Tootsville.login.appendChildMode(li, 'adult', '<i class="fas fa-graduation-cap fa-fw"></i> Adult account',
-                    !(li['data-toot'].childP || li['data-toot'].sensitiveP));
+                                     !(li['data-toot'].childP || li['data-toot'].sensitiveP));
     appendChildMode(li, 'child', '<i class="fas fa-child fa-fw"></i> Child account',
                     li['data-toot'].childP);
     appendChildMode(li, 'sensitive', '<i class="fas fa-chess-queen fa-fw"></i> Sensitive Player account',
@@ -306,7 +306,7 @@ Tootsville.login.stripChildSettings = function (li) {
     }
     li.removeChild(li.querySelector('hr'));
     li.removeChild(li.querySelector('.define-child-code'));
-    
+
     li.onclick = function() { pickCharacter(li) };
     addChildOrSensitiveFlag(li);
 }

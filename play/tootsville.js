@@ -29,11 +29,11 @@ if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||
     ('tootsville.org' == Tootsville.cluster))
 { Tootsville.host =
-    { www: 'https://www.' + Tootsville.cluster,
-      play: 'https://play.' + Tootsville.cluster,
-      users: 'https://users.' + Tootsville.cluster.replace('.org','.net'),
-      gossip: 'https://gossip.' + Tootsville.cluster.replace('.org','.net'),
-      world: 'https://world.' + Tootsville.cluster.replace('.org','.net') };
+  { www: 'https://www.' + Tootsville.cluster,
+    play: 'https://play.' + Tootsville.cluster,
+    users: 'https://users.' + Tootsville.cluster.replace('.org','.net'),
+    gossip: 'https://gossip.' + Tootsville.cluster.replace('.org','.net'),
+    world: 'https://world.' + Tootsville.cluster.replace('.org','.net') };
   document.domain = Tootsville.cluster; }
 else
 { Tootsville.cluster = 'local';
@@ -45,14 +45,14 @@ else
     world: 'http://localhost:5000' }; }
 
 window.addEventListener('Tootsville/Login', function (ev)
- { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
-                                            username: Tootsville.character && Tootsville.character.name,
-                                            email: Tootsville.player && Tootsville.player.eMail }}}); },
+                        { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
+                                                                   username: Tootsville.character && Tootsville.character.name,
+                                                                   email: Tootsville.player && Tootsville.player.eMail }}}); },
                         false);
 
 window.loadWatchdog1 = setTimeout(() => {
     if (Tootsville.ui.slowLoadingWatchdog)
         Tootsville.ui.slowLoadingWatchdog();
-    else 
+    else
         setTimeout(window.loadWatchdog1, 300); },
                                   5000);

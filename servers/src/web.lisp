@@ -46,10 +46,10 @@ as well.)"
              content-bytes (flexi-streams:string-to-octets reply
                                                            :external-format :utf-8)))
       ((vectorp reply)
-       (setf (hunchentoot:return-code*) 200 
+       (setf (hunchentoot:return-code*) 200
              content-bytes reply))
       ((and (listp reply) (not (numberp (first reply))))
-       (setf (hunchentoot:return-code*) 200 
+       (setf (hunchentoot:return-code*) 200
              content-bytes (contents-to-bytes reply)))
       ((= 2 (length reply))
        (destructuring-bind (status contents) reply
@@ -73,7 +73,7 @@ as well.)"
     content-bytes))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  
+
   (defun apply-extension-to-template (template extension)
     (if template
         (let ((temp (append template (list extension))))
@@ -81,16 +81,16 @@ as well.)"
               temp
               (rest temp)))
         (list "index" extension)))
-  
+
   (defun without-sem (string)
     (if-let (sem (position #\; string))
       (subseq string 0 sem)
       string))
-  
+
   (defun first-line (string)
     (let ((newline (or (position #\newline string) 100)))
       (subseq string 0 (min newline 100 (length string)))))
-  
+
   (defun defendpoint/make-endpoint-function (&key fname content-type
                                                   λ-list docstring body)
     `(defun ,fname (,@λ-list) ,docstring
@@ -99,8 +99,8 @@ as well.)"
                     (thread-name (current-thread)))
             (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
             (unwind-protect
-                 (let ((reply 
-                        (catch 'endpoint 
+                 (let ((reply
+                        (catch 'endpoint
                           (block endpoint
                             (block ,fname
                               ,@body)))))
@@ -243,7 +243,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
       ((atom value) value)
       ((= 1 (length value)) (first value))
       (t (format nil "~{~a~^, ~}" value))))
-  
+
   (defun add-charset (content-type)
     "Adds the ;charset=UTF-8 type to the end of text and JS/JSON CONTENT-TYPEs"
     (if (member content-type
@@ -280,21 +280,21 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                       (null #\?)
                       (string (name-for-content-type accept-type))
                       (symbol (name-for-content-type (string accept-type)))))))
-  
+
   (defun lambda-list-as-variables (λ-list)
     (if λ-list
         (cons 'list (mapcar (lambda (var)
                               (list 'quote var))
                             λ-list))
         'nil))
-  
+
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)
     (let* ((method (make-keyword (string-upcase method)))
            (content-type (make-keyword (string-upcase content-type)))
            (fname (make-endpoint-function-name method uri content-type))
            (template (parse-uri-as-template uri))
-           (λ-list (mapcar (lambda (s) 
+           (λ-list (mapcar (lambda (s)
                              (intern (symbol-name s) (symbol-package fname)))
                            (remove-if-not #'symbolp template)))
            (docstring (if (and (consp body) (stringp (first body)))
@@ -303,19 +303,20 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                   "Undocumented endpoint for ~a ~a → ~s"
                                   method uri content-type))))
       `(progn
-         ,(defendpoint/make-endpoint-function 
+         ,(defendpoint/make-endpoint-function
               :fname fname
             :content-type content-type
             :λ-list λ-list
             :docstring docstring
             :body body)
          ,(when-let (extension (extension-for-content-type (string content-type)))
-            `(add-or-replace-endpoint ',fname ,method 
+            `(add-or-replace-endpoint ',fname ,method
                                       ',(apply-extension-to-template template extension)
                                       ,content-type))
          (add-or-replace-endpoint ',fname ,method ',template ,content-type)
-         ;; (format *trace-output* "~2& ★ New endpoint: ~a ~a → ~a~% All endpoints: ~{~% •~s~}"
-         ;;         method uri content-type (enumerate-endpoints))
+         ;; (format *trace-output* "~2& ★ New endpoint: ~a ~a → ~a~% All
+         ;;         endpoints:  ~{~%  •~s~}"   method  uri  content-type
+         ;;         (enumerate-endpoints))
          ))))
 
 
@@ -353,10 +354,10 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 (defun query-string->plist (query-string)
   (mapcan (lambda (pair)
-            (destructuring-bind (key value) 
+            (destructuring-bind (key value)
                 (split-sequence #\= pair)
-              (list 
-               (make-keyword (substitute #\- #\_ 
+              (list
+               (make-keyword (substitute #\- #\_
                                          (string-upcase key)))
                value)))
           (split-sequence #\& query-string)))

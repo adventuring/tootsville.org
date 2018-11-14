@@ -135,4 +135,3 @@ Tootsville.ui.keys.onKeypress = function (ev)
   { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings[coda], ev); }}
 
 document.addEventListener('keypress', Tootsville.ui.keys.onKeypress);
-

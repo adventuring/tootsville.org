@@ -65,7 +65,7 @@
                       (let ((slash (position #\/ a)))
                         (string-equal a b :end1 slash :end2 slash)))
                  (and (string-ends "/*" b)
-                      (let ((slash (position #\/ b))) 
+                      (let ((slash (position #\/ b)))
                         (string-equal a b :end1 slash :end2 slash)))
                  (equal a "*/*")
                  (equal b "*/*"))))))
@@ -84,7 +84,7 @@
 
 (defun gracefully-report-http-client-error (c)
   (if (wants-json-p)
-      (encode-endpoint-reply 
+      (encode-endpoint-reply
        (list (http-status-code c)
              '(:content-type "application/json; charset=utf-8")
              (if hunchentoot:*show-lisp-backtraces-p*
@@ -93,7 +93,7 @@
                                                 :trace (rollbar::find-appropriate-backtrace c)))
                  (jonathan.encode:to-json (list :error (http-status-code c)
                                                 :error-message (princ-to-string c))))))
-      (encode-endpoint-reply 
+      (encode-endpoint-reply
        (list (http-status-code c)
              '(:content-type "text/html; charset=utf-8")
              (pretty-print-html-error c)))))
@@ -115,7 +115,7 @@
                                      :remove-empty-subseqs t))
           (ua-accept (request-accept-types)))
       (with-http-conditions ()
-        (if-let (match (find-best-endpoint method uri-parts ua-accept)) 
+        (if-let (match (find-best-endpoint method uri-parts ua-accept))
           (destructuring-bind (endpoint &rest bindings) match
             (verbose:info :request "Calling ~s" match)
             (apply (fdefinition (endpoint-function endpoint)) bindings))
@@ -124,36 +124,35 @@
                           method uri-parts ua-accept)
             (error 'not-found :the (format nil "The URI you requsted"))))))))
 
-(defmethod hunchentoot:acceptor-status-message 
+(defmethod hunchentoot:acceptor-status-message
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
      &rest _ &key &allow-other-keys)
   ;;(declare (ignore _))
   (verbose:info 'error "~s" _)
   (unless (wants-json-p) (call-next-method))
   (when (< HTTP-status-code 400) (call-next-method))
-  
+
   (setf (hunchentoot:content-type*)
         "application/json;charset=utf-8"
-        
+
         (hunchentoot:header-out "X-Tootsville-Machine")
         (machine-instance)
-        
+
         (hunchentoot:header-out "X-Romance-II-Version")
         (romance-ii-program-name/version)
-        
-        (hunchentoot:header-out "Access-Control-Allow-Origin") 
+
+        (hunchentoot:header-out "Access-Control-Allow-Origin")
         (case (cluster)
           (:devel "*")
           (otherwise (format nil "~a, ~a"
                              (cluster-name) (cluster-net-name))))
-        
+
         (hunchentoot:header-out "X-Lisp-Version")
         (format nil "~a/~a"
                 (lisp-implementation-type)
                 (lisp-implementation-version))
-        
+
         (hunchentoot:header-out "X-Site")
         (short-site-name))
-  (format nil "{\"error\": ~d, \"status\":\"~a\"}" 
+  (format nil "{\"error\": ~d, \"status\":\"~a\"}"
           HTTP-status-code (gethash HTTP-status-code *http-status-message*)))
-

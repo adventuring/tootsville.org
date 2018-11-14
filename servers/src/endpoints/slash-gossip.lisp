@@ -157,4 +157,3 @@ that URI and await a reply (COMET style).
   (with-user ()
     (list 201 '(:location "/gossip/answer")
           (user-info *user*))))
-

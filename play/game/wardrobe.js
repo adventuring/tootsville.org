@@ -26,7 +26,7 @@ Tootsville.wardrobe = {
       { for (var j = 0; j < Tootsville.wardrobe.valences[ baseSlot ].length; ++j)
         { if (slot == Tootsville.wardrobe.valences[ baseSlot ][ j ])
           { return baseSlot; }}}},
-    
+
     don: function (item, slot)
     { if (Tootsville.wardrobe.wearingP (item))
       { return; }
@@ -45,7 +45,7 @@ Tootsville.wardrobe = {
         { return; }
         if (Tootsville.wardrobe.wearingP (item))
         { Tootsville.wardrobe.doff (item); }
-        
+
         Tootsville.wardrobe.don (item, 'readied');
     },
 

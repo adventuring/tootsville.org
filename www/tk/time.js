@@ -27,4 +27,3 @@ Tootsville.updateClock = function () {
         ([0,"Sir", "Dug", "Inu", "Man", "Hydr", "Sen", "Pyg", "Lux", "Eleph", "Pro", "Den", "Teth"])[now.month] +
         '-' + now.year;
 }
-
