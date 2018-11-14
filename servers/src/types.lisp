@@ -140,18 +140,47 @@ harmless  error   message  on  the  second   and  subsequent  attempts."
   ((http-status-code :type http-response-failure-status-number
                      :reader http-status-code)))
 
-(defun pretty-print-html-error (c)
+(defun pretty-print-html-error (condition)
+  "Produces an HTML page explaining CONDITION.
+
+TODO: Use templates, filter backtrace like Rollbar, do better."
   (format nil "<!DOCTYPE html><html><head>
 <meta charset=\"utf-8\">
 <title> Error ~D — Tootsville</title>
-<link rel=\"stylesheet\" href=\"https://www.tootsville.org/error/simple-error.2017.css\">
+<link rel=\"stylesheet\"
+      href=\"https://www.tootsville.org/error/simple-error.2017.css\">
 </head>
 <body>
 <h2> Error ~:*~D </h2>
 <h1> ~A </h1>
+<ul>
+<li> 
+  <a href=\"http://wiki.tootsville.org/wiki/Error_~0@*~D\">More info…</a>~*
+</li>
+<li>
+ <a href=\"http://~a/\">~:*~a</a>
+</li>
+</ul>
+<pre>~A</pre>
+~@[~:*<dl>
+~{<dt> ~a </dt> <dd> ~a </dd> ~}
+</dl>~]
 </body>
 </html>"
-          (http-status-code c) c))
+          (http-status-code condition) 
+          (if hunchentoot:*show-lisp-errors-p* 
+              condition
+              (gethash (http-status-code condition) *http-status-message*))
+          (cluster-name)
+          (if hunchentoot:*show-lisp-backtraces-p*
+              (trivial-backtrace:backtrace-string)
+              "More information is in the server logs")
+          (if hunchentoot:*show-lisp-backtraces-p*
+              (mapcar 
+               (lambda (restart)
+                 (list restart (princ-to-string restart))); TODO report?
+               (compute-restarts condition))
+              nil)))
 
 (define-condition not-your-Toot-error (http-client-error)
   ((http-status-code :initform 404)
