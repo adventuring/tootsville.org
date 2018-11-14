@@ -127,27 +127,33 @@
 (defmethod hunchentoot:acceptor-status-message 
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
      &rest _ &key &allow-other-keys)
-  (declare (ignore _))
+  ;;(declare (ignore _))
+  (verbose:info 'error "~s" _)
   (unless (wants-json-p) (call-next-method))
   (when (< HTTP-status-code 400) (call-next-method))
   
-  (setf (hunchentoot:content-type*) "application/json;charset=utf-8"
-        (hunchentoot:header-out "X-Tootsville-Machine") (machine-instance)
-        (hunchentoot:header-out "X-Romance-II-Version") (romance-ii-program-name/version)
+  (setf (hunchentoot:content-type*)
+        "application/json;charset=utf-8"
+        
+        (hunchentoot:header-out "X-Tootsville-Machine")
+        (machine-instance)
+        
+        (hunchentoot:header-out "X-Romance-II-Version")
+        (romance-ii-program-name/version)
+        
         (hunchentoot:header-out "Access-Control-Allow-Origin") 
         (case (cluster)
           (:devel "*")
           (otherwise (format nil "~a, ~a"
                              (cluster-name) (cluster-net-name))))
-        (hunchentoot:header-out "X-Lisp-Version") (format nil "~a/~a"
-                                                          (lisp-implementation-type)
-                                                          (lisp-implementation-version))
-        (hunchentoot:header-out "X-Site") (short-site-name))
-  (when (and (= 500 HTTP-status-code)
-             Hunchentoot::*show-lisp-errors-p*)
-    ;; TODO: stack trace info
-    ())
-  
+        
+        (hunchentoot:header-out "X-Lisp-Version")
+        (format nil "~a/~a"
+                (lisp-implementation-type)
+                (lisp-implementation-version))
+        
+        (hunchentoot:header-out "X-Site")
+        (short-site-name))
   (format nil "{\"error\": ~d, \"status\":\"~a\"}" 
           HTTP-status-code (gethash HTTP-status-code *http-status-message*)))
 
