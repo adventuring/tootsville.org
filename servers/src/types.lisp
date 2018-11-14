@@ -331,7 +331,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
                                                 in (length bases) bases)
                                         (elt bases in))
-                                       (t (stringify in))))))
+                                       (t (princ-to-string in))))))
          (setf base-color color)
          (check-type base-color Toot-pattern-color-name)
          (go do-over)))))
