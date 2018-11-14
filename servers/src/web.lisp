@@ -15,13 +15,19 @@
 (defun wants-json-p ()
   "Does the client request Accept JSON format?
 
-Looks   for   some    odd   synonyms   as   well    as   the   canonical
-\"application/json\", and also checks the request URI for \".js\" (which
-is, of course, a subseq of \".json\" as well.)"
+Looks for  the canonical  \"Accept: application/json\", and  also checks
+the request URI for \".js\" (which  is, of course, a subseq of \".json\"
+as well.)"
   (let ((accept (hunchentoot:header-in* :accept)))
-    (or (search "application/json" accept)
-        (search ".js" (hunchentoot:request-uri*)))))
-
+    (or (when (search "application/json" accept)
+          (verbose:info :json "Client Accepts application/json explicitly")
+          t)
+        (when (search ".js" (hunchentoot:request-uri*))
+          (verbose:info :json "Client request URI contains .js")
+          t)
+        (progn
+          (verbose:info :json "Client does not want JSON")
+          nil))))
 
 
 
