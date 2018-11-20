@@ -6,7 +6,8 @@
 @copying
 An introduction to Tootsville.
 
-Copyright @copyright{} 2018  
+Copyright @copyright{} 2018, the Corporation for Inter-World Tourism and
+Adventuring.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -29,7 +30,7 @@ The document was typeset with
 @titlepage
 @title Tootsville Players' Guide
 @subtitle An introduction to Tootsville
-@author  <brpocock@Star-Hope.org>
+@author Bruce-Robert Pocock <brpocock@tootsville.org>
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -62,16 +63,78 @@ Requirements -- check the Wiki-Wiki
 @node
 @section Signing In
 
+You'll sign in to Tootsville using your Google account.
+
+If you're already logged in to Google when you visit the site, you'll just
+be asked to authorize Tootsville once.
+
+If you aren't yet signed in to your Google account, you'll have the
+opportunity to do so.
+
+Once you've signed in, you'll go directly to your Toot character.
+
 @c Update all node entries with `C-c C-u C-n'.
 @c Insert new nodes with `C-c C-c n'.
 @node 
 @chapter Managing Toots
 
+When you play in Tootsville, you'll take control of a Toot character
+yourself. When you first sign in, you'll be guided through creating your
+first Toot character.
+
+If you later decide you want to create another one, perhaps for a family
+member, you can also do so from the login screen.
+
 @node
 @section Creating a New Toot
 
+Toot characters start off with a name and an appearance. We'll also give you
+a few items with which to start your exploration.
+
+Toot names are just like human names, but they all have to be unique. You
+can join together word-parts with hyphens. Here are some Toot names:
+
+@itemize
+@item
+Flora
+@item
+NullPointerException
+@item
+Codfish-Howie
+@end itemize
+
+If you really want to include a number, it has to be the last part of a
+name. You can't name a Toot something like ``99luftballoons,'' but you could
+name them ``Luftballoons-99'' or so.
+
+Toot characters have some basic appearance settings, as well. You can choose
+the base color of your Toot's skin, the color of the pads of their feet (and
+``hands''), and the color of the pattern on their skin. You can also choose
+what pattern they will have.
+
+Once you've made these choices, you can immediately start playing as your
+Toot character.
+
+
 @node
-@section Toots for Childrenf
+@section Toots for Children
+
+WRITEME
+
+@node
+@chapter Now That You're In Tootsville
+
+@section Wishing Wells
+
+@section Getting Around
+
+@section Building a House
+
+@section Shopping
+
+@section Useful Tools
+
+@section Troops and Operators
 
 
 
