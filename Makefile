@@ -130,8 +130,8 @@ all-docs: \
 js-doc:	doc/texi/tootsville-js.texi
 
 doc/texi/tootsville-js.texi: doc/rst/index.rst doc/conf.py
-	sphinx-build -b texinfo doc/rst doc/texi $(shell find doc/rst -name \*.rst) \
-		-j 4 -n -a -c doc/conf.py
+	sphinx-build -b texinfo -j 4 -n -a -c doc \
+		doc/rst doc/texi
 
 doc/rst/index.rst: node_modules/.bin/jsdoc node_modules/jsdoc-sphinx/template/publish.js \
 		$(< build/js.order )
