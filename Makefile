@@ -127,14 +127,24 @@ all-docs: \
 	doc/Tootsville.txt 	\
 	doc/Tootsville.info
 
-js-doc:	play-doc
+js-doc:	doc/texi/tootsville-js.texi
 
-play-doc:
-# TODO. There  doesn't seem  to be  any elegant  way (yet)  to integrate
-# JSDoc, and,  in fact, I'm having  a hard time finding  a JSDoc-to-texi
-# compiler  at  all  and  may  have   to  write  one;  perhaps  look  at
-# post-processing the JSON output from Node.js doctrine, or just rolling
-# our own.
+doc/texi/tootsville-js.texi: doc/rst/index.rst doc/conf.py
+	sphinx-build -b texinfo doc/rst doc/texi $(shell find doc/rst -name \*.rst) \
+		-j 4 -n -a -c doc/conf.py
+
+doc/rst/index.rst: node_modules/.bin/jsdoc node_modules/jsdoc-sphinx/template/publish.js \
+		$(< build/js.order )
+	mkdir -p doc/rst/
+	node_modules/.bin/jsdoc -t node_modules/jsdoc-sphinx/template/ \
+		--recurse play --recurse worker \
+		-d doc/rst/
+
+node_modules/.bin/jsdoc:
+	npm install jsdoc
+
+node_modules/jsdoc-sphinx/template/publish.js:
+	npm install jsdoc-sphinx
 
 #################### htaccess
 
