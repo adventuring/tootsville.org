@@ -456,15 +456,15 @@ quicklisp-update-servers:
 remotes:
 	if ! git remote -v | grep github &>/dev/null ;\
 	then \
-		git remote add github git@github.com:adventuring/Tootsville.org ;\
+		git remote add github git@github.com:adventuring/tootsville.org ;\
 	fi
 	if ! git remote -v | grep gitlab &>/dev/null ;\
 	then \
-		git remote add gitlab git@gitlab.com:adventuring/Tootsville.org ;\
+		git remote add gitlab git@gitlab.com:adventuring/tootsville.org ;\
 	fi
 	if ! git remote -v | grep goethe &>/dev/null ;\
 	then \
-		git remote add goethe goethe.Tootsville.org:devel/git/Tootsville.org ;\
+		git remote add goethe goethe.Tootsville.org:devel/git/tootsville.org ;\
 	fi
 
 bump-next-version:
@@ -512,7 +512,7 @@ git-tag-deployment:
 
 deploy-docs:
 	make -C servers doc-publish
-	scp dist/htaccess.all/goethe.tootsville.net.htaccess goethe.Tootsville.org:goethe.tootsville.org/.htaccess
+	scp dist/htaccess.all/goethe.tootsville.net.htaccess goethe.tootsville.org:goethe.tootsville.org/.htaccess
 	scp www/favicon.??? goethe.Tootsville.org:goethe.tootsville.org/
 	rsync -essh www/error goethe.Tootsville.org:goethe.tootsville.org/
 
