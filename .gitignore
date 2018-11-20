@@ -34,3 +34,5 @@ www/.htaccess
 TODO.org
 TODO.scorecard
 
+# NPM mess
+node_modules
