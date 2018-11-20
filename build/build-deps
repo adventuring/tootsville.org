@@ -1,5 +1,4 @@
 closure-compiler
-closure-compiler
 compat-readline6
 curl
 emacs-nox
@@ -9,10 +8,11 @@ gpg
 joe
 nodejs-less
 nodejs-source-map
+npm
 openssl-devel
+python-sphinx
 readline-devel
 rlwrap
-sbcl
 sbcl
 sharutils
 texinfo
