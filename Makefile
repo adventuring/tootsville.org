@@ -514,5 +514,5 @@ deploy-docs:
 	make -C servers doc-publish
 	scp dist/htaccess.all/goethe.tootsville.net.htaccess goethe.tootsville.org:goethe.tootsville.org/.htaccess
 	scp www/favicon.??? goethe.tootsville.org:goethe.tootsville.org/
-	rsync -essh www/error goethe.tootsville.org:goethe.tootsville.org/
+	rsync -essh -zar www/error goethe.tootsville.org:goethe.tootsville.org/
 
