@@ -275,7 +275,11 @@ dist/play.$(clusterorg)/.well-known/assetlinks.json: play/.well-known/assetlinks
 
 dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
 	mkdir -p dist/play.$(clusterorg)/play/
-	cp $$(< build/js.order) dist/play.$(clusterorg)/play/
+	for file in $$(< build/js.order) ; \
+	do \
+	   mkdir -p dist/play.$(clusterorg)/play/$$(dirname $$file ) ; \
+	   cp $$file dist/play.$(clusterorg)/play/$$file ; \
+	done
 
 dist/play.$(clusterorg)/play/play.js:	dist/play/play.js
 	mkdir -p dist/play.$(clusterorg)/play/
