@@ -12,12 +12,60 @@
         <input type="radio" id="gamepads-list-empty"
                name="gamepad-selection" value="_">
         <label for="gamepads-list-empty">No gamepads.
-        Click <i class="fas fa-plus">+</i> to add one.</label>
-        <button id="gamepad-add-new"
-                onclick="gamepadAddNew()"><i class="fas fa-plus">+</i></button>
+          Press any button on your gamepad to set it up.</label>
       </fieldset>
-      <div id="gamepads-configure">
-      </div>
+      <fieldset id="gamepads-assign">
+        <legend> Configure </legend>
+        <h4> Play </h4>
+        <ul>
+
+          <li><button id="assign-walk-up-down">Walk ↕</button>
+            <label for="assign-walk-up-down">Axis #1</label></li>
+          
+          <li><button id="assign-walk-left-right">Walk ↔</button>
+            <label for="assign-walk-left-right">Axis #2</label></li>
+
+          <li><button id="assign-interact">Interact</button>
+            <label for="assign-interact">Button #1</label></li>
+          
+          <li><button id="assign-use-item">Use Item</button>
+            <label for="assign-use-item">Button #2</label></li>
+          
+          <li><button id="assign-swap-items">Swap-Items</button>
+            <label for="assign-swap-items">Button #3</label></li>
+          
+        </ul>
+        <h4> Commands </h4>
+        <ul>
+
+          <li><button id="assign-open-paperdoll">Open Paperdoll</button>
+            <label for="assign-open-paperdoll">Button #4</label></li>
+          
+          <li><button id="assign-open-mobile">Open Mobile</button>
+            <label for="assign-open-mobile">Button #5</label></li>
+          
+          <li><button id="assign-open-contacts">Open Contacts</button>
+            <label for="assign-open-contacts">Button #6</label></li>
+          
+          <li><button id="assign-open-calendar">Open Calendar</button>
+            <label for="assign-open-calendar">Button #7</label></li>
+          
+          <li><button id="assign-mute">Mute</button>
+            <label for="assign-mute">Button #8</label></li>
+          
+          <li><button id="assign-volume">Volume</button>
+            <label for="assign-volume">Axis #4</label></li>
+          
+          <li><button id="assign-gamepad-settings">Gamepad Settings</button>
+            <label for="assign-gamepad-settings">Button #9</label></li>
+          
+          <li><button id="assign-fullscreen">Toggle Fullscreen</button>
+            <label for="assign-fullscreen">Button #10</label></li>
+          
+
+          
+        </ul>
+      </fieldset>
     </div>
   </body>
 </html>

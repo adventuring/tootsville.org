@@ -143,7 +143,7 @@ htaccess:	dist/htaccess.all/play.$(clusterorg).htaccess
 dist/htaccess.all/play.$(clusterorg).htaccess:	htaccess.base bin/make-all-htaccess
 	bin/make-all-htaccess
 
-#################### play/worker.js
+#################### /worker.js
 
 worker:	dist/worker.js
 
@@ -238,8 +238,10 @@ devel-test:	devel-serve devel-play
 devel-serve:	servers/Tootsville
 	servers/Tootsville server
 
-devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
+devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/"
+
+devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); else \
@@ -260,6 +262,10 @@ dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
 dist/play.$(clusterorg)/play/play.js:	dist/play/play.js
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.js dist/play.$(clusterorg)/play/
+
+dist/play.$(clusterorg)/play/game/start.js:	$(shell cat build/js.order)
+	mkdir -p dist/play.$(clusterorg)/play/
+	rsync -a $$(< build/js.order) dist/play.$(clusterorg)/play/
 
 dist/play.$(clusterorg)/play/play.map:	dist/play/play.map
 	mkdir -p dist/play.$(clusterorg)/play/
@@ -307,8 +313,10 @@ dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/play/play.css \
 	dist/play.$(clusterorg)/play/play.css.map \
 	dist/play.$(clusterorg)/play/play.js \
+	dist/play.$(clusterorg)/play/game/start.js \
 	dist/play.$(clusterorg)/play/play.map \
 	dist/play.$(clusterorg)/play/index.html \
+	dist/play.$(clusterorg)/worker.js \
 	dist/play.$(clusterorg)/.htaccess \
 	dist/play.$(clusterorg)/error/404.var
 
