@@ -129,11 +129,15 @@ all-docs: \
 
 js-doc:	doc/texi/tootsville-js.texi
 
+doc/texi/tootsville-js.texi:	doc/texi/TootsvilleJS.texi
+	perl -ne 'print if /@c END_PREAMBLE/..0' \
+		< doc/texi/TootsvilleJS.texi > doc/texi/tootsville-js.texi
+
 doc/conf.py:	build/doc.conf.py servers/tootsville.asd
 	sed -e "s/@@VERSION@@/$$(grep :version servers/tootsville.asd | cut -d \" -f 2)/g" \
 		build/doc.conf.py > doc/conf.py
 
-doc/texi/tootsville-js.texi: doc/rst/index.rst doc/conf.py
+doc/texi/TootsvilleJS.texi: doc/rst/index.rst doc/conf.py
 	sphinx-build -b texinfo -j 4 -n -a -c doc \
 		doc/rst doc/texi
 
