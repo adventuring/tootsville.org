@@ -76,6 +76,11 @@ Tootsville.ui.hud.loadHUDPanel = function(panelName, finish) {
     var spinnerDiv = Tootsville.ui.hud.createHUDLoaderPanel(panelName);
     Tootsville.ui.hud.loadHTML("/play/ui/panels/" + panelName + ".html").then((htmlf) => {
         var panelDiv = htmlf.getElementById(panelName);
+        if (!panelDiv)
+        { var bodies = htmlf.getElementsByTagName("BODY");
+          if (bodies) { panelDiv = bodies[0]; } }
+        if (!panelDiv)
+        { console.error("No BODY in HTML fragment " + panelName); }
         hud.appendChild(panelDiv);
         loadScriptIntoDiv('/play/ui/panels/' + panelName + '.js', panelDiv);
         Tootsville.ui.hud.showHUDPanel(panelName, panelDiv);
