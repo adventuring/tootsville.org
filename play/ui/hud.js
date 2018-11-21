@@ -13,23 +13,22 @@ Tootsville.ui.hud.getOpenPanel = function() {
     return null;
 };
 
-Tootsville.ui.hud.closePanel = function() {
-    var panelPopup = Tootsville.ui.hud.getOpenPanel();
-    if (panelPopup) {
-        var panelID = panelPopup.id;
-        if (panelID == 'paperdoll') {
-            Tootsville.ui.hud.returnPaperdollMini();
-        }
-        panelPopup.style.opacity = .1;
-        panelPopup.style.maxHeight = '1px';
-        setTimeout( (function(id) {
-            document.getElementById(id).style.display = 'none';
-        })(panelID), 1000 );
-        panelPopup = null;
-        return true;
-    }
-    return false;
-};
+Tootsville.ui.hud.closePanel = function(){ var foundAny = false;
+  for (var panelPopup = Tootsville.ui.hud.getOpenPanel();
+       panelPopup;
+       panelPopup = Tootsville.ui.hud.getOpenPanel())
+  { var panelID = panelPopup.id;
+    if (panelID == 'paperdoll')
+    { Tootsville.ui.hud.returnPaperdollMini(); }
+    else
+    { panelPopup.style.opacity = .1;
+      panelPopup.style.maxHeight = '1px';
+      setTimeout( (function(id)
+                   { document.getElementById(id).style.display = 'none'; }
+                  )(panelID), 1000 );
+      panelPopup = null; }
+    foundAny = true; }
+  return foundAny; };
 
 Tootsville.ui.hud.loadScriptIntoDiv = function(src, div) {
     var script = document.createElement('SCRIPT');
