@@ -78,7 +78,8 @@ Tootsville.ui.hud.loadHUDPanel = function(panelName, finish) {
         var panelDiv = htmlf.getElementById(panelName);
         if (!panelDiv)
         { var bodies = htmlf.getElementsByTagName("BODY");
-          if (bodies) { panelDiv = bodies[0]; } }
+          if (bodies) { panelDiv = bodies[0];
+                        panelDiv.id = 'panelName'; } }
         if (!panelDiv)
         { console.error("No BODY in HTML fragment " + panelName); }
         hud.appendChild(panelDiv);
