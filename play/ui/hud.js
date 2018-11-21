@@ -104,6 +104,7 @@ Tootsville.ui.hud.showHUDPanel = function(panel, div) {
             div.style.maxHeight = '100vh';
             div.style.display = 'block';
             div.className = 'hud-panel';
+            div.position = 'absolute';
             finish();
             return;
         }
