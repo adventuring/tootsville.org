@@ -24,6 +24,9 @@ play/ui/audio-control.js
 play/ui/keys.js
 play/ui/commands.js
 
+play/scene/scene.js
+play/scene/avatar.js
+
 play/game/stop-watchdogs.js
 
 play/game/start.js
