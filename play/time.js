@@ -1,3 +1,6 @@
+if (!("Tootsville" in window))
+{ window.Tootsville = {}; }
+
 Tootsville.universalTimeOffset = ((((new Date()).valueOf()/1000) + 2208988800) - (performance.now()/1000));
 Tootsville.decodeTime = function ()
 {
