@@ -1,4 +1,4 @@
-if (!Tootsville.login) {
+if (!("login" in Tootsville)) {
     Tootsville.login = {};
 }
 
