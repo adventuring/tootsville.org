@@ -18,11 +18,22 @@ Tootsville.decodeTime = function ()
 }
 Tootsville.updateClock = function () {
     var now = Tootsville.decodeTime();
-    document.getElementById('tootsville-time').innerHTML = now.hour + ':' + (now.min<10 ? "0" : "") +
+    document.getElementById('tootsville-time').innerHTML =
+        now.hour + ':' + (now.min<10 ? "0" : "") +
         now.min + ':' + (now.sec<10 ? "0" : "") + now.sec;
-    document.getElementById('tootsville-date').innerHTML =
+    var date = document.getElementById('tootsville-date');
+    date.innerHTML =
         (["Ltn","Spt","Str","Not","Spk","Moo","Hrt","Flr","Bnk"])[now.weekday] +
         ' ' + now.day + '-' +
-        ([0,"Sir", "Dug", "Inu", "Man", "Hydr", "Sen", "Pyg", "Lux", "Eleph", "Pro", "Den", "Teth"])[now.month] +
+        ([0,"Sir", "Dug", "Inu", "Man", "Hydr", "Sen",
+          "Pyg", "Lux", "Eleph", "Pro", "Den", "Teth"])[now.month] +
         '-' + now.year;
+    date.title =
+        (["Lightningsday", "Spotsday", "Starsday", "Notesday", "Sparklesday",
+          "Moosday", "Heartsday", "Flowerday", "Blanksday"])[now.weekday] +
+        ', ' + now.day + ' ' +
+        ([0, "Sirenia", "Dugon", "Inu", "Man",
+          "Hydr", "Sen", "Pyg", "Luxodonta",
+          "Elephas", "Prodontia", "Den", "Teth"])[now.month] +
+        ', ' + now.year;
 }
