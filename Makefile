@@ -277,8 +277,8 @@ dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
 	mkdir -p dist/play.$(clusterorg)/play/
 	for file in $$(< build/js.order) ; \
 	do \
-	   mkdir -p dist/play.$(clusterorg)/play/$$(dirname $$file ) ; \
-	   cp $$file dist/play.$(clusterorg)/play/$$file ; \
+	   mkdir -p dist/play.$(clusterorg)/$$(dirname $$file ) ; \
+	   cp $$file dist/play.$(clusterorg)/$$file ; \
 	done
 
 dist/play.$(clusterorg)/play/play.js:	dist/play/play.js
@@ -292,7 +292,11 @@ dist/play.$(clusterorg)/play/game/start.js:	$(shell cat build/js.order)
 dist/play.$(clusterorg)/play/play.map:	dist/play/play.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.map dist/play.$(clusterorg)/play/
-	for file in $(< build/js.order) ; do cp $$file dist/play.$(clusterorg)/$$file ; done
+	for file in $$(< build/js.order) ; \
+	do \
+	    mkdir -p dist/play.$(clusterorg)/$$(dirname $$file) ; \
+              cp $$file dist/play.$(clusterorg)/$$file ; \
+	done
 
 dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 	mkdir -p dist/play.$(clusterorg)/play/
@@ -301,7 +305,11 @@ dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.css.map dist/play.$(clusterorg)/play/
-	for file in $(LESSFILES) ; do mkdir -p $$(dirname $$file) ; cp $$file dist/play.$(clusterorg)/$$file ; done
+	for file in $(LESSFILES) ; \
+	do \
+	    mkdir -p dist/play.$(clusterorg)/$$(dirname $$file) ; \
+	    cp $$file dist/play.$(clusterorg)/$$file ; \
+	done
 
 dist/play.$(clusterorg)/worker.js:	dist/worker.js
 	mkdir -p dist/play.$(clusterorg)/
