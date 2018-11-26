@@ -16,5 +16,7 @@ window.addEventListener('load', () => {
 
     Tootsville.tank.start3D();
 
+    Tootsville.login.start();
+
     setInterval(Tootsville.updateClock, 250);
 });
