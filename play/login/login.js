@@ -12,8 +12,7 @@ Tootsville.login.start = function ()
   Tootsville.ui.hud.loadHUDPanel("login", Tootsville.login.beginYolo); }
 
 Tootsville.login.beginYolo = function (loginPanel)
-{ window.onGoogleYoloLoad
-    Tootsville.ui.hud.loadScriptIntoDiv("https://smartlock.google.com/client", loginPanel); }
+{ Tootsville.ui.hud.loadScriptIntoDiv("https://smartlock.google.com/client", loginPanel); }
 
 // Tootsville.login.googleInit = function ()
 // { console.log("Async Google init");
