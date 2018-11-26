@@ -301,7 +301,7 @@ dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.css.map dist/play.$(clusterorg)/play/
-	for file in $(LESSFILES) ; do cp $$file dist/play.$(clusterorg)/$$file ; done
+	for file in $(LESSFILES) ; do mkdir -p $$(dirname $$file) ; cp $$file dist/play.$(clusterorg)/$$file ; done
 
 dist/play.$(clusterorg)/worker.js:	dist/worker.js
 	mkdir -p dist/play.$(clusterorg)/
