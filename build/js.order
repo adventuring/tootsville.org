@@ -11,6 +11,7 @@ play/time.js
 play/gossip/parrot.js
 play/gossip/gossip.js
 play/login/login.js
+play/login/yolo.js
 
 play/game/wardrobe.js
 
