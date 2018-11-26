@@ -83,7 +83,7 @@ Tootsville.ui.hud.loadHUDPanel = function(panelName, finish) {
         if (!panelDiv)
         { console.error("No BODY in HTML fragment " + panelName); }
         hud.appendChild(panelDiv);
-        loadScriptIntoDiv('/play/ui/panels/' + panelName + '.js', panelDiv);
+        Tootsville.ui.hud.loadScriptIntoDiv('/play/ui/panels/' + panelName + '.js', panelDiv);
         Tootsville.ui.hud.showHUDPanel(panelName, panelDiv);
         var spinner = document.getElementById(panelName + '-loading');
         hud.removeChild(spinner);
