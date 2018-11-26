@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
     Tootsville.game.hideWhenGameReady();
     Tootsville.game.stopSlowLoadingWatchdogs();
 
-    Tootsville.tank.start3D();
+    Tootsville.tank.prepareFor3D();
 
     Tootsville.login.start();
 
