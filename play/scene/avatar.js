@@ -2,27 +2,18 @@ if (! Tootsville.Avatars) {
     Tootsville.Avatars = {};
 }
 
-Tootsville.Avatars.getAvatar = function (character) {
-    var xhr = new XMLHttpRequest;
-    // should be https://users.{cluster}/toots/{name}
-    xhr.open('GET', Tootsville.host.users + '/users/me/toots/' + character);
-    return new Promise( (finish) => {
-        xhr.onload = () => {
-            var toots = JSON.parse(xhr.response).toots;
-            for (var i = 0; i < toots.length; ++i) {
-                if (toots[i].name == character) {
-                    finish(toots[i]);
-                    return;
-                }
-            }
-            // XXX: Should send them back to login screen
-            Tootsville.warn("Selected Toot character is not owned by the player");
-            finish(toots[0]);
-            return;
-        };
-        xhr.send();
-    });
-};
+Tootsville.Avatars.getAvatar = function (character)
+{ if (!character) { return; }
+  var xhr = new XMLHttpRequest;
+  xhr.open('GET', Tootsville.host.users + '/toots/' + character + "/avatar");
+  return new Promise(
+      (finish) =>
+          { xhr.onload =
+            () =>
+            { var avatar = JSON.parse(xhr.response).avatar;
+              finish(avatar);
+              return; }
+            xhr.send(); }); };
 
 Tootsville.Avatars.UltraTootBuilder = {
     model: null,
