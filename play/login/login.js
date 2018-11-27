@@ -9,7 +9,7 @@ Tootsville.login.start = function ()
   { console.log("Not restarting login; panel already visible");
     return; }
   console.log("Start login");
-  Tootsville.ui.hud.loadHUDPanel("login", Tootsville.login.beginYolo); }
+  Tootsville.ui.hud.loadHUDPanel("login").then(Tootsville.login.beginYolo); }
 
 Tootsville.login.storeGoogleCredentials = function ()
 { document.cookie = 'google-api-token=' + Tootsville.login.googleIDToken + ';path=/;domain=' +
