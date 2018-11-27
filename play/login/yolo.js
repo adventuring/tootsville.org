@@ -8,7 +8,7 @@ Tootsville.login.yoloConfig = {
     supportedIdTokenProviders: [
         {
             uri: "https://accounts.google.com",
-            clientId: "1052481910502-97n2sod83avoegskb6849076d6dhtdkr.apps.googleusercontent.com"
+            clientId: "1052481910502-kb8u1evb6c82dl2o5km4vu6q5mmudkfo.apps.googleusercontent.com"
         }
     ]
 };
@@ -78,7 +78,7 @@ Tootsville.login.googleYoloSignIn = function (yolo) {
             Tootsville.login.storeCredentialInfo(credential);
             Tootsville.login.switchTootsView();
         } else {
-            alert('Google sign-in failed?\nNo ID taken was returned.');
+            alert('Google sign-in failed?\nNo ID token was returned.');
         }
     }, (error) => {
         Tootsville.inform('YOLO Error 1', error.type, error.message, error);
@@ -87,7 +87,7 @@ Tootsville.login.googleYoloSignIn = function (yolo) {
                 Tootsville.login.storeCredentialInfo(credential);
                 Tootsville.login.switchTootsView()
             } else {
-                alert('Google sign-in failed?\nNo ID taken was returned.');
+                alert('Google sign-in failed?\nNo ID token was returned.');
             }
         }, Tootsville.login.yoloError);
     });

@@ -1,3 +1,6 @@
+if (!("Tootsville" in window))
+{ window.Tootsville = {}; }
+
 Tootsville.universalTimeOffset = ((((new Date()).valueOf()/1000) + 2208988800) - (performance.now()/1000));
 Tootsville.decodeTime = function ()
 {
@@ -32,8 +35,8 @@ Tootsville.updateClock = function () {
         (["Lightningsday", "Spotsday", "Starsday", "Notesday", "Sparklesday",
           "Moosday", "Heartsday", "Flowerday", "Blanksday"])[now.weekday] +
         ', ' + now.day + ' ' +
-        ([0, "Sirenia", "Dugon", "Inu", "Man",
-          "Hydr", "Sen", "Pyg", "Luxodonta",
-          "Elephas", "Prodontia", "Den", "Teth"])[now.month] +
+        ([0, "Sirenia", "Dugon", "Inunguis", "Manatus",
+          "Hydrodamalis", "Senecalensis", "Pygmaeus", "Luxodonta",
+          "Elephas", "Procavia", "Dendrohyrax", "Tethytheria"])[now.month] +
         ', ' + now.year;
 }

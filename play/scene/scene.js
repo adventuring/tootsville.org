@@ -89,9 +89,12 @@ Tootsville.tank.initCrappyDefaultLight = function ()
     Tootsville.tank.scene); };
 
 Tootsville.tank.initPlayerToot = function ()
-{ Tootsville.Avatars.getAvatar
-  (Tootsville.character &&
-   Tootsville.character.name).then (
+{ if ( (!(Tootsville.character))
+       ||
+       (!(Tootsville.character.name)) ) { Tootsville.login.start();
+                                          return;}
+  Tootsville.Avatars.getAvatar
+  (Tootsville.character.name).then (
        (toot) =>
            { Tootsville.Avatars.UltraTootBuilder.makeToot (
                toot
@@ -139,14 +142,25 @@ Tootsville.tank.startRenderLoop = function ()
       function ()
       { Tootsville.tank.scene.render(); } ); };
 
+Tootsville.tank.prepareFor3D = function ()
+{ return new Promise(
+    (finish) =>
+        { if (("BABYLON" in window) &&
+              ("CANNON" in window))
+          { finish(); }
+          else if ("BABYLON" in window)
+          { Tootsville.util.loadScript ('https://cdn.babylonjs.com/cannon.js').then(
+              Tootsville.tank.prepareFor3D); }
+          else
+          { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.js').then(
+              Tootsville.tank.prepareFor3D); }}); };
+
 Tootsville.tank.start3D = function ()
-{ Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.js').
-  then (Tootsville.tank.start3DIfReady);
-  Tootsville.util.loadScript ('https://cdn.babylonjs.com/cannon.js').
-  then (Tootsville.tank.start3DIfReady); };
+{ Tootsville.tank.prepareFor3D().then(Tootsville.tank.start3DIfReady); };
 
 Tootsville.tank.start3DIfReady = function ()
-{ if ( (! window.BABYLON) || (! window.CANNON)) { return; }
+{ if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
+  { Tootsville.tank.prepareFor3D.then(Tootsville.tank.start3DifReady); }
   BABYLON.SceneLoader.ShowLoadingScreen = false;
 
   Tootsville.tank.init3DEngine ().then (
