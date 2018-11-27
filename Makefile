@@ -175,6 +175,19 @@ dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.j
 		--js_output_file $@
 	echo '//# sourceMappingURL=/worker.map' >> $@
 
+#################### dist/node-adopt.js
+
+node_modules/.bin/browserify:	package-lock.json
+	npm install browserify --save
+
+node_modules/@openid/openyolo/package.json:
+	npm install @openid/openyolo --save
+
+dist/node-adopt.js:	build/node-adopt.js \
+		node_modules/@openid/openyolo/package.json \
+		package-lock.json node_modules/.bin/browserify
+	node_modules/.bin/browserify build/node-adopt.js -o dist/node-adopt.js
+
 #################### dist/play/play.js
 
 dist/play/play.js:	build/js.order $(shell cat build/js.order)
