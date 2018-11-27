@@ -11,23 +11,7 @@ Tootsville.login.start = function ()
   { Tootsville.trace ("Not restarting login; panel already visible");
     return; }
   Tootsville.trace ("Start login");
-  Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.beginYolo); };
-
-Tootsville.login.storeGoogleCredentials = function ()
-{ document.cookie = 'google-api-token=' + Tootsville.login.googleIDToken + ';path=/;domain=' +
-  Tootsville.cluster + ';max-age=' + (365 * 24 * 60 * 60); };
-
-Tootsville.login.eraseGoogleCredentials = function ()
-{ document.cookie = 'google-api-token=;path=/;domain=tootsville.org;max-age=0'; };
-
-Tootsville.login.googleSignOut = function ()
-{ return new Promise (after =>
-                      { Tootsville.login.eraseGoogleCredentials ();
-                       gapi.auth2.getAuthInstance ().signOut ().then ( () => { after (); }); }); };
-
-Tootsville.login.switchGoogleAccount = function ()
-{ Tootsville.trace ("Switch Google Account: TODO");
-}
+  Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.firebaseLogin); };
 
 Tootsville.login.drawAvatarOnCanvas = function (avatar,canvas)
 { /* TODO: Replace super-lame placeholder with paperdolls in Tootsville.login.drawAvatarOnCanvas */
@@ -46,13 +30,10 @@ Tootsville.login.clearTootsList = function ()
   for (var i = 0; i < toots.length; ++i)
   { toots[i].parentNode.removeChild (toots[i]); } };
 
-Tootsville.login.criticalFailure = function (message)
-{ Tootsville.error ("Login failure", message); };
-
 Tootsville.login.serverQueryCharacters = function ()
 { return new Promise (
     (finish, reject) =>
-        { Tootsville.login.rest (
+        { Tootsville.util.rest (
             'users','/users/me/toots',
             { want: [ 'avatar', 'name', 'note', 'child-p', 'sensitive-p' ],
               order: 'last-seen' }).
@@ -61,7 +42,10 @@ Tootsville.login.serverQueryCharacters = function ()
                   { if (response.toots.length == 0)
                     { reject (); } else
                     { finish (response.toots); } },
-              Tootsville.login.criticalFailure); }); };
+              error =>
+                  { Tootsville.parrot.say ("Can't get Toots list",
+                                           "I can't get a list of your Toots. Are you connected to the Internet?");
+                    Tootsville.error ("Can't retrieve Toots list", error); } ); }); };
 
 Tootsville.login.createTootListItem = function (toot)
 { var li = document.createElement ('LI');
@@ -84,13 +68,31 @@ Tootsville.login.populateTootsList = function (list)
     var canvas = li.querySelector ('canvas');
     Tootsville.login.drawAvatarOnCanvas (toot, canvas); } };
 
+Tootsville.login.generateNewToot = function ()
+{ /* TODO let server generate new Toots with unique names */
+    var toot =
+      { name: "Needs-Naming",
+        baseColor: "indigo",
+        patternColor: "yellow",
+        pattern: "lightning",
+        padColor: "spring-green",
+        childP: false,
+        sensitiveP: false };
+    Tootsville.login.createTootListItem (toot);
+    Tootsville.login.editToot (toot); };
+
 Tootsville.login.startCharacterCreation = function ()
 { Tootsville.parrot.say ("Let's get started!",
-                        "Let's create your first Toot character.<BR><BR>Actually … TODO"); };
+                         "<p>Let's create your Toot character.</p>" +
+                         "<p>You'll be able to get started about a minute. I'll create a new " +
+                         "Toot character for you. You can change the name, colors, or " +
+                         "pattern to be what you like. </p>").
+  then(Tootsville.login.generateNewToot); };
 
 Tootsville.login.loadTootsList = function ()
-{ Tootsville.login.serverQueryCharacters ().then (Tootsville.login.populateTootsList,
-                                                  Tootsville.login.startCharacterCreation); };
+{ Tootsville.login.serverQueryCharacters ().then
+  (Tootsville.login.populateTootsList,
+   Tootsville.login.startCharacterCreation); };
 
 Tootsville.login.dimUnpickedCharacters = function (picked)
 { var allItems = document.querySelectorAll ('#toots-list li');
@@ -129,12 +131,6 @@ Tootsville.login.startSignIn = function ()
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
 { return Tootsville.util.rest ('users', 'play-with', { character: character }); };
-
-Tootsville.login.googleSignIn = function ()
-{ if (Tootsville.login.googleUser)
-  { Tootsville.login.storeGoogleCredentials ();
-    Tootsville.login.switchTootsView (); } else
-  { Tootsville.login.startSignIn (); } };
 
 Tootsville.login.removeChildOrSensitive = function (li)
 { var child = li.querySelector ('.child');
@@ -272,14 +268,5 @@ Tootsville.login.copyGoogleUserInfo = function ()
   Tootsville.login.player.email = profile.getEmail ();
   Tootsville.login.player.face = profile.getImageUrl (); };
 
-Tootsville.login.onSignIn = function (googleUser)
-{ Tootsville.trace ("onSignIn", googleUser);
-  Tootsville.inform ("UserSignIn", "User signed in successfully");
-  Tootsville.login.googleUser = googleUser;
-
-  if (Tootsville.login.googleUser && Tootsville.login.googleUser.isSignedIn ())
-  { Tootsville.login.copyGoogleUserInfo ();
-    Tootsville.login.switchTootsView (); } else
-  { Tootsville.login.startSignIn (); } };
 
 

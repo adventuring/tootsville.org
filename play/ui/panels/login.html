@@ -20,7 +20,7 @@
       </section>
 
       <section id="sign-in" style="display:none">
-        <h2> Sign In and Play Now</h2>!
+        <h2> Sign In and Play Now</h2>
         <p> It's free to join and play. </p>
         <section id="login-13">
           <h3>Ages 13+</h3>
@@ -72,23 +72,6 @@
         </section>
       </section>
 
-      <section id="google-init-failed" style="display:none">
-        <h2> Unable to communicate with Google </h2>
-        <p> This could mean that your computer is offline, but it often means that your settings
-          prevent Google's sign-in program from running on this page. </p>
-        <p> In Firefox, you can change this setting in <b>Ξ → Preferences</b>; in the <b>Privacy &
-            Security</b> section, scroll down and make sure that these settings are selected: </p>
-        <ul>
-          <li> <b>✓</b> Accept cookies from websites </li>
-          <li> Accept third-party cookies <b>Always</b> </li>
-        </ul>
-        <p> When you have changed this setting, <button onclick="document.reload()">reload</button>
-          this page to sign in. </p>
-        <hr>
-        <p> Technical information: </p>
-        <pre id="google-init-failed-reason">No reason was provided</pre>
-      </section>
-
       <section id="pick-toot" style="display:none">
         <h2> Pick a Toot Character </h2>
         <p>Click or tap a character to play now.</p>
@@ -118,7 +101,7 @@
                                                                                              fa-spin fa-fw fa-spinner" ></i></span>
             <tt>&lt;</tt ><tt id="google-user-email" ><i class="fas fa-spin fa-spinnerfa-fw"
                                                          ></i></tt><tt>&gt;</tt>. </p>
-          <button onclick="Tootsville.login.switchGoogleAccount()">Switch Google Account</button>
+          <button onclick="Tootsville.login.signOut()"> Sign Out </button>
         </div>
       </section>
     </div>
