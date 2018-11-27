@@ -80,20 +80,21 @@ Tootsville.ui.hud.showHUDPanel = function(panel, div) {
               if (div)
               { if (Tootsville.ui.hud.getOpenPanel () != div)
                 { Tootsville.ui.hud.closePanel (); }
-            div.style.opacity = 1;
-            div.style.maxHeight = '100vh';
-            div.style.display = 'block';
-            div.className = 'hud-panel';
-            div.position = 'absolute';
-            finish();
+                div.style.opacity = 1;
+                div.style.maxHeight = '100vh';
+                div.style.display = 'block';
+                div.className = 'hud-panel';
+                div.position = 'absolute';
+                finish();
                 return; }
-        Tootsville.ui.hud.closePanel();
-              Tootsville.ui.hud.loadHUDPanel (panel, finish); }); };
+              else
+              { Tootsville.ui.hud.closePanel();
+                Tootsville.ui.hud.loadHUDPanel (panel, finish); } }); };
 
 Tootsville.ui.hud.loadHUDPanel = function (panelName, finish)
 { var panelDiv = document.getElementById (panelName);
   if (!panelDiv)
-  { Tootsville.ui.hud.showHUDPanel(panelName, panelDiv);
+  { Tootsville.ui.hud.showHUDPanel (panelName, panelDiv);
     if (finish) { finish (panelDiv); } }
   else
   { var spinnerDiv = Tootsville.ui.hud.createHUDLoaderPanel (panelName);
