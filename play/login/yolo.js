@@ -1,21 +1,24 @@
 if (!Tootsville.login) { Tootsville.login = {}; }
 
 /* TODO fetch Google client ID from server config */
-Tootsville.login.yoloConfig = {
-    supportedAuthMethods: [
-        "https://accounts.google.com"
-    ],
-    supportedIdTokenProviders: [
-        {
-            uri: "https://accounts.google.com",
-            clientId: "1052481910502-kb8u1evb6c82dl2o5km4vu6q5mmudkfo.apps.googleusercontent.com"
-        }
-    ]
-};
+Tootsville.login.yoloConfig =
+    { supportedAuthMethods:
+        [ "https://accounts.google.com",
+          "https://www.facebook.com",
+          // 'https://www.linkedin.com',
+          'https://login.live.com',
+          // 'https://www.paypal.com',
+          'https://twitter.com',
+          'https://login.yahoo.com'],
+        supportedIdTokenProviders:
+        [{ uri: "https://accounts.google.com",
+           /* TODO move Google client ID someplace cooler */
+           clientId: "1052481910502-kb8u1evb6c82dl2o5km4vu6q5mmudkfo.apps.googleusercontent.com" },
+         { uri: 'https://login.live.com' }],
+      context: "signIn" /* or "signUp", "continue", "use" */ };
 
 Tootsville.login.beginYolo = function (loginPanel)
-{ Tootsville.ui.hud.loadScriptIntoDiv('',
-                                      loginPanel).then(); }
+{ Tootsville.login.openYoloSignIn (); }
 
 
 Tootsville.login.yoloError = function (error) {
@@ -77,27 +80,6 @@ Tootsville.login.storeCredentialInfo = function (credential) {
     Tootsville.login.player.face = credential.profilePicture; // FIXME (Why? What's wrong with it?)
 }
 
-Tootsville.login.googleYoloSignIn = function (yolo) {
-    googleyolo.retrieve(Tootsville.login.yoloConfig).then( (credential) => {
-        if (credential.idToken) {
-            Tootsville.login.storeCredentialInfo(credential);
-            Tootsville.login.switchTootsView();
-        } else {
-            alert('Google sign-in failed?\nNo ID token was returned.');
-        }
-    }, (error) => {
-        Tootsville.inform('YOLO Error 1', error.type, error.message, error);
-        googleyolo.hint(Tootsville.login.yoloConfig).then( (credential) => {
-            if (credential.idToken) {
-                Tootsville.login.storeCredentialInfo(credential);
-                Tootsville.login.switchTootsView()
-            } else {
-                alert('Google sign-in failed?\nNo ID token was returned.');
-            }
-        }, Tootsville.login.yoloError);
-    });
-};
-
 Tootsville.login.gotYolo = function (credential)
 { if (credential.idToken)
   { console.log("Got credentials", credential);
@@ -112,12 +94,23 @@ Tootsville.login.gotYolo = function (credential)
   else
   { console.log("Mysterious credentials lack an idToken", credential); } };
 
-Tootsville.login.yoloFailed = function (error)
+Tootsville.login.yoloRetrieveFailed = function (error)
+{ Tootsville.inform('YOLO Error 1', error.type, error.message, error);
+  openYolo.hint(Tootsville.login.yoloConfig).then(
+      (credential) =>
+          { if (credential.idToken)
+            { Tootsville.login.storeCredentialInfo(credential);
+              Tootsville.login.switchTootsView(); }
+      else
+            { alert('Google sign-in failed?\nNo ID token was returned.'); }},
+      Tootsville.login.yoloError); }
+
+Tootsville.login.yoloError = function (error)
 { Tootsville.error("Yolo Error", error);
   switch (error.type) {
   case "userCanceled":
       /* The user closed the hint selector. */
-      Tootsville.login.googleYoloSignin();
+      Tootsville.login.openYoloSignin();
       break;
   case "noCredentialsAvailable":
       /* No hint available for the session. */
@@ -125,7 +118,7 @@ Tootsville.login.yoloFailed = function (error)
   case "requestFailed":
       /* The request failed, most likely because of a timeout.
          You can retry another time if necessary. */
-      Tootsville.login.googleYoloSignin();
+      Tootsville.login.openYoloSignin();
       break;
   case "operationCanceled":
       // The operation was programmatically canceled, do nothing.
@@ -143,18 +136,11 @@ Tootsville.login.yoloFailed = function (error)
       // Unknown error, do nothing.
   }};
 
-Tootsville.login.googleYoloSignIn = function ()
+Tootsville.login.openYoloSignIn = function ()
 { console.log("Asking Google YOLO to run");
-  googleyolo.retrieve(
-      { supportedAuthMethods:
-        [ "https://accounts.google.com" ],
-        supportedIdTokenProviders:
-        [{ uri: "https://accounts.google.com",
-           /* TODO move Google client ID someplace cooler */
-           clientId: "1052481910502-kb8u1evb6c82dl2o5km4vu6q5mmudkfo.apps.googleusercontent.com" }],
-        context: "signIn" /* or "continue" */ }).then(
-            (credential) => {Tootsville.login.gotYolo(credential);},
-            (error) => {Tootsville.login.yoloFailed(error);}); };
+  openYolo.retrieve(Tootsville.login.yoloConfig).then(
+      (credential) => {Tootsville.login.gotYolo(credential);},
+      (error) => {Tootsville.login.yoloRetrieveFailed(error);}); };
 
 Tootsville.login.cancelYoloSignIn = function ()
-{ googleyolo.cancelLastOperation (); }
+{ openYolo.cancelLastOperation (); }
