@@ -273,7 +273,7 @@ devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
 devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
-	notify-send -i document-new "Build Complete" "Finished building devel-play"
+	-notify-send -i document-new "Build Complete" "Finished building devel-play"
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); else \

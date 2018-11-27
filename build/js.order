@@ -1,5 +1,7 @@
 play/tootsville.js
 
+play/analytics.js
+
 play/rollbar.js
 play/instabug.js
 
@@ -10,8 +12,6 @@ play/time.js
 
 play/gossip/parrot.js
 play/gossip/gossip.js
-
-dist/node-adopt.js
 
 play/login/login.js
 play/login/yolo.js
