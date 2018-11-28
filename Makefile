@@ -158,7 +158,7 @@ node_modules/jsdoc-sphinx/template/publish.js:
 
 htaccess:	dist/htaccess.all/play.$(clusterorg).htaccess
 
-dist/htaccess.all/play.$(clusterorg).htaccess:	htaccess.base bin/make-all-htaccess
+dist/htaccess.all/play.$(clusterorg).htaccess:	build/htaccess.base bin/make-all-htaccess
 	bin/make-all-htaccess
 
 #################### /worker.js
