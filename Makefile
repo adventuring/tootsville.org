@@ -267,7 +267,7 @@ dist/www/2019.css:	$(shell echo www/*.less)
 devel-test:	devel-serve devel-play
 
 devel-serve:	servers/Tootsville
-	servers/Tootsville server
+	servers/Tootsville server < /dev/null
 
 devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
@@ -560,3 +560,7 @@ deploy-docs:
 	scp www/favicon.??? goethe.tootsville.org:goethe.tootsville.org/
 	rsync -essh -zar www/error goethe.tootsville.org:goethe.tootsville.org/
 
+####################
+
+TAGS:	$(shell find . -type f -name *.lisp)
+	etags --declarations $(shell find . -type f -name *.lisp) Makefile
