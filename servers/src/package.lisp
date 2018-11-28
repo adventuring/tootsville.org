@@ -12,7 +12,7 @@
                           #:copy-file #:copy-stream ; conflicts with Alexandria.
                           #:directory-pathname-p)
   (:import-from :trivial-backtrace #:print-backtrace)
-  (:import-from :sb-introspect #:function-lambda-expression)
+  (:import-from :sb-introspect #:function-lambda-expression #:function-lambda-list)
   (:import-from :uiop #:run-program)
   (:export
    #:*application-root*
