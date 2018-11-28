@@ -114,6 +114,7 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                    do (terpri o)))))))))
 
 (defun docstring->html (docstring symbol)
+  (check-type symbol symbol)
   (when (fboundp symbol)
     (let ((first-line (subseq docstring 0 (position #\Newline docstring))))
       (loop for word in (function-lambda-list (fdefinition symbol))
