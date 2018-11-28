@@ -38,15 +38,18 @@ Tootsville.login.acceptSignedIn = function(result)
   return false; };
 
 Tootsville.login.storeCredentialInfo = function (result)
-{   var cred = result.credential; /* .accessToken,  idToken, providerId, signInMethod */
-  var addl = result.additionalUserInfo; /*   →  isNewUser:  true,  providerId, profile:
-   * {email,  family_name,  gender:  "male",  given_name,  hd:
-   * "star-hope.org", id, link:  google+ URI, locale: "en-GB",
-   * name, picture: URL, verified_email: true} */
+{   var cred = result.credential;
+    /* .accessToken,  idToken, providerId, signInMethod */
+    var addl = result.additionalUserInfo;
+    /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
+     * gender:  "male",  given_name,   hd:  "star-hope.org",  id,  link:
+     * google+ URI, locale: "en-GB", name, picture: URL, verified_email:
+     * true} */
   var user = result.user;
-  /* o: "[DEFAULT]", refreshToken, displayName,    email,     emailVerified,    isAnonymous,
-   * phoneNumber,  photoURL,   providerData  =  [{displayName,
-   * email, phoneNumber, photoURL, providerId, uid}…], u = 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
+    /* o: "[DEFAULT]", refreshToken,  displayName, email, emailVerified,
+     * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
+     * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
+     * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
   Tootsville.login.accessToken = cred.accessToken;
   Tootsville.login.idToken = cred.idToken;
   Tootsville.login.idProvider = cred.providerId;
