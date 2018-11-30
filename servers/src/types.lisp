@@ -401,3 +401,86 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
   '(and string
     (satisfies string-length-2-p)
     (satisfies string-all-alpha-chars-p)))
+
+
+(defun integer-to-byte-vector
+    (integer
+     &optional
+       (vector (make-array (ceiling (integer-length integer) 8)
+                           :element-type '(unsigned-byte 8))))
+  "Convert INTEGER into VECTOR of (UNSIGNED-BYTE 8)
+
+If VECTOR is  supplied, it must be lon enough  to accept INTEGER without
+growing. Otherwise,  the vector  of the minimum  length to  hold INTEGER
+will be constructed.
+
+The byte vector will be in big-endian (aka \"network\") order."
+  (assert (<= (ceiling (integer-length integer) 8)
+              (length vector))
+          (integer vector)
+          "INTEGER-TO-BYTE-VECTOR: ~
+integer ~x is longer than vector length ~:d byte~p"
+          integer (length vector))
+  (let ((i8 (* 8 (1- (length vector)))))
+    (dotimes (i (length vector))
+      (setf (aref vector i) (ldb (byte 8 i8) integer))
+      (decf i8 8)))
+  vector)
+
+(defun byte-vector-to-integer (vector)
+  "Convert VECTOR of (UNSIGNED-BYTE 8) into an integer.
+
+The VECTOR should be in big-endian (aka \"network\") order."
+  (let ((i8 (* 8 (1- (length vector)))) (integer 0))
+    (dotimes (i (length vector))
+      (setf (ldb (byte 8 i8) integer) (aref vector i))
+      (decf i8 8))
+    integer))
+
+
+
+(defstruct color24 red green blue)
+
+;; TODO: HSV accessors for color24
+
+(defun integer-to-color24 (number)
+  (make-color24 :red (ldb (byte 8 16) number)
+		:green (ldb (byte 8 8) number)
+		:blue (ldb (byte 8 0) number)))
+
+(defun color24-to-integer (color)
+  (+ (ash (color24-red color) 16)
+     (ash (color24-green color) 8)
+     (color24-blue color)))
+
+
+(defun legal-age (date-of-birth &optional (reference-date (local-time:now)))
+  "The age of  a person born on DATE-OF-BIRTH, as  of REFERENCE-DATE (or
+right  now);  this uses  the  legal  definition  that the  person's  age
+increments at  the midnight of their  date of birth each  year, with the
+date 29 February treated as 1 March on non-leap-years.
+
+The time  zone used for  this computation  is the not  defined, however,
+yielding  rather  irregular  behaviour   depending  on  time  zones  and
+the like.
+
+TODO: Determine  in what  time zone  we should  computer this  for legal
+reasons, eg, COPPA."
+  (check-type date-of-birth timestamp)
+  (check-type reference-date timestamp)
+  (unless (timestamp< date-of-birth reference-date)
+    (return-from legal-age 0))
+  (multiple-value-bind (msec sec min hour day month year)
+      (decode-timestamp reference-date)
+    (declare (ignore msec sec min hour))
+    (multiple-value-bind (msec sec min hour
+                               day-of-birth month-of-birth year-of-birth)
+        (decode-timestamp date-of-birth)
+      (declare (ignore msec sec min hour))
+      (let ((had-birthday-p (or (< month-of-birth month)
+                                (and (= month-of-birth month)
+                                     (<= day-of-birth day)))))
+        (+ (- year
+              year-of-birth
+              1)
+           (if had-birthday-p 1 0))))))
