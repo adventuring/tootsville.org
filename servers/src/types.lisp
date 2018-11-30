@@ -466,16 +466,16 @@ the like.
 
 TODO: Determine  in what  time zone  we should  computer this  for legal
 reasons, eg, COPPA."
-  (check-type date-of-birth local-time:timestamp)
-  (check-type reference-date local-time:timestamp)
-  (unless (local-time:timestamp< date-of-birth reference-date)
+  (check-type date-of-birth timestamp)
+  (check-type reference-date timestamp)
+  (unless (timestamp< date-of-birth reference-date)
     (return-from legal-age 0))
   (multiple-value-bind (msec sec min hour day month year)
-      (local-time:decode-timestamp reference-date)
+      (decode-timestamp reference-date)
     (declare (ignore msec sec min hour))
     (multiple-value-bind (msec sec min hour
                                day-of-birth month-of-birth year-of-birth)
-        (local-time:decode-timestamp date-of-birth)
+        (decode-timestamp date-of-birth)
       (declare (ignore msec sec min hour))
       (let ((had-birthday-p (or (< month-of-birth month)
                                 (and (= month-of-birth month)
