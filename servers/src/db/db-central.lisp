@@ -69,11 +69,11 @@
                        (let* ((query (cl-dbi:prepare 
                                       *dbi-connection*
                                       ,(format nil "INSERT INTO `~a` (~{`~a`~^, ~})~
-~:*VALUES (~{?~^, ~})"
-                                               table 
+~:*VALUES (~{?~*~^, ~})"
+                                               table
                                                (mapcar (compose #'lisp-to-db-name #'car) columns)))))
                          (cl-dbi:execute query
-                                         ,(mapcar #'column-save-mapping columns)))
+                                         ,@(mapcar #'column-save-mapping columns)))
                        (when (string-equal (caar columns) "ID")
                          (let* ((id-query (cl-dbi:prepare 
                                            *dbi-connection*
