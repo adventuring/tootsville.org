@@ -77,6 +77,11 @@ REST services for the front-end."
      (:file "acceptor" :depends-on ("types" "endpoint" "web" "auth"
                                             "http-status-messages"))
      (:file "main" :depends-on ("config" "view" "package" "acceptor"))
+     (:module "db"
+              :depends-on ("package")
+              :components ((:file "db-pool")
+                           (:file "db-central" :depends-on ("db-pool"))
+                           (:file "friendly" :depends-on ("db-central"))))
      (:module "auth"
               :depends-on ("package" "users")
               :components
@@ -84,7 +89,7 @@ REST services for the front-end."
                (:file "auth-google" :depends-on ("auth-oauth2"))))
      (:module
       "endpoints"
-      :depends-on ("web" "terrain")
+      :depends-on ("web" "terrain" "db")
       :components
       ((:file "slash-login")
        (:file "slash-version")

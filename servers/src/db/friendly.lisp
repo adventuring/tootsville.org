@@ -17,16 +17,16 @@
     person)
   (:method ((person uuid:uuid))
     (find-record 'db.person "uuid" person))
-  (:method ((person number))
-    (check-type person (and (< 0 number (expt 2 128)))) 
+  (:method ((person real))
+    (check-type person (real (0) (#.(expt 2 128)))) 
     (find-record 'db.person "uuid" person))
   (:method ((person cons))
     (assert (= 2 (length person)))
     (check-type (car person) string)
     (check-type (cdr person) string)
-    (singular-select-column "credentials" "person"
-                            "uid" (car person)
-                            "provider" (cdr person))))
+    (db-select-single-column "credentials" "person"
+                             "uid" (car person)
+                             "provider" (cdr person))))
 
 (defrecord db.parent-child (:friendly "parent_child")
   (parent uuid ref db.person)
