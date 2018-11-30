@@ -401,3 +401,40 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
   '(and string
     (satisfies string-length-2-p)
     (satisfies string-all-alpha-chars-p)))
+
+
+(defun integer-to-byte-vector
+    (integer
+     &optional
+       (vector (make-array (ceiling (integer-length integer) 8)
+                           :element-type '(unsigned-byte 8))))
+  "Convert INTEGER into VECTOR of (UNSIGNED-BYTE 8)
+
+If VECTOR is  supplied, it must be lon enough  to accept INTEGER without
+growing. Otherwise,  the vector  of the minimum  length to  hold INTEGER
+will be constructed.
+
+The byte vector will be in big-endian (aka \"network\") order."
+  (assert (<= (ceiling (integer-length integer) 8)
+              (length vector))
+          (integer vector)
+          "INTEGER-TO-BYTE-VECTOR: ~
+integer ~x is longer than vector length ~:d byte~p"
+          integer (length vector))
+  (let ((i8 (* 8 (1- (length vector)))))
+    (dotimes (i (length vector))
+      (setf (aref vector i) (ldb (byte 8 i8) integer))
+      (decf i8 8)))
+  vector)
+
+(defun byte-vector-to-integer (vector)
+  "Convert VECTOR of (UNSIGNED-BYTE 8) into an integer.
+
+The VECTOR should be in big-endian (aka \"network\") order."
+  (let ((i8 (* 8 (1- (length vector)))) (integer 0))
+    (dotimes (i (length vector))
+      (setf (ldb (byte 8 i8) integer) (aref vector i))
+      (decf i8 8))
+    integer))
+
+
