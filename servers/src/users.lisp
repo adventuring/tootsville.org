@@ -5,21 +5,21 @@
 (defvar *user* nil
   "The currently-signed-in user, if any")
 
-(defun user-display-name (person)
+(defun user-display-name (&optional (person *user*))
   (db.person-display-name (ensure-person person)))
 
-(defun user-given-name (person)
+(defun user-given-name (&optional (person *user*))
   (db.person-given-name (ensure-person person)))
 
-(defun user-surname (person)
+(defun user-surname (&optional (person *user*))
   (db.person-surname (ensure-person person)))
 
-(defun user-face (person)
+(defun user-face (&optional (person *user*))
   (let* ((uuid (db.person-uuid (ensure-person person)))
-	 (portraits (find-records 'db.person-link "rel" :portrait)))
+         (portraits (find-records 'db.person-link "rel" :portrait)))
     (when portraits (first portrait))))
 
-(defun user-id (person)
+(defun user-id (&optional (person *user*))
   (db.person-uuid (ensure-person person)))
 
 (defun user->alist (user)
@@ -97,33 +97,33 @@
 
 (defun player-childp (&optional (player *user))
   (< (or (legal-age (db.person-date-of-birth player))
-	 (db.person-age player))
+         (db.person-age player))
      13))
 
 (defun player-adultp (&optional (player *user))
   (>= (or (legal-age (db.person-date-of-birth player))
-	  (db.person-age player))
-     18))
+	(db.person-age player))
+      18))
 
 (defun toot-childp (toot)
   (player-childp (find-reference toot :player)))
 
 (defun toot-info (toot)
   (list :name (db.toot-name toot)
-	:note "" ; TODO Toot notes by player/parent
-	:avatar (db.avatar-name (find-reference toot :avatar))
-	:base-color (color24-name (db.toot-base-color toot))
-	:pattern (string-downcase (db.toot-pattern toot))
-	:pattern-color (color24-name (db.toot-pattern-color toot))
-	:pads-color (color24-name (db.toot-pads-color toot))
-	:child-p (toot-childp toot)
-	:sensitive-p (or (toot-childp toot)
-			 (db.person-sensitivep (find-reference toot :player)))
-	:last-seen (db.toot-last-active toot)))
+        :note "" ; TODO Toot notes by player/parent
+        :avatar (db.avatar-name (find-reference toot :avatar))
+        :base-color (color24-name (db.toot-base-color toot))
+        :pattern (string-downcase (db.toot-pattern toot))
+        :pattern-color (color24-name (db.toot-pattern-color toot))
+        :pads-color (color24-name (db.toot-pads-color toot))
+        :child-p (toot-childp toot)
+        :sensitive-p (or (toot-childp toot)
+		     (db.person-sensitivep (find-reference toot :player)))
+        :last-seen (db.toot-last-active toot)))
 
 (defun player-toots (&optional (player *user*))
   (find-records 'db.toot "player" (db.person-uuid player)))
-  
+
 (defun player-fake-toots (&optional (player *user*))
   (declare (ignore player))
   (list
