@@ -22,10 +22,12 @@ REST services for the front-end."
                ;; systems from Quicklisp
 
                :bordeaux-threads
+               :cl-dbi
                :cl-memcached
                :cl-ppcre
                :cl-threadpool
                :clouchdb
+               :dbd-mysql
                :drakma
                :envy
                :fare-memoization
