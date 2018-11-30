@@ -43,13 +43,18 @@
      (defmethod find-record ((class (eql ',name)) &rest columns+values)
        (load-record ',name (apply #'select-single-record ,(string-downcase table)
                                   columns+values)))
+     (defmethod find-records ((class (eql ',name)) &rest columns+values)
+       (mapcar #'load-record ',name
+	       (apply #'simple-select-records ,(string-downcase table)
+		      columns+values)))
      (defmethod row<-record  ((object ,name))
        (with-slots (object ,@(mapcar #'car
                                      columns))
            (list ,@(mapcar #'column-save-mapping columns))))
      ,(when (or (string-equal "ID" (caar columns))
                 (string-equal "UUID" (caar columns)))
-        `(defmethod save-record ((object ,name))
+        `(progn
+	   (defmethod save-record ((object ,name))
            (with-db (,database)
              (let ((query (cl-dbi:prepare 
                            (format nil "UPDATE `~a` SET ~{`~a` = ?~^, ~} WHERE ~a = ?"
@@ -60,4 +65,16 @@
                                    ,(string-downcase (caar columns))))))
                (cl-dbi:execute query
                                ,@(mapcar #'car (rest columns))
-                               ,(caar columns))))))))
+                               ,(caar columns)))))
+	   ;; FIXME: insert and collect new ID or UUID
+	   ))
+     ,(when (find-if (lambda (column) (< 2 (length column))) columns)
+	(loop for column in columns
+	      when (and (= 4 (length column))
+			(string-equal "REF" (third column)))
+	      collect
+	      `(defmethod find-reference
+		 ((object ,name)
+		  (reference (eql ,(make-keyword (string (first column))))))
+		 (find-record ,(fourth column)
+			      ,(string-downcase (second column))))))))
