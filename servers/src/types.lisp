@@ -437,4 +437,18 @@ The VECTOR should be in big-endian (aka \"network\") order."
       (decf i8 8))
     integer))
 
+
 
+(defstruct color24 red green blue)
+
+;; TODO: HSV accessors for color24
+
+(defun integer-to-color24 (number)
+  (make-color24 :red (ldb (byte 8 16) number)
+		:green (ldb (byte 8 8) number)
+		:blue (ldb (byte 8 0) number)))
+
+(defun color24-to-integer (color)
+  (+ (ash (color24-red color) 16)
+     (ash (color24-green color) 8)
+     (color24-blue color)))
