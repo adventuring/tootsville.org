@@ -32,7 +32,7 @@
         (:json `(jonathan.encode:to-json ,slot))
         (:uri `(puri:render-uri ,slot nil))
         (:color24 `(color24-to-integer ,slot))
-        (:uuid `(vector-to-int))       
+        (:uuid `(vector-to-int ,slot))       
         (:timestamp `(timestamp-to-universal  ,slot))))))
 
 (defmacro defrecord (name (database table) &rest columns)
