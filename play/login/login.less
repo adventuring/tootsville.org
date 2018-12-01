@@ -234,11 +234,20 @@ p {
     transition: .25s;
 }
 
-.toot-name {
+#toot-name, .toot-name {
     font-family: Acme, sans-serif;
     padding: 1rem;
     font-size: 2rem;
 }
+
+#toot-name {
+    border-bottom: 1px solid black;
+}
+
+#toot-name:focus {
+    background-color: @periwinkle;
+}
+
 .note {
     display: block;
     font-family: Cantarell, sans-serif;
@@ -274,8 +283,8 @@ p {
 
 strong.green-plus {
     display: inline-block;
-    margin: 0
-                width: 1.5em;
+    margin: 0;
+    width: 1.5em;
     height: 1.5em;
     border-radius: .75em;
     background-color: #6f6;
