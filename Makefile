@@ -195,9 +195,9 @@ dist/play/play.map:	dist/play/play.js
 
 #################### dist/play/play.css
 
-LESSFILES=$(shell find play -name \*.less -and -not -name .\*)
+PLAYLESSDEPS=$(shell lessc -M - play/play.less)
 
-dist/play/play.css:	$(LESSFILES)
+dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
 	lessc --math=strict --source-map play/play.less dist/play/play.css
 
@@ -246,7 +246,7 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 
 #################### www
 
-dist/www/2019.css:	$(shell echo www/*.less)
+dist/www/2019.css:	$(shell lessc -M - www/2019.less)
 	lessc --math=strict --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
@@ -297,7 +297,7 @@ dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.css.map dist/play.$(clusterorg)/play/
-	for file in $(LESSFILES) ; do cp $$file dist/play.$(clusterorg)/$$file ; done
+	for file in $(PLAYLESSDEPS) ; do cp $$file dist/play.$(clusterorg)/$$file ; done
 
 dist/play.$(clusterorg)/worker.js:	dist/worker.js
 	mkdir -p dist/play.$(clusterorg)/
