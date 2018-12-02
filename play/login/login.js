@@ -258,14 +258,14 @@ Tootsville.login.doneEditingSettings = function ()
   document.querySelector ('#new-toot-hint').style.display = 'block';
   document.querySelector ('#edit-toot-settings-done').style.display = 'none'; };
 
-Tootsville.login.copyGoogleUserInfo = function ()
-{ Tootsville.login.googleIDToken = Tootsville.login.googleUser.getAuthResponse ().id_token;
-  Tootsville.login.storeGoogleCredentials ();
-  var profile = Tootsville.login.googleUser.getBasicProfile ();
-  if (! Tootsville.login.player) { Tootsville.login.player = {} ; }
-  Tootsville.login.player.name = profile.getName ();
-  Tootsville.login.player.email = profile.getEmail ();
-  Tootsville.login.player.face = profile.getImageUrl (); };
+// Tootsville.login.copyGoogleUserInfo = function ()
+// { Tootsville.login.googleIDToken = Tootsville.login.googleUser.getAuthResponse ().id_token;
+//   Tootsville.login.storeGoogleCredentials ();
+//   var profile = Tootsville.login.googleUser.getBasicProfile ();
+//   if (! Tootsville.login.player) { Tootsville.login.player = {} ; }
+//   Tootsville.login.player.name = profile.getName ();
+//   Tootsville.login.player.email = profile.getEmail ();
+//   Tootsville.login.player.face = profile.getImageUrl (); };
 
 Tootsville.login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
@@ -315,6 +315,14 @@ Tootsville.login.storeCredentialInfo = function (result)
      * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
      * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
      * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
+
+    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+        // Send token to your backend via HTTPS TODO
+        // ...
+    }).catch(function(error) {
+        // Handle error TODO
+    });
+    
   Tootsville.login.accessToken = cred.accessToken;
   Tootsville.login.idToken = cred.idToken;
   Tootsville.login.idProvider = cred.providerId;
@@ -327,7 +335,9 @@ Tootsville.login.storeCredentialInfo = function (result)
                                   user.providerData[0].photoURL ||
                                   addl.picture);
   Tootsville.login.player.gender = addl.gender;
-  Tootsville.login.player.locale = addl.locale; };
+    Tootsville.login.player.locale = addl.locale;
+
+};
 
 
 
