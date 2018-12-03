@@ -276,7 +276,10 @@ devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
 	-notify-send -i document-new "Build Complete" "Finished building devel-play"
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
-	if [ -f dist/play/httpd.pid ]; then kill -HUP $$(< dist/play/httpd.pid ); else \
+	if [ -f dist/play/httpd.pid ]; then \
+		kill -HUP $$(< dist/play/httpd.pid ) || \
+		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
+	else \
 		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
 	fi
 
