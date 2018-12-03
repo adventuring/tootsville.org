@@ -1,0 +1,28 @@
+#!/usr/bin/bash
+
+clusterorg=$1
+mkdir -p dist/www/{logs,conf} dist/www.$clusterorg
+ln -sf /etc/httpd/modules/ dist/www/
+ln -sf /etc/mime.types dist/www/conf/
+
+cat <<END > dist/www/dev-www.httpd.conf
+ServerName $(hostnamectl --transient).local
+PIDFile "$(pwd)/dist/www/httpd.pid"
+ServerRoot "$(pwd)/dist/www/"
+Listen 5001
+User $(whoami)
+Group $(groups|cut -d ' ' -f 1)
+Include /etc/httpd/conf.modules.d/*.conf
+<Directory />
+  AllowOverride none
+  Require all denied
+</Directory>
+DocumentRoot "$(pwd)/dist/www.$clusterorg"
+<Directory "$(pwd)/dist/www.$clusterorg">
+  Options Indexes FollowSymLinks Includes MultiViews
+  Require all granted
+</Directory>
+<IfModule dir_module>
+    DirectoryIndex index.html
+</IfModule>
+END

@@ -273,9 +273,25 @@ devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
 devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
-	-notify-send -i document-new "Build Complete" "Finished building devel-play"
+	-notify-send -i document-new "Build Complete: play" "Finished building devel-play"
+
+devel-wwwtest:	devel-www
+	firefox --devtools --new-tab "http://localhost:5001/" </dev/null &>/dev/null &
+
+devel-www:	dist/www.$(clusterorg) dist/www/httpd.pid
+	-notify-send -i document-new "Build Complete: www" "Finished building devel-www"
+
+dist/www/httpd.pid:	dist/www/dev-www.httpd.conf
+	mkdir -p dist/www
+	if [ -f dist/www/httpd.pid ]; then \
+		kill -HUP $$(< dist/www/httpd.pid ) || \
+		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
+	else \
+		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
+	fi
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
+	mkdir -p dist/play
 	if [ -f dist/play/httpd.pid ]; then \
 		kill -HUP $$(< dist/play/httpd.pid ) || \
 		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
@@ -285,6 +301,9 @@ dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
 
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
+
+dist/www/dev-www.httpd.conf:	bin/dev-www-httpd-conf
+	bin/dev-www-httpd-conf $(clusterorg)
 
 dist/play.$(clusterorg)/.well-known/assetlinks.json: play/.well-known/assetlinks.json
 	mkdir -p dist/play.$(clusterorg)/.well-known
@@ -461,8 +480,11 @@ predeploy-play:	dist/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
 	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
 
-predeploy-www:	htaccess dist/www/2019.css
+predeploy-www:	dist/www.$(clusterorg)
 	echo " » Pre-deploy www.$(clusterorg)"
+	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
+
+dist/www.$(clusterorg):	htaccess dist/www/2019.css
 	mkdir -p dist/www.$(clusterorg)
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      www/* dist/www.$(clusterorg)/
@@ -475,7 +497,6 @@ predeploy-www:	htaccess dist/www/2019.css
 	then \
 		cp www/index.qa.html dist/www.$(clusterorg)/index.html ;\
 	fi
-	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
 
 predeploy-servers:	servers quicklisp-update-servers
 	for host in game1 game2 ;\
