@@ -303,7 +303,7 @@ Tootsville.login.acceptSignedIn = function(result)
   return false; };
 
 Tootsville.login.storeCredentialInfo = function (result)
-{   var cred = result.credential;
+{ var cred = result.credential;
     /* .accessToken,  idToken, providerId, signInMethod */
     var addl = result.additionalUserInfo;
     /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
@@ -329,6 +329,7 @@ Tootsville.login.storeCredentialInfo = function (result)
   Tootsville.login.player.gender = addl.gender;
   Tootsville.login.player.locale = addl.locale; };
 
-
+Tootsville.login.quit = function ()
+{ firebase.auth().signOut().then(document.reload); };
 
 
