@@ -51,29 +51,19 @@
   (hunchentoot:abort-request-handler))
 
 
-(defun active-sdp-offers (&optional (user *user*))
-  (mapcar (rcurry #'drakma:url-encode :utf-8)
-          (mapcar #'user-sdp-offer
-                  (remove-if #'user-sdp-answer
-                             (remove-if-not #'user-sdp-offer
-                                            (remove-if (curry #'user= user)
-                                                       *gossip-users*))))))
-
 (defun user-info (&optional (user *user*))
   (gossipnet-update-client)
   (let ((partial
          (list :id (user-id user)
-               :toots (mapcar #'toot-info (player-toots))
-               :offers (mapcar #'stringify (active-sdp-offers user)))))
-    (if-let (answer (user-sdp-answer user))
-      (append (list :answer answer) partial)
-      partial)))
+               :toots (mapcar #'toot-info (player-toots)))))))
+
+(defun find-user-from-session ()
+  ())
 
 (defmacro with-user (() &body body)
   `(let ((*user* (find-user-from-session)))
      (unless *user*
-       (return-from endpoint
-         (list 403 nil *403.JSON-BYTES*)))
+       (error 'user-not-identified-error))
      ,@body))
 
 
@@ -100,7 +90,7 @@ in the universe.
 You've already gotten a response to  your most recently PUT request; See
 PUT /gossip/request for details.
 
-@subsection{Status: 420 Cool your heels}
+@subsection{Status: 429 Too many requests)
 
 You are submitting requests too often. Wait before retrying.
 "
@@ -128,5 +118,5 @@ will be an URI from which to request a response. Submit a GET request to
 that URI and await a reply (COMET style).
 "
   (with-user ()
-    (list 201 '(:location "/gossip/answer")
-          (user-info *user*))))
+    (list 202 '(:location "/gossip/answer")
+          (user-info))))
