@@ -226,29 +226,37 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	echo '** FIXME Actual bugs!' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn FIXME: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn FIXME servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** TODO To be done ASAP' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn TODO: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn TODO servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** XXX Might Be Nice to do someday' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn XXX: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn XXX servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** ☠☠☠ Bruce-Robert should examine this' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn ☠☠☠: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn ☠☠☠: servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
 TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
 	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
 	-o -name \*.shtml \) -and -not -name .\*) \
 	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
-	git grep FIXME: */ README.org | wc -l >> TODO.scorecard
+	git grep FIXME servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
-	git grep TODO: */ README.org | wc -l >> TODO.scorecard
+	git grep TODO servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_XXX=' >> TODO.scorecard
-	git grep XXX: */ README.org | wc -l >> TODO.scorecard
+	git grep XXX servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
-	git grep ☠☠☠: */ README.org | wc -l >> TODO.scorecard
+	git grep ☠☠☠ servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 
 #################### bin/jscl
 
