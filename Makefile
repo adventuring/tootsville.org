@@ -158,7 +158,7 @@ node_modules/jsdoc-sphinx/template/publish.js:
 
 htaccess:	dist/htaccess.all/play.$(clusterorg).htaccess
 
-dist/htaccess.all/play.$(clusterorg).htaccess:	htaccess.base bin/make-all-htaccess
+dist/htaccess.all/play.$(clusterorg).htaccess:	build/htaccess.base bin/make-all-htaccess
 	bin/make-all-htaccess
 
 #################### /worker.js
@@ -174,6 +174,19 @@ dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.j
 		--js worker/WorkerStart.js                 \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/worker.map' >> $@
+
+#################### dist/node-adopt.js
+
+node_modules/.bin/browserify:	package-lock.json
+	npm install browserify --save
+
+node_modules/@openid/openyolo/package.json:
+	npm install @openid/openyolo --save
+
+dist/node-adopt.js:	build/node-adopt.js \
+		node_modules/@openid/openyolo/package.json \
+		package-lock.json node_modules/.bin/browserify
+	node_modules/.bin/browserify build/node-adopt.js -o dist/node-adopt.js
 
 #################### dist/play/play.js
 
@@ -199,7 +212,7 @@ PLAYLESSDEPS=$(shell lessc -M - play/play.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --math=strict --source-map play/play.less dist/play/play.css
+	lessc --strict-math=on --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
@@ -213,29 +226,37 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	echo '** FIXME Actual bugs!' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn FIXME: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn FIXME servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** TODO To be done ASAP' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn TODO: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn TODO servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** XXX Might Be Nice to do someday' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn XXX: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn XXX servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** ☠☠☠ Bruce-Robert should examine this' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn ☠☠☠: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn ☠☠☠: servers mesh play www build Makefile README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
 TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
 	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
 	-o -name \*.shtml \) -and -not -name .\*) \
 	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
-	git grep FIXME: */ README.org | wc -l >> TODO.scorecard
+	git grep FIXME servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
-	git grep TODO: */ README.org | wc -l >> TODO.scorecard
+	git grep TODO servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_XXX=' >> TODO.scorecard
-	git grep XXX: */ README.org | wc -l >> TODO.scorecard
+	git grep XXX servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
-	git grep ☠☠☠: */ README.org | wc -l >> TODO.scorecard
+	git grep ☠☠☠ servers mesh play www build Makefile README.org \
+	 | wc -l >> TODO.scorecard
 
 #################### bin/jscl
 
@@ -254,20 +275,43 @@ dist/www/2019.css:	$(shell lessc -M - www/2019.less)
 devel-test:	devel-serve devel-play
 
 devel-serve:	servers/Tootsville
-	servers/Tootsville server
+	servers/Tootsville server < /dev/null
 
 devel-playtest:	devel-play
-	firefox --devtools --new-tab "http://localhost:5002/play/"
+	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
 devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
+	-notify-send -i document-new "Build Complete: play" "Finished building devel-play"
+
+devel-wwwtest:	devel-www
+	firefox --devtools --new-tab "http://localhost:5001/" </dev/null &>/dev/null &
+
+devel-www:	dist/www.$(clusterorg) dist/www/httpd.pid
+	-notify-send -i document-new "Build Complete: www" "Finished building devel-www"
+
+dist/www/httpd.pid:	dist/www/dev-www.httpd.conf
+	mkdir -p dist/www
+	if [ -f dist/www/httpd.pid ]; then \
+		kill -HUP $$(< dist/www/httpd.pid ) || \
+		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
+	else \
+		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
+	fi
 
 dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
-	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); else \
+	mkdir -p dist/play
+	if [ -f dist/play/httpd.pid ]; then \
+		kill -HUP $$(< dist/play/httpd.pid ) || \
+		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
+	else \
 		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
 	fi
 
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
+
+dist/www/dev-www.httpd.conf:	bin/dev-www-httpd-conf
+	bin/dev-www-httpd-conf $(clusterorg)
 
 dist/play.$(clusterorg)/.well-known/assetlinks.json: play/.well-known/assetlinks.json
 	mkdir -p dist/play.$(clusterorg)/.well-known
@@ -275,7 +319,11 @@ dist/play.$(clusterorg)/.well-known/assetlinks.json: play/.well-known/assetlinks
 
 dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
 	mkdir -p dist/play.$(clusterorg)/play/
-	cp $$(< build/js.order) dist/play.$(clusterorg)/play/
+	for file in $$(< build/js.order) ; \
+	do \
+	   mkdir -p dist/play.$(clusterorg)/$$(dirname $$file ) ; \
+	   cp $$file dist/play.$(clusterorg)/$$file ; \
+	done
 
 dist/play.$(clusterorg)/play/play.js:	dist/play/play.js
 	mkdir -p dist/play.$(clusterorg)/play/
@@ -288,7 +336,11 @@ dist/play.$(clusterorg)/play/game/start.js:	$(shell cat build/js.order)
 dist/play.$(clusterorg)/play/play.map:	dist/play/play.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.map dist/play.$(clusterorg)/play/
-	for file in $(< build/js.order) ; do cp $$file dist/play.$(clusterorg)/$$file ; done
+	for file in $$(< build/js.order) ; \
+	do \
+	    mkdir -p dist/play.$(clusterorg)/$$(dirname $$file) ; \
+              cp $$file dist/play.$(clusterorg)/$$file ; \
+	done
 
 dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 	mkdir -p dist/play.$(clusterorg)/play/
@@ -432,8 +484,11 @@ predeploy-play:	dist/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
 	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
 
-predeploy-www:	htaccess dist/www/2019.css
+predeploy-www:	dist/www.$(clusterorg)
 	echo " » Pre-deploy www.$(clusterorg)"
+	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
+
+dist/www.$(clusterorg):	htaccess dist/www/2019.css
 	mkdir -p dist/www.$(clusterorg)
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      www/* dist/www.$(clusterorg)/
@@ -446,7 +501,6 @@ predeploy-www:	htaccess dist/www/2019.css
 	then \
 		cp www/index.qa.html dist/www.$(clusterorg)/index.html ;\
 	fi
-	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
 
 predeploy-servers:	servers quicklisp-update-servers
 	for host in game1 game2 ;\
@@ -534,3 +588,7 @@ deploy-docs:
 	scp www/favicon.??? goethe.tootsville.org:goethe.tootsville.org/
 	rsync -essh -zar www/error goethe.tootsville.org:goethe.tootsville.org/
 
+####################
+
+TAGS:	$(shell find . -type f -name *.lisp)
+	etags --declarations $(shell find . -type f -name *.lisp) Makefile

@@ -21,9 +21,7 @@ var Tootsville = {
     Character: function (json)
     { Item.call(this, json);
       this.controller = json.controller;
-      this.characterP = true; },
-    game: {},
-    ui: {} };
+      this.characterP = true; } };
 
 if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||

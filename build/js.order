@@ -1,5 +1,7 @@
 play/tootsville.js
 
+play/analytics.js
+
 play/rollbar.js
 play/instabug.js
 
@@ -8,11 +10,12 @@ play/colors.js
 
 play/time.js
 
+play/gossip/parrot.js
 play/gossip/gossip.js
+
 play/login/login.js
 
 play/game/wardrobe.js
-
 
 play/ui/connect.js
 play/ui/gamepad.js
@@ -23,6 +26,9 @@ play/ui/fullscreen-polyfill.js
 play/ui/audio-control.js
 play/ui/keys.js
 play/ui/commands.js
+
+play/scene/scene.js
+play/scene/avatar.js
 
 play/game/stop-watchdogs.js
 

@@ -11,6 +11,7 @@
  * You should have  received a copy of the CC0  Public Domain Dedication
  * along      with       this      software.      If       not,      see
  * <http://creativecommons.org/publicdomain/zero/1.0/>.
+ *
  */
 
 if (!('Tootsville' in window)) { Tootsville={ui:{gamepad:{}}}; }
@@ -25,11 +26,11 @@ Tootsville.ui.gamepad.connectHandler = function (ev)
 
 Tootsville.ui.gamepad.addGamepad = function (gamepad)
 { Tootsville.ui.gamepad.controllers[gamepad.index] = gamepad;
-  Tootsville.ui.gamepad.controllerState[gamepad.index] = {};
+  Tootsville.ui.gamepad.controllerState[gamepad.index] = {buttons:[], axes:[]};
   for (var i=0; i < gamepad.buttons.length; i++)
-  { Tootsville.ui.gamepad.controllerState[gamepad.index]["b" + i] = null; }
+  { Tootsville.ui.gamepad.controllerState[gamepad.index].buttons[i] = null; }
   for (i=0; i<gamepad.axes.length; i++)
-  { Tootsville.ui.gamepad.controllerState[gamepad.index]["a" + i] = 0; }
+  { Tootsville.ui.gamepad.controllerState[gamepad.index].axes[i] = 0; }
   window.requestAnimationFrame(Tootsville.ui.gamepad.updateStatus); };
 
 Tootsville.ui.gamepad.disconnectHandler = function (e)
@@ -46,13 +47,13 @@ Tootsville.ui.gamepad.updateStatus = function ()
     { var val = controller.buttons[i];
       if (typeof(val) == "object")
       { val = val.value; }
-      if (Math.abs(Tootsville.ui.gamepad.controllerState[j]['b'+i] - val) > 0.01)
-      { Tootsville.ui.gamepad.controllerState[j]['b'+i] = val;
+      if (Math.abs(Tootsville.ui.gamepad.controllerState[j].buttons[i] - val) > 0.01)
+      { Tootsville.ui.gamepad.controllerState[j].buttons[i] = val;
         Tootsville.ui.gamepad.buttonEvent(j, i); }}
     for (var i=0; i<controller.axes.length; i++)
     { var val = controller.axes[i];
-      if (Math.abs(Tootsville.ui.gamepad.controllerState[j]['a'+i] - val) > 0.01)
-      { Tootsville.ui.gamepad.controllerState[j]['a'+i] = val;
+      if (Math.abs(Tootsville.ui.gamepad.controllerState[j].axes[i] - val) > 0.01)
+      { Tootsville.ui.gamepad.controllerState[j].axes[i] = val;
         Tootsville.ui.gamepad.axisEvent(j, i); }}}
   window.requestAnimationFrame(Tootsville.ui.gamepad.updateStatus); };
 

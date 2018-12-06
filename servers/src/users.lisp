@@ -5,37 +5,32 @@
 (defvar *user* nil
   "The currently-signed-in user, if any")
 
-(defclass user ()
-  ((display-name :accessor user-display-name
-                 :initarg :display-name
-                 :type string)
-   (given-name :accessor user-given-name
-               :initarg :given-name
-               :type string)
-   (middle-name :accessor user-middle-name
-                :initarg :middle-name
-                :type (or string null))
-   (surname :accessor user-surname
-            :initarg :surname
-            :type (or string null))
-   (face :accessor user-face
-         :initarg :face
-         :type (or puri:uri null))
-   (uuid :accessor user-id
-         :initarg :uuid
-         :initform (uuid:make-v4-uuid)
-         :type uuid:uuid)))
+(defun user-display-name (&optional (person *user*))
+  (db.person-display-name (ensure-person person)))
+
+(defun user-given-name (&optional (person *user*))
+  (db.person-given-name (ensure-person person)))
+
+(defun user-surname (&optional (person *user*))
+  (db.person-surname (ensure-person person)))
+
+(defun user-face (&optional (person *user*))
+  (let* ((uuid (db.person-uuid (ensure-person person)))
+         (portraits (find-records 'db.person-link "rel" :portrait)))
+    (when portraits (first portrait))))
+
+(defun user-id (&optional (person *user*))
+  (db.person-uuid (ensure-person person)))
 
 (defun user->alist (user)
   (list (cons :|displayName| (user-display-name user))
         (cons :|givenName|   (user-given-name user))
-        (cons :|middleName|  (user-middle-name user))
         (cons :|surname|     (user-surname user))
         (cons :|face|        (user-face user))
         (cons :|uuid|        (user-id user))))
 
 (defclass credentials ()
-  ((user :type user
+  ((user :type db.person
          :initarg :user
          :reader credentials-user)))
 
@@ -92,63 +87,44 @@
              :initarg :id-token
              :accessor openid-id-token)))
 
-(defclass toot ()
-  ((name :accessor toot-name
-         :initarg :name
-         :type toot-name)
-   (note :accessor toot-note
-         :initarg :note
-         :type string)
-   (avatar :accessor toot-avatar
-           :initarg :avatar
-           :initform "UltraToot"
-           :type string)
-   (base-color :accessor toot-base-color
-               :initarg :base-color
-               :type toot-base-color-name)
-   (pattern :accessor toot-pattern
-            :initarg :pattern
-            :type toot-pattern-name)
-   (pattern-color :accessor toot-pattern-color
-                  :initarg :pattern-color
-                  :type toot-pattern-color-name)
-   (pads-color :accessor toot-pads-color
-               :initarg :pads-color
-               :type toot-pads-color-name)
-   (owner-id :accessor toot-owner-id
-             :initarg :owner-id
-             :type uuid-string)
-   (childp :accessor toot-child-p
-           :initarg :childp
-           :type (member t nil))
-   (sensitivep :accessor toot-sensitive-p
-               :initarg :sensitivep
-               :type (member t nil))
-   (onlinep :accessor toot-online-p
-            :initarg :onlinep
-            :type (member t nil))
-   (created :reader toot-created
-            :initform (now)
-            :type timestamp)
-   (last-seen :accessor toot-last-seen
-              :initarg :last-seen
-              :initform (now)
-              :type timestamp)))
-
 
 
 ;;; Toot character data.
 
 (defun find-toot-by-name (toot-name)
   (check-type toot-name toot-name)
-  (remove-if-not (lambda (toot)
-                   (string-equal (getf toot :name) toot-name))
-                 (player-toots)))
+  (find-record 'db.toot "name" toot-name))
+
+(defun player-childp (&optional (player *user))
+  (< (or (legal-age (db.person-date-of-birth player))
+         (db.person-age player))
+     13))
+
+(defun player-adultp (&optional (player *user))
+  (>= (or (legal-age (db.person-date-of-birth player))
+	(db.person-age player))
+      18))
+
+(defun toot-childp (toot)
+  (player-childp (find-reference toot :player)))
 
 (defun toot-info (toot)
-  (append toot (list :is-a "toot")))
+  (list :name (db.toot-name toot)
+        :note "" ; TODO Toot notes by player/parent
+        :avatar (db.avatar-name (find-reference toot :avatar))
+        :base-color (color24-name (db.toot-base-color toot))
+        :pattern (string-downcase (db.toot-pattern toot))
+        :pattern-color (color24-name (db.toot-pattern-color toot))
+        :pads-color (color24-name (db.toot-pads-color toot))
+        :child-p (toot-childp toot)
+        :sensitive-p (or (toot-childp toot)
+		     (db.person-sensitivep (find-reference toot :player)))
+        :last-seen (db.toot-last-active toot)))
 
 (defun player-toots (&optional (player *user*))
+  (find-records 'db.toot "player" (db.person-uuid player)))
+
+(defun player-fake-toots (&optional (player *user*))
   (declare (ignore player))
   (list
    (list :name "Zap"
@@ -189,6 +165,8 @@ appearing on a parent's account."
 
 
 
+
+
 (defun find-player-or-die ()
   "Ensure that a recognized player is connected."
   (find-user-from-session :if-not-exists :error))
@@ -206,7 +184,7 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
             ,@body)
            (t (throw 'endpoint (list 403 nil *403.json-bytes*))))))
 
-
+
 
 (defun assert-my-character (toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
@@ -215,6 +193,11 @@ using `FIND-PLAYER-OR-DIE' and bind *USER*"
                 (mapcar (rcurry #'getf :name) (player-toots user))
                 :test #'string-equal)
     (error 'not-your-toot-error :name toot-name)))
+
+
+
+;;; TODO ensure that these time functions exist somewhere more
+;;; appropriate and remove then
 
 (defun days-ago (days)
   (local-time:timestamp- (local-time:now) days :day))

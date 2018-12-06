@@ -71,7 +71,7 @@
     content="58AB22CF287C381CB569FAC0DC9327F9" /> <!-- OAuth2 magic -->
     <meta name="google-signin-scope" content="profile email openid">
     <meta name="google-signin-client_id"
-          content="1052481910502-97n2sod83avoegskb6849076d6dhtdkr.apps.googleusercontent.com">
+          content="1052481910502-kb8u1evb6c82dl2o5km4vu6q5mmudkfo.apps.googleusercontent.com">
 
     <!-- END:icon-common -->
 
@@ -196,7 +196,7 @@
           <i class="fas fa-bomb fa-4x"></i>
         </div>
 
-      </div> <!-- end of HUD layer -->
+      </div>
 
       <!-- Gossip Parrots -->
       <div id="parrot">
@@ -206,24 +206,32 @@
           I'm a talking parrot. Human want a cracker?
         </div>
         <div id="parrot-reply">
-          <ul>
-            <li> <label> <input  type="radio" name="parrot-reply"> Reply
-                1 </label> </li>
-            <li> <label> <input  type="radio" name="parrot-reply"> Reply
-                2 </label> </li>
-            <li> <label> <input  type="radio" name="parrot-reply"> Reply
-                3 </label> </li>
-          </ul>
           <div class="button-box">
             <button>OK</button>
           </div>
         </div>
       </div>
       
-    </div> <!-- end of HUD -->
+    </div> <!-- end of HUD layer -->
 
     <!-- Game canvas -->
-    <canvas id="tootsville3d"></canvas>
+    <canvas id="tootsville3d" touch-action="none"></canvas>
+
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-auth.js"></script>
+    <script>
+      // Initialize Firebase
+      firebase.initializeApp(
+      { apiKey: "AIzaSyCtq66sgpIaJMOQnbLhsUwC85zAuz3spHs",
+        authDomain :"tootsville-v.firebaseapp.com",
+        databaseURL: "https://tootsville-v.firebaseio.com",
+        projectId: "tootsville-v",
+        storageBucket: "tootsville-v.appspot.com",
+        messagingSenderId: "416974352322" });
+    </script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
 
     <!-- our code -->
     <script>

@@ -5,13 +5,13 @@ rm -fr "$(dirname $0)"/../dist/htaccess.all/*
 cd "$(dirname $0)"/../dist/htaccess.all/
 for cluster in tootsville test.tootsville qa.tootsville ; do
     for host in www play ; do
-        sed ../../htaccess.base -e s/@@HOST@@/$host/g \
+        sed ../../build/htaccess.base -e s/@@HOST@@/$host/g \
             -e s/@@CLUSTER@@/$cluster/g \
             | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
                    > $host.$cluster.org.htaccess
     done
     for host in gossip world users goethe ; do
-        sed ../../htaccess.base -e s/@@HOST@@/$host/g \
+        sed ../../build/htaccess.base -e s/@@HOST@@/$host/g \
             -e s/@@CLUSTER@@/$cluster/g \
             | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
                    > $host.$cluster.net.htaccess

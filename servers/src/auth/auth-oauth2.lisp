@@ -37,27 +37,37 @@
                    :iss (assoc-value found :|iss|)
                    :user (assoc-value found :|user|))))
 
+(defun get-openid-credentials-from-database (uuid)
+  (let* ((cred (find-record 'db.credentials uuid))
+	 (json (db.credentials-json-info cred)))
+    (make-instance 'openid-credentials
+		   :aud (db.credentials-auth-token cred)
+		   :iat (db.credentials-id-token cred)
+		   :exp (extract json "exp")
+		   :azp (extract json "azp")
+		   :idd (extract json "iss")
+		   :user (db.credentials-uid cred))))
+
 (defun key-for-uuid (kind uuid)
   (concatenate 'string kind "/"
                (uuid:format-as-urn nil uuid)))
 
 (defun get-user-by-uuid (uuid)
-  (when-let (found (clouchdb:get-document
-                    (key-for-uuid "User" uuid)))
-    (make-instance 'user
-                   :display-name (assoc-value found :|displayName|)
-                   :given-name (assoc-value found :|givenName|)
-                   :middle-name (assoc-value found :|middleName|)
-                   :surname (assoc-value found :|surname|)
-                   :face (puri:parse-uri (assoc-value found :|face|)))))
+  (find-record 'db.person "uuid" uuid))
 
 (defun auto-vivify-user (credentials)
-  (let ((u (make-instance 'user
-                          :display-name "New user"
-                          :given-name "Newbie")))
-    (clouchdb:put-document (user->alist user)
-                           :id (key-for-uuid "User" (user-id u)))
-    u))
+  (let ((person (create-record 'db.person
+			       :display-name "Needs Naming"
+			       :given-name "Newbie"
+			       :lang "en_US")))
+    (create-record 'db.credential
+		   :person (db.person-uuid person)
+		   :provider "FIXME"
+		   ;; FIXME auto-vivify-user credentials
+		   )))
+		   
+    
+    
 
 (defun find-user-for-credentials (credentials)
   (when-let (cred (get-openid-credentials-for-bearer-token credentials))

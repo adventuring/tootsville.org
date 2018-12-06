@@ -27,6 +27,12 @@ Redirect /quiz/toots-quiz-201610 https://docs.google.com/forms/d/e/1FAIpQLSf3u02
 <FilesMatch "\.css$">
   Header set Content-type "text/css;charset=utf-8"
 </FilesMatch>
+<FilesMatch "\.less$">
+  Header set Content-type "text/x-less;charset=utf-8"
+</FilesMatch>
+<FilesMatch "\.lisp$">
+  Header set Content-type "text/x-lisp;charset=utf-8"
+</FilesMatch>
 <FilesMatch "\.text$">
   Header set Content-type "text/plain;charset=utf-8"
 </FilesMatch>
@@ -71,7 +77,7 @@ RedirectMatch ^/help/(.*)$ https://wiki.tootsville.org/wiki/Help_$1
 RedirectMatch ^/indira/(.*)$ https://world.@@CLUSTER@@.net/world/$1
 RedirectMatch ^/login/(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/members/(.*)$ https://members.tootsbook.com/members/$1
-RedirectMatch ^/meta/(.*)$ https://gossip.@@CLUSTER@@.net/meta/$1
+RedirectMatch ^/meta/(.*)$ https://gossip.@@CLUSTER@@.net/meta-game/$1
 RedirectMatch ^/meta-game/(.*)$ https://gossip.@@CLUSTER@@.net/meta-game/$1
 RedirectMatch ^/play/(.*)$ https://play.@@CLUSTER@@.org/play/$1
 RedirectMatch ^/play_now(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1

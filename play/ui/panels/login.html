@@ -5,116 +5,106 @@
     <title> Tootsville Sign-In </title>
   </head>
   <body>
-    <h1><img src="https://jumbo.tootsville.org/Assets/Icons/tootsville-logo.svg" id="tootsville"
-             alt="Tootsville"></h1>
 
-    <section id="warm-up">
-      <h2 style="text-align: center">
-        <i style="color: #888" class="fas fa-spin fa-6x fa-spinner"></i>
-      </h2>
-    </section>
+    <p>  This is  an  HTML fragment  that  should be  loaded  by the  UI
+      HUD layer. </p>
 
-    <section id="sign-in" style="display:none">
-      <h2> Sign In and Play Now</h2>
-      <p> It's free to join and play. </p>
-      <section id="login-13">
-        <h3>Ages 13+</h3>
-        <h4>Sign in with your Google Account</h4>
-        <div class="g-signin2" data-onsuccess="onSignIn" data-longtitle="true"
-             data-theme="light"></div>
-        <p>Sign in here if you're <strong>a new player</strong> or <strong>returning</strong>.
-          <small>Next, you'll create your Toot character, or pick your existing
-            character.</small> </p>
+    <div id="login">
+      <h1><img src="https://jumbo.tootsville.org/Assets/Icons/tootsville-logo.svg"
+               alt="Tootsville"></h1>
+
+      <section id="login-warm-up">
+        <h2 style="text-align: center">
+          <i style="color: #888" class="fas fa-spin fa-6x fa-spinner"></i>
+        </h2>
       </section>
-      <section id="login-kid">
-        <h3>Kids Under 13</h3>
-        <div id="login-kid-enter-login">
-          <h4>Sign in with your Toot character</h4>
-          <p>Your parents must create your Toot character first.
-            <a href="https://wiki.tootsville.org/wiki/Getting_a_child_account">Find out how.</a> </p>
-          <div>
-            <h5><label for="toot-name" id="toot-name-label"> My Toot's name is
-            </label></h5>
-            <input name="toot-name" id="toot-name"
-                   onChange="Tootsville.login.loginKidDirty(this)">
+
+      <section id="sign-in" style="display:none">
+        <h2> Sign In and Play Now</h2>
+        <p> It's free to join and play. </p>
+        <section id="login-13">
+          <h3>Ages 13+</h3>
+          <h4>Sign in with your Google or Twitter Account</h4>
+          <div class="g-signin2" data-onsuccess="onSignIn" data-longtitle="true"
+               data-theme="light"></div>
+          <p>Sign in here if you're <strong>a new player</strong> or <strong>returning</strong>.
+            <small>Next, you'll create your Toot character, or pick your existing
+              character.</small> </p>
+          <div id="firebaseui-auth-container"></div>
+        </section>
+        <section id="login-kid" style="opacity: 12.5%">
+          <h3>Kids Under 13</h3>
+          <div id="login-kid-enter-login">
+            <h4>Sign in with your Toot character</h4>
+            <p>Your parents must create your Toot character first.
+              <a href="https://wiki.tootsville.org/wiki/Getting_a_child_account">Find out how.</a> </p>
+            <div>
+              <h5><label for="toot-name" id="toot-name-label"> My Toot's name is
+                </label></h5>
+              <input name="toot-name" id="toot-name"
+                     onChange="Tootsville.login.loginKidDirty(this)">
+            </div>
+            <div>
+              <h5>My secret code is</h5>
+              <table>
+                <tbody>
+                  <tr>
+                    <td> This feature is not available yet. </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div>
-            <h5>My secret code is</h5>
-            <table>
-              <tbody>
-                <tr>
-                  <td> This feature is not ready yet. </td>
-                </tr>
-              </tbody>
-            </table>
+          <div id="login-kid-request-parent" style="display:none">
+            <h4>Get Permission</h4>
+            <p>Now, we will ask your parent or guardian for permission.</p>
+            <p>Toot Name: <b id="login-kid-toot-name-echo">？</b></p>
+            <p>Secret Code entered.</p>
+            <div class="two-buttons">
+              <button id="login-kid-request-parent-back">
+                <i class="fas fa-arrow-circle-left fa-2x fa-fw"></i>Change
+              </button>
+              <button id="login-kid-request-parent-confirm">
+                <i class="fas fa-comment fa-2x fa-fw" ></i> Ask Now
+              </button>
+            </div>
           </div>
-        </div>
-        <div id="login-kid-request-parent" style="display:none">
-          <h4>Get Permission</h4>
-          <p>Now, we will ask your parent or guardian for permission.</p>
-          <p>Toot Name: <b id="login-kid-toot-name-echo">？</b></p>
-          <p>Secret Code entered.</p>
-          <div class="two-buttons">
-            <button id="login-kid-request-parent-back">
-              <i class="fas fa-arrow-circle-left fa-2x fa-fw"></i>Change
-            </button>
-            <button id="login-kid-request-parent-confirm">
-              <i class="fas fa-comment fa-2x fa-fw" ></i> Ask Now
-            </button>
-          </div>
-        </div>
+        </section>
       </section>
-    </section>
 
-    <section id="google-init-failed" style="display:none">
-      <h2> Unable to communicate with Google </h2>
-      <p> This could mean that your computer is offline, but it often means that your settings
-        prevent Google's sign-in program from running on this page. </p>
-      <p> In Firefox, you can change this setting in <b>Ξ → Preferences</b>; in the <b>Privacy &
-          Security</b> section, scroll down and make sure that these settings are selected: </p>
-      <ul>
-        <li> <b>✓</b> Accept cookies from websites </li>
-        <li> Accept third-party cookies <b>Always</b> </li>
-      </ul>
-      <p> When you have changed this setting, <button onclick="document.reload()">reload</button>
-        this page to sign in. </p>
-      <hr>
-      <p> Technical information: </p>
-      <pre id="google-init-failed-reason">No reason was provided</pre>
-    </section>
-
-    <section id="pick-toot" style="display:none">
-      <h2> Pick a Toot Character </h2>
-      <p>Click or tap a character to play now.</p>
-      <ul id="toots-list">
-        <li id="new-toot" onclick="Tootsville.login.startCharacterCreation()"
-            ><abbr for="Create a new character"><i class="fas fa-user-plus fa-2x"></i></abbr></li>
-      </ul>
-      <div id="edit-toot-settings-done" style="display:none">
-        <button onclick="Tootsville.login.doneEditingSettings()"> <i class="fas fa-wrench"></i> Done Editing</button>
-      </div>
-      <div id="new-toot-hint">
-        To create a new Toot character, click <i onclick="Tootsville.login.startCharacterCreation()" class="fas
-                                                                                           fa-user-plus"></i>.
-      </div>
-      <hr>
-      <div id="edit-toot-settings">
-        <h3> Edit Toot Settings </h3>
-        <p> You can enable Child accounts that your children can play.  You can also enable
-          Sensitive Player mode for your own characters. (TODO: link help) </p>
-        <button onclick="Tootsville.login.childSettings()">
-          <i class="fas fa-wrench"></i> Settings
-        </button>
+      <section id="pick-toot" style="display:none">
+        <h2> Pick a Toot Character </h2>
+        <p>Click or tap a character to play now.</p>
+        <ul id="toots-list">
+          <li id="new-toot" onclick="Tootsville.login.startCharacterCreation()"
+              ><abbr for="Create a new character"><i class="fas fa-user-plus fa-2x"></i></abbr></li>
+        </ul>
+        <div id="edit-toot-settings-done" style="display:none">
+          <button onclick="Tootsville.login.doneEditingSettings()"> <i class="fas fa-wrench"></i> Done Editing</button>
+        </div>
+        <div id="new-toot-hint">
+          To create a new Toot character, click <i onclick="Tootsville.login.startCharacterCreation()" class="fas
+                                                                                                              fa-user-plus"></i>.
+        </div>
         <hr>
-      </div>
-      <div id="switch-google-account">
-        <p> Signed in as <img id="google-user-face" ><span id="google-user-name"><i class="fas
-                                                                                           fa-spin fa-fw fa-spinner" ></i></span>
-          <tt>&lt;</tt ><tt id="google-user-email" ><i class="fas fa-spin fa-spinnerfa-fw"
-                                                       ></i></tt><tt>&gt;</tt>. </p>
-        <button onclick="Tootsville.login.switchGoogleAccount()">Switch Google Account</button>
-      </div>
-    </section>
-
+        <div id="edit-toot-settings">
+          <h3> Edit Toot Settings </h3>
+          <p> You can enable Child accounts that your children can play.  You can also enable
+            Sensitive Player mode for your own characters. (TODO: link help) </p>
+          <button onclick="Tootsville.login.childSettings()">
+            <i class="fas fa-wrench"></i> Settings
+          </button>
+          <hr>
+        </div>
+        <div id="switch-google-account">
+          <p> Signed in as <img id="google-user-face" ><span id="google-user-name"><i class="fas
+                                                                                             fa-spin fa-fw fa-spinner" ></i></span>
+            <tt>&lt;</tt ><tt id="google-user-email" ><i class="fas fa-spin fa-spinnerfa-fw"
+                                                         ></i></tt><tt>&gt;</tt>. </p>
+          <button  onclick="Tootsville.ui.signOut()">   Quit  or  Change
+          Players </button>
+        </div>
+      </section>
+    </div>
   </body>
 </html>
