@@ -208,7 +208,7 @@ dist/play/play.map:	dist/play/play.js
 
 #################### dist/play/play.css
 
-PLAYLESSDEPS=$(shell lessc -M - play/play.less)
+PLAYLESSDEPS=$(wildcard play/*.less play/**/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
@@ -267,7 +267,7 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 
 #################### www
 
-dist/www/2019.css:	$(shell lessc -M - www/2019.less)
+dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 	lessc --math=strict --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
@@ -363,7 +363,7 @@ dist/play.$(clusterorg)/favicon.%:	www/favicon.%
 	mkdir -p dist/play.$(clusterorg)/
 	cp $< $@
 
-errordocs=$(shell echo www/error/*.{var,shtml,json,htmlf} )
+errordocs=$(wildcard www/error/*.{var,shtml,json,htmlf} )
 
 dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 	mkdir -p dist/play.$(clusterorg)/error/
