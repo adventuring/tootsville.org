@@ -226,19 +226,19 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	echo '** FIXME Actual bugs!' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn FIXME servers mesh play www build Makefile README.org \
+	git grep -Hn FIXME servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** TODO To be done ASAP' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn TODO servers mesh play www build Makefile README.org \
+	git grep -Hn TODO servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** XXX Might Be Nice to do someday' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn XXX servers mesh play www build Makefile README.org \
+	git grep -Hn XXX servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** ☠☠☠ Bruce-Robert should examine this' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn ☠☠☠: servers mesh play www build Makefile README.org \
+	git grep -Hn ☠☠☠: servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
 TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
@@ -246,16 +246,16 @@ TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
 	-o -name \*.shtml \) -and -not -name .\*) \
 	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
-	git grep FIXME servers mesh play www build Makefile README.org \
+	git grep FIXME servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
-	git grep TODO servers mesh play www build Makefile README.org \
+	git grep TODO servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_XXX=' >> TODO.scorecard
-	git grep XXX servers mesh play www build Makefile README.org \
+	git grep XXX servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
-	git grep ☠☠☠ servers mesh play www build Makefile README.org \
+	git grep ☠☠☠ servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 
 #################### bin/jscl
