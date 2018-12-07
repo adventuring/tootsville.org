@@ -208,7 +208,7 @@ dist/play/play.map:	dist/play/play.js
 
 #################### dist/play/play.css
 
-PLAYLESSDEPS=$(shell lessc -M - play/play.less)
+PLAYLESSDEPS=$(wildcard play/*.less play/*/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
@@ -267,7 +267,7 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 
 #################### www
 
-dist/www/2019.css:	$(shell lessc -M - www/2019.less)
+dist/www/2019.css:	www/2019.less
 	lessc --math=strict --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
@@ -592,3 +592,4 @@ deploy-docs:
 
 TAGS:	$(shell find . -type f -name *.lisp)
 	etags --declarations $(shell find . -type f -name *.lisp) Makefile
+
