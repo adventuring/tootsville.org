@@ -104,7 +104,7 @@ install -c -m 0644 Tootsville.service \
   '%{_infodir}/Tootsville.info'
 
 %post servers
-useradd # FIXME
+useradd --system pil # FIXME
 systemctl enable Tootsville
 systemctl start Tootsville
 
