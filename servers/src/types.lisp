@@ -46,7 +46,8 @@ This  is  generally  intended  for  accepting  new  Toot  names,  versus
 validating REST calls, for example."
   (restart-bind
       (#+ (or) (auto-rename () ; TODO
-                 (:report (lambda (s) (format s "Find a similar name which is not in use")))
+                 (:report (lambda (s) (format s "Find a name similar to ~a which is not in use"
+                                              name)))
                  (error 'unimplemented))
           #+ (or) (provide-new-name (name) ; TODO
                     (:report (lambda (s) (format s "Supply a new name")))
@@ -56,7 +57,9 @@ validating REST calls, for example."
 (define-memo-function potential-Toot-name-character-p (character)
   "Is CHARACTER allowed in a Toot name at all?
 
-Allowed characters are alphanumerics, apostrophe, hyphen, or space, but there are additional rules in `POTENTIAL-TOOT-NAME-P' which limit the string as a whole."
+Allowed characters are alphanumerics, apostrophe, hyphen, or space, but
+there are additional rules in `POTENTIAL-TOOT-NAME-P' which limit
+the string as a whole."
   (and (characterp character)
        (or (alphanumericp character)
            (char= #\- character)
@@ -69,22 +72,30 @@ Allowed characters are alphanumerics, apostrophe, hyphen, or space, but there ar
 Toot names must be:
 
 @itemize
+
 @item
 From three to 32 characters in length, inclusive.
+
 @item
 Characters must be  `POTENTIAL-TOOT-NAME-CHARACTER-P', ie, alphanumeric,
 a space, apostrophe, or hyphen.
+
 @item
 The first character must be alphabetic
+
 @item
 There can not be two punctuation marks (or spaces) in a row
+
 @item
-There can not be more than three of the same character in a row
+There can not be three of the same character in a row
+
 @item
 There can not be more than three digits
+
 @item
 Digits must appear only at the end -- i.e., if there are any digits, the
 leftmost digit must be after the rightmost non-digit character.
+
 @end itemize"
   (and (stringp Toot-name)
        (<= 3 (length Toot-name) 32)
