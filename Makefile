@@ -212,7 +212,7 @@ PLAYLESSDEPS=$(wildcard play/*.less play/*/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --strict-math=on --source-map play/play.less dist/play/play.css
+	lessc --math=strict --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
