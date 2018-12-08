@@ -49,12 +49,9 @@ Tootsville.ui.confirmPretty = function (title,text,accept)
       hud.appendChild(Tootsville.ui.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
 Tootsville.ui.forceQuit = function ()
-{ Tootsville.tank.destroy3DScene();
-  Tootsville.ui.hud.destroyHUD(); };
+{ Tootsville.login.quit(); };
 
-Tootsville.ui.quitAndGoTo = function (url)
-{ Tootsville.ui.forceQuit();
-  document.location = url; };
+Tootsville.ui.quit = function () { Tootsville.ui.signOut (); }
 
 Tootsville.ui.signOut = function ()
 { Tootsville.ui.confirmPretty(
@@ -63,7 +60,7 @@ Tootsville.ui.signOut = function ()
     "Quit").then
   ( reallyP =>
     { if (reallyP)
-      { Tootsville.ui.quitAndGoTo(Tootsville.host.play + '/login/logout'); }}); };
+      { Tootsville.login.quit(); }}); };
 
 Tootsville.ui.setFullscreenFromNavigator = function ()
 { var fullscreenCheck = document.getElementById('fullscreen-toggle');
