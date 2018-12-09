@@ -126,7 +126,8 @@ leftmost digit must be after the rightmost non-digit character.
               Toot-name)
        (alpha-char-p (char Toot-name 0))
        (not (three-chars-in-a-row-p Toot-name))
-       (not (two-chars-in-a-row-p Toot-name #(#\Space #\Apostrophe #\Hyphen-Minus)))
+       (not (two-chars-in-a-row-p Toot-name #(#\Space #\Apostrophe
+                                              #\Hyphen-Minus)))
        (or (notany #'digit-char-p Toot-name)
            (< (position-if (complement #'digit-char-p) Toot-name :from-end t)
               (position-if #'digit-char-p Toot-name)))
@@ -498,7 +499,7 @@ The VECTOR should be in big-endian (aka \"network\") order."
                          ((= c-max red) (mod (/ (- green blue) delta) 6))
                          ((= c-max green) (+ (/ (- blue red) delta) 2))
                          ((= c-max blue) (+ (/ (- red green) delta) 4))
-                         (t (error "unreachable")))) 
+                         (t (error "unreachable"))))
                     360.0d0)
                  2 pi)
               (* 2 pi))
@@ -522,8 +523,8 @@ The VECTOR should be in big-endian (aka \"network\") order."
 
 (defun integer-to-color24 (number)
   (make-color24 :red (ldb (byte 8 16) number)
-		:green (ldb (byte 8 8) number)
-		:blue (ldb (byte 8 0) number)))
+                :green (ldb (byte 8 8) number)
+                :blue (ldb (byte 8 0) number)))
 
 (defun color24-to-integer (color)
   (+ (ash (color24-red color) 16)
