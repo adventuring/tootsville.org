@@ -2,7 +2,10 @@
 
 
 
-
+(defun debugger ()
+  (setf hunchentoot:*catch-errors-p* nil
+        hunchentoot:*show-lisp-errors-p* t
+        hunchentoot:*show-lisp-backtraces-p* t))
 
 (defvar *acceptors* nil)
 
