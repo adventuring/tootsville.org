@@ -45,20 +45,16 @@
          "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
          :accept "application/json")
       (when (<= 200 http-status 299)
-        (setf keys (jonathan.decode:parse
-                    (map 'string #'code-char json-data))
-              keys-update-next 
+        (setf keys-update-next 
               (timestamp+ (now)
                           (or (let ((n (subheader-field (assoc :cache-control
                                                                headers-alist)
                                                         "max-age")))
                                 (parse-integer n))
                               *google-account-keys-refresh*)
-                          :seconds)))) 
-    ;; FIXME: Use  the value of  max-age in the Cache-Control  header of
-    ;; the  response from  that endpoint  to  know when  to refresh  the
-    ;; public keys.
-    (setf keys (http-fetch-json ))))
+                          :seconds)
+              keys (jonathan.decode:parse
+                    (map 'string #'code-char json-data)))))))
 
 (defun check-firebase-id-token (token)
   (let* (header
