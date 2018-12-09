@@ -385,20 +385,72 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 (defun host-name-like-p (name)
   "Does NAME meet the general rules of being a DNS host name.
 
- TODO: Compare this against RFCs for DNS names."
+Note that this  does NOT recognize etiher dotted-quad IPv4  nor hex IPv6
+addresses, only DNS names.
+
+ RFC-1035:
+
+@itemize
+
+@item
+Each label is up to 63 character-bytes.
+
+@item
+The total name length is up to 255 character-bytes, excluding dots.
+
+@item
+Labels must begin with a basic ASCII letter A-Z
+
+@item
+Labels must end with a letter or digit 0-9
+
+@item
+Labels  may contain  ASCII Hyphen-Minus,  but only  internally and
+never twice in a row.
+
+@item
+At present,  all Top-Level  Domains are  at least  two alphabetic
+characters and contain no digits nor hyphens.
+
+@item
+This function requires at least one dot; i.e. it is not for TLDs
+
+@item
+The trailing dot for the root should be omitted for this function.
+
+@end itemize"
   (check-type name string)
   (and (every #'host-name-char-p name)
+       (find #\. name)
        (not (char= #\- (char name 0)))
+       (not (digit-char-p (char name 0)))
        (not (char= #\- (char name (1- (length name)))))
+       (not (some (lambda (d)
+                    (search d name))
+                  '(".0" ".1" ".2" ".3" ".4"
+                    ".5" ".6" ".7" ".8" ".9"
+                    ".-")))
        (not (two-chars-in-a-row-p name ".-"))
        (let ((tld (subseq name (1+ (position #\. name :from-end t)))))
          (and (every #'alpha-char-p tld)
               (<= 2 (length tld))))))
 
 (assert (host-name-like-p "tootsville.org"))
+(assert (host-name-like-p "star-hope.org"))
 (assert (host-name-like-p "www.tootsvillle.org"))
 (assert (host-name-like-p "www.gov.uk"))
 (assert (host-name-like-p "s3.amazonaws.com"))
+(assert (not (host-name-like-p "한굴.ko")))
+(assert (not (host-name-like-p "-foo.com")))
+(assert (not (host-name-like-p "foo--foo.com")))
+(assert (not (host-name-like-p "foo-.com")))
+(assert (not (host-name-like-p "9foo.com")))
+(assert (not (host-name-like-p "bar.-foo.com")))
+(assert (not (host-name-like-p "bar.9foo.com")))
+(assert (not (host-name-like-p "foo.12")))
+(assert (not (host-name-like-p "foo.x")))
+(assert (not (host-name-like-p "foo")))
+(assert (not (host-name-like-p "10.0.0.10")))
 
 (defun www-uri-like-p (uri)
   "Does URI look like a WWW (HTTP/HTTPS) URI?"
