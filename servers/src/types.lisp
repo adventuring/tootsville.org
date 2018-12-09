@@ -39,20 +39,43 @@ itself returns true."
 
 ;;; Toot names
 
+(defun remove-repeats-for-Toot-name (string)
+  (regex-replace-all "--+"
+                     (regex-replace-all "(.)\\1\\1+" string "\\1")
+                     "-"))
+
 (defun check-Toot-name (name)
-  "Check if NAME is allowed as a Toot name; offering restarts to correct it, if not.
+  "Check if NAME is allowed as a Toot name; offering restarts to correct it,
+ if not.
 
 This  is  generally  intended  for  accepting  new  Toot  names,  versus
 validating REST calls, for example."
-  (restart-bind
-      (#+ (or) (auto-rename () ; TODO
-                 (:report (lambda (s) (format s "Find a name similar to ~a which is not in use"
-                                              name)))
-                 (error 'unimplemented))
-          #+ (or) (provide-new-name (name) ; TODO
-                    (:report (lambda (s) (format s "Supply a new name")))
-                    (error 'unimplemented)))
-    (check-type name toot-name)))
+  (tagbody do-over
+     (restart-bind
+         ((auto-rename
+           (lambda ()
+             (let ((try (remove-repeats-for-Toot-name
+                         (substitute-if #\- (complement #'alpha-char-p) name))))
+               (when (char= #\- (first-elt try))
+                 (setf try (subseq try 1)))
+               (when (char= #\- (last-elt try))
+                 (setf try (subseq try 0 (- (length try) 2))))
+               (when (< (length try) 3)
+                 (setf try (concatenate 'string try "-a")))
+               (when (< 32 (length try))
+                 (setf try (subseq try 0 32)))
+               try))
+            :report-function
+            (lambda (s)
+              (format s "Find a name similar to ~a"
+                      name)))
+          (provide-new-name
+           (lambda (new-name)
+             (setf name new-name)
+             (go do-over))
+            :report-function
+            (lambda (s) (format s "Supply a new name"))))
+       (check-type name toot-name))))
 
 (define-memo-function potential-Toot-name-character-p (character)
   "Is CHARACTER allowed in a Toot name at all?
