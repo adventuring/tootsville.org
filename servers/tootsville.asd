@@ -26,6 +26,7 @@ REST services for the front-end."
                :cl-memcached
                :cl-ppcre
                :cl-threadpool
+               :cljwt-custom
                :clouchdb
                :dbd-mysql
                :drakma
@@ -85,8 +86,7 @@ REST services for the front-end."
      (:module "auth"
               :depends-on ("package" "users")
               :components
-              ((:file "auth-oauth2")
-               (:file "auth-google" :depends-on ("auth-oauth2"))))
+              ((:file "auth-firebase")))
      (:module
       "endpoints"
       :depends-on ("web" "terrain" "db")
