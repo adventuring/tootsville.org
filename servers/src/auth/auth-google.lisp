@@ -105,10 +105,12 @@ stream stream-closed-p status-reason)
 :method :get
 :accept "application/json;charset=utf-8")
 (declare (ignore response-headers stream stream-closed-p))
-(assert (<= 200 status 299) ()
+(defpost FIXME-NAME ()
+ (<= 200 status 299) ()
 "While validating Google sign-in token, error ~D: ~A returned by ~A"
 status status-reason response-uri)
-(assert (string= "https://www.googleapis.com/"
+(defpost FIXME-NAME ()
+ (string= "https://www.googleapis.com/"
 response-uri :end2 27) ()
 "While validating Google sign-in token, response returned by ~A, whose authority I do not recognize"
 response-uri)
@@ -117,13 +119,15 @@ response-uri)
 :object-key-fn (compose #'make-keyword
 #'string-upcase)
 :json-arrays-as-vectors t)))
-(assert (find (getf response :iss) '("accounts.google.com"
+(defpost FIXME-NAME ()
+ (find (getf response :iss) '("accounts.google.com"
 "https://accounts.google.com")
 :test #'string-equal) ()
 "While  validating Google  sign-in token,  ISS field
 returned was ~A, whose authority I do not recognize"
 (getf response :iss))
-(assert (< (parse-integer (getf response :exp))
+(defpost FIXME-NAME ()
+ (< (parse-integer (getf response :exp))
 (local-time:timestamp-to-unix (local-time:now))) ()
 "The Google sign-in permission has already expired.")
 (user-id<-registrar-id :google (getf response :sub)))))

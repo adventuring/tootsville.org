@@ -9,8 +9,9 @@
          (cons (flatten-plist-tree value (concatenate 'string hier-key "/")))
          (atom (list (make-keyword hier-key) value)))))
 
-(assert (equalp (flatten-plist-tree '(:a (:b 2 :c (:d 42)) :e 5))
-                (list :A/B 2 :A/C/D 42 :E 5)))
+(defpost unit-test-flatten-plist-tree ()
+  (equalp (flatten-plist-tree '(:a (:b 2 :c (:d 42)) :e 5))
+          (list :A/B 2 :A/C/D 42 :E 5)))
 
 (defmethod acceptor-status-message ((acceptor Tootsville-REST-acceptor)
                                     http-status-code &rest properties &key &allow-other-keys)
