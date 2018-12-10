@@ -39,24 +39,50 @@ itself returns true."
 
 ;;; Toot names
 
+(defun remove-repeats-for-Toot-name (string)
+  (regex-replace-all "--+"
+                     (regex-replace-all "(.)\\1\\1+" string "\\1")
+                     "-"))
+
 (defun check-Toot-name (name)
-  "Check if NAME is allowed as a Toot name; offering restarts to correct it, if not.
+  "Check if NAME is allowed as a Toot name; offering restarts to correct it,
+ if not.
 
 This  is  generally  intended  for  accepting  new  Toot  names,  versus
 validating REST calls, for example."
-  (restart-bind
-      (#+ (or) (auto-rename () ; TODO
-                 (:report (lambda (s) (format s "Find a similar name which is not in use")))
-                 (error 'unimplemented))
-          #+ (or) (provide-new-name (name) ; TODO
-                    (:report (lambda (s) (format s "Supply a new name")))
-                    (error 'unimplemented)))
-    (check-type name toot-name)))
+  (tagbody do-over
+     (restart-bind
+         ((auto-rename
+           (lambda ()
+             (let ((try (remove-repeats-for-Toot-name
+                         (substitute-if #\- (complement #'alpha-char-p) name))))
+               (when (char= #\- (first-elt try))
+                 (setf try (subseq try 1)))
+               (when (char= #\- (last-elt try))
+                 (setf try (subseq try 0 (- (length try) 2))))
+               (when (< (length try) 3)
+                 (setf try (concatenate 'string try "-a")))
+               (when (< 32 (length try))
+                 (setf try (subseq try 0 32)))
+               try))
+            :report-function
+            (lambda (s)
+              (format s "Find a name similar to ~a"
+                      name)))
+          (provide-new-name
+           (lambda (new-name)
+             (setf name new-name)
+             (go do-over))
+            :report-function
+            (lambda (s) (format s "Supply a new name"))))
+       (check-type name toot-name))))
 
 (define-memo-function potential-Toot-name-character-p (character)
   "Is CHARACTER allowed in a Toot name at all?
 
-Allowed characters are alphanumerics, apostrophe, hyphen, or space, but there are additional rules in `POTENTIAL-TOOT-NAME-P' which limit the string as a whole."
+Allowed characters are alphanumerics, apostrophe, hyphen, or space, but
+there are additional rules in `POTENTIAL-TOOT-NAME-P' which limit
+the string as a whole."
   (and (characterp character)
        (or (alphanumericp character)
            (char= #\- character)
@@ -69,22 +95,30 @@ Allowed characters are alphanumerics, apostrophe, hyphen, or space, but there ar
 Toot names must be:
 
 @itemize
+
 @item
 From three to 32 characters in length, inclusive.
+
 @item
 Characters must be  `POTENTIAL-TOOT-NAME-CHARACTER-P', ie, alphanumeric,
 a space, apostrophe, or hyphen.
+
 @item
 The first character must be alphabetic
+
 @item
 There can not be two punctuation marks (or spaces) in a row
+
 @item
-There can not be more than three of the same character in a row
+There can not be three of the same character in a row
+
 @item
 There can not be more than three digits
+
 @item
 Digits must appear only at the end -- i.e., if there are any digits, the
 leftmost digit must be after the rightmost non-digit character.
+
 @end itemize"
   (and (stringp Toot-name)
        (<= 3 (length Toot-name) 32)
@@ -92,7 +126,8 @@ leftmost digit must be after the rightmost non-digit character.
               Toot-name)
        (alpha-char-p (char Toot-name 0))
        (not (three-chars-in-a-row-p Toot-name))
-       (not (two-chars-in-a-row-p Toot-name #(#\Space #\Apostrophe #\Hyphen-Minus)))
+       (not (two-chars-in-a-row-p Toot-name #(#\Space #\Apostrophe
+                                              #\Hyphen-Minus)))
        (or (notany #'digit-char-p Toot-name)
            (< (position-if (complement #'digit-char-p) Toot-name :from-end t)
               (position-if #'digit-char-p Toot-name)))
@@ -350,20 +385,72 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 (defun host-name-like-p (name)
   "Does NAME meet the general rules of being a DNS host name.
 
- TODO: Compare this against RFCs for DNS names."
+Note that this  does NOT recognize etiher dotted-quad IPv4  nor hex IPv6
+addresses, only DNS names.
+
+ RFC-1035:
+
+@itemize
+
+@item
+Each label is up to 63 character-bytes.
+
+@item
+The total name length is up to 255 character-bytes, excluding dots.
+
+@item
+Labels must begin with a basic ASCII letter A-Z
+
+@item
+Labels must end with a letter or digit 0-9
+
+@item
+Labels  may contain  ASCII Hyphen-Minus,  but only  internally and
+never twice in a row.
+
+@item
+At present,  all Top-Level  Domains are  at least  two alphabetic
+characters and contain no digits nor hyphens.
+
+@item
+This function requires at least one dot; i.e. it is not for TLDs
+
+@item
+The trailing dot for the root should be omitted for this function.
+
+@end itemize"
   (check-type name string)
   (and (every #'host-name-char-p name)
+       (find #\. name)
        (not (char= #\- (char name 0)))
+       (not (digit-char-p (char name 0)))
        (not (char= #\- (char name (1- (length name)))))
+       (not (some (lambda (d)
+                    (search d name))
+                  '(".0" ".1" ".2" ".3" ".4"
+                    ".5" ".6" ".7" ".8" ".9"
+                    ".-")))
        (not (two-chars-in-a-row-p name ".-"))
        (let ((tld (subseq name (1+ (position #\. name :from-end t)))))
          (and (every #'alpha-char-p tld)
               (<= 2 (length tld))))))
 
 (assert (host-name-like-p "tootsville.org"))
+(assert (host-name-like-p "star-hope.org"))
 (assert (host-name-like-p "www.tootsvillle.org"))
 (assert (host-name-like-p "www.gov.uk"))
 (assert (host-name-like-p "s3.amazonaws.com"))
+(assert (not (host-name-like-p "한굴.ko")))
+(assert (not (host-name-like-p "-foo.com")))
+(assert (not (host-name-like-p "foo--foo.com")))
+(assert (not (host-name-like-p "foo-.com")))
+(assert (not (host-name-like-p "9foo.com")))
+(assert (not (host-name-like-p "bar.-foo.com")))
+(assert (not (host-name-like-p "bar.9foo.com")))
+(assert (not (host-name-like-p "foo.12")))
+(assert (not (host-name-like-p "foo.x")))
+(assert (not (host-name-like-p "foo")))
+(assert (not (host-name-like-p "10.0.0.10")))
 
 (defun www-uri-like-p (uri)
   "Does URI look like a WWW (HTTP/HTTPS) URI?"
@@ -441,12 +528,55 @@ The VECTOR should be in big-endian (aka \"network\") order."
 
 (defstruct color24 red green blue)
 
-;; TODO: HSV accessors for color24
+(defun color24-hsv (color)
+  (declare (optimize (speed 1) (safety 2)))
+  (let* ((red (the (real 0 1)
+                   (/ (the (unsigned-byte 8) (color24-red color))
+                      255.0d0)))
+         (green (the (real 0 1)
+                     (/ (the (unsigned-byte 8) (color24-green color))
+                        255.0d0)))
+         (blue (the (real 0 1)
+                    (/ (the (unsigned-byte 8) (color24-blue color))
+                       255.0d0)))
+         (c-max (the (real 0 1) (max red green blue)))
+         (c-min (the (real 0 1) (min red green blue)))
+         (delta (the (real 0 1) (- (the (real 0 1) c-max)
+                                   (the (real 0 1) c-min)))))
+    (if (< 0 delta)
+        (list
+         ;; hue
+         (mod (* (/ (* 60.0d0
+                       (cond
+                         ((= c-max red) (mod (/ (- green blue) delta) 6))
+                         ((= c-max green) (+ (/ (- blue red) delta) 2))
+                         ((= c-max blue) (+ (/ (- red green) delta) 4))
+                         (t (error "unreachable"))))
+                    360.0d0)
+                 2 pi)
+              (* 2 pi))
+         ;; saturation
+         (if (< 0 c-max)
+             (/ delta c-max)
+             0)
+         ;; value
+         c-max)
+        ;; else
+        (list 0 0 c-max))))
+
+(defun color24-hue (color)
+  (first (color24-hsv color)))
+
+(defun color24-saturation (color)
+  (second (color24-hsv color)))
+
+(defun color24-value (color)
+  (third (color24-hsv color)))
 
 (defun integer-to-color24 (number)
   (make-color24 :red (ldb (byte 8 16) number)
-		:green (ldb (byte 8 8) number)
-		:blue (ldb (byte 8 0) number)))
+                :green (ldb (byte 8 8) number)
+                :blue (ldb (byte 8 0) number)))
 
 (defun color24-to-integer (color)
   (+ (ash (color24-red color) 16)

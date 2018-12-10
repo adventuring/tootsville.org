@@ -46,9 +46,9 @@ via `REDIRECT-TO/HTML/BODY'."
 
 CODE is allowed to be a string beginning with an HTTP error code.
 
-CODE must be between 300-599, inclusive, or 501 will be used.
+CODE must be a valid HTTP status code number, or 501 will be used.
 
-TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
+"
   (cond
     ((consp code)
      (render-json code))
@@ -58,6 +58,6 @@ TODO: We SHOULD validate that CODE is a sane HTTP error code, but we don't."
                             (number code)
                             (string (parse-integer code :junk-allowed t))
                             (t 501))))
-         (unless (<= 300 code-number 599)
+         (unless (typep code-number 'http-response-status-number)
            (setf code-number 501))
          (redirect-to (format nil "/error/~d" code-number) :temp)))))
