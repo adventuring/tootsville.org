@@ -363,7 +363,7 @@ dist/play.$(clusterorg)/favicon.%:	www/favicon.%
 	mkdir -p dist/play.$(clusterorg)/
 	cp $< $@
 
-errordocs=$(wildcard www/error/*.{var,shtml,json,htmlf} )
+errordocs=$(wildcard www/error/*.var www/error/*.shtml www/error/*.json www/error/*.htmlf)
 
 dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 	mkdir -p dist/play.$(clusterorg)/error/
