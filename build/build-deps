@@ -6,6 +6,7 @@ git
 gnupg
 gpg
 joe
+mariadb-devel
 nodejs-less
 nodejs-source-map
 npm
