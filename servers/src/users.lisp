@@ -112,7 +112,7 @@
 
 (defun Toot-info (Toot)
   (list :name (db.Toot-name Toot)
-        :note "" ; TODO Toot notes by player/parent
+        :note (db.Toot-note Toot)
         :avatar (db.avatar-name (find-reference Toot :avatar))
         :base-color (color24-name (db.Toot-base-color Toot))
         :pattern (string-downcase (db.Toot-pattern Toot))
