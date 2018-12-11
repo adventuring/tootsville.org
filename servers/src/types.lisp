@@ -252,6 +252,36 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 
 
 
+(defun parse-color24 (color)
+  "Parse COLOR as a name for a color, or a hex 24-bit color value"
+  (integer-to-color24 
+   (etypecase color
+     (string (cond
+               ((equalp color "silver") #xdddddd)
+               ((equalp color "charcoal") #x333333)
+               ((equalp color "white") #xffffff)
+               ((equalp color "black") #x000000)
+               ((equalp color "deep-purple") #xb117ff)
+               ((equalp color "yellow") #xff216f)
+               ((equalp color "pink") #xe73e97)
+               ((equalp color "turquoise") #x00a290)
+               ((equalp color "periwinkle") #x96b4de)
+               ((equalp color "violet") #x9669ad)
+               ((equalp color "gold") #xf7d023)
+               ((equalp color "burgundy") #x9c0059)
+               ((equalp color "green") #x7ac142)
+               ((equalp color "blue") #x0082c8)
+               ((equalp color "lavender") #xba9dca)
+               ((equalp color "tan") #xffd2a0)
+               ((equalp color "red") #xe51b24)
+               ((equalp color "spring-green") #xc4d82d)
+               ((equalp color "indigo") #x0028ff)
+               ((equalp color "orange") #xff7b26)
+               (t (parse-number color :radix 16))))
+     (number color))))
+
+
+
 (define-constant +Toot-base-color-names+
     '(Cyan Indigo Orange Pink Red Turquoise Violet White Yellow)
   :test #'equalp
