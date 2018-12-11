@@ -12,7 +12,7 @@
   (gender keyword)
   (lang string))
 
-(defgeneric as-person (person-or-uuid-or-uid)
+(defgeneric ensure-person (person-or-uuid-or-uid)
   (:method ((person db.person))
     person)
   (:method ((person uuid:uuid))
