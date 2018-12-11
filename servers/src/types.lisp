@@ -196,8 +196,8 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
  <a href=\"http://~a/\">~:*~a</a>
 </li>
 </ul>
-<pre>~A</pre>
-~@[~:*<dl>
+~:[<pre>~A</pre>~;Our operations team can find out more in the server logs.~]
+~@[<dl>
 ~{<dt> ~a </dt> <dd> ~a </dd> ~}
 </dl>~]
 </body>
@@ -207,13 +207,13 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
               condition
               (gethash (http-status-code condition) *http-status-message*))
           (cluster-name)
-          (if hunchentoot:*show-lisp-backtraces-p*
-              (trivial-backtrace:backtrace-string)
-              "More information is in the server logs")
+          hunchentoot:*show-lisp-backtraces-p*
+          (rollbar::find-appropriate-backtrace)
           (if hunchentoot:*show-lisp-backtraces-p*
               (mapcar
                (lambda (restart)
-                 (list restart (princ-to-string restart))); TODO report?
+                 ;; TODO report-function for restarts?
+                 (list restart (princ-to-string restart)))
                (compute-restarts condition))
               nil)))
 
