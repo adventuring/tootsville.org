@@ -73,7 +73,8 @@
                                                  0
                                                  (position #\@ (getf record :gmail)))
                              :surname ""
-                             :gender "X")))
+                             :gender "X"
+                             :lang "en")))
     (make-record 'db.person-link
                  :person (db.person-uuid person)
                  :rel :CONTACT
