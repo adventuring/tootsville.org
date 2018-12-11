@@ -1,10 +1,16 @@
 (in-package :Tootsville)
 
 (defun lisp-to-db-name (name)
+  "Convert a Lispy name to an SQL-type one.
+
+Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
   (cffi:translate-name-to-foreign (make-keyword (string name)) *package*))
 
 (eval-when (:load-toplevel :execute :compile-toplevel)
   (defun column-load-mapping (column index)
+    "Map COLUMN from a database record column INDEX into internal form.
+
+Used in `DEFRECORD', qv."
     (list (make-keyword (string (car column)))
           (ecase (make-keyword (string (second column)))
             (:string `(nth ,index record))
@@ -130,6 +136,46 @@ SET ~{`~a` = ?~^, ~} WHERE ~a = ?"
        record)))
 
 (defmacro defrecord (name (database table) &rest columns)
+  "Define a database-mapping object type NAME, for DATABASE and TABLE, with COLUMNS.
+
+DATABASE is the symbolic name of the database, mapped via `CONFIG'.
+
+TABLE is the string table-name, exactly as it exists in the database.
+
+COLUMNS are a table of names, types, and foreign-key references, in the form:
+    (LABEL TYPE &rest REFERENCE)
+
+The LABEL  of a column is  mapped via `LISP-TO-DB-NAME'; it  is the Lisp
+name which is essentially the same  as the SQL name, but with KEBAB-CASE
+rather than snake_case.
+
+When   present,  REFERENCE   is   the  symbol   REF   followed  by   the
+record-type  (class) to  whose primary  key (ID  or UUID)  the reference
+is made. NUMBER REF columns point to ID, UUID REF columns to UUID.
+
+TYPE is one of the following:
+
+@table
+@item NUMBER
+map to an integer or real column in the database
+@item STRING
+map to a CHAR, CHAR VARYING, or TEXT column, or ENUM
+@item COLOR24 
+stored in the database as a 24-bit integer array (3 bytes)
+@item KEYWORD
+map to a CHAR or CHAR VARYING column, or ENUM
+@item UUID
+stored as a 64-bit integer array (8 bytes)
+@item JSON
+stored as a TEXT column, but parsed on loading via Jonathan
+@item YORNP
+a boolean, stored as (typically an enum) 'Y' or 'N'.
+@item URI
+stored as CHAR VARying or TEXT, parsed at load time as a PURI:URI.
+@item TIMESTAMP
+translates to a LOCAL-TIME:TIMESTAMP on loading.
+@end table
+"
   `(progn 
      (defstruct ,name
        ,@(mapcar #'car columns))
