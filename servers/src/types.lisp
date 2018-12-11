@@ -224,6 +224,11 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
              (format s "You do not have a Toot named “~a.”"
                      (which-Toot-is-not-yours c)))))
 
+(define-condition unidentified-player-error (http-client-error)
+  ((http-status-code :initform 403))
+  (:report (lambda (c s)
+             (format s "You are not logged-in: ~a" c))))
+
 (define-condition unimplemented (http-client-error)
   ((http-status-code :initform 501)
    (feature :initarg :feature :accessor unimplemented-feature
