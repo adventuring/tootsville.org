@@ -10,7 +10,7 @@
   (sensitivep yornp)
   (child-code string)
   (gender keyword)
-  (lang string))
+  (lang keyword))
 
 (defgeneric ensure-person (person-or-uuid-or-uid)
   (:method ((person db.person))
