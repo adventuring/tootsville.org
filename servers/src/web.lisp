@@ -346,6 +346,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 (defmethod print-object ((request hunchentoot:request) stream)
+  "Print a Hunchentoot Request object nicely"
   (print-unreadable-object (request stream :type t)
     (princ (hunchentoot:request-method request) stream)
     (write-char #\Space stream)
@@ -359,6 +360,9 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 (defun query-string->plist (query-string)
+  "Split an HTTP QUERY-STRING into a  PList.
+ 
+Probably a duplicate of something done in Hunchentoot or Drakma?"
   (mapcan (lambda (pair)
             (destructuring-bind (key value)
                 (split-sequence #\= pair)
