@@ -1,11 +1,6 @@
 (in-package :Tootsville)
 
 
-(defun sha1-hex (string)
-  (ironclad:byte-array-to-hex-string
-   (ironclad:digest-sequence :sha1 
-                             (trivial-utf-8:string-to-utf-8-bytes string))))
-
 (defun query-to-memcache-key (db query)
   (if (< (length query) 128)
       (format nil "~:(~a~):~a" db query)
