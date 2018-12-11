@@ -182,6 +182,14 @@ or exit the REPL.")
   (power-on-self-test)
   (start-repl))
 
+(defun debugger ()
+  (setf hunchentoot:*show-lisp-errors-p* t
+        hunchentoot:*show-lisp-backtraces-p* t
+        hunchentoot:*catch-errors-p* nil)
+  (swank:set-default-directory (asdf:component-relative-pathname
+                                (asdf:find-system  :Tootsville)))
+  (swank:set-package :Tootsville))
+
 (defun destroy-all-listeners ()
   (map nil #'destroy-thread
        (remove-if-not (lambda (th) (search "Hunchentoot Listening on Address"
