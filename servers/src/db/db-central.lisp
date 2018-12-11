@@ -36,7 +36,7 @@
         (:timestamp `(timestamp-to-universal  ,slot))))))
 
 (defun defrecord/load-record (name columns)
-  `(defmethod load-record ((class (eql ',name)) row)
+  `(defmethod load-record ((class (eql ',name)) record)
      (,(intern (concatenate 'string "MAKE-" (string name)))
        ,@(loop for i from 0 
             for column in columns
