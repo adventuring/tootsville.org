@@ -58,14 +58,18 @@
   (last-seen timestamp)
   (origin string))
 
-(defrecord db.avatar (:friendly "avatars")
+(defrecord db.avatar (:friendly "avatars" :pull t)
   (id number)
   (name string))
 
-(defrecord db.toots (:friendly "toots")
+(defrecord db.pattern (:friendly "patterns" :pull t)
+  (id number)
+  (name string))
+
+(defrecord db.toot (:friendly "toots")
   (uuid uuid)
   (name string) 
-  (pattern keyword)
+  (pattern number ref db.pattern)
   (base-color color24)
   (pattern-color color24)
   (pad-color color24)

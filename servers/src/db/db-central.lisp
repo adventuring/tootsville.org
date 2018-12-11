@@ -7,46 +7,82 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
   (cffi:translate-name-to-foreign (make-keyword (string name)) *package*))
 
 (eval-when (:load-toplevel :execute :compile-toplevel)
-  (defun column-load-mapping (column index)
-    "Map COLUMN from a database record column INDEX into internal form.
+  (defun column-load-mapping (column)
+    "Map COLUMN from a database record into internal form.
 
 Used in `DEFRECORD', qv."
-    (list (make-keyword (string (car column)))
-          (ecase (make-keyword (string (second column)))
-            (:string `(nth ,index record))
-            (:keyword `(make-keyword (nth ,index record)))
-            (:yornp `(ecase
-                         (make-keyword (nth ,index record))
-                       (:y t) (:n nil)))
-            (:number `(nth ,index record))
-	  (:json `(jonathan.decode:parse (nth ,index record)))
-	  (:uri `(puri:parse-uri (nth ,index record)))
-	  (:color24 `(integer-to-color24 (nth ,index record)))
-            (:uuid `(uuid:byte-array-to-uuid 
-                     (integer-to-byte-vector (nth ,index record)
-                                             (make-array 16 :element-type 
-                                                         '(unsigned-byte 8)))))
-            (:timestamp `(universal-to-timestamp (nth ,index record))))))
+    (let ((key (make-keyword (lisp-to-db-name (car column)))))
+      (list (make-keyword (string (car column)))
+            (ecase (make-keyword (string (second column)))
+              (:string `(getf record ,key))
+              (:keyword `(make-keyword (getf record ,key)))
+              (:yornp `(ecase
+                           (make-keyword (getf record ,key))
+                         (:y t) (:n nil)))
+              (:number `(getf record ,key))
+	    (:json `(jonathan.decode:parse (getf record ,key)))
+	    (:uri `(puri:parse-uri (getf record ,key)))
+	    (:color24 `(integer-to-color24 (getf record ,key)))
+              (:uuid `(uuid:byte-array-to-uuid 
+                       (integer-to-byte-vector (parse-integer (getf record ,key)
+                                                              :radix 16)
+                                               (make-array 16 :element-type 
+                                                           '(unsigned-byte 8)))))
+              (:timestamp `(universal-to-timestamp (getf record ,key)))))))
   
   (defun column-save-mapping (column)
     (let ((slot (first column)))
       (ecase (make-keyword (string (second column)))
         (:string slot)
-        (:keyword `(string ,slot))
+        (:keyword `(and ,slot
+                        (string ,slot)))
         (:yornp `(if ,slot "Y" "N"))
         (:number slot)
-        (:json `(jonathan.encode:to-json ,slot))
-        (:uri `(puri:render-uri ,slot nil))
-        (:color24 `(color24-to-integer ,slot))
-        (:uuid `(byte-vector-to-integer ,slot))       
-        (:timestamp `(timestamp-to-universal  ,slot))))))
+        (:json `(and ,slot
+                     (jonathan.encode:to-json ,slot)))
+        (:uri `(and ,slot
+                    (puri:render-uri ,slot nil)))
+        (:color24 `(and ,slot
+                        (color24-to-integer ,slot)))
+        (:uuid `(and ,slot 
+                     (byte-vector-to-integer (uuid:uuid-to-byte-array ,slot))))
+        (:timestamp `(and ,slot
+                          (timestamp-to-universal  ,slot))))))
+  
+  (defun column-normalizer (column)
+    (let ((name (intern (string (car column)))))
+      (list name 
+            (list 'and name 
+                  (ecase (make-keyword (string (second column)))
+                    (:string `(typecase ,name (string ,name) (t (princ-to-string ,name))))
+                    (:keyword `(make-keyword (string ,name)))
+                    (:yornp `(or ,name t))  ; T or NIL
+                    (:number `(etypecase ,name 
+                                (number ,name)
+                                (string (parse-number ,name))))
+                    (:json name)            ; TODO
+                    (:uri name)             ; TODO
+                    (:color24 `(etypecase ,name 
+                                 (color24 ,name)
+                                 (string (parse-color24 ,name))
+                                 (integer (integer-to-color24 ,name))))
+                    (:uuid `(etypecase ,name
+                              (uuid:uuid ,name)
+                              (vector (uuid:byte-array-to-uuid ,name))
+                              (number (uuid:byte-array-to-uuid 
+                                       (integer-to-byte-vector ,name)))
+                              (string (uuid:byte-array-to-uuid 
+                                       (integer-to-byte-vector 
+                                        (parse-integer ,name :radix 16))))))
+                    (:timestamp `(etypecase ,name
+                                   (timestamp ,name)
+                                   (number (universal-to-timestamp ,name))
+                                   (string (parse-timestring ,name))))))))))
 
 (defun defrecord/load-record (name columns)
   `(defmethod load-record ((class (eql ',name)) record)
      (,(intern (concatenate 'string "MAKE-" (string name)))
-       ,@(loop for i from 0 
-            for column in columns
-            appending (column-load-mapping column i)))))
+       ,@(mapcan #'column-load-mapping columns))))
 
 (defun defrecord/find-record (name table)
   `(defmethod find-record ((class (eql ',name)) &rest columns+values)
@@ -63,7 +99,12 @@ Used in `DEFRECORD', qv."
 (defun defrecord/row<-record (name columns)
   `(defmethod row<-record  ((object ,name))
      (with-slots ,(mapcar #'car columns) object
-       (list ,@(mapcar #'column-save-mapping columns)))))
+       ,@(mapcar #'column-save-mapping columns))))
+
+(defun defrecord/before-save-normalize (name columns)
+  `(defmethod before-save-normalize ((object ,name))
+     (with-slots ,(mapcar #'car columns) object
+       (setf ,@(mapcan #'column-normalizer columns)))))
 
 (defun defrecord/save-record (name id-accessor database table columns )
   `(defmethod save-record ((object ,name))
@@ -72,10 +113,11 @@ Used in `DEFRECORD', qv."
            (progn 
              ,(when (string-equal (caar columns) "UUID")
                 `(setf (,id-accessor object) (uuid:make-v4-uuid)))
+             (before-save-normalize object)
              (let* ((query (cl-dbi:prepare 
                             *dbi-connection*
                             ,(format nil "INSERT INTO `~a` (~{`~a`~^, ~})~
-~:*VALUES (~{?~*~^, ~})"
+~:* VALUES (~{?~*~^, ~});"
                                      table
                                      (mapcar (compose #'lisp-to-db-name #'car) columns)))))
                (with-slots ,(mapcar #'car columns) object
@@ -84,14 +126,14 @@ Used in `DEFRECORD', qv."
              ,(when (string-equal (caar columns) "ID")
                 `(let* ((id-query (cl-dbi:prepare 
                                    *dbi-connection*
-                                   "SELECT LAST_INSERT_ID()"))
+                                   "SELECT LAST_INSERT_ID();"))
                         (id-results (cl-dbi:execute id-query)))
                    (setf (,id-accessor object) (caar (cl-dbi:fetch-all 
                                                       id-results))))))
            (let ((query (cl-dbi:prepare
                          *dbi-connection*
                          ,(format nil "UPDATE `~a` ~
-SET ~{`~a` = ?~^, ~} WHERE ~a = ?"
+ SET ~{`~a` = ?~^, ~} WHERE ~a = ?;"
                                   table
                                   (mapcar (compose #'lisp-to-db-name #'car)
                                           (rest columns))
@@ -131,16 +173,26 @@ SET ~{`~a` = ?~^, ~} WHERE ~a = ?"
 
 (defun defrecord/make-record (name)
   `(defmethod make-record ((class (eql ',name)) &rest columns+values)
-     (let ((record (apply #'make-instance ',name columns+values)))
+     (let ((record (apply (function
+                           ,(intern (concatenate 'string "MAKE-" (string name))))
+                          columns+values)))
        (save-record record)
        record)))
 
-(defmacro defrecord (name (database table) &rest columns)
+(defmacro defrecord (name (database table &key pull) &rest columns)
   "Define a database-mapping object type NAME, for DATABASE and TABLE, with COLUMNS.
 
-DATABASE is the symbolic name of the database, mapped via `CONFIG'.
+DATABASE  is the  symbolic name  of the  database, mapped  via `CONFIG';
+eg, :friendly
 
-TABLE is the string table-name, exactly as it exists in the database.
+TABLE is  the string table-name, exactly  as it exists in  the database;
+eg, \"toots\"
+
+PULL is NOT implemented; TODO.
+
+PULL  is meant  to indicate  an infrequently-changed,  short table  (ie,
+basically a  small enumeration) that  should be pulled into  local cache
+up-front.
 
 COLUMNS are a table of names, types, and foreign-key references, in the form:
     (LABEL TYPE &rest REFERENCE)
@@ -184,5 +236,6 @@ translates to a LOCAL-TIME:TIMESTAMP on loading.
      ,(defrecord/find-record name table)
      ,(defrecord/find-records name table)
      ,(defrecord/row<-record name columns)
+     ,(defrecord/before-save-normalize name columns)
      ,(defrecord/save-record-with-id-column name database table columns)
      ,(defrecord/find-reference-columns name columns)))
