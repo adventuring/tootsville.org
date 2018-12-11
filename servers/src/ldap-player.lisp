@@ -108,7 +108,7 @@ The time  zone used for  this computation  is the not  defined, however,
 yielding  rather  irregular  behaviour   depending  on  time  zones  and
 the like.
 
-TODO: Determine  in what  time zone  we should  computer this  for legal
+TODO: Determine  in what  time zone  we should  compute this  for legal
 reasons, eg, COPPA."
   (check-type date-of-birth local-time:timestamp)
   (check-type reference-date local-time:timestamp)
