@@ -29,11 +29,12 @@
         (cons :|face|        (user-face user))
         (cons :|uuid|        (user-id user))))
 
+#+ (or)
 (defclass credentials ()
   ((user :type db.person
          :initarg :user
          :reader credentials-user)))
-
+#+ (or)
 (defclass openid-credentials (credentials)
   ((issuer :type string
            :initarg :issuer
@@ -68,7 +69,7 @@
    (user-id :type uuid
             :initarg :user
             :reader credentials-user)))
-
+#+ (or)
 (defclass openid-token ()
   ((access-token :type string
                  :initarg :access-token
