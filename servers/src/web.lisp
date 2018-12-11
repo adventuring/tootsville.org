@@ -324,17 +324,20 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 (defendpoint (get "/" text/html)
   "GET on the root redirects to the main web page for the cluster (eg, @url{https://Tootsville.org/})"
   (list 307 (list :location (format nil "https://www.~a.org/" (let ((cluster (cluster-name)))
-                                                                (if (search "tootsville" cluster-name)
+                                                                (if (search "tootsville" cluster)
                                                                     cluster
                                                                     "test.tootsville.org")))) ""))
 
 (defendpoint (get "/favicon" image/png)
+  "Get the Tootsville logo as a PNG"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.png") ""))
 
 (defendpoint (get "/favicon/ico")
+  "Get the Tootsville logo in Windows Icon format"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.ico") ""))
 
 (defendpoint (get "/favicon" image/gif)
+  "Get the Tootsville logo as a GIF"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.gif") ""))
 
 
