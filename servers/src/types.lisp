@@ -51,7 +51,7 @@ itself returns true."
 This  is  generally  intended  for  accepting  new  Toot  names,  versus
 validating REST calls, for example."
   (tagbody do-over
-     (restart-bind
+  (restart-bind
          ((auto-rename
            (lambda ()
              (let ((try (remove-repeats-for-Toot-name
@@ -68,7 +68,7 @@ validating REST calls, for example."
             :report-function
             (lambda (s)
               (format s "Find a name similar to ~a"
-                      name)))
+                                              name)))
           (provide-new-name
            (lambda (new-name)
              (setf name new-name)
@@ -563,24 +563,24 @@ The VECTOR should be in big-endian (aka \"network\") order."
          (delta (the (real 0 1) (- (the (real 0 1) c-max)
                                    (the (real 0 1) c-min)))))
     (if (< 0 delta)
-        (list
-         ;; hue
+      (list
+        ;; hue
          (mod (* (/ (* 60.0d0
-                       (cond
-                         ((= c-max red) (mod (/ (- green blue) delta) 6))
-                         ((= c-max green) (+ (/ (- blue red) delta) 2))
+                (cond
+                  ((= c-max red) (mod (/ (- green blue) delta) 6))
+                  ((= c-max green) (+ (/ (- blue red) delta) 2))
                          ((= c-max blue) (+ (/ (- red green) delta) 4))
                          (t (error "unreachable"))))
                     360.0d0)
                  2 pi)
               (* 2 pi))
-         ;; saturation
-         (if (< 0 c-max)
-             (/ delta c-max)
-             0)
-         ;; value
-         c-max)
-        ;; else
+        ;; saturation
+        (if (< 0 c-max)
+          (/ delta c-max)
+          0)
+        ;; value
+          c-max)
+      ;; else
         (list 0 0 c-max))))
 
 (defun color24-hue (color)
@@ -594,8 +594,8 @@ The VECTOR should be in big-endian (aka \"network\") order."
 
 (defun integer-to-color24 (number)
   (make-color24 :red (ldb (byte 8 16) number)
-                :green (ldb (byte 8 8) number)
-                :blue (ldb (byte 8 0) number)))
+		:green (ldb (byte 8 8) number)
+		:blue (ldb (byte 8 0) number)))
 
 (defun color24-to-integer (color)
   (+ (ash (color24-red color) 16)
