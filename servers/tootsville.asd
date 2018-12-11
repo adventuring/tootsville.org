@@ -20,12 +20,12 @@ REST services for the front-end."
   :depends-on (
 
                ;; systems from Quicklisp
-
                :bordeaux-threads
                :cl-dbi
                :cl-memcached
                :cl-ppcre
                :cl-threadpool
+               :cljwt-custom
                :clouchdb
                :dbd-mysql
                :drakma
@@ -65,8 +65,7 @@ REST services for the front-end."
      (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
      (:file "browser" :depends-on ("config"))
-     (:file "ldap-player" :depends-on ("package-post"))
-     (:file "users" :depends-on ("utils" "ldap-player"))
+     (:file "users" :depends-on ("utils"))
      (:file "toots" :depends-on ("utils" "users"))
      (:file "players" :depends-on ("utils" "users"))
      (:file "errors" :depends-on ("package-post"))
@@ -94,8 +93,7 @@ REST services for the front-end."
      (:module "auth"
               :depends-on ("package-post" "users")
               :components
-              ((:file "auth-oauth2")
-               (:file "auth-google" :depends-on ("auth-oauth2"))))
+              ((:file "auth-firebase")))
      (:module
       "endpoints"
       :depends-on ("web" "terrain" "db")

@@ -51,29 +51,39 @@
                           :seconds))))))
 
 (defun check-firebase-id-token (token)
-  (let* (header
-         payload
-         (sub (getf :|sub| payload)))
-    (assert (string= "RS256" (getf :|alg| header)) (token)
-            "Credential token does not have the required algorithm")
-    (assert (member (getf :|kid| header) (plist-keys (get-google-account-keys)))
-            (token)
-            "Credential token does not have a recognized signing key ID")
-    (assert (> (getf :|exp| payload) (timestamp-to-unix (now))) (token)
-            "Credential token has expired")
-    (assert (< (getf :|iat| payload) (timestamp-to-unix (now))) (token)
-            "Credential token will be issued in the future. You must be punished for violating causality.")
-    (assert (< (getf :|auth_time| payload) (timestamp-to-unix (now))) (token)
-            "Credential token is from a future user authentication. You must be punished for violating causality.")
-    (assert (string= (getf :|aud| payload) (config :firebase :project-id)) (token)
-            "Credential token was not for us (we are not its audience)")
-    (assert (stringp sub) (token)
-            "Credential token's subject should be a string")
-    (assert (< 4 (length sub) 256) (token)
-            "Credential token's subject length seems improper.")
-    (cljwt-custom:verify jwt
-                         (getf (getf :|kid| header) (get-google-account-keys))
-                         :rs256
-                         :fail-if-unsecured t
-                         :fail-if-unsupported t)
-    sub))
+  (multiple-value-bind (claims header digest claims$ header$)
+      (cljwt-custom:unpack token)
+    (declare (ignore claims digest claims$ header$))
+    (multiple-value-bind (payload token-header)
+        (cljwt-custom:verify token
+                             (gethash (gethash :|kid| header) (get-google-account-keys))
+                             :rs256
+                             :fail-if-unsecured t
+                             :fail-if-unsupported t)
+      (declare (ignore token-header))
+      (let ((sub (gethash :|sub| payload)))
+        (assert (string= "RS256" (gethash :|alg| header)) (token)
+                "Credential token does not have the required algorithm")
+        (assert (member (gethash :|kid| header) (plist-keys (get-google-account-keys)))
+                (token)
+                "Credential token does not have a recognized signing key ID")
+        (assert (> (gethash :|exp| payload) (timestamp-to-unix (now))) (token)
+                "Credential token has expired")
+        (assert (< (gethash :|iat| payload) (timestamp-to-unix (now))) (token)
+                "Credential token will be issued in the future. ~
+You must be punished for violating causality.")
+        (assert (< (gethash :|auth_time| payload) (timestamp-to-unix (now))) (token)
+                "Credential token is from a future user authentication. ~
+You must be punished for violating causality.")
+        (assert (string= (gethash :|aud| payload) (config :firebase :project-id)) 
+                (token)
+                "Credential token was not for us (we are not its audience)")
+        (assert (stringp sub) (token)
+                "Credential token's subject should be a string")
+        (assert (< 4 (length sub) 256) (token)
+                "Credential token's subject length seems improper.")
+        (list :uid sub
+              :email (gethash :|email| payload)
+              :email-verified-p (equalp "true" (gethash :|email_verified| payload))
+              :name (gethash :|name| payload)
+              :picturo (gethash :|picture| payload))))))
