@@ -64,6 +64,7 @@ REST services for the front-end."
                            (:file "toot-names")))
      (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
+     (:file "browser" :depends-on ("config"))
      (:file "ldap-player" :depends-on ("package-post"))
      (:file "users" :depends-on ("utils" "ldap-player"))
      (:file "toots" :depends-on ("utils" "users"))
