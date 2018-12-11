@@ -71,7 +71,8 @@
   (pad-color color24)
   (avatar number ref db.avatar)
   (player uuid ref db.person)
-  (last-active timestamp))
+  (last-active timestamp)
+  (note string))
 
 (defrecord db.wear-slot (:friendly "wear-slots")
   (id number)
