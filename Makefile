@@ -208,11 +208,11 @@ dist/play/play.map:	dist/play/play.js
 
 #################### dist/play/play.css
 
-PLAYLESSDEPS=$(wildcard play/*.less play/*/*.less)
+PLAYLESSDEPS=$(wildcard play/*.less play/**/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --strict-math=on --source-map play/play.less dist/play/play.css
+	lessc --math=strict --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
@@ -226,19 +226,19 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	echo '** FIXME Actual bugs!' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn FIXME servers mesh play www build Makefile README.org \
+	git grep -Hn FIXME servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** TODO To be done ASAP' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn TODO servers mesh play www build Makefile README.org \
+	git grep -Hn TODO servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** XXX Might Be Nice to do someday' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn XXX servers mesh play www build Makefile README.org \
+	git grep -Hn XXX servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** ☠☠☠ Bruce-Robert should examine this' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn ☠☠☠: servers mesh play www build Makefile README.org \
+	git grep -Hn ☠☠☠: servers mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
 TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
@@ -246,16 +246,16 @@ TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
 	-o -name \*.shtml \) -and -not -name .\*) \
 	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
-	git grep FIXME servers mesh play www build Makefile README.org \
+	git grep FIXME servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
-	git grep TODO servers mesh play www build Makefile README.org \
+	git grep TODO servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_XXX=' >> TODO.scorecard
-	git grep XXX servers mesh play www build Makefile README.org \
+	git grep XXX servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
-	git grep ☠☠☠ servers mesh play www build Makefile README.org \
+	git grep ☠☠☠ servers mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 
 #################### bin/jscl
@@ -267,7 +267,7 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 
 #################### www
 
-dist/www/2019.css:	www/2019.less
+dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 	lessc --math=strict --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
@@ -363,7 +363,7 @@ dist/play.$(clusterorg)/favicon.%:	www/favicon.%
 	mkdir -p dist/play.$(clusterorg)/
 	cp $< $@
 
-errordocs=$(shell echo www/error/*.{var,shtml,json,htmlf} )
+errordocs=$(wildcard www/error/*.{var,shtml,json,htmlf} )
 
 dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 	mkdir -p dist/play.$(clusterorg)/error/
@@ -405,10 +405,11 @@ deploy-play:	predeploy-play
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)
 
-deploy-servers:	predeploy
-	for host in game1 game2; \
+deploy-servers:	predeploy-servers
+	for host in game3 game2 game1 ; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
+                    scp ~/.config/Tootsville/Tootsville.config.lisp $$host.$(clusternet): ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers install ;\
 		VERSION=$(shell servers/Tootsville version-info version) ;\
 		curl https://api.rollbar.com/api/1/deploy/ \
@@ -422,7 +423,7 @@ deploy-servers:	predeploy
 		     -F local_username=$(LOCAL_USERNAME) ;\
 	done
 
-deploy-www:	predeploy
+deploy-www:	predeploy-www
 	echo " » Deploy www.$(clusterorg)"
 	ssh www.$(clusterorg) "mv www.$(clusterorg) www.$(clusterorg).before-deploy && mv www.$(clusterorg).new www.$(clusterorg)"
 	curl https://api.rollbar.com/api/1/deploy/ \
@@ -442,6 +443,7 @@ connectivity:
 	ssh www.$(clusterorg) ls -1d www.$(clusterorg)/ | grep $(clusterorg)
 	ssh game1.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
 	ssh game2.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
+	ssh game3.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
 
 
 no-fixmes:	TODO.scorecard
@@ -503,7 +505,7 @@ dist/www.$(clusterorg):	htaccess dist/www/2019.css
 	fi
 
 predeploy-servers:	servers quicklisp-update-servers
-	for host in game1 game2 ;\
+	for host in game3 game2 game1 ;\
 	do \
 		echo " » Pre-deploy $$host.$(clusternet)" ;\
 		rsync -essh --delete -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
@@ -513,7 +515,7 @@ predeploy-servers:	servers quicklisp-update-servers
 	done
 
 quicklisp-update-servers:
-	for host in game1 game2; \
+	for host in game3 game2 game1 ; \
 	do \
 		echo " » Ensure latest Quicklisp on $$host.$(clusternet)" ;\
 	    ssh $$host.$(clusternet) \
@@ -592,4 +594,3 @@ deploy-docs:
 
 TAGS:	$(shell find . -type f -name *.lisp)
 	etags --declarations $(shell find . -type f -name *.lisp) Makefile
-

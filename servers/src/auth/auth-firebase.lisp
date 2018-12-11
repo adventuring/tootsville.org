@@ -7,17 +7,58 @@
 (defun http-fetch-json (uri &rest drakma-options)
   (jonathan.decode:parse
    (map 'string #'code-char
-        (apply #'drakma:http-request uri :accept "application/json" drakma-options))))
+        (apply #'drakma:http-request uri :accept "application/json" 
+               drakma-options))))
+
+(defun subheader-field (header-assoc label)
+  (when header-assoc
+    (let* ((label* (concatenate 'string label ":"))
+           (len (length label*))
+           (finds 
+            (mapcar #'second
+                    (split-sequence
+                     ":"
+                     (remove-if-not 
+                      (lambda (section)
+                        (and (> (length section) len)
+                             (string-equal label* section
+                                           :end2 len)))
+                      (mapcar 
+                       (curry #'string-trim +whitespace+)
+                       (split-sequence ";" (cdr header-assoc))))))))
+      (case (length finds)
+        (0 nil)
+        (1 (string-trim +whitespace+ (first finds)))
+        (otherwise (warn "Multiple sub-header hits in ~:(~a~) for ~(~a~)"
+                         (car header-assoc) label)
+                   (string-trim +whitespace+ (first finds)))))))
 
 (let ((keys nil)
-      (keys-updated (timestamp- (now) 1 :year)))
+      (keys-update-next (timestamp- (now) 1 :year)))
   (defun get-google-account-keys ()
-    (when (< (timestamp-difference (now) keys-updated) *google-account-keys-refresh*)
+    (when (timestamp< (now) keys-update-next)
       (return-from get-google-account-keys keys))
+    (multiple-value-bind 
+          (json-data http-status headers-alist reply-uri 
+                     reply-stream stream-close-p status-message)
+        (drakma:http-request
+         "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+         :accept "application/json")
+      (when (<= 200 http-status 299)
+        (setf keys (jonathan.decode:parse
+                    (map 'string #'code-char json-data))
+              keys-update-next 
+              (timestamp+ (now)
+                          (or (let ((n (subheader-field (assoc :cache-control
+                                                               headers-alist)
+                                                        "max-age")))
+                                (parse-integer n))
+                              *google-account-keys-refresh*)
+                          :seconds)))) 
     ;; FIXME: Use  the value of  max-age in the Cache-Control  header of
     ;; the  response from  that endpoint  to  know when  to refresh  the
     ;; public keys.
-    (setf keys (http-fetch-json "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"))))
+    (setf keys (http-fetch-json ))))
 
 (defun check-firebase-id-token (token)
   (let* (header

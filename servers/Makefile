@@ -104,7 +104,10 @@ doc/Tootsville.texi:	Tootsville
 
 install:	tootsville.service Tootsville
 	cp Tootsville --backup=simple -f /usr/local/bin/
-	cp tootsville.service --backup=simple -f /usr/lib/systemd/system/
+	cp tootsville.service --backup=simple -f /usr/lib/systemd/system/ || \
+		cat tootsville.service > /usr/lib/systemd/system/tootsville.service
+	mkdir -p ~/.config/Tootsville/
+	mv --backup=simple ~/Tootsville.config.lisp ~/.config/Tootsville/
 	cp 55-tootsville.conf -f /etc/rsyslog.conf
 	sudo -n systemctl enable tootsville || :
 	sudo -n systemctl restart tootsville || :
