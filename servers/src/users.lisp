@@ -16,8 +16,9 @@
 
 (defun user-face (&optional (person *user*))
   (let* ((uuid (db.person-uuid (ensure-person person)))
-         (portraits (find-records 'db.person-link "rel" :portrait)))
-    (when portraits (first portrait))))
+         (portraits (find-records 'db.person-link
+                                  "person" uuid "rel" :portrait)))
+    (when portraits (random-elt portraits))))
 
 (defun user-id (&optional (person *user*))
   (db.person-uuid (ensure-person person)))
