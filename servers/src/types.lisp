@@ -173,7 +173,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 </li>
 </ul>
 <pre>~A</pre>
-~@[~:*<dl>
+~@[<dl>
 ~{<dt> ~a </dt> <dd> ~a </dd> ~}
 </dl>~]
 </body>
@@ -186,6 +186,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
           (if hunchentoot:*show-lisp-backtraces-p*
               (trivial-backtrace:backtrace-string)
               "More information is in the server logs")
+          nil
           (if hunchentoot:*show-lisp-backtraces-p*
               (mapcar
                (lambda (restart)
@@ -453,34 +454,30 @@ The VECTOR should be in big-endian (aka \"network\") order."
 (defstruct color24 red green blue)
 
 (defun color24-hsv (color)
- (let ((red (/ (color24-red color) 255))
-       (green (/ (color24-green color) 255))
-       (blue (/ (color24-blue color) 255)))
-  (let ((c-max (max red green blue))
-	(c-min (min red green blue))
-        (delta (- c-max c-min))
-        hue-degrees saturation value)
-    (if (< 0 delta)
-      (list
-        ;; hue
-        (mod (* 60
-                (cond
-                  ((= c-max red) (mod (/ (- green blue) delta) 6))
-                  ((= c-max green) (+ (/ (- blue red) delta) 2))
-                  ((= c-max blue) (+ (/ (- red green) delta) 4))))
-             360)
-        ;; saturation
-        (if (< 0 c-max)
-          (/ delta c-max)
-          0)
-        ;; value
-          c-max)
-      ;; else
-      (list 0 0 c-max))
-     
-             
-             
-         
+  (let ((red (/ (color24-red color) 255))
+	(green (/ (color24-green color) 255))
+	(blue (/ (color24-blue color) 255)))
+    (let ((c-max (max red green blue))
+	  (c-min (min red green blue))
+	  (delta (- c-max c-min))
+	  hue-degrees saturation value)
+      (if (< 0 delta)
+	  (list
+	   ;; hue
+	   (mod (* 60
+		   (cond
+		    ((= c-max red) (mod (/ (- green blue) delta) 6))
+		    ((= c-max green) (+ (/ (- blue red) delta) 2))
+		    ((= c-max blue) (+ (/ (- red green) delta) 4))))
+		360)
+	   ;; saturation
+	   (if (< 0 c-max)
+	       (/ delta c-max)
+	     0)
+	   ;; value
+	   c-max)
+	;; else
+	(list 0 0 c-max)))))
 
 (defun color24-hue (color)
   (first (color24-hsv color)))
