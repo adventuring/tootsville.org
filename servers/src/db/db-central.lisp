@@ -161,11 +161,11 @@ map to an integer or real column in the database
 @item STRING
 map to a CHAR, CHAR VARYING, or TEXT column, or ENUM
 @item COLOR24 
-stored in the database as a 24-bit integer array (3 bytes)
+stored in the database as a 24-bit BINARY (3 bytes)
 @item KEYWORD
 map to a CHAR or CHAR VARYING column, or ENUM
 @item UUID
-stored as a 64-bit integer array (8 bytes)
+stored as a 128-bit BINARY (16 bytes)
 @item JSON
 stored as a TEXT column, but parsed on loading via Jonathan
 @item YORNP
