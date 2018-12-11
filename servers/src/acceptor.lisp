@@ -86,6 +86,7 @@
  (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun find-user-for-headers (headers)
+  ;; TODO … authorization credentials 
   (when-let (auth-header (assoc "Authorization" headers))
     (when-let (credentials (validate-auth-header (cdr auth-header)))
       (find-user-for-credentials credentials))))
