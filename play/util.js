@@ -30,13 +30,14 @@ Tootsville.util.assertValidHostName = function (hostName)
   if ("tootsbook" == hostName)
   { return "https://tootsbook.com"; }
   Tootsville.error ("Unknown which host handles " + hostName);
+  return undefined;
 };
 
 Tootsville.util.rest = function (uri, post, headers)
-{ Tootsville.trace ("REST: URI " + uri);
-  var hostName = uri.split('/')[0];
+{ var hostName = uri.split('/')[0];
   hostName = Tootsville.util.assertValidHostName(hostName);
-  return Tootsville.util.postJSONforJSON(hostName + uri.slice(1),
+  Tootsville.trace ("REST: URI " + hostName + '/' + uri);
+  return Tootsville.util.postJSONforJSON(hostName + '/' + uri,
                                          post, headers); };
 
 Tootsville.util.loadScript = function (src)
