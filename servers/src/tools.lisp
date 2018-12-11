@@ -31,8 +31,9 @@
                                    pattern-name$
                                    age-range
                                    gmail1
-                                   child-name gmail2)
+                                   child-name gmail2 &rest _)
       (mapcar (curry #'string-trim +whitespace+) (split-sequence #\Tab line))
+    (declare (ignore _))
     (let* ((created-at (translate-american-ish-date created-at$))
            (base-color (or (remove-parentheticals base-color$)
                            (random-elt +Toot-base-color-names+)))
@@ -63,11 +64,62 @@
             :child-name (unless own-toot-p child-name)
             :gmail gmail))))
 
-(defun import-toot-name-reservations (&optional (file (merge-pathnames (user-homedir-pathname)
-                                                                       (make-pathname :name "Toots-Name-Reservations"))))
+(defun import-toot-to-db (record)
+  (unless (getf record :own-toot-p)
+    (return-from import-toot-to-db))    ; TODO
+  (let ((person (make-record 'db.person :child-code nil
+                             :display-name (getf record :gmail)
+                             :given-name (subseq (getf record :gmail)
+                                                 0
+                                                 (position #\@ (getf record :gmail)))
+                             :surname ""
+                             :gender "X")))
+    (make-record 'db.person-link
+                 :person (db.person-uuid person)
+                 :rel :CONTACT
+                 :url (concatenate 'string "mailto:" (getf record :gmail))
+                 :label "Toot Name Reservations GMail")
+    (unless (getf record :own-toot-p)
+      (setf (db.person-child-code person) "*"
+            (db.person-display-name person) (getf record :child-name)
+            (db.person-given-name person) (getf record :child-name))
+      ;; TODO
+      )
+    (let ((toot (make-record
+                 'db.toot
+                 :name (getf record :toot-name)
+                 :pattern (db.pattern-id (find-record 'db.pattern "name" 
+                                                      (getf record :pattern-name)))
+                 :base-color (parse-color24 (string (getf record :base-color)))
+                 :pad-color (parse-color24 (string (getf record :pads-color)))
+                 :pattern-color (parse-color24 (string (getf record :pattern-color)))
+                 :avatar 1
+                 :player (db.person-uuid person)
+                 :last-active (or (getf record :created-at) (parse-timestring "2013-01-01T00:00:00"))
+                 :note "Toot Name Pre-Registered"))
+          (gifts (list (make-record 'db.item :template 1)
+                       (make-record 'db.item :template 2)
+                       (make-record 'db.item :template 3))))
+      (dolist (gift gifts)
+        (make-record 'db.inventory-item
+                     :person (db.person-uuid person)
+                     :toot (db.toot-uuid toot)
+                     :item (db.item-uuid gift)
+                     :equipped "N")))))
+
+;; (make-record   'db.toot  :name   "Shade"   :pattern  13   :base-color
+;; (make-color24  :red  #x90  :green  #x20  :blue  #x90)  :pattern-color
+;; (make-color24   :red  #xff   :green  #xff   :blue  #x00)   :pad-color
+;; (make-color24   :red   #xff   :green   #xff   :blue   #x00)   :avatar
+;; 8     :last-active     (parse-timestring    "2013-01-01")     :player
+;; (db.person-uuid ☠brp) :note "")
+
+(defun import-toot-name-reservations
+    (&optional (file (merge-pathnames (user-homedir-pathname)
+                                      (make-pathname :name "Toots-Name-Reservations"))))
   (with-input-from-file (file file)
     (check-first-line/reservations file)
-    (let ((roster nil))
+    (with-dbi (:friendly)
       (tagbody reading
          (let ((line (read-line file nil nil)))
            (unless line (go done))
@@ -75,7 +127,7 @@
              (go reading))
            (restart-case
                (progn
-                 (push (parse-line/reservations line) roster)
+                 (import-toot-to-db (parse-line/reservations line))
                  (format t "~&~:(~25a~)  for ~:[child of ~;~]~a"
                          (getf (parse-line/reservations line) :toot-name)
                          (getf (parse-line/reservations line) :own-toot-p)
@@ -86,5 +138,4 @@
                (format *error-output* "~&Skipping this record due to error:~%~a" line)
                (go reading)))
            (go reading))
-       done)
-      roster)))
+       done))))
