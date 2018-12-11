@@ -176,12 +176,6 @@ appearing on a parent's account."
 \"note\":\"You are not signed in to the web services\",
 \"login\":\"https://play.Tootsville.org/login/\"}"))
 
-(defmacro with-player (() &body body) ; TODO: cv WITH-USER
-  "Ensure that a recognized player is connected
-using `FIND-PLAYER-OR-DIE' and bind *USER*"
-  `(progn (find-player-or-die)
-          ,@body))
-
 
 
 (defun assert-my-character (Toot-name &optional (user *user*))

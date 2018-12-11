@@ -2,7 +2,7 @@
 
 (defendpoint (get "/toots/:toot-name" "application/json")
   (check-arg-type toot-name toot-name)
-  (with-player ()
+  (with-user ()
     (list 200
           `(:last-modified ,(header-time))
           (if-let (toot (find-toot-by-name toot-name))
