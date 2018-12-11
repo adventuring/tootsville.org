@@ -4,12 +4,6 @@
   "How  often (in  sec)  to  refresh the  Google  account  keys used  in
   Firebase authentication verification?")
 
-(defun http-fetch-json (uri &rest drakma-options)
-  (jonathan.decode:parse
-   (map 'string #'code-char
-        (apply #'drakma:http-request uri :accept "application/json" 
-               drakma-options))))
-
 (defun subheader-field (header-assoc label)
   (when header-assoc
     (let* ((label* (concatenate 'string label ":"))
@@ -54,11 +48,7 @@
                                                         "max-age")))
                                 (parse-integer n))
                               *google-account-keys-refresh*)
-                          :seconds)))) 
-    ;; FIXME: Use  the value of  max-age in the Cache-Control  header of
-    ;; the  response from  that endpoint  to  know when  to refresh  the
-    ;; public keys.
-    (setf keys (http-fetch-json ))))
+                          :seconds))))))
 
 (defun check-firebase-id-token (token)
   (let* (header
