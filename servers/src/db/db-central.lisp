@@ -121,7 +121,7 @@ SET ~{`~a` = ?~^, ~} WHERE ~a = ?"
 	   collecting
 	     (defrecord/find-reference name column)))))
 
-(defun defrecord/make-record (name columns)
+(defun defrecord/make-record (name)
   `(defmethod make-record ((class (eql ',name)) &rest columns+values)
      (let ((record (apply #'make-instance ',name columns+values)))
        (save-record record)
@@ -131,7 +131,7 @@ SET ~{`~a` = ?~^, ~} WHERE ~a = ?"
   `(progn 
      (defstruct ,name
        ,@(mapcar #'car columns))
-     ,(defrecord/make-record name columns)
+     ,(defrecord/make-record name)
      ,(defrecord/load-record name columns)
      ,(defrecord/find-record name table)
      ,(defrecord/find-records name table)
