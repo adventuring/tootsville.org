@@ -23,7 +23,7 @@
            (if-let (,$value (cl-memcached:mc-get-value ,$key))
              (apply #'values (read-from-string ,$value))
              (let ((,$value (values-list (progn ,@body))))
-               (cl-memcached:mc-store ,$key (print-to-string ,$value))
+               (cl-memcached:mc-store ,$key (princ-to-string ,$value))
                (apply #'values ,$value))))
          (progn ,@body))))
 
