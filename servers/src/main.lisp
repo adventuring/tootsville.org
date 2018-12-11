@@ -2,8 +2,6 @@
 
 
 
-
-
 (defvar *acceptors* nil)
 
 (defun find-acceptor (host port)
@@ -173,12 +171,34 @@ process's PID."
 
 ;;; Web servers
 
-(defun start-hunchentoot (&key host port)
+(defun start-hunchentoot (&key (host "localhost") (port 5000))
   "Start a Hunchentoot  server via `START' and fall through  into a REPL
 to keep the process running."
   (start :host host :port port)
-  (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, or exit the REPL.")
+  (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, ~
+or exit the REPL.")
+  (when (swank-connected-p)
+    (debugger))
+  (power-on-self-test)
   (start-repl))
+
+(defun destroy-all-listeners ()
+  (map nil #'destroy-thread
+       (remove-if-not (lambda (th) (search "Hunchentoot Listening on Address"
+                                           (thread-name th)))
+                      (all-threads))))
+
+(defun destroy-all-idle-workers ()
+  (let ((workers (remove-if-not (lambda (th) (search "Idle Web Worker"
+                                                     (thread-name th)))
+                                (all-threads))))
+    (map nil #'destroy-thread workers)
+    workers))
+
+(defun destroy-all-web-tasks ()
+  (destroy-all-listeners)
+  (while (destroy-all-idle-workers)
+    (sleep 1)))
 
 (defparameter *trace-output-heartbeat-time* 90)
 
