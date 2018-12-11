@@ -38,7 +38,7 @@
         (drakma:http-request
          "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
          :accept "application/json")
-      (when (<= 200 http-status 299)
+      (when (typep http-status 'http-response-success-status-number)
         (setf keys (jonathan.decode:parse
                     (map 'string #'code-char json-data))
               keys-update-next 
