@@ -21,7 +21,7 @@ Tootsville.util.postJSONforJSON = function (uri, post, headers)
 Tootsville.util.assertValidHostName = function (hostName)
 { if ("users" == hostName || "toots" == hostName)
   { return Tootsville.host["users"]; }
-  if ("gossip" == hostName)
+  if ("gossip" == hostName || "meta-game" == hostName)
   { return Tootsville.host["gossip"]; }
   if ("world" == hostName)
   { return Tootsville.host["world"]; }
