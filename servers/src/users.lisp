@@ -109,14 +109,14 @@ come from a trusted authentication provider like Google Firebase)."
   (check-type Toot-name Toot-name)
   (find-record 'db.Toot "name" Toot-name))
 
-(defun player-childp (&optional (player *user))
+(defun player-childp (&optional (player *user*))
   (< (or (legal-age (db.person-date-of-birth player))
          (db.person-age player))
      13))
 
-(defun player-adultp (&optional (player *user))
+(defun player-adultp (&optional (player *user*))
   (>= (or (legal-age (db.person-date-of-birth player))
-	(db.person-age player))
+          (db.person-age player))
       18))
 
 (defun Toot-childp (Toot)
@@ -129,10 +129,10 @@ come from a trusted authentication provider like Google Firebase)."
         :base-color (color24-name (db.Toot-base-color Toot))
         :pattern (string-downcase (db.Toot-pattern Toot))
         :pattern-color (color24-name (db.Toot-pattern-color Toot))
-        :pads-color (color24-name (db.Toot-pads-color Toot))
+        :pads-color (color24-name (db.Toot-pad-color Toot))
         :child-p (Toot-childp Toot)
         :sensitive-p (or (Toot-childp Toot)
-		     (db.person-sensitivep (find-reference Toot :player)))
+                         (db.person-sensitivep (find-reference Toot :player)))
         :last-seen (db.Toot-last-active Toot)))
 
 (defun player-Toots (&optional (player *user*))
@@ -200,7 +200,7 @@ appearing on a parent's account."
 
 
 
-;;; TODO ensure that these time functions exist somewhere more
+;;; TODO  ensure   that  these  time  functions   exist  somewhere  more
 ;;; appropriate and remove then
 
 (defun days-ago (days)
