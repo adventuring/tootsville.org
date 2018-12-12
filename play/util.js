@@ -24,7 +24,8 @@ Tootsville.util.assertValidHostName = function (hostName)
 Tootsville.util.rest = function (method, uri, body, headers)
 { var hostName = uri.split('/')[0];
   hostName = Tootsville.util.assertValidHostName(hostName);
-  Tootsville.trace ('REST: ' + method + ' ' + hostName + '/' + uri);
+  uri = hostName + '/' + uri;
+  Tootsville.trace ('REST: ' + method + ' ' + uri);
   if (!headers) { headers = {}; }
   return new Promise(
       (pass, fail) =>
@@ -46,7 +47,8 @@ Tootsville.util.rest = function (method, uri, body, headers)
                                     p: Tootsville.login.idProvider})); }
             if (body)
             { xhr.setRequestHeader('Content-Type', 'application/json;encoding=utf-8');
-              xhr.send(JSON.stringify(body)); }}); };
+              xhr.send(JSON.stringify(body)); }
+            else  { xhr.send (); } }); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
@@ -54,3 +56,13 @@ Tootsville.util.loadScript = function (src)
                         el.onload = finish;
                         el.src = src;
                         document.body.appendChild(el); });};
+
+//
+
+Tootsville.util.ensureServersReachable = function ()
+{ Tootsville.util.rest ('GET', 'meta-game/ping').then
+  ( (response) => { Tootsville.trace ("Ping replied", response); },
+    (error) => { Tootsville.parrot.say (
+        "Squawk! I don't see any servers!",
+        ("I'm not able to reach any of the Tootsville game servers. " +
+         "Make sure you're connected to the Internet.") ); } ); };
