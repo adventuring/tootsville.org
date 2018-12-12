@@ -5,6 +5,64 @@
 (defvar *user* nil
   "The currently-signed-in user, if any")
 
+(defun email-lhs (address)
+  (when address
+    (subseq address 0 (position #\@ address))))
+
+(defun ensure-user-for-plist (plist)
+  "Find or create the user described by PLIST and return them.
+
+PLIST  can  have  keys  that  align to  a  DB.PERSON  or  their  contact
+infos (eg,  email) and is expected  to have been validated  already (eg,
+come from a trusted authentication provider like Google Firebase)."
+  (let ((by-mail (when-let (email (and (getf plist :email-verified-p)
+                                       (getf plist :email)))
+                   (when-let (link (find-record 'db.person-link
+                                                "url"
+                                                (concatenate 'string
+                                                             "mailto:" email)))
+                     (find-record 'db.person "uuid" (db.person-link-person link)))))
+        (by-uid (when-let (cred (find-record 'db.credential
+                                             "uid" (getf plist :uid)
+                                             "provider" (getf plist :provider)))
+                  (find-record 'db.person "uuid"
+                               (db.credential-person cred)))))
+    (cond
+      ((and by-mail by-uid (uuid:uuid= (db.person-uuid by-mail)
+                                       (db.person-uuid by-uid)))
+       )
+      ((and by-mail by-uid)
+       )
+      (by-mail)
+      (by-uid)
+      (t (let ((person (make-record
+                        'db.person
+                        :display-name (or (getf plist :name)
+                                          (email-lhs (getf plist :email)))
+                        :given-name (or (getf plist :given-name)
+                                        (getf plist :name)
+                                        (email-lhs (getf plist :email)))
+                        :surname (getf plist :surname))))
+           (make-record 'db.credential "person" (db.person-uuid person)
+                        "provider" (getf plist :provider)
+                        "uid" (getf plist :uid))
+           (when (getf plist :email-verified-p)
+             (make-record 'db.person-link
+                          "person" (db.person-uuid person)
+                          "rel" "CONTACT"
+                          "url" (concatenate 'string "mailto:"
+                                             (getf plist :email))))
+           (when (getf plist :picture)
+             (make-record 'db.person-link
+                          "person" (db.person-uuid person)
+                          "rel" "PORTRAIT"
+                          "url" (getf plist :picture)))
+           person)))))
+
+
+
+;;; User details
+
 (defun user-display-name (&optional (person *user*))
   (db.person-display-name (ensure-person person)))
 
