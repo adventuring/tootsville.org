@@ -72,11 +72,24 @@ come from a trusted authentication provider like Google Firebase)."
 (defun user-surname (&optional (person *user*))
   (db.person-surname (ensure-person person)))
 
+(defun user-email (&optional (person *user*))
+  "Finds an email address for PERSON of type CONTACT."
+  (when-let (mails (remove-if-not
+                    (lambda (record)
+                      (string-begins "mailto:" (db.person-link-url record)))
+                    (find-records 'db.person-link
+                                  "person" (db.person-uuid
+                                            (ensure-person person))
+                                  "rel" "CONTACT")))
+    (subseq (random-elt mails) 7)))
+
 (defun user-face (&optional (person *user*))
-  (let* ((uuid (db.person-uuid (ensure-person person)))
-         (portraits (find-records 'db.person-link
-                                  "person" uuid "rel" :portrait)))
-    (when portraits (random-elt portraits))))
+  "Finds a portrait URI for PERSON"
+  (when-let (portraits (find-records 'db.person-link
+                                     "person" (db.person-uuid
+                                               (ensure-person person))
+                                     "rel" "PORTRAIT"))
+    (random-elt portraits)))
 
 (defun user-id (&optional (person *user*))
   (db.person-uuid (ensure-person person)))
