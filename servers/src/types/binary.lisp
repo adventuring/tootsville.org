@@ -40,3 +40,14 @@ The VECTOR should be in big-endian (aka \"network\") order."
   (ironclad:byte-array-to-hex-string
    (ironclad:digest-sequence :sha1 
                              (trivial-utf-8:string-to-utf-8-bytes string))))
+
+(defun ensure-integer (value)
+  (etypecase value
+    (integer value)
+    (real (round value))
+    (string (parse-integer value))))
+
+(defun ensure-number (value)
+  (etypecase value
+    (number value)
+    (string (parse-number value))))

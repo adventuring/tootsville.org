@@ -61,6 +61,13 @@ come from a trusted authentication provider like Google Firebase)."
 
 
 
+(defmacro with-user (() &body body)
+  `(progn (unless *user*
+            (error 'unidentified-player-error))
+          ,@body))
+
+
+
 ;;; User details
 
 (defun user-display-name (&optional (person *user*))

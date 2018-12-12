@@ -113,8 +113,8 @@ as well.)"
                              "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
                              (thread-name (current-thread))
                              (hunchentoot:return-code*)
-                             (length (hunchentoot:headers-out*))
-                             (length bytes))
+                             (length (the list (hunchentoot:headers-out*)))
+                             (length (the vector bytes)))
                      bytes))
               (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
                       ,(concatenate 'string "{~a} Finished: " (first-line docstring))

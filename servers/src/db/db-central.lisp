@@ -1,5 +1,16 @@
 (in-package :Tootsville)
 
+
+
+
+(defgeneric id-column-for (type))
+(defgeneric make-record (type &rest columns+values))
+(defgeneric find-record (type &rest columns+values))
+(defgeneric load-record (type columns))
+(defgeneric save-record (object))
+
+
+
 (defun lisp-to-db-name (name)
   "Convert a Lispy name to an SQL-type one.
 
@@ -22,7 +33,7 @@ Used in `DEFRECORD', qv."
               (:number `(getf record ,key))
 	    (:json `(jonathan.decode:parse (getf record ,key)))
 	    (:uri `(puri:parse-uri (getf record ,key)))
-	    (:color24 `(integer-to-color24 (getf record ,key)))
+	    (:color24 `(integer-to-color24 (ensure-integer (getf record ,key))))
               (:uuid `(uuid:byte-array-to-uuid 
                        (integer-to-byte-vector (parse-integer (getf record ,key)
                                                               :radix 16)
@@ -141,7 +152,14 @@ Used in `DEFRECORD', qv."
              (with-slots ,(mapcar #'car columns) object
                (cl-dbi:execute query
                                ,@(mapcar #'column-save-mapping (rest columns))
-                               ,(caar columns))))))))
+                               ,(caar columns))))))
+     object))
+
+(defun defrecord/id-column-for (name columns)
+  (when (or (string-equal "ID" (caar columns))
+            (string-equal "UUID" (caar columns)))
+    `(defmethod id-column-for ((type (eql ',name)))
+       ',(caar columns))))
 
 (defun defrecord/save-record-with-id-column (name database table columns)
   (when (or (string-equal "ID" (caar columns))
@@ -156,7 +174,7 @@ Used in `DEFRECORD', qv."
        ((object ,name)
         (reference (eql ,(make-keyword (string (first column))))))
      (find-record ',(fourth column)
-	        ,(lisp-to-db-name (first column)) 
+	        ,(lisp-to-db-name (id-column-for (fourth column))) 
                   (,(intern (concatenate 'string (string name)
                                          "-"
                                          (string (first column))))
@@ -231,6 +249,7 @@ translates to a LOCAL-TIME:TIMESTAMP on loading.
   `(progn 
      (defstruct ,name
        ,@(mapcar #'car columns))
+     ,(defrecord/id-column-for name columns)
      ,(defrecord/make-record name)
      ,(defrecord/load-record name columns)
      ,(defrecord/find-record name table)
