@@ -171,8 +171,7 @@
 (defmethod hunchentoot:acceptor-status-message
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
      &rest _ &key &allow-other-keys)
-  ;;(declare (ignore _))
-  (verbose:info 'error "~s" _)
+  (declare (ignore _)) 
   (unless (wants-json-p) (call-next-method))
   (when (< HTTP-status-code 400) (call-next-method))
   
