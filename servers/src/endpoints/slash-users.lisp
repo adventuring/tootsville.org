@@ -36,7 +36,7 @@ Child accounts will have some tokens here that help us … TODO
 @subsection{Status: 403 Authorization Failed}
 
 "
-  (with-player ()
+  (with-user ()
     (list 200 nil
           (list :hello "Hello, new user"
                 :fake "This is a totes fake response"
@@ -57,7 +57,7 @@ information, like an OAuth2 login.
 @subsection{Status: 405 Not Allowed}
 
 "
-  (with-player ()
+  (with-user ()
     (list 200 nil
           (list :hello "Hello, new user"
                 :fake "This is a totes fake response"
@@ -79,13 +79,13 @@ Requires a body with fields to be changed, and their new values. TODO.
 @subsection{Status: 405 Not Allowed}
 
 "
-  (with-player ()
+  (with-user ()
     (error 'unimplemented)))
 
 
 (defendpoint (get "/users/me/toots" "application/json")
   "Enumerates all Toot characters available to you."
-  (with-player ()
+  (with-user ()
     (list 200 (list :last-modified (header-time (yesterday)))
           (list :toots (player-toots)))))
 
@@ -101,7 +101,7 @@ See GET /users/me/toots/:toot-name for the format.
 
 @subsection{Status: 307 Redirect}
 If the Toot had been previously created, returns a redirect (307)."
-  (with-player ()
+  (with-user ()
     (assert-my-character toot-name)
     (list 201 nil (toot-info (find-toot-by-name toot-name)))))
 
@@ -125,7 +125,7 @@ The user credentials presented were not recognized.
 @subsection{Status: 404 Not Found}
 
 "
-  (with-player ()
+  (with-user ()
     (assert-my-character toot-name)
     (error 'unimplemented)))
 
@@ -169,6 +169,6 @@ The Toot named is  one that you have permission to use,  but are not the
 main owner of. This is usually a child account.
 
 "
-  (with-player ()
+  (with-user ()
     (assert-my-character toot-name)
     (error 'unimplemented)))

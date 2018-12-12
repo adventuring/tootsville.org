@@ -16,8 +16,9 @@
 
 (defun user-face (&optional (person *user*))
   (let* ((uuid (db.person-uuid (ensure-person person)))
-         (portraits (find-records 'db.person-link "rel" :portrait)))
-    (when portraits (first portrait))))
+         (portraits (find-records 'db.person-link
+                                  "person" uuid "rel" :portrait)))
+    (when portraits (random-elt portraits))))
 
 (defun user-id (&optional (person *user*))
   (db.person-uuid (ensure-person person)))
@@ -29,11 +30,12 @@
         (cons :|face|        (user-face user))
         (cons :|uuid|        (user-id user))))
 
+#+ (or)
 (defclass credentials ()
   ((user :type db.person
          :initarg :user
          :reader credentials-user)))
-
+#+ (or)
 (defclass openid-credentials (credentials)
   ((issuer :type string
            :initarg :issuer
@@ -68,7 +70,7 @@
    (user-id :type uuid
             :initarg :user
             :reader credentials-user)))
-
+#+ (or)
 (defclass openid-token ()
   ((access-token :type string
                  :initarg :access-token
@@ -91,9 +93,9 @@
 
 ;;; Toot character data.
 
-(defun find-toot-by-name (toot-name)
-  (check-type toot-name toot-name)
-  (find-record 'db.toot "name" toot-name))
+(defun find-Toot-by-name (Toot-name)
+  (check-type Toot-name Toot-name)
+  (find-record 'db.Toot "name" Toot-name))
 
 (defun player-childp (&optional (player *user))
   (< (or (legal-age (db.person-date-of-birth player))
@@ -105,26 +107,26 @@
 	(db.person-age player))
       18))
 
-(defun toot-childp (toot)
-  (player-childp (find-reference toot :player)))
+(defun Toot-childp (Toot)
+  (player-childp (find-reference Toot :player)))
 
-(defun toot-info (toot)
-  (list :name (db.toot-name toot)
-        :note "" ; TODO Toot notes by player/parent
-        :avatar (db.avatar-name (find-reference toot :avatar))
-        :base-color (color24-name (db.toot-base-color toot))
-        :pattern (string-downcase (db.toot-pattern toot))
-        :pattern-color (color24-name (db.toot-pattern-color toot))
-        :pads-color (color24-name (db.toot-pads-color toot))
-        :child-p (toot-childp toot)
-        :sensitive-p (or (toot-childp toot)
-		     (db.person-sensitivep (find-reference toot :player)))
-        :last-seen (db.toot-last-active toot)))
+(defun Toot-info (Toot)
+  (list :name (db.Toot-name Toot)
+        :note (db.Toot-note Toot)
+        :avatar (db.avatar-name (find-reference Toot :avatar))
+        :base-color (color24-name (db.Toot-base-color Toot))
+        :pattern (string-downcase (db.Toot-pattern Toot))
+        :pattern-color (color24-name (db.Toot-pattern-color Toot))
+        :pads-color (color24-name (db.Toot-pads-color Toot))
+        :child-p (Toot-childp Toot)
+        :sensitive-p (or (Toot-childp Toot)
+		     (db.person-sensitivep (find-reference Toot :player)))
+        :last-seen (db.Toot-last-active Toot)))
 
-(defun player-toots (&optional (player *user*))
-  (find-records 'db.toot "player" (db.person-uuid player)))
+(defun player-Toots (&optional (player *user*))
+  (find-records 'db.Toot "player" (db.person-uuid player)))
 
-(defun player-fake-toots (&optional (player *user*))
+(defun player-fake-Toots (&optional (player *user*))
   (declare (ignore player))
   (list
    (list :name "Zap"
@@ -165,34 +167,24 @@ appearing on a parent's account."
 
 
 
-
-
 (defun find-player-or-die ()
   "Ensure that a recognized player is connected."
-  (find-user-from-session :if-not-exists :error))
+  (unless *user* (error 'unidentified-player-error)))
 
 (defvar *403.json-bytes*
   (flexi-streams:string-to-octets "{\"error\":\"player-not-found\",
 \"note\":\"You are not signed in to the web services\",
 \"login\":\"https://play.Tootsville.org/login/\"}"))
 
-(defmacro with-player (() &body body)
-  "Ensure that a recognized player is connected
-using `FIND-PLAYER-OR-DIE' and bind *USER*"
-  `(multiple-value-bind  (foundp *user*) (find-player-or-die)
-     (cond (foundp
-            ,@body)
-           (t (throw 'endpoint (list 403 nil *403.json-bytes*))))))
-
 
 
-(defun assert-my-character (toot-name &optional (user *user*))
+(defun assert-my-character (Toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
-  (check-type toot-name toot-name)
-  (unless (find toot-name
-                (mapcar (rcurry #'getf :name) (player-toots user))
+  (check-type Toot-name Toot-name)
+  (unless (find Toot-name
+                (mapcar (rcurry #'getf :name) (player-Toots user))
                 :test #'string-equal)
-    (error 'not-your-toot-error :name toot-name)))
+    (error 'not-your-Toot-error :name Toot-name)))
 
 
 

@@ -58,7 +58,7 @@ a verb (case-insensitive) from the hard-coded table in this function."
                                                       (< 3 (length argv)))
                                                  (fourth argv)
                                                  "127.0.0.1")))
-    ((:test :check) (power-on-self-test))
+    ((:test :check) (power-on-self-test :exitp t))
     (:repl (start-repl))
     (:version (print *compiled*))
     (:swank (start-swank)

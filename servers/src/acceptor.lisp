@@ -47,9 +47,11 @@
               (symbol (push el result)))
          finally (return (nreverse result)))))
 
-(assert (template-match '("foo" "bar" "baz") '("foo" "bar" "baz")))
-(assert (equalp '("42" "99")
-                (template-match '("foo" :bar :baz) '("foo" "42" "99"))))
+(defpost acceptor-template-matches-constants ()
+ (template-match '("foo" "bar" "baz") '("foo" "bar" "baz")))
+(defpost acceptor-template-unifies-variables ()
+ (equalp '("42" "99")
+          (template-match '("foo" :bar :baz) '("foo" "42" "99"))))
 
 (defun strip-after-sem (s)
   (if-let ((sem (position #\; s :Test #'char=)))
@@ -70,14 +72,21 @@
                  (equal a "*/*")
                  (equal b "*/*"))))))
 
-(assert (accept-type-equal "text/html" "text/html"))
-(assert (accept-type-equal "text/html" "text/html;charset=utf-8"))
-(assert (accept-type-equal "text/html" "text/*"))
-(assert (accept-type-equal "text/html" "text/*;charset=utf-8"))
-(assert (accept-type-equal "text/html" "*/*"))
-(assert (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
+(defpost accept-type-matches-identically ()
+ (accept-type-equal "text/html" "text/html"))
+(defpost accept-type-matches-with-charset=utf-8 ()
+ (accept-type-equal "text/html" "text/html;charset=utf-8"))
+(defpost accept-type-matches-/* ()
+ (accept-type-equal "text/html" "text/*"))
+(defpost accept-type-matches-/*-with-charset=utf-8 ()
+ (accept-type-equal "text/html" "text/*;charset=utf-8"))
+(defpost accept-type-matches-*/* ()
+ (accept-type-equal "text/html" "*/*"))
+(defpost accept-type-does-not-match-/*-when-not-allow-wildcards-p ()
+ (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun find-user-for-headers (headers)
+  ;; TODO … authorization credentials 
   (when-let (auth-header (assoc "Authorization" headers))
     (when-let (credentials (validate-auth-header (cdr auth-header)))
       (find-user-for-credentials credentials))))
@@ -88,11 +97,13 @@
        (list (http-status-code c)
              '(:content-type "application/json; charset=utf-8")
              (if hunchentoot:*show-lisp-backtraces-p*
-                 (jonathan.encode:to-json (list :error (http-status-code c)
-                                                :error-message (princ-to-string c)
-                                                :trace (rollbar::find-appropriate-backtrace c)))
-                 (jonathan.encode:to-json (list :error (http-status-code c)
-                                                :error-message (princ-to-string c))))))
+                 (jonathan.encode:to-json 
+                  (list :error (http-status-code c)
+                        :error-message (princ-to-string c)
+                        :trace (rollbar::find-appropriate-backtrace)))
+                 (jonathan.encode:to-json
+                  (list :error (http-status-code c)
+                        :error-message (princ-to-string c))))))
       (encode-endpoint-reply
        (list (http-status-code c)
              '(:content-type "text/html; charset=utf-8")

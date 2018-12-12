@@ -33,7 +33,7 @@ Tootsville.login.serverQueryCharacters = function ()
 { return new Promise (
     (finish, reject) =>
         { Tootsville.util.rest (
-            '/users/me/toots',
+            'users/me/toots',
             { want: [ 'avatar', 'name', 'note', 'child-p', 'sensitive-p' ],
               order: 'last-seen' }).
           then (

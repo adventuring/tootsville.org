@@ -42,8 +42,10 @@
                                                     "data/Tootanga-elevation"
                                                     :type "png" )))
 
-(assert (= 600 (pngload:height *habitat-map*) (pngload:height *elevation-map*)))
-(assert (= 800 (pngload:width *habitat-map*) (pngload:width *elevation-map*)))
+(defpost check-map-heights ()
+  (= 600 (pngload:height *habitat-map*) (pngload:height *elevation-map*)))
+(defpost check-map-widths ()
+  (= 800 (pngload:width *habitat-map*) (pngload:width *elevation-map*)))
 
 (defun habitat<-pixel (r g b)
   (let ((c (or (assoc (list r g b) +habitat-colors+ :test 'equalp)

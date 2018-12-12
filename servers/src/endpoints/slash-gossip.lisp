@@ -57,14 +57,10 @@
          (list :id (user-id user)
                :toots (mapcar #'toot-info (player-toots)))))))
 
-(defun find-user-from-session ()
-  ())
-
 (defmacro with-user (() &body body)
-  `(let ((*user* (find-user-from-session)))
-     (unless *user*
-       (error 'user-not-identified-error))
-     ,@body))
+  `(progn (unless *user*
+            (error 'user-not-identified-error))
+          ,@body))
 
 
 
