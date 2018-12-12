@@ -32,7 +32,7 @@
 
 (defun request-accept-types ()
   (when-let (accept (assoc :accept (hunchentoot:headers-in*)))
-    (mapcar (curry #'string-trim +whitespace+)
+    (mapcar (lambda (s) (string-trim +whitespace+ (the string s)))
             (split-sequence #\, (rest accept)))))
 
 (defun template-match (template list)
@@ -54,7 +54,7 @@
           (template-match '("foo" :bar :baz) '("foo" "42" "99"))))
 
 (defun strip-after-sem (s)
-  (if-let ((sem (position #\; s :Test #'char=)))
+  (if-let ((sem (position #\; (the string s) :test #'char=)))
     (subseq s 0 sem)
     s))
 
@@ -85,23 +85,26 @@
 (defpost accept-type-does-not-match-/*-when-not-allow-wildcards-p ()
   (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
-(defun find-user-for-headers (headers)
-  (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
-  (if (string-begins "auth/∞/5.0 " string)
-      (let ((auth (jonathan.decode:parse (subseq string 12))))
-        (let ((access (extract auth "a"))
-              (id-token (extract auth "i"))
-              (id-provider (make-keyword (extract auth "p"))))
-          (case id-provider
-            ((:|google| :|twitter|)
-             (ensure-user-for-plist
-              (check-firebase-id-token access)))
-            (otherwise 
-             (v:warn :auth "Unsupported ID provider ~s" id-provider)
-             nil))))
-      (progn (v:warn :auth "Unsupported ∞ auth, ~s"
-                     (subseq string (position #\Space string)))
-             nil)))
+(defun find-user-for-headers (string)
+  (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))  
+  (when string
+    (if (string-begins "auth/∞/5.0 " (the string string))
+        (let ((auth (jonathan.decode:parse (subseq string 12))))
+          (let ((access (extract auth "a"))
+                (id-token (extract auth "i"))
+                (id-provider (make-keyword (extract auth "p"))))
+            (case id-provider
+              ((:|google| :|twitter|)
+               (ensure-user-for-plist
+                (check-firebase-id-token access)))
+              (otherwise 
+               (v:warn :auth "Unsupported ID provider ~s" id-provider)
+               nil))))
+        (progn (v:warn :auth "Unsupported ∞ auth, ~s"
+                       (subseq (the string string)
+                               (or (position #\Space string)
+                                   (length string))))
+               nil))))
 
 (defun gracefully-report-http-client-error (c)
   (if (wants-json-p)
@@ -186,7 +189,7 @@
      &rest _ &key &allow-other-keys)
   (declare (ignore _)) 
   (unless (wants-json-p) (call-next-method))
-  (when (< HTTP-status-code 400) (call-next-method))
+  (when (< (the fixnum HTTP-status-code) 400) (call-next-method))
   
   (setf (hunchentoot:content-type*)
         "application/json;charset=utf-8")
