@@ -86,10 +86,22 @@
   (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun find-user-for-headers (headers)
-  ;; TODO … authorization credentials 
-  (when-let (auth-header (assoc "Authorization" headers))
-    (when-let (credentials (validate-auth-header (cdr auth-header)))
-      (find-user-for-credentials credentials))))
+  (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
+  (if (string-begins "auth/∞/5.0 " string)
+      (let ((auth (jonathan.decode:parse (subseq string 12))))
+        (let ((access (extract auth "a"))
+              (id-token (extract auth "i"))
+              (id-provider (make-keyword (extract auth "p"))))
+          (case id-provider
+            ((:|google| :|twitter|)
+             (ensure-user-for-plist
+              (check-firebase-id-token access)))
+            (otherwise 
+             (v:warn :auth "Unsupported ID provider ~s" id-provider)
+             nil))))
+      (progn (v:warn :auth "Unsupported ∞ auth, ~s"
+                     (subseq string (position #\Space string)))
+             nil)))
 
 (defun gracefully-report-http-client-error (c)
   (if (wants-json-p)
@@ -120,7 +132,8 @@
   (verbose:info :request "{~A} Dispatching request ~s via acceptor ~s"
                 (thread-name (current-thread)) request acceptor)
   (let ((hunchentoot:*request* request)
-        (*user* (find-user-for-headers (hunchentoot:headers-in request))))
+        (*user* (find-user-for-headers (hunchentoot:header-in
+                                        "X-Infinity-Auth" request))))
     (let ((method (hunchentoot:request-method*))
           (uri-parts (split-sequence #\/ (namestring (hunchentoot:request-pathname request))
                                      :remove-empty-subseqs t))
