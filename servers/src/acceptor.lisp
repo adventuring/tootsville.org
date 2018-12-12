@@ -48,9 +48,9 @@
          finally (return (nreverse result)))))
 
 (defpost acceptor-template-matches-constants ()
- (template-match '("foo" "bar" "baz") '("foo" "bar" "baz")))
+  (template-match '("foo" "bar" "baz") '("foo" "bar" "baz")))
 (defpost acceptor-template-unifies-variables ()
- (equalp '("42" "99")
+  (equalp '("42" "99")
           (template-match '("foo" :bar :baz) '("foo" "42" "99"))))
 
 (defun strip-after-sem (s)
@@ -73,17 +73,17 @@
                  (equal b "*/*"))))))
 
 (defpost accept-type-matches-identically ()
- (accept-type-equal "text/html" "text/html"))
+  (accept-type-equal "text/html" "text/html"))
 (defpost accept-type-matches-with-charset=utf-8 ()
- (accept-type-equal "text/html" "text/html;charset=utf-8"))
+  (accept-type-equal "text/html" "text/html;charset=utf-8"))
 (defpost accept-type-matches-/* ()
- (accept-type-equal "text/html" "text/*"))
+  (accept-type-equal "text/html" "text/*"))
 (defpost accept-type-matches-/*-with-charset=utf-8 ()
- (accept-type-equal "text/html" "text/*;charset=utf-8"))
+  (accept-type-equal "text/html" "text/*;charset=utf-8"))
 (defpost accept-type-matches-*/* ()
- (accept-type-equal "text/html" "*/*"))
+  (accept-type-equal "text/html" "*/*"))
 (defpost accept-type-does-not-match-/*-when-not-allow-wildcards-p ()
- (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
+  (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun find-user-for-headers (headers)
   ;; TODO … authorization credentials 
@@ -126,14 +126,50 @@
                                      :remove-empty-subseqs t))
           (ua-accept (request-accept-types)))
       (with-http-conditions ()
-        (if-let (match (find-best-endpoint method uri-parts ua-accept))
-          (destructuring-bind (endpoint &rest bindings) match
-            (verbose:info :request "Calling ~s" match)
-            (apply (fdefinition (endpoint-function endpoint)) bindings))
-          (progn
-            (verbose:info :request "No match for ~s ~{/~a~} accepting ~s"
-                          method uri-parts ua-accept)
-            (error 'not-found :the (format nil "The URI you requsted"))))))))
+        (setf 
+         (hunchentoot:header-out :access-control-allow-headers) "Accept;Accept-Language,Content-Language,Content-Type"
+         (hunchentoot:header-out :X-Tootsville-Machine)
+         (machine-instance)
+         
+         (hunchentoot:header-out :X-Romance-II-Version)
+         (romance-ii-program-name/version)
+         
+         (hunchentoot:header-out :Access-Control-Allow-Origin)
+         (case (cluster)
+           (:devel "*")
+           (otherwise (format nil "~a, ~a"
+                              (cluster-name) (cluster-net-name))))
+         
+         (hunchentoot:header-out :X-Lisp-Version)
+         (format nil "~a/~a"
+                 (lisp-implementation-type)
+                 (lisp-implementation-version)))
+        
+        (if (eql :options method)
+            (progn 
+              (v:info :request "Method is OPTIONS")
+              (if-let (match (find-best-endpoint (make-keyword (hunchentoot:header-in* :access-control-request-method))
+                                                 uri-parts ua-accept))
+                (progn
+                  (setf (hunchentoot:return-code*) 204 #| no content|# )
+                  (v:info :request "OPTIONS reply for ~s ~s ~s"
+                          (make-keyword (hunchentoot:header-in* :access-control-request-method))
+                          uri-parts ua-accept)
+                  (hunchentoot:send-headers)
+                  nil)
+                (progn 
+                  (v:info :request "No match for ~s ~s ~s"
+                          (make-keyword (hunchentoot:header-in* :access-control-request-method))
+                          uri-parts ua-accept)
+                  (error 'not-found :the "OPTIONS URI"))))
+            (if-let (match (find-best-endpoint method uri-parts ua-accept))
+              (destructuring-bind (endpoint &rest bindings) match
+                (verbose:info :request "Calling ~s" match)
+                (apply (fdefinition (endpoint-function endpoint)) bindings))
+              (progn
+                (verbose:info :request "No match for ~s ~{/~a~} accepting ~s"
+                              method uri-parts ua-accept)
+                (error 'not-found :the (format nil "The URI you requsted")))))))))
 
 (defmethod hunchentoot:acceptor-status-message
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
@@ -142,28 +178,9 @@
   (verbose:info 'error "~s" _)
   (unless (wants-json-p) (call-next-method))
   (when (< HTTP-status-code 400) (call-next-method))
-
+  
   (setf (hunchentoot:content-type*)
-        "application/json;charset=utf-8"
-
-        (hunchentoot:header-out "X-Tootsville-Machine")
-        (machine-instance)
-
-        (hunchentoot:header-out "X-Romance-II-Version")
-        (romance-ii-program-name/version)
-
-        (hunchentoot:header-out "Access-Control-Allow-Origin")
-        (case (cluster)
-          (:devel "*")
-          (otherwise (format nil "~a, ~a"
-                             (cluster-name) (cluster-net-name))))
-
-        (hunchentoot:header-out "X-Lisp-Version")
-        (format nil "~a/~a"
-                (lisp-implementation-type)
-                (lisp-implementation-version))
-
-        (hunchentoot:header-out "X-Site")
-        (short-site-name))
+        "application/json;charset=utf-8")
+  
   (format nil "{\"error\": ~d, \"status\":\"~a\"}"
           HTTP-status-code (gethash HTTP-status-code *http-status-message*)))
