@@ -37,6 +37,13 @@ Tootsville.util.rest = function (method, uri, body, headers)
             { if (headers.hasOwnProperty(header))
               { xhr.setRequestHeader(header, headers[header]); } }
             xhr.setRequestHeader('Accept', 'application/json;encoding=utf-8');
+            if (Tootsville.login.idToken)
+            { xhr.setRequestHeader(
+                'X-Infinity-Auth',
+                'auth/∞/5.0 ' +
+                    JSON.stringify({a: Tootsville.login.accessToken,
+                                    i: Tootsville.login.idToken, 
+                                    p: Tootsville.login.idProvider})); }
             if (body)
             { xhr.setRequestHeader('Content-Type', 'application/json;encoding=utf-8');
               xhr.send(JSON.stringify(body)); }}); };
