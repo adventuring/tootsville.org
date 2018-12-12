@@ -65,7 +65,8 @@
     (jonathan.encode:%to-json
      `(:is-a "function"
              :package ,(string-upcase (package-name (symbol-package name)))
-             :name ,(string-upcase (symbol-name name))))))
+             :name ,(string-upcase (symbol-name name))
+             :source ,(function-lambda-exrpession)))))
 
 (defmethod jonathan.encode:%to-json ((object t))
   "Return a JSON object that represents the state of OBJECT"
@@ -79,6 +80,7 @@
 
 (defmethod render (bt condition env)
   "☠ deprecated"
+  (break "☠deprecated RENDER BACKTRACE CONDITION ENVIRONMENT")
   (let* ((backtrace (parse-backtrace bt)))
     (encode-json
      `(:error ,(princ-to-string condition)
@@ -95,6 +97,7 @@
 
 (defun present-error-to-client (condition env)
   "☠ deprecated, do not use"
+  (break "☠deprecated PRESENT-ERROR-TO-CLIENT")
   (let ((backtrace (with-output-to-string (stream)
                      (write-string
                       (print-backtrace condition
@@ -110,6 +113,7 @@
 
 (defun middleware (app)
   "☠ deprecated"
+  (break "☠deprecated MIDDLEWARE")
   (lambda (env)
     (tagbody do-over
        (restart-bind
