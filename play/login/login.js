@@ -32,10 +32,7 @@ Tootsville.login.clearTootsList = function ()
 Tootsville.login.serverQueryCharacters = function ()
 { return new Promise (
     (finish, reject) =>
-        { Tootsville.util.rest (
-            'users/me/toots',
-            { want: [ 'avatar', 'name', 'note', 'child-p', 'sensitive-p' ],
-              order: 'last-seen' }).
+        { Tootsville.util.rest ('GET', 'users/me/toots').
           then (
               response =>
                   { if (response.toots.length == 0)
@@ -129,7 +126,7 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('pick-toot').style.display = 'none'; };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
-{ return Tootsville.util.rest ('users', 'play-with', { character: character }); };
+{ return Tootsville.util.rest ('POST', 'users/play-with', { character: character }); };
 
 Tootsville.login.removeChildOrSensitive = function (li)
 { var child = li.querySelector ('.child');
@@ -173,23 +170,23 @@ Tootsville.login.findSelectedChildMode = function (li)
   return 'adult'; };
 
 Tootsville.login.enableChildMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/child-p', { set: true });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: true });
   li['data-toot'].childP = true;
   li['data-toot'].sensitiveP = false;
   li.querySelector ('.define-child-code').style.display = 'block'; };
 
 Tootsville.login.disableChildMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/child-p', { set: false });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: false });
   li['data-toot'].childP = false;
   li.querySelector ('.define-child-code').style.display = 'none'; };
 
 Tootsville.login.enableSensitiveMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/sensitive-p', { set: true });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/sensitive-p', { set: true });
   li['data-toot'].childP = false;
   li['data-toot'].sensitiveP = true; };
 
 Tootsville.login.disableSensitiveMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/sensitive-p', { set: false });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/sensitive-p', { set: false });
   li['data-toot'].sensitiveP = false; };
 
 Tootsville.login.updateChildMode = function (name)
