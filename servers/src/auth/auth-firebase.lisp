@@ -88,7 +88,8 @@ You must be punished for violating causality.")
           (assert (< 4 (length sub) 256) (token)
                   "Credential token's subject length seems improper.")
           (list :uid sub
+                :uid-provider "firebase"
                 :email (gethash :|email| payload-claims)
                 :email-verified-p (equalp "true" (gethash :|email_verified| payload-claims))
                 :name (gethash :|name| payload-claims)
-                :picturo (gethash :|picture| payload-claims)))))))
+                :picture (gethash :|picture| payload-claims)))))))
