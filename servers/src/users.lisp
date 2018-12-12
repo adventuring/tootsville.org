@@ -101,65 +101,6 @@ come from a trusted authentication provider like Google Firebase)."
         (cons :|face|        (user-face user))
         (cons :|uuid|        (user-id user))))
 
-#+ (or)
-(defclass credentials ()
-  ((user :type db.person
-         :initarg :user
-         :reader credentials-user)))
-#+ (or)
-(defclass openid-credentials (credentials)
-  ((issuer :type string
-           :initarg :issuer
-           :initarg :iss
-           :reader credentials-issuer
-           :reader openid-iss)
-   (subject :type string
-            :initarg :subject
-            :initarg :sub
-            :reader credentials-subject-code
-            :reader openid-sub)
-   (authorized-party :type string
-                     :initarg :authorized-party
-                     :initarg :azp
-                     :reader openid-authorized-party
-                     :reader openid-azp)
-   (audience :type string
-             :initarg :audience
-             :initarg :aud
-             :reader openid-audience
-             :reader openid-aud)
-   (issued-at :type timestamp
-              :initarg :issued-at
-              :initarg :iat
-              :reader openid-issued-at
-              :reader openid-iat)
-   (expires :type timestamp
-            :initarg :expires
-            :initarg :exp
-            :reader openid-expires
-            :reader openid-exp)
-   (user-id :type uuid
-            :initarg :user
-            :reader credentials-user)))
-#+ (or)
-(defclass openid-token ()
-  ((access-token :type string
-                 :initarg :access-token
-                 :accessor openid-access-token)
-   (token-type :type string
-               :initarg :token-type
-               :initform "Bearer"
-               :accessor openid-token-type)
-   (refresh-token :type string
-                  :initarg :token-type
-                  :accessor openid-refresh-token)
-   (token-expires :type timestamp
-                  :initarg :token-expires
-                  :accessor openid-token-expires)
-   (id-token :type string
-             :initarg :id-token
-             :accessor openid-id-token)))
-
 
 
 ;;; Toot character data.
