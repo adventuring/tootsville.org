@@ -18,12 +18,12 @@
 (defun update-session-details ()
   (let ((origin (concatenate 'string "http←" (hunchentoot:remote-addr*)))
         (login (find-record 'db.login
-                            "player" (db.player-uuid)
+                            "player" (db.person-uuid *user*)
                             "credentials" *credentials*)))
     (if login 
         (unless (equal origin (db.login-origin login))
           (setf (db.login-origin login) origin)))
-    (make-record 'db.login :player (db.player-uuid user) :origin origin
+    (make-record 'db.login :player (db.person-uuid *user*) :origin origin
                  :credentials *credentials*)
     (setf (db.login-last-seen login) (now))
     (save-record login)))
@@ -34,33 +34,12 @@
     (unless (find-user-by-sdp sdp)
       ())))
 
-(define-condition user-not-identified-error (error)
-  ((source :initarg :source :reader user-not-identified-source)
-   (value :initarg :value :reader user-not-identified-value))
-  (:documentation "I could not identify any user by the credentials provided.")
-  (:report (lambda (c s)
-             (format s
-                     "The credentials provided did not identify any user.~
-~[ ~:*The credential source was: ~:(~a~)~]~
-~[ ~:*The value provided was: ~:(~a~)~]"
-                     (user-not-identified-source c)
-                     (user-not-identified-value c)))))
-
-(defmethod respond-to-error ((error user-not-identified-error))
-  (setf (hunchentoot:return-code*) 401)
-  (hunchentoot:abort-request-handler))
-
 
 (defun user-info (&optional (user *user*))
   (gossipnet-update-client)
   (let ((partial
          (list :id (user-id user)
                :toots (mapcar #'toot-info (player-toots)))))))
-
-(defmacro with-user (() &body body)
-  `(progn (unless *user*
-            (error 'user-not-identified-error))
-          ,@body))
 
 
 
@@ -90,7 +69,7 @@ PUT /gossip/request for details.
 
 You are submitting requests too often. Wait before retrying.
 "
-  (let ((answeror (find-user-from-session))
+  (let ((answeror *user*)
         (offeror (find-user-by-sdp (hunchentoot:parameter "offeror"))))
     (declare (ignore answeror)) ; for now TODO
     (cond ((user-sdp-answer offeror)

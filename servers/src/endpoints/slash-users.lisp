@@ -1,5 +1,7 @@
 (in-package :Tootsville)
 
+(declaim (optimize (speed 3)))
+
 (defendpoint (get "/users/me" "application/json")
   "Provides information about your user account.
 
@@ -36,11 +38,11 @@ Child accounts will have some tokens here that help us … TODO
 @subsection{Status: 403 Authorization Failed}
 
 "
-  (with-user ()
-    (list 200 nil
-          (list :hello "Hello, new user"
-                :fake "This is a totes fake response"
-                :toots "/users/me/toots.json"))))
+  ;; with-user TODO
+  (list 200 nil
+        (list :hello "Hello, new user"
+              :fake "This is a totes fake response"
+              :toots "/users/me/toots.json")))
 
 (defendpoint (put "/users/me" "application/json")
   "Registers a new user account.
