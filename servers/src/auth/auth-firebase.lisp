@@ -33,12 +33,16 @@
     (when (timestamp< (now) keys-update-next)
       (return-from get-google-account-keys keys))
     (multiple-value-bind 
-          (json-data http-status headers-alist reply-uri 
-                     reply-stream stream-close-p status-message)
+          (json-data http-status headers-alist reply-uri)
         (drakma:http-request
          "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
          :accept "application/json")
       (when (typep http-status 'http-response-success-status-number)
+        (assert (string-ends ".googleapis.com" 
+                             (puri:uri-host (puri:parse-uri reply-uri)))
+                (reply-uri)
+                "Google Firebase keys query did not come from Google.com ~
+ — could this be a man-in-the-middle attack?")
         (setf keys (jonathan.decode:parse
                     (map 'string #'code-char json-data))
               keys-update-next 
@@ -54,36 +58,37 @@
   (multiple-value-bind (claims header digest claims$ header$)
       (cljwt-custom:unpack token)
     (declare (ignore claims digest claims$ header$))
-    (multiple-value-bind (payload token-header)
-        (cljwt-custom:verify token
-                             (gethash (gethash :|kid| header) (get-google-account-keys))
-                             :rs256
-                             :fail-if-unsecured t
-                             :fail-if-unsupported t)
-      (declare (ignore token-header))
-      (let ((sub (gethash :|sub| payload)))
-        (assert (string= "RS256" (gethash :|alg| header)) (token)
-                "Credential token does not have the required algorithm")
-        (assert (member (gethash :|kid| header) (plist-keys (get-google-account-keys)))
-                (token)
-                "Credential token does not have a recognized signing key ID")
-        (assert (> (gethash :|exp| payload) (timestamp-to-unix (now))) (token)
-                "Credential token has expired")
-        (assert (< (gethash :|iat| payload) (timestamp-to-unix (now))) (token)
-                "Credential token will be issued in the future. ~
+    (let ((google-keys (get-google-account-keys)))
+      (multiple-value-bind (payload-claims payload-header)
+          (cljwt-custom:verify token
+                               (extract google-account-keys
+                                        (gethash :|kid| header))
+                               :rs256
+                               :fail-if-unsecured t
+                               :fail-if-unsupported t)
+        (let ((sub (gethash :|sub| payload-claims)))
+          (assert (string= "RS256" (gethash :|alg| header)) (token)
+                  "Credential token does not have the required algorithm")
+          (assert (member (gethash :|kid| header) (plist-keys google-keys))
+                  (token)
+                  "Credential token does not have a recognized signing key ID")
+          (assert (> (gethash :|exp| payload-header) (timestamp-to-unix (now))) (token)
+                  "Credential token has expired")
+          (assert (< (gethash :|iat| payload-header) (timestamp-to-unix (now))) (token)
+                  "Credential token will be issued in the future. ~
 You must be punished for violating causality.")
-        (assert (< (gethash :|auth_time| payload) (timestamp-to-unix (now))) (token)
-                "Credential token is from a future user authentication. ~
+          (assert (< (gethash :|auth_time| payload-header) (timestamp-to-unix (now))) (token)
+                  "Credential token is from a future user authentication. ~
 You must be punished for violating causality.")
-        (assert (string= (gethash :|aud| payload) (config :firebase :project-id)) 
-                (token)
-                "Credential token was not for us (we are not its audience)")
-        (assert (stringp sub) (token)
-                "Credential token's subject should be a string")
-        (assert (< 4 (length sub) 256) (token)
-                "Credential token's subject length seems improper.")
-        (list :uid sub
-              :email (gethash :|email| payload)
-              :email-verified-p (equalp "true" (gethash :|email_verified| payload))
-              :name (gethash :|name| payload)
-              :picturo (gethash :|picture| payload))))))
+          (assert (string= (gethash :|aud| payload-header) (config :firebase :project-id)) 
+                  (token)
+                  "Credential token was not for us (we are not its audience)")
+          (assert (stringp sub) (token)
+                  "Credential token's subject should be a string")
+          (assert (< 4 (length sub) 256) (token)
+                  "Credential token's subject length seems improper.")
+          (list :uid sub
+                :email (gethash :|email| payload-claims)
+                :email-verified-p (equalp "true" (gethash :|email_verified| payload-claims))
+                :name (gethash :|name| payload-claims)
+                :picturo (gethash :|picture| payload-claims)))))))
