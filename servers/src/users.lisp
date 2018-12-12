@@ -197,27 +197,3 @@ appearing on a parent's account."
                 (mapcar (rcurry #'getf :name) (player-Toots user))
                 :test #'string-equal)
     (error 'not-your-Toot-error :name Toot-name)))
-
-
-
-;;; TODO  ensure   that  these  time  functions   exist  somewhere  more
-;;; appropriate and remove then
-
-(defun days-ago (days)
-  (local-time:timestamp- (local-time:now) days :day))
-
-(defun yesterday ()
-  (days-ago 1))
-
-(defun 2-days-ago ()
-  (days-ago 2))
-
-(defun 3-days-ago ()
-  (days-ago 3))
-
-(defun header-time (&optional (time (get-universal-time)))
-  (local-time:format-rfc1123-timestring
-   nil
-   (etypecase time
-     (number (local-time:universal-to-timestamp time))
-     (local-time:timestamp time))))
