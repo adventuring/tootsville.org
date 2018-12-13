@@ -246,7 +246,7 @@ stored as CHAR VARying or TEXT, parsed at load time as a PURI:URI.
 translates to a LOCAL-TIME:TIMESTAMP on loading.
 @end table
 "
-  `(progn 
+  `(eval-when (:compile-toplevel :load-toplevel :execute) 
      (defstruct ,name
        ,@(mapcar #'car columns))
      ,(defrecord/id-column-for name columns)
