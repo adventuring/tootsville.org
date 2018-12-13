@@ -95,12 +95,18 @@ Returns all results in a list, so don't use it with a (potentially) large set.
 
 Uses MemCache when available."
   (with-dbi (*db*)
-    (destructuring-bind (columns values) (split-plist columns+values)
-      (let* ((query (cl-dbi:prepare tootsville::*dbi-connection* 
-                                    (build-simple-query table columns)))
-             (result-set (apply #'cl-dbi:execute query values))) 
-        (with-memcached-query (*db* query)
-          (cl-dbi:fetch-all result-set))))))
+    (if columns+values
+        (destructuring-bind (columns values) (split-plist columns+values)
+          (let* ((query (cl-dbi:prepare tootsville::*dbi-connection* 
+                                        (build-simple-query table columns)))
+                 (result-set (apply #'cl-dbi:execute query values))) 
+            (with-memcached-query (*db* query)
+              (cl-dbi:fetch-all result-set))))
+        (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
+                                      (format nil "SELECT * FROM `~a`" table)))
+               (result-set (cl-dbi:execute query)))
+          (with-memcached-query (*db* query)
+            (cl-dbi:fetch-all result-set))))))
 
 (defmacro do-db-records-simply ((record-var table &rest columns+values)
                                 &body body)
