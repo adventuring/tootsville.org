@@ -27,8 +27,14 @@
 (defvar *dbi-connection* :not-connected
   "The connection selected by a WITH-MARIA block")
 
+(defvar *db* :friendly
+  "The default database moniker")
+
 (defun db-config (&optional (moniker *db*))
-  (cdr (assoc moniker (config :databases))))
+  (or (cdr (assoc moniker (config :databases)))
+      (and (load-config)
+           (cdr (assoc moniker (config :databases))))
+      (error "No database configuration for ~s" moniker)))
 
 (defmacro with-dbi ((moniker) &body body)
   (let ((connection$ (gensym "DBI-")))
@@ -36,12 +42,13 @@
             (*dbi-connection* ,connection$))
        (unwind-protect
             (cl-dbi:with-transaction *dbi-connection*
-              ,@body)
+                                     ,@body)
          (cl-dbi:disconnect ,connection$)))))
 
-(defvar *db* :friendly)
+
 
 (defun split-plist (plist)
+  "Split a PLIST into two lists, of keys and values."
   (loop for (key value) on plist by #'cddr
      collect key into keys
      collect value into values
@@ -125,3 +132,52 @@ Selects one record at a time from TABLE. Does not use MemCacheD."
            (loop for ,record-var = (cl-dbi:fetch ,$result-set)
               while ,record-var
               do (progn ,@body)))))))
+
+
+
+(in-package :cl-mysql-system)
+
+(defun extract-field (row field-index field-length type-map field-detail)
+  "Returns either  a string or an  unsigned byte array for  known binary types.
+ 
+The  designation of  binary  types per  the  C API  seems  a bit  weird.
+Basically, BIT,  BINARY and VARBINARY are  binary and so are  BLOBs with
+the binary  flag set. It  seems that other  fields also have  the binary
+flag set  that are not  binary and the  BIT type, whilst  binary doesn't
+have the flag set. Bizarre-o."
+  (destructuring-bind (field-name field-type field-flag) field-detail
+    (declare (ignore field-name)
+             (optimize (speed 3) (safety 3))
+             (type (integer 0 65536) field-index field-flag)
+             (type (integer 0 4294967296) field-length )
+             (type (simple-array symbol) *binary-types*))
+    (if (eql field-length 0)
+        (return-from extract-field nil))
+    (if (or (eq field-type :BLOB) ;; FIXED: removed an AND here ←
+	  (logtest +field-binary+ field-flag)
+	  (find field-type *binary-types*))
+        (let ((arr (make-array field-length :element-type '(unsigned-byte 8)))
+	    (ptr (mem-ref row :pointer field-index)))
+          (loop for i from 0 to (1- field-length)
+	   do (setf (elt arr i) (mem-ref ptr :unsigned-char i)))
+	(values  arr))
+        (let ((fn (gethash field-type type-map)))
+	(declare (type (or null symbol function) fn))
+	(values (if fn
+                      ;; PATCHED: (THE FUNCTION) here ↓
+		  (funcall (the function fn)
+                               (mem-ref row :string field-index) field-length)
+		  (mem-ref row :string field-index)))))))
+
+
+;; `EXTRACT-FIELD' is inlined into `PROCESS-ROW' probably, which in turn
+;; also   may   be   inlined,   into   `NEXT-ROW'   and   `RESULT-DATA'.
+;; Recompiling  all of  these after  “monkey” patching  the function  is
+;; advised, for safety. (At least `PROCESS-ROW' seems necessary on SBCL,
+;; to get the new definition of `EXTRACT-FIELD'.)
+(compile 'process-row)
+(compile 'next-row)
+(compile 'result-data)
+
+(in-package :Tootsville)
+
