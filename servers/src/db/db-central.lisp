@@ -6,6 +6,7 @@
 (defgeneric id-column-for (type))
 (defgeneric make-record (type &rest columns+values))
 (defgeneric find-record (type &rest columns+values))
+(defgeneric find-records (type &rest columns+values))
 (defgeneric load-record (type columns))
 (defgeneric save-record (object))
 
@@ -104,8 +105,7 @@ Used in `DEFRECORD', qv."
 (defun defrecord/find-records (name table)
   `(defmethod find-records ((class (eql ',name)) &rest columns+values)
      (mapcar #'load-record ',name
-	   (apply #'db-select-records-simply ,(lisp-to-db-name table)
-		columns+values))))
+	   (apply #'db-select-records-simply ,table columns+values))))
 
 (defun defrecord/row<-record (name columns)
   `(defmethod row<-record  ((object ,name))
@@ -246,6 +246,7 @@ stored as CHAR VARying or TEXT, parsed at load time as a PURI:URI.
 translates to a LOCAL-TIME:TIMESTAMP on loading.
 @end table
 "
+  (declare (ignore pull)) ; TODO
   `(eval-when (:compile-toplevel :load-toplevel :execute) 
      (defstruct ,name
        ,@(mapcar #'car columns))
