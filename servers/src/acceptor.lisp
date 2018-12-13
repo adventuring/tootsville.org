@@ -143,7 +143,8 @@
           (ua-accept (request-accept-types)))
       (with-http-conditions ()
         (setf 
-         (hunchentoot:header-out :access-control-allow-headers) "Accept;Accept-Language,Content-Language,Content-Type"
+         (hunchentoot:header-out :access-control-allow-headers)
+         "Accept, Accept-Language, Content-Language, Content-Type"
          (hunchentoot:header-out :X-Tootsville-Machine) (machine-instance)
          (hunchentoot:header-out :X-Romance) (romance-ii-program-name/version)
          
