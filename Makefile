@@ -212,7 +212,7 @@ PLAYLESSDEPS=$(wildcard play/*.less play/**/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --strict-math --source-map play/play.less dist/play/play.css
+	lessc --strict-math=yes --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
@@ -268,7 +268,7 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 #################### www
 
 dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
-	lessc --strict-math --source-map www/2019.less dist/www/2019.css
+	lessc --strict-math=yes --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
 
