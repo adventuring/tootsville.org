@@ -30,14 +30,35 @@
 
 
 
-(defgeneric db-table-for (type))
-(defgeneric id-column-for (type))
-(defgeneric make-record (type &rest columns+values))
-(defgeneric find-record (type &rest columns+values))
-(defgeneric find-records (type &rest columns+values))
-(defgeneric load-record (type columns))
-(defgeneric save-record (object))
-(defgeneric destroy-record (object))
+(defgeneric db-table-for (type)
+  (:documentation 
+   "Which database table contains the data mirrored by the ORM TYPE"))
+(defgeneric id-column-for (type)
+  (:documentation
+   "Which column (if any) provides the primary key for TYPE"))
+(defgeneric make-record (type &rest columns+values)
+  (:documentation
+   "Create a new record of TYPE with initial values COLUMNS+VALUES."))
+(defgeneric find-record (type &rest columns+values)
+  (:documentation
+   "Find a record of TYPE where each of COLUMNS+VALUES are exact matches.
+
+Expects to find 0 or 1 result."))
+(defgeneric find-records (type &rest columns+values)
+  (:documentation
+   "Find all records of TYPE where each of COLUMNS+VALUES are exact matches."))
+(defgeneric find-reference (object column)
+  (:documentation
+   "Following the reference COLUMN on OBJECT, return the object referred-to."))
+(defgeneric load-record (type columns)
+  (:documentation
+   "Create an object of TYPE from the raw data in COLUMNS"))
+(defgeneric save-record (object)
+  (:documentation
+   "Write OBJECT to the database, with any changes made"))
+(defgeneric destroy-record (object)
+  (:documentation
+   "Delete the row in the database representing OBJECT"))
 
 
 
@@ -48,6 +69,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
   (cffi:translate-name-to-foreign (make-keyword (string name)) *package*))
 
 (defun column-save-value (value type)
+  "Convert VALUE into the database's representation of TYPE"
   (ecase type
     (:string value)
     (:keyword (and value (string value)))
@@ -67,6 +89,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:timestamp (and value (timestamp-to-unix value)))))
 
 (defun column-load-value (value type)
+  "For a column of TYPE, interpret raw VALUE"
   (ecase type
     (:string value)
     (:keyword (make-keyword value))
