@@ -41,10 +41,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
             if (Tootsville.login.accessToken)
             { xhr.setRequestHeader(
                 'X-Infinity-Auth',
-                'auth/Infinity/Alef/5.0 ' +
-                    JSON.stringify({a: Tootsville.login.accessToken,
-                                    i: Tootsville.login.idToken, 
-                                    p: Tootsville.login.idProvider})); }
+                'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth); }
             if (body)
             { xhr.setRequestHeader('Content-Type', 'application/json;encoding=utf-8');
               xhr.send(JSON.stringify(body)); }

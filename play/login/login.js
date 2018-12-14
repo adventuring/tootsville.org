@@ -41,8 +41,8 @@ Tootsville.login.serverQueryCharacters = function ()
               error =>
                   { Tootsville.parrot.ask ("Can't get Toots list",
                                            "I can't get a list of your Toots. Maybe there are network problems?",
-                                           { tag: "retry",
-                                             text: "Try Again" }).
+                                           [{ tag: "retry",
+                                             text: "Try Again" }]).
                     then (Tootsville.login.serverQueryCharacters);
                     Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
@@ -299,7 +299,6 @@ Tootsville.login.firebaseLogin = function (loginPanel)
 Tootsville.login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in", result);
   Tootsville.login.storeCredentialInfo (result);
-  Tootsville.login.switchTootsView();
   return false; };
 
 Tootsville.login.storeCredentialInfo = function (result)
@@ -316,10 +315,11 @@ Tootsville.login.storeCredentialInfo = function (result)
      * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
      * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
 
-    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-        // Send token to your backend via HTTPS TODO
-        // ...
-    }).catch(function(error) {
+  firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
+  then (function (idToken)
+        { Tootsville.login.firebaseAuth = idToken;
+          Tootsville.login.switchTootsView(); }).
+  catch(function(error) {
         // Handle error TODO
     });
     
@@ -335,7 +335,7 @@ Tootsville.login.storeCredentialInfo = function (result)
                                   user.providerData[0].photoURL ||
                                   addl.picture);
   Tootsville.login.player.gender = addl.gender;
-    Tootsville.login.player.locale = addl.locale;
+  Tootsville.login.player.locale = addl.locale;
 
 };
 

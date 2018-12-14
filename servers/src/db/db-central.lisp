@@ -1,5 +1,16 @@
 (in-package :Tootsville)
 
+
+
+(defmethod jonathan.encode:%to-json ((uuid uuid:uuid))
+  (princ-to-string uuid))
+
+(defmethod jonathan.encode:%to-json ((color24 color24))
+  (color24-name  color24))
+
+(defmethod jonathan.encode:%to-json ((timestamp timestamp))
+  (timestamp-to-unix timestamp))
+
 
 
 (defgeneric db-table-for (type))
@@ -30,7 +41,9 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:yornp (if value "Y" "N"))
     (:number value)
     (:json (and value (jonathan.encode:to-json value)))
-    (:uri (and value (puri:render-uri value nil)))
+    (:uri (and value (etypecase value
+                       (puri:uri (puri:render-uri value nil))
+                       (string value))))
     (:color24 (and value (color24-to-integer value)))
     (:uuid (and value
                 (subseq (cl-base64:usb8-array-to-base64-string
@@ -232,6 +245,23 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
        (save-record record)
        record)))
 
+(defun defrecord/to-json (name columns)
+  (let ((basename (if (string-begins "DB." (string name))
+                      (intern (subseq (string name) 3))
+                      name)))
+    `(defmethod jonathan.encode:%to-json ((,basename ,name))
+       (jonathan.encode:%to-json
+        (list :|isA| ,(symbol-munger:lisp->studly-caps basename)
+              ,@(mapcan (lambda (column)
+                          (list (intern (symbol-munger:lisp->camel-case  (first column)) :keyword)
+                                (list 'jonathan.encode:%to-json
+                                      (list (intern (concatenate 'string
+                                                                 (string name)
+                                                                 "-"
+                                                                 (string (first column)))) 
+                                            basename))))
+                        columns))))))
+
 
 
 (defmacro defrecord (name (database table &key pull) &rest columns)
@@ -295,4 +325,5 @@ translates to a LOCAL-TIME:TIMESTAMP on loading.
      ,(defrecord/find-records name table columns)
      ,(defrecord/before-save-normalize name columns)
      ,(defrecord/save-record-with-id-column name database table columns)
+     ,(defrecord/to-json name columns)
      ,(defrecord/find-reference-columns name columns)))

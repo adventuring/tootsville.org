@@ -9,56 +9,66 @@
   (when address
     (subseq address 0 (position #\@ address))))
 
+(defmacro ignore-duplicates (&body body)
+  `(restart-case 
+       (handler-bind
+           ((dbi.error:<dbi-database-error> 
+             (lambda (c)
+               (when (= 1062 (slot-value c 'DBI.ERROR::ERROR-CODE))
+                 (invoke-restart 'continue)))))
+         ,@body)
+     (continue () nil)))
+
+(defun associate-credential (person provider id &rest more)
+  (ignore-duplicates
+    (apply #'make-record 'db.credential
+           :person (db.person-uuid person)
+           :id-token id
+           :uid id 
+           :provider provider
+           more)))
+
+(defun associate-credentials (person credentials)
+  (loop for (provider ids) on credentials by #'cddr
+     do (dolist (id ids)
+          (associate-credential person provider id))))
+
 (defun ensure-user-for-plist (plist)
   "Find or create the user described by PLIST and return them.
 
 PLIST  can  have  keys  that  align to  a  DB.PERSON  or  their  contact
 infos (eg,  email) and is expected  to have been validated  already (eg,
 come from a trusted authentication provider like Google Firebase)."
-  (let ((by-mail (when-let (email (and (getf plist :email-verified-p)
-                                       (getf plist :email)))
-                   (when-let (link (find-record 'db.person-link
-                                                :url
-                                                (concatenate 'string
-                                                             "mailto:" email)))
-                     (find-record 'db.person :uuid (db.person-link-person link)))))
-        (by-uid (when-let (cred (find-record 'db.credential
-                                             :uid (getf plist :uid)
-                                             :provider (getf plist :provider)))
-                  (find-record 'db.person
-                               :uuid (db.credential-person cred)))))
-    (cond
-      ((and by-mail by-uid (uuid:uuid= (db.person-uuid by-mail)
-                                       (db.person-uuid by-uid)))
-       )
-      ((and by-mail by-uid)
-       )
-      (by-mail)
-      (by-uid)
-      (t (let ((person (make-record
-                        'db.person
-                        :display-name (or (getf plist :name)
-                                          (email-lhs (getf plist :email)))
-                        :given-name (or (getf plist :given-name)
-                                        (getf plist :name)
-                                        (email-lhs (getf plist :email)))
-                        :surname (getf plist :surname))))
-           (make-record 'db.credential
-                        :person (db.person-uuid person)
-                        :provider (getf plist :provider)
-                        :uid (getf plist :uid))
-           (when (getf plist :email-verified-p)
-             (make-record 'db.person-link
-                          "person" (db.person-uuid person)
-                          "rel" "CONTACT"
-                          "url" (concatenate 'string "mailto:"
-                                             (getf plist :email))))
-           (when (getf plist :picture)
-             (make-record 'db.person-link
-                          "person" (db.person-uuid person)
-                          "rel" "PORTRAIT"
-                          "url" (getf plist :picture)))
-           person)))))
+  (let ((person 
+         (or (when-let (email (and (getf plist :email-verified-p)
+                                   (getf plist :email)))
+               (when-let (link (find-record 'db.person-link
+                                            :url
+                                            (concatenate 'string
+                                                         "mailto:" email)))
+                 (find-reference link :person)))
+             (make-record
+              'db.person
+              :display-name (or (getf plist :name)
+                                (email-lhs (getf plist :email)))
+              :given-name (or (getf plist :given-name)
+                              (getf plist :name)
+                              (email-lhs (getf plist :email)))
+              :surname (getf plist :surname)))))
+    (ignore-duplicates
+      (make-record 'db.person-link
+                   :person (db.person-uuid person)
+                   :rel "CONTACT"
+                   :url (concatenate 'string "mailto:"
+                                     (getf plist :email))))
+    (associate-credentials person (getf plist :credentials)) 
+    (when (getf plist :picture)
+      (ignore-duplicates 
+        (make-record 'db.person-link
+                     :person (db.person-uuid person)
+                     :rel "PORTRAIT"
+                     :url (getf plist :picture))))
+    person))
 
 
 

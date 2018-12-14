@@ -88,18 +88,15 @@
 (defun find-user-for-headers (string)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))  
   (when string
-    (if (string-begins "auth/Infinitf/Alef/5.0 " (the string string))
-        (let ((auth (jonathan.decode:parse (subseq string 12))))
-          (let ((access (extract auth "a"))
-                (id-token (extract auth "i"))
-                (id-provider (make-keyword (extract auth "p"))))
-            (case id-provider
-              ((:|google| :|twitter|)
-               (ensure-user-for-plist
-                (check-firebase-id-token access)))
-              (otherwise 
-               (v:warn :auth "Unsupported ID provider ~s" id-provider)
-               nil))))
+    (if (string-begins "auth/Infinity/Alef/5.0 " (the string string))
+        (destructuring-bind (provider token &rest _)
+            (split-sequence #\Space (subseq string 23))
+          (declare (ignore _))
+          (v:info :auth "Provider ~a asserts token ~s"
+                  provider token)
+          (assert (string-equal provider "Firebase"))
+          (ensure-user-for-plist 
+           (check-firebase-id-token token)))
         (progn (v:warn :auth "Unsupported ∞ auth, ~s"
                        (subseq (the string string)
                                (or (position #\Space string)

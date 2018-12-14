@@ -30,3 +30,17 @@ reasons, eg, COPPA."
               year-of-birth
               1)
            (if had-birthday-p 1 0))))))
+
+
+
+(defun yesterday ()
+  (timestamp- (now) 24 :hour))
+
+(defun 2-days-ago ()
+  (timestamp- (now) 48 :hour))
+
+(defun 3-days-ago ()
+  (timestamp- (now) 72 :hour))
+
+(defun header-time (&optional (time (now)))
+  (format-timestring nil time :format +rfc-1123-format+))
