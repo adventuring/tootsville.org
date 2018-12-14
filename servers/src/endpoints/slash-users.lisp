@@ -45,12 +45,14 @@ Child accounts will have some tokens here that help us … TODO
               :toots "/users/me/toots.json")))
 
 (defendpoint (put "/users/me" "application/json")
-  "Registers a new user account.
+  "Makes changes to an user account.
 
 Requires the user  to pass some external,  trusted authentication source
 information, like an OAuth2 login.
 
 @subsection{Status: 201 Created}
+
+XXX is there a better status for updates?
 
 @subsection{Status: 401 Authorization Required}
 
@@ -92,7 +94,7 @@ Requires a body with fields to be changed, and their new values. TODO.
           (list :Last-Modified (header-time (yesterday))) ; FIXME
           (list :|toots| (mapcar #'Toot-info (player-Toots))))))
 
-(defendpoint (put "/users/me/toots/:toot-name" "application/json")
+(defendpoint (post "/users/me/toots/:toot-name" "application/json")
   "Create a new Toot character named TOOT-NAME.
 
 Requires player authentication.
@@ -157,9 +159,40 @@ The Toot has  been deleted. Repeated calls will return  the same status,
 for the duration of the name lock on the Toot.
 
 @subsection{Status: 401 Authorization Required}
+
 No user credentials were passed.
 
 @subsection{Status: 403 Authorization Failed}
+
+The user credentials presented were not recognized.
+
+@subsection{Status: 404 Not Found}
+
+The Toot named does not exist.
+
+@subsection{Status: 405 Not Allowed}
+
+The Toot named is  one that you have permission to use,  but are not the
+main owner of. This is usually a child account.
+
+"
+  (with-user ()
+    (assert-my-character toot-name)
+    (error 'unimplemented)))
+
+(defendpoint (post "/users/me/play-with/:toot-name" "application/json")
+  "Begin playing with the Toot named TOOT-NAME.
+
+@subsection{Status: 200 OK}
+
+You are now in control of this Toot. The Toot's info will be returned.
+
+@subsection{Status: 401 Authorization Required}
+
+No user credentials were passed.
+
+@subsection{Status: 403 Authorization Failed}
+
 The user credentials presented were not recognized.
 
 @subsection{Status: 404 Not Found}

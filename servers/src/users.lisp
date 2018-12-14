@@ -149,16 +149,10 @@ come from a trusted authentication provider like Google Firebase)."
         (cons :|uuid|        (user-id user))))
 
 
-
-;;; Toot character data.
-
-(defun find-Toot-by-name (Toot-name)
-  (check-type Toot-name Toot-name)
-  (find-record 'db.Toot :name Toot-name))
-
 (defun player-childp (&optional (player *user*))
   (< (or (when-let (dob (db.person-date-of-birth player)) (legal-age dob))
          (db.person-age player)
+         (db.person-child-code player)
          1)
      13))
 
@@ -167,62 +161,8 @@ come from a trusted authentication provider like Google Firebase)."
           (db.person-age player))
       18))
 
-(defun Toot-childp (Toot)
-  (player-childp (find-reference Toot :player)))
-
-(defun Toot-info (Toot)
-  (list :|name| (db.Toot-name Toot)
-        :|note| (db.Toot-note Toot)
-        :|avatar| (db.avatar-moniker (find-reference Toot :avatar))
-        :|baseColor| (color24-name (db.Toot-base-color Toot))
-        :|pattern| (string-downcase (db.pattern-name 
-                                     (find-reference Toot :pattern)))
-        :|patternColor| (color24-name (db.Toot-pattern-color Toot))
-        :|padColor| (color24-name (db.Toot-pad-color Toot))
-        :|childP| (if (Toot-childp Toot) :true :false)
-        :|sensitiveP| (if (or (Toot-childp Toot)
-                              (db.person-sensitivep (find-reference Toot :player)))
-                          :true :false)
-        :|lastSeen| (db.Toot-last-active Toot)))
-
 (defun player-Toots (&optional (player *user*))
-  (or (find-records 'db.Toot :player (db.person-uuid player))
-      (player-fake-Toots)))
-
-(defun player-fake-Toots (&optional (player *user*))
-  (declare (ignore player))
-  (list
-   (list :name "Zap"
-         :note "These are still fake Toots for testing"
-         :avatar "UltraToot"
-         :base-color "violet"
-         :pattern :lightning
-         :pattern-color "yellow"
-         :highlight-color "yellow"
-         :child-p nil
-         :sensitive-p nil
-         :last-seen (3-days-ago))
-   (list :name "Flora"
-         :note "This an an example of a child's Toot
-appearing on a parent's account."
-         :avatar "UltraToot"
-         :base-color "pink"
-         :pattern :flowers
-         :pattern-color "white"
-         :highlight-color "yellow"
-         :child-p t
-         :sensitive-p nil
-         :last-seen (2-days-ago))
-   (list :name "Moo"
-         :note ""
-         :avatar "UltraToot"
-         :base-color "white"
-         :pattern :moo
-         :pattern-color "black"
-         :highlight-color "black"
-         :child-p nil
-         :sensitive-p nil
-         :last-seen (yesterday))))
+  (find-records 'db.Toot :player (db.person-uuid player)))
 
 
 
@@ -240,9 +180,9 @@ appearing on a parent's account."
 (defun assert-my-character (Toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
   (check-type Toot-name Toot-name)
-  (unless (find Toot-name
-                (mapcar (rcurry #'getf :name) (player-Toots user))
-                :test #'string-equal)
+  (unless (find-record 'db.toot 
+                       :player (db.player-uuid user)
+                       :name Toot-name)
     (error 'not-your-Toot-error :name Toot-name)))
 
 
