@@ -88,7 +88,7 @@
 (defun find-user-for-headers (string)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))  
   (when string
-    (if (string-begins "auth/∞/5.0 " (the string string))
+    (if (string-begins "auth/Infinitf/Alef/5.0 " (the string string))
         (let ((auth (jonathan.decode:parse (subseq string 12))))
           (let ((access (extract auth "a"))
                 (id-token (extract auth "i"))
@@ -129,6 +129,45 @@
      (http-client-error (c)
        (gracefully-report-http-client-error c))))
 
+(defun handle-cors-request (uri-parts ua-accept)
+  (v:info :request "Method is OPTIONS")
+  (let ((method (make-keyword (hunchentoot:header-in* :access-control-request-method))))
+    (if-let (match (find-best-endpoint method uri-parts ua-accept))
+      (progn
+        (setf (hunchentoot:return-code*) 200)
+        (v:info :request "OPTIONS reply for ~s ~s ~s"
+                method uri-parts ua-accept)
+        (setf 
+         (hunchentoot:header-out :access-control-allow-origin)
+         (or (hunchentoot:header-in* :origin)
+             "*")
+         (hunchentoot:header-out :access-control-allow-methods)
+         (string method)
+         (hunchentoot:header-out :access-control-allow-headers)
+         "Accept, Accept-Language, Content-Language, Content-Type, X-Infinity-Auth"
+         (hunchentoot:header-out :access-control-max-age) 85000)
+        (hunchentoot:send-headers)
+        nil)
+      (progn 
+        (v:info :request "No match for ~s ~s ~s"
+                (make-keyword (hunchentoot:header-in* :access-control-request-method))
+                uri-parts ua-accept)
+        (error 'not-found :the "OPTIONS URI")))))
+
+(defun set-http-default-headers ()
+  (setf
+   (hunchentoot:header-out :X-Tootsville-Machine) (machine-instance)
+   (hunchentoot:header-out :X-Romance) (romance-ii-program-name/version) 
+   (hunchentoot:header-out :X-Lisp-Version)
+   (format nil "~a/~a"
+           (lisp-implementation-type)
+           (lisp-implementation-version))))
+
+(defun dispatch-endpoint (match)
+  (destructuring-bind (endpoint &rest bindings) match
+    (verbose:info :request "Calling ~s" match)
+    (apply (fdefinition (endpoint-function endpoint)) bindings)))
+
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-REST-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
@@ -142,44 +181,11 @@
                                      :remove-empty-subseqs t))
           (ua-accept (request-accept-types)))
       (with-http-conditions ()
-        (setf 
-         (hunchentoot:header-out :access-control-allow-headers)
-         "Accept, Accept-Language, Content-Language, Content-Type"
-         (hunchentoot:header-out :X-Tootsville-Machine) (machine-instance)
-         (hunchentoot:header-out :X-Romance) (romance-ii-program-name/version)
-         
-         (hunchentoot:header-out :Access-Control-Allow-Origin)
-         (case (cluster)
-           (:devel "*")
-           (otherwise (format nil "~a, ~a"
-                              (cluster-name) (cluster-net-name))))
-         
-         (hunchentoot:header-out :X-Lisp-Version)
-         (format nil "~a/~a"
-                 (lisp-implementation-type)
-                 (lisp-implementation-version)))
-        
+        (set-http-default-headers) 
         (if (eql :options method)
-            (progn 
-              (v:info :request "Method is OPTIONS")
-              (if-let (match (find-best-endpoint (make-keyword (hunchentoot:header-in* :access-control-request-method))
-                                                 uri-parts ua-accept))
-                (progn
-                  (setf (hunchentoot:return-code*) 204 #| no content|# )
-                  (v:info :request "OPTIONS reply for ~s ~s ~s"
-                          (make-keyword (hunchentoot:header-in* :access-control-request-method))
-                          uri-parts ua-accept)
-                  (hunchentoot:send-headers)
-                  nil)
-                (progn 
-                  (v:info :request "No match for ~s ~s ~s"
-                          (make-keyword (hunchentoot:header-in* :access-control-request-method))
-                          uri-parts ua-accept)
-                  (error 'not-found :the "OPTIONS URI"))))
+            (handle-cors-request uri-parts ua-accept)
             (if-let (match (find-best-endpoint method uri-parts ua-accept))
-              (destructuring-bind (endpoint &rest bindings) match
-                (verbose:info :request "Calling ~s" match)
-                (apply (fdefinition (endpoint-function endpoint)) bindings))
+              (dispatch-endpoint match)
               (progn
                 (verbose:info :request "No match for ~s ~{/~a~} accepting ~s"
                               method uri-parts ua-accept)

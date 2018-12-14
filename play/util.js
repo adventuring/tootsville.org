@@ -38,10 +38,10 @@ Tootsville.util.rest = function (method, uri, body, headers)
             { if (headers.hasOwnProperty(header))
               { xhr.setRequestHeader(header, headers[header]); } }
             xhr.setRequestHeader('Accept', 'application/json;encoding=utf-8');
-            if (Tootsville.login.idToken)
+            if (Tootsville.login.accessToken)
             { xhr.setRequestHeader(
                 'X-Infinity-Auth',
-                'auth/∞/5.0 ' +
+                'auth/Infinity/Alef/5.0 ' +
                     JSON.stringify({a: Tootsville.login.accessToken,
                                     i: Tootsville.login.idToken, 
                                     p: Tootsville.login.idProvider})); }
@@ -64,5 +64,4 @@ Tootsville.util.ensureServersReachable = function ()
   ( (response) => { Tootsville.trace ("Ping replied", response); },
     (error) => { Tootsville.parrot.say (
         "Squawk! I don't see any servers!",
-        ("I'm not able to reach any of the Tootsville game servers. " +
-         "Make sure you're connected to the Internet.") ); } ); };
+        "I'm not able to reach any of the Tootsville game servers." ); } ); };
