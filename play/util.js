@@ -32,19 +32,20 @@ Tootsville.util.rest = function (method, uri, body, headers)
           { let xhr = new XMLHttpRequest;
             xhr.open(method, uri);
             xhr.onload = (response) =>
-            { pass(JSON.parse(response.body)); };
-            xhr.onerror = (failure) => { fail(failure); };
+            { console.log ("Reply from " + method + " " + uri, response);
+              pass (JSON.parse (response.body)); };
+            xhr.onerror = (failure) => { fail (failure); };
             for (header in headers)
-            { if (headers.hasOwnProperty(header))
-              { xhr.setRequestHeader(header, headers[header]); } }
+            { if (headers.hasOwnProperty (header))
+              { xhr.setRequestHeader (header, headers[header]); } }
             xhr.setRequestHeader('Accept', 'application/json;encoding=utf-8');
             if (Tootsville.login.accessToken)
-            { xhr.setRequestHeader(
+            { xhr.setRequestHeader (
                 'X-Infinity-Auth',
                 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth); }
             if (body)
-            { xhr.setRequestHeader('Content-Type', 'application/json;encoding=utf-8');
-              xhr.send(JSON.stringify(body)); }
+            { xhr.setRequestHeader ('Content-Type', 'application/json;encoding=utf-8');
+              xhr.send (JSON.stringify (body)); }
             else  { xhr.send (); } }); };
 
 Tootsville.util.loadScript = function (src)

@@ -19,19 +19,26 @@
          ,@body)
      (continue () nil)))
 
-(defun associate-credential (person provider id &rest more)
-  (ignore-duplicates
-    (apply #'make-record 'db.credential
-           :person (db.person-uuid person)
-           :id-token id
-           :uid id 
-           :provider provider
-           more)))
-
 (defun associate-credentials (person credentials)
   (loop for (provider ids) on credentials by #'cddr
      do (dolist (id ids)
-          (associate-credential person provider id))))
+          (ensure-record 'db.credential
+                         :person (db.person-uuid person)
+                         :id-token id
+                         :uid id 
+                         :provider provider))))
+
+(defun person-links-to-email (email)
+  (find-records 'db.person-link
+                :url
+                (concatenate 'string
+                             "mailto:" email)))
+
+(defun all-links-to-same-person-p (links)
+  (let ((first (db.person-link-person (first links))))
+    (every (lambda (link) 
+             (uuid:uuid= (db.person-link-person link) first))
+           (rest links))))
 
 (defun ensure-user-for-plist (plist)
   "Find or create the user described by PLIST and return them.
@@ -42,11 +49,10 @@ come from a trusted authentication provider like Google Firebase)."
   (let ((person 
          (or (when-let (email (and (getf plist :email-verified-p)
                                    (getf plist :email)))
-               (when-let (link (find-record 'db.person-link
-                                            :url
-                                            (concatenate 'string
-                                                         "mailto:" email)))
-                 (find-reference link :person)))
+               (when-let (links (person-links-to-email email))
+                 (when-let (link (when (all-links-to-same-person-p links)
+                                   (first links)))
+                   (find-reference link :person))))
              (make-record
               'db.person
               :display-name (or (getf plist :name)
@@ -55,20 +61,43 @@ come from a trusted authentication provider like Google Firebase)."
                               (getf plist :name)
                               (email-lhs (getf plist :email)))
               :surname (getf plist :surname)))))
-    (ignore-duplicates
-      (make-record 'db.person-link
+    (ensure-record 'db.person-link
                    :person (db.person-uuid person)
-                   :rel "CONTACT"
+                   :rel :contact
                    :url (concatenate 'string "mailto:"
-                                     (getf plist :email))))
+                                     (getf plist :email))
+                   :label "Provided by Firebase login")
     (associate-credentials person (getf plist :credentials)) 
-    (when (getf plist :picture)
-      (ignore-duplicates 
-        (make-record 'db.person-link
+    (when-let (picture (getf plist :picture))
+      (ensure-record 'db.person-link
                      :person (db.person-uuid person)
-                     :rel "PORTRAIT"
-                     :url (getf plist :picture))))
+                     :rel :portrait
+                     :url picture
+                     :label "Provided by Firebase login"))
+    (when-let (email (and (getf plist :email-verified-p)
+                          (getf plist :email)))
+      (update-gravatar person email))
     person))
+
+(defun update-gravatar (person email)
+  (if-let ((gravatar (ignore-not-found
+                       (find-record 'db.person-link
+                                    :person (db.person-uuid person)
+                                    :rel :portrait
+                                    :label "Provided by Gravatar"))))
+    (setf (db.person-link-url gravatar)
+          (gravatar-image-url email
+                              :size 256
+                              :rating :pg
+                              :default :identicon))
+    (make-record 'db.person-link
+                 :person (db.person-uuid person)
+                 :rel :portrait
+                 :label "Provided by Gravatar"
+                 :url (gravatar-image-url email
+                                          :size 256
+                                          :rating :pg
+                                          :default :identicon))))
 
 
 
@@ -128,8 +157,9 @@ come from a trusted authentication provider like Google Firebase)."
   (find-record 'db.Toot :name Toot-name))
 
 (defun player-childp (&optional (player *user*))
-  (< (or (legal-age (db.person-date-of-birth player))
-         (db.person-age player))
+  (< (or (when-let (dob (db.person-date-of-birth player)) (legal-age dob))
+         (db.person-age player)
+         1)
      13))
 
 (defun player-adultp (&optional (player *user*))
@@ -141,20 +171,22 @@ come from a trusted authentication provider like Google Firebase)."
   (player-childp (find-reference Toot :player)))
 
 (defun Toot-info (Toot)
-  (list :name (db.Toot-name Toot)
-        :note (db.Toot-note Toot)
-        :avatar (db.avatar-name (find-reference Toot :avatar))
-        :base-color (color24-name (db.Toot-base-color Toot))
-        :pattern (string-downcase (db.Toot-pattern Toot))
-        :pattern-color (color24-name (db.Toot-pattern-color Toot))
-        :pads-color (color24-name (db.Toot-pad-color Toot))
-        :child-p (Toot-childp Toot)
-        :sensitive-p (or (Toot-childp Toot)
-                         (db.person-sensitivep (find-reference Toot :player)))
+  (list :|name| (db.Toot-name Toot)
+        :|note| (db.Toot-note Toot)
+        :|avatar| (db.avatar-moniker (find-reference Toot :avatar))
+        :|baseColor| (color24-name (db.Toot-base-color Toot))
+        :|pattern| (string-downcase (db.pattern-name 
+                                     (find-reference Toot :pattern)))
+        :|patternColor| (color24-name (db.Toot-pattern-color Toot))
+        :|padColor| (color24-name (db.Toot-pad-color Toot))
+        :|childP| (Toot-childp Toot)
+        :|sensitiveP| (or (Toot-childp Toot)
+                          (db.person-sensitivep (find-reference Toot :player)))
         :last-seen (db.Toot-last-active Toot)))
 
 (defun player-Toots (&optional (player *user*))
-  (find-records 'db.Toot :player (db.person-uuid player)))
+  (or (find-records 'db.Toot :player (db.person-uuid player))
+      (player-fake-Toots)))
 
 (defun player-fake-Toots (&optional (player *user*))
   (declare (ignore player))
@@ -163,37 +195,33 @@ come from a trusted authentication provider like Google Firebase)."
          :note "These are still fake Toots for testing"
          :avatar "UltraToot"
          :base-color "violet"
-         :pattern "lightning"
+         :pattern :lightning
          :pattern-color "yellow"
          :highlight-color "yellow"
          :child-p nil
          :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil (3-days-ago)))
+         :last-seen (3-days-ago))
    (list :name "Flora"
          :note "This an an example of a child's Toot
 appearing on a parent's account."
          :avatar "UltraToot"
          :base-color "pink"
-         :pattern "flowers"
+         :pattern :flowers
          :pattern-color "white"
          :highlight-color "yellow"
          :child-p t
          :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil (2-days-ago)))
+         :last-seen (2-days-ago))
    (list :name "Moo"
          :note ""
          :avatar "UltraToot"
          :base-color "white"
-         :pattern "moo"
+         :pattern :moo
          :pattern-color "black"
          :highlight-color "black"
          :child-p nil
          :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil
-                     (yesterday)))))
+         :last-seen (yesterday))))
 
 
 
@@ -215,3 +243,55 @@ appearing on a parent's account."
                 (mapcar (rcurry #'getf :name) (player-Toots user))
                 :test #'string-equal)
     (error 'not-your-Toot-error :name Toot-name)))
+
+
+
+;;; Copied from CL-Gravatar, but fixed for my version of Drakma (newer?)
+
+;;; TODO: post patch upstream
+
+#| CL-Gravatar
+
+Copyright 2011 Greg Pfeil <greg@technomadic.org>
+
+Licensed under the Apache License,  Version 2.0 (the "License"); you may
+not use this file except in  compliance with the License. You may obtain
+a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless  required by  applicable law  or agreed  to in  writing, software
+distributed  under the  License  is  distributed on  an  "AS IS"  BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See  the License  for the  specific language  governing permissions  and
+limitations under the License. |#
+
+(define-constant +gravatar-base-uri+ (puri:uri "https://secure.gravatar.com/")
+  :test #'puri:uri=
+  :documentation "Why would we ever _not_ use SSL?")
+
+(defun gravatar-hash (email)
+  (string-downcase (format nil "~{~2,'0x~}"
+                           (coerce (md5:md5sum-sequence
+                                    (string-downcase (string-trim '(#\space)
+                                                                  email)))
+                                   'list))))
+
+(defun gravatar-image-url (email &key size default force-default-p rating)
+  "DEFAULT may be either a URL to your own image, or one of :404, :mm,
+:identicon, :monsterid, :wavatar, or :retro. RATING may be one of :g, :pg,
+:r, or :x."
+  (let ((parameters ()))
+    (when size (push `("s" . ,(format nil "~d" size)) parameters))
+    (typecase default
+      (keyword (push `("d" . ,(string-downcase default)) parameters))
+      (string (push `("d" . ,default) parameters)))
+    (when force-default-p (push '("f" . "y") parameters))
+    (when rating (push `("r" . ,(string-downcase rating)) parameters))
+    (puri:merge-uris (format nil "avatar/~a~@[?~a~]"
+                             (gravatar-hash email)
+                             (drakma::alist-to-url-encoded-string parameters
+                                                                  :utf-8 #'drakma:url-encode))
+                     +gravatar-base-uri+)))
+
+

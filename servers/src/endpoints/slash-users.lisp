@@ -88,8 +88,9 @@ Requires a body with fields to be changed, and their new values. TODO.
 (defendpoint (get "/users/me/toots" "application/json")
   "Enumerates all Toot characters available to you."
   (with-user ()
-    (list 200 (list :last-modified (header-time (yesterday)))
-          (list :toots (player-toots)))))
+    (list 200
+          (list :Last-Modified (header-time (yesterday))) ; FIXME
+          (list :|toots| (mapcar #'Toot-info (player-Toots))))))
 
 (defendpoint (put "/users/me/toots/:toot-name" "application/json")
   "Create a new Toot character named TOOT-NAME.
@@ -104,8 +105,8 @@ See GET /users/me/toots/:toot-name for the format.
 @subsection{Status: 307 Redirect}
 If the Toot had been previously created, returns a redirect (307)."
   (with-user ()
-    (assert-my-character toot-name)
-    (list 201 nil (toot-info (find-toot-by-name toot-name)))))
+    (assert-my-character Toot-name)
+    (list 201 nil (Toot-info (find-Toot-by-name Toot-name)))))
 
 (defendpoint (get "/users/me/toots/:toot-name" "application/json")
   "Gives detailed information about your Toot character TOOT-NAME.

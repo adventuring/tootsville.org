@@ -54,10 +54,10 @@
      finally (return (list keys values))))
 
 (defun build-simple-query (table columns)
-  (format nil "SELECT * FROM `~a` ~@[WHERE ~{`~a` = ? ~}~];" table columns))
+  (format nil "SELECT * FROM `~a`~@[ WHERE ~{`~a`=?~^ AND ~}~];" table columns))
 
 (defun build-simple-column-query (table column columns)
-  (format nil "SELECT `~a` FROM `~a` ~@[WHERE ~{`~a` = ? ~}~];"
+  (format nil "SELECT `~a` FROM `~a`~@[ WHERE ~{`~a`=?~^ AND ~}~];"
           table column columns))
 
 
@@ -66,7 +66,10 @@
   "Select COLUMN from TABLE where columns = values as in plist COLUMNS+VALUES.
 
 Expects to find only one row and return the one column value as an atom.
-Signal  an assertion error if more rows are returned.
+
+Signal  an  error if more rows are returned.
+
+Signals NOT-FOUND if none are found.
 
 Uses MemCacheD when available."
   (let ((results
@@ -78,9 +81,11 @@ Uses MemCacheD when available."
                     (result-set (apply #'cl-dbi:execute query values))) 
                (with-memcached-query (*db* query)
                  (cl-dbi:fetch-all result-set)))))))
-    (assert (= 1 (length results)) (results)
-            "Expected a single record; got ~:d" (length results))
-    (caar results)))
+    (cond ((= 1 (length results)) 
+           (caar results))
+          ((zerop (length results))
+           (error 'not-found :the (cons table columns+values)))
+          (t (error "Found ~p record~:p when expecting one" (length results))))))
 
 (defun db-select-single-record (table &rest columns+values)
   "Select a single record from TABLE where columns = values as in COLUMNS+VALUES.
@@ -88,10 +93,15 @@ Uses MemCacheD when available."
 Calls `DB-SELECT-RECORDS-SIMPLY'  which in  turn may use  MemCacheD when
 it's available.
 
-Signals an assertion error if more than one record is returned."
+Signals an error if more than one record is returned.
+
+Signals NOT-FOUND if none are found."
   (let ((results (apply #'db-select-records-simply table columns+values)))
-    (assert (= 1 (length results)) (results)
-            "Expected a single record; got ~:d" (length results))
+    (cond ((= 1 (length results)) 
+           (first results))
+          ((zerop (length results))
+           (error 'not-found :the (cons table columns+values)))
+          (t (error "Found ~p record~:p when expecting one" (length results))))
     (first results)))
 
 (defun db-select-records-simply (table &rest columns+values)

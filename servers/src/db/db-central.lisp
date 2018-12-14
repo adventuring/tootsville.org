@@ -3,13 +3,30 @@
 
 
 (defmethod jonathan.encode:%to-json ((uuid uuid:uuid))
-  (princ-to-string uuid))
+  (jonathan.encode:%write-string (princ-to-string uuid)))
 
 (defmethod jonathan.encode:%to-json ((color24 color24))
-  (color24-name  color24))
+  (jonathan.encode:%write-string (color24-name  color24)))
 
 (defmethod jonathan.encode:%to-json ((timestamp timestamp))
-  (timestamp-to-unix timestamp))
+  (jonathan.encode:%write-string (princ-to-string (timestamp-to-unix timestamp))))
+
+
+
+(defmacro ignore-not-found (&body body)
+  `(handler-case (progn ,@body)
+     (not-found (c)
+       (declare (ignore c))
+       nil)))
+
+(defun ensure-record (type &rest columns+values)
+  (or (values (ignore-not-found (apply #'find-record type columns+values)) t)
+      (values (apply #'make-record type columns+values) nil)))
+
+(defmacro do-records ((record-var type &rest columns+values) &body body)
+  "Apply BODY to each row as if `FIND-RECORDS' were called."
+  `(do-db-records-simply (,record-var ,(db-table-for type) ,@columns+values)
+     ,@body))
 
 
 
@@ -20,11 +37,7 @@
 (defgeneric find-records (type &rest columns+values))
 (defgeneric load-record (type columns))
 (defgeneric save-record (object))
-
-(defmacro do-records ((record-var type &rest columns+values) &body body)
-  "Apply BODY to each row as if `FIND-RECORDS' were called."
-  `(do-db-records-simply (,record-var ,(db-table-for type) ,@columns+values)
-     ,@body))
+(defgeneric destroy-record (object))
 
 
 
@@ -40,7 +53,9 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:keyword (and value (string value)))
     (:yornp (if value "Y" "N"))
     (:number value)
-    (:json (and value (jonathan.encode:to-json value)))
+    (:json (and value
+                (with-output-to-string (*standard-output*)
+                  (jonathan.encode:%to-json value))))
     (:uri (and value (etypecase value
                        (puri:uri (puri:render-uri value nil))
                        (string value))))
@@ -49,7 +64,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
                 (subseq (cl-base64:usb8-array-to-base64-string
                          (uuid:uuid-to-byte-array value))
                         0 22)))
-    (:timestamp (and value (timestamp-to-universal value)))))
+    (:timestamp (and value (timestamp-to-unix value)))))
 
 (defun column-load-value (value type)
   (ecase type
@@ -59,14 +74,29 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
                 (make-keyword value)
               (:y t) (:n nil)))
     (:number value)
-    (:json (jonathan.decode:parse value))
+    (:json (and value
+                (< 0 (length value))
+                (jonathan.decode:parse value)))
     (:uri (puri:parse-uri value))
-    (:color24 (integer-to-color24 (ensure-integer value)))
+    (:color24
+     (etypecase value
+       (null nil)
+       (integer (integer-to-color24 value))
+       (string (parse-color24 value))
+       (vector (integer-to-color24 (byte-vector-to-integer value)))))
     (:uuid (uuid:byte-array-to-uuid
             (cl-base64:base64-string-to-usb8-array
              value)))
     (:timestamp (let ((τ value))
-                  (and τ (universal-to-timestamp τ))))))
+                  (etypecase τ
+                    (null nil)
+                    (integer (unix-to-timestamp τ))
+                    (string (if (equalp τ "0000-00-00")
+                                nil
+                                (parse-timestring (substitute #\T #\Space τ))))
+                    (vector (if (equalp τ #(48 48 48 48 45 48 48 45 48 48))
+                                nil
+                                (parse-timestring (substitute #\T #\Space (map 'string #'code-char τ))))))))))
 
 
 
@@ -209,13 +239,29 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
     `(defmethod id-column-for ((type (eql ',name)))
        ',(caar columns))))
 
+(defun defrecord/destroy-record (name id-accessor database table columns)
+  (declare (ignore id-accessor))
+  `(defmethod destroy-record ((object ,name))
+     (with-dbi (,database)
+       (let ((q (cl-dbi:prepare *dbi-connection*
+                                ,(format nil "DELETE FROM ~a WHERE `~a` = ?"
+                                         table
+                                         (lisp-to-db-name (caar columns))))))
+         (with-slots (,(caar columns)) object
+           (cl-dbi:execute q ,(column-save-mapping (car columns))))
+         (let ((rows (cl-dbi:row-count *dbi-connection*)))
+           (when (zerop rows)
+             (signal 'update-nil))
+           rows)))))
+
 (defun defrecord/save-record-with-id-column (name database table columns)
   (when (or (string-equal "ID" (caar columns))
             (string-equal "UUID" (caar columns)))
     (let ((id-accessor (intern (concatenate 'string (string name) "-"
                                             (string (caar columns))))))
       `(progn
-         ,(defrecord/save-record name id-accessor database table columns )))))
+         ,(defrecord/save-record name id-accessor database table columns)
+         ,(defrecord/destroy-record name id-accessor database table columns)))))
 
 (defun defrecord/find-reference (name column)
   `(defmethod find-reference

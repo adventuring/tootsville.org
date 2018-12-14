@@ -40,7 +40,9 @@
                      :framework (romance-ii-program-name/version)))
 
 (defmethod apply-config progn ()
-  "Set site name from configuration")
+  "Set site name from configuration"
+  ;; TODO: Set site name from configuration
+  )
 
 (defun load-config (&optional (config-file (default-config-file)))
   "Load the configuration from CONFIG-FILE."
@@ -48,10 +50,13 @@
   (apply-config)
   (setf *config-file* (list :path config-file
                             :truename (truename config-file)
-                            :read (get-universal-time)
+                            :read (now)
                             :host (machine-instance)
-                            :file-write-date (file-write-date config-file)
-                            :author (file-author config-file))))
+                            :file-write-date (universal-to-timestamp
+                                              (file-write-date config-file))
+                            :author (file-author config-file)))
+  (v:info :config "Loaded config from ~s" *config-file*)
+  *config-file*)
 
 
 

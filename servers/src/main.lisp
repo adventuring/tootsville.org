@@ -61,7 +61,6 @@
                        "{~a}: done" (thread-name (current-thread)))
          (setf (sb-thread:thread-name (current-thread)) idle-name))))))
 
-
 (defun start (&key (host "localhost") (port 5000))
   "Start a local Hunchentoot server.
 
@@ -70,6 +69,7 @@ HOST is an address of a live interface; PORT may be a port number.
 The server will  be started running on port  5000 on local-loopback-only
 addresses  (127.0.0.1  and  ::1).  If an  existing  server  is  running,
 a restart will be presented to allow you to kill it (RESTART-SERVER)."
+  (load-config)
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
@@ -98,7 +98,8 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
                                        :port port)))))
               (setf (hunchentoot:acceptor-name acceptor)
                     (format nil "Tootsville ~:[Non-TLS ~;~](~a port ~d)"
-                            (config :ssl) host port)))
+                            (config :ssl) host port))
+              acceptor)
             *acceptors*)
     (change-port (port*)
       :report "Use a different port"
@@ -177,15 +178,10 @@ to keep the process running."
   (start :host host :port port)
   (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, ~
 or exit the REPL.")
-  (when (swank-connected-p)
-    (debugger))
   (power-on-self-test)
   (start-repl))
 
 (defun debugger ()
-  (setf hunchentoot:*show-lisp-errors-p* t
-        hunchentoot:*show-lisp-backtraces-p* t
-        hunchentoot:*catch-errors-p* nil)
   (swank:set-default-directory (asdf:component-relative-pathname
                                 (asdf:find-system  :Tootsville)))
   (swank:set-package :Tootsville))
