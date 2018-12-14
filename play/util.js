@@ -1,11 +1,6 @@
 /* -*- js2 -*- */
 if (!("util" in Tootsville)) { Tootsville.util = {}; }
 
-Tootsville.util.postJSONforJSON = function (uri, post, headers)
-{ if (!post) { post = {}; }
-  if (!headers) { headers = {}; }
- };
-
 Tootsville.util.assertValidHostName = function (hostName)
 { if ("users" == hostName || "toots" == hostName)
   { return Tootsville.host["users"]; }
@@ -22,31 +17,21 @@ Tootsville.util.assertValidHostName = function (hostName)
 };
 
 Tootsville.util.rest = function (method, uri, body, headers)
-{ var hostName = uri.split('/')[0];
+{ let hostName = uri.split('/')[0];
   hostName = Tootsville.util.assertValidHostName(hostName);
   uri = hostName + '/' + uri;
   Tootsville.trace ('REST: ' + method + ' ' + uri);
   if (!headers) { headers = {}; }
-  return new Promise(
-      (pass, fail) =>
-          { let xhr = new XMLHttpRequest;
-            xhr.open(method, uri);
-            xhr.onload = (response) =>
-            { console.log ("Reply from " + method + " " + uri, response);
-              pass (JSON.parse (response.body)); };
-            xhr.onerror = (failure) => { fail (failure); };
-            for (header in headers)
-            { if (headers.hasOwnProperty (header))
-              { xhr.setRequestHeader (header, headers[header]); } }
-            xhr.setRequestHeader('Accept', 'application/json;encoding=utf-8');
-            if (Tootsville.login.accessToken)
-            { xhr.setRequestHeader (
-                'X-Infinity-Auth',
-                'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth); }
-            if (body)
-            { xhr.setRequestHeader ('Content-Type', 'application/json;encoding=utf-8');
-              xhr.send (JSON.stringify (body)); }
-            else  { xhr.send (); } }); };
+  if (! ('Accept' in headers))
+  { headers['Accept'] = 'application/json;encoding=utf-8'; }
+  if (Tootsville.login.firebaseAuth)
+  { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth; }
+  let opts = { method: method };
+  if (body && (! ('Content-Type' in headers)))
+  { headers['Content-Type'] = 'application/json';
+    opts.body = body; }
+  opts.headers = headers;
+  return fetch (uri, opts).then( response => response.json () ); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
