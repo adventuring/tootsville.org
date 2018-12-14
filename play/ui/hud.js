@@ -42,7 +42,7 @@ Tootsville.ui.hud.loadHTML = function (src)
 { Tootsville.trace ("Load HTML: " + src);
   return new Promise (
       after =>
-          { var xhr = new XMLHttpRequest;
+          { var xhr = new XMLHttpRequest; // XXX: Fetch
             xhr.onload = () => {
                 Tootsville.trace ("Got response from " + src, xhr.response);
                 after (xhr.response);
