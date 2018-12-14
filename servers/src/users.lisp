@@ -18,15 +18,15 @@ come from a trusted authentication provider like Google Firebase)."
   (let ((by-mail (when-let (email (and (getf plist :email-verified-p)
                                        (getf plist :email)))
                    (when-let (link (find-record 'db.person-link
-                                                "url"
+                                                :url
                                                 (concatenate 'string
                                                              "mailto:" email)))
-                     (find-record 'db.person "uuid" (db.person-link-person link)))))
+                     (find-record 'db.person :uuid (db.person-link-person link)))))
         (by-uid (when-let (cred (find-record 'db.credential
-                                             "uid" (getf plist :uid)
-                                             "provider" (getf plist :provider)))
-                  (find-record 'db.person "uuid"
-                               (db.credential-person cred)))))
+                                             :uid (getf plist :uid)
+                                             :provider (getf plist :provider)))
+                  (find-record 'db.person
+                               :uuid (db.credential-person cred)))))
     (cond
       ((and by-mail by-uid (uuid:uuid= (db.person-uuid by-mail)
                                        (db.person-uuid by-uid)))
@@ -43,9 +43,10 @@ come from a trusted authentication provider like Google Firebase)."
                                         (getf plist :name)
                                         (email-lhs (getf plist :email)))
                         :surname (getf plist :surname))))
-           (make-record 'db.credential "person" (db.person-uuid person)
-                        "provider" (getf plist :provider)
-                        "uid" (getf plist :uid))
+           (make-record 'db.credential
+                        :person (db.person-uuid person)
+                        :provider (getf plist :provider)
+                        :uid (getf plist :uid))
            (when (getf plist :email-verified-p)
              (make-record 'db.person-link
                           "person" (db.person-uuid person)
@@ -85,17 +86,17 @@ come from a trusted authentication provider like Google Firebase)."
                     (lambda (record)
                       (string-begins "mailto:" (db.person-link-url record)))
                     (find-records 'db.person-link
-                                  "person" (db.person-uuid
-                                            (ensure-person person))
-                                  "rel" "CONTACT")))
+                                  :person (db.person-uuid
+                                           (ensure-person person))
+                                  :rel :CONTACT)))
     (subseq (random-elt mails) 7)))
 
 (defun user-face (&optional (person *user*))
   "Finds a portrait URI for PERSON"
   (when-let (portraits (find-records 'db.person-link
-                                     "person" (db.person-uuid
-                                               (ensure-person person))
-                                     "rel" "PORTRAIT"))
+                                     :person (db.person-uuid
+                                              (ensure-person person))
+                                     :rel :PORTRAIT))
     (random-elt portraits)))
 
 (defun user-id (&optional (person *user*))
@@ -114,7 +115,7 @@ come from a trusted authentication provider like Google Firebase)."
 
 (defun find-Toot-by-name (Toot-name)
   (check-type Toot-name Toot-name)
-  (find-record 'db.Toot "name" Toot-name))
+  (find-record 'db.Toot :name Toot-name))
 
 (defun player-childp (&optional (player *user*))
   (< (or (legal-age (db.person-date-of-birth player))
@@ -143,7 +144,7 @@ come from a trusted authentication provider like Google Firebase)."
         :last-seen (db.Toot-last-active Toot)))
 
 (defun player-Toots (&optional (player *user*))
-  (find-records 'db.Toot "player" (db.person-uuid player)))
+  (find-records 'db.Toot :player (db.person-uuid player)))
 
 (defun player-fake-Toots (&optional (player *user*))
   (declare (ignore player))

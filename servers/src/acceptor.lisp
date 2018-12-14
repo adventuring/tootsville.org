@@ -131,21 +131,18 @@
 
 (defun handle-cors-request (uri-parts ua-accept)
   (v:info :request "Method is OPTIONS")
-  (let ((method (make-keyword (hunchentoot:header-in* :access-control-request-method))))
+  (let ((method (make-keyword (hunchentoot:header-in* :Access-Control-Request-Method))))
     (if-let (match (find-best-endpoint method uri-parts ua-accept))
       (progn
         (setf (hunchentoot:return-code*) 200)
         (v:info :request "OPTIONS reply for ~s ~s ~s"
                 method uri-parts ua-accept)
-        (setf 
-         (hunchentoot:header-out :access-control-allow-origin)
-         (or (hunchentoot:header-in* :origin)
-             "*")
-         (hunchentoot:header-out :access-control-allow-methods)
+        (setf
+         (hunchentoot:header-out :Access-Control-Allow-Methods)
          (string method)
-         (hunchentoot:header-out :access-control-allow-headers)
+         (hunchentoot:header-out :Access-Control-Allow-Headers)
          "Accept, Accept-Language, Content-Language, Content-Type, X-Infinity-Auth"
-         (hunchentoot:header-out :access-control-max-age) 85000)
+         (hunchentoot:header-out :Access-Control-Max-Age) 85000)
         (hunchentoot:send-headers)
         nil)
       (progn 
@@ -156,6 +153,9 @@
 
 (defun set-http-default-headers ()
   (setf
+   (hunchentoot:header-out :Access-Control-Allow-Origin)
+   (or (hunchentoot:header-in* :Origin)
+       "*")
    (hunchentoot:header-out :X-Tootsville-Machine) (machine-instance)
    (hunchentoot:header-out :X-Romance) (romance-ii-program-name/version) 
    (hunchentoot:header-out :X-Lisp-Version)

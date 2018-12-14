@@ -39,9 +39,12 @@ Tootsville.login.serverQueryCharacters = function ()
                     { reject (); } else
                     { finish (response.toots); } },
               error =>
-                  { Tootsville.parrot.say ("Can't get Toots list",
-                                           "I can't get a list of your Toots. Are you connected to the Internet?");
-                    Tootsville.error ("Can't retrieve Toots list", error); } ); }); };
+                  { Tootsville.parrot.ask ("Can't get Toots list",
+                                           "I can't get a list of your Toots. Maybe there are network problems?",
+                                           { tag: "retry",
+                                             text: "Try Again" }).
+                    then (Tootsville.login.serverQueryCharacters);
+                    Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
 Tootsville.login.createTootListItem = function (toot)
 { var li = document.createElement ('LI');

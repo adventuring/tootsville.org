@@ -2,6 +2,13 @@
 
 
 
+(defmacro with-user-brp (() &body body)
+  `(let ((*user* (find-record 'db.person :uuid (uuid:make-uuid-from-string "480B0917-3C7A-4D13-B55B-AA56105C5E00")))) 
+     (with-user () 
+       ,@body)))
+
+
+
 (defun check-first-line/reservations (file)
   (let ((first-line (split-sequence #\Tab (read-line file))))
     (assert (equalp first-line

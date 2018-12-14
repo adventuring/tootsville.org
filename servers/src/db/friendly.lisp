@@ -60,7 +60,7 @@
 
 (defrecord db.avatar (:friendly "avatars" :pull t)
   (id number)
-  (name string))
+  (moniker string))
 
 (defrecord db.pattern (:friendly "patterns" :pull t)
   (id number)
