@@ -98,4 +98,3 @@ leftmost digit must be after the rightmost non-digit character.
 
 (deftype Toot-name ()
   `(and string (satisfies potential-Toot-name-p)))
-

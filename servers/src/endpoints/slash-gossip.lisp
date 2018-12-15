@@ -20,7 +20,7 @@
         (login (find-record 'db.login
                             "player" (db.person-uuid *user*)
                             "credentials" *credentials*)))
-    (if login 
+    (if login
         (unless (equal origin (db.login-origin login))
           (setf (db.login-origin login) origin)))
     (make-record 'db.login :player (db.person-uuid *user*) :origin origin

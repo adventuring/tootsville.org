@@ -28,7 +28,7 @@
   (:method ((error error))
     (hunchentoot:maybe-invoke-debugger error))
   (:method ((error unimplemented))
-    (verbose:info :unimplemented 
+    (verbose:info :unimplemented
                   "Unimplemented function called: ~s" error)))
 
 (defun request-accept-types ()
@@ -87,7 +87,7 @@
   (not (accept-type-equal "text/html" "text/*" :allow-wildcard-p nil)))
 
 (defun find-user-for-headers (string)
-  (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))  
+  (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
   (when string
     (if (string-begins "auth/Infinity/Alef/5.0 " (the string string))
         (destructuring-bind (provider token &rest _)
@@ -96,7 +96,7 @@
           (v:info :auth "Provider ~a asserts token ~s"
                   provider token)
           (assert (string-equal provider "Firebase"))
-          (ensure-user-for-plist 
+          (ensure-user-for-plist
            (check-firebase-id-token token)))
         (progn (v:warn :auth "Unsupported ∞ auth, ~s"
                        (subseq (the string string)
@@ -110,7 +110,7 @@
        (list (http-status-code c)
              '(:content-type "application/json; charset=utf-8")
              (if hunchentoot:*show-lisp-backtraces-p*
-                 (jonathan.encode:to-json 
+                 (jonathan.encode:to-json
                   (list :error (http-status-code c)
                         :error-message (princ-to-string c)
                         :trace (rollbar::find-appropriate-backtrace)))
@@ -143,7 +143,7 @@
          (hunchentoot:header-out :Access-Control-Max-Age) 85000)
         (hunchentoot:send-headers)
         nil)
-      (progn 
+      (progn
         (v:info :request "No match for ~s ~s ~s"
                 (make-keyword (hunchentoot:header-in* :access-control-request-method))
                 uri-parts ua-accept)
@@ -155,7 +155,7 @@
    (or (hunchentoot:header-in* :Origin)
        "*")
    (hunchentoot:header-out :X-Tootsville-Machine) (machine-instance)
-   (hunchentoot:header-out :X-Romance) (romance-ii-program-name/version) 
+   (hunchentoot:header-out :X-Romance) (romance-ii-program-name/version)
    (hunchentoot:header-out :X-Lisp-Version)
    (format nil "~a/~a"
            (lisp-implementation-type)
@@ -183,7 +183,7 @@
         (*user* (find-user-for-headers (hunchentoot:header-in
                                         "X-Infinity-Auth" request))))
     (let ((method (hunchentoot:request-method*))
-          (uri-parts (split-sequence #\/ 
+          (uri-parts (split-sequence #\/
                                      (namestring
                                       (hunchentoot:request-pathname request))
                                      :remove-empty-subseqs t))
@@ -197,12 +197,12 @@
 (defmethod hunchentoot:acceptor-status-message
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
      &rest _ &key &allow-other-keys)
-  (declare (ignore _)) 
+  (declare (ignore _))
   (unless (wants-json-p) (call-next-method))
   (when (< (the fixnum HTTP-status-code) 400) (call-next-method))
-  
+
   (setf (hunchentoot:content-type*)
         "application/json;charset=utf-8")
-  
+
   (format nil "{\"error\": ~d, \"status\":\"~a\"}"
           HTTP-status-code (gethash HTTP-status-code *http-status-message*)))

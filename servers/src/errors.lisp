@@ -75,8 +75,8 @@
            :t ,(format nil "~s" object))))
 
 
-;;; Rendering a backtrace … who defines this generic function? XXX
-;;; XXX how is this not CLIM:PRESENT or so?
+;;; Rendering a backtrace  … who defines this generic  function? XXX XXX
+;;; how is this not CLIM:PRESENT or so?
 
 (defmethod render (bt condition env)
   "☠ deprecated"

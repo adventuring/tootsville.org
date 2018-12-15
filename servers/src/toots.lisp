@@ -35,13 +35,13 @@
         :|note| (or (db.Toot-note Toot) "")
         :|avatar| (db.avatar-moniker (find-reference Toot :avatar))
         :|baseColor| (color24-name (db.Toot-base-color Toot))
-        :|pattern| (string-downcase (db.pattern-name 
+        :|pattern| (string-downcase (db.pattern-name
                                      (find-reference Toot :pattern)))
         :|patternColor| (color24-name (db.Toot-pattern-color Toot))
         :|padColor| (color24-name (db.Toot-pad-color Toot))
         :|childP| (if (Toot-childp Toot) :true :false)
         :|sensitiveP| (if (or (Toot-childp Toot)
-                              (db.person-sensitivep 
+                              (db.person-sensitivep
                                (find-reference Toot :player)))
                           :true :false)
         :|lastSeen| (db.Toot-last-active Toot)

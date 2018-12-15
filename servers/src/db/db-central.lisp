@@ -31,7 +31,7 @@
 
 
 (defgeneric db-table-for (type)
-  (:documentation 
+  (:documentation
    "Which database table contains the data mirrored by the ORM TYPE"))
 (defgeneric id-column-for (type)
   (:documentation
@@ -86,7 +86,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:uuid (etypecase value
              (null nil)
              (string (subseq (cl-base64:usb8-array-to-base64-string
-                              (uuid:uuid-to-byte-array 
+                              (uuid:uuid-to-byte-array
                                (uuid:make-uuid-from-string value)))
                              0 22))
              (uuid:uuid (subseq (cl-base64:usb8-array-to-base64-string
@@ -136,11 +136,11 @@ Used in `DEFRECORD', qv."
     (let ((key (make-keyword (lisp-to-db-name (car column)))))
       (list (make-keyword (string (car column)))
             `(column-load-value (getf record ,key) ,(make-keyword (string (second column)))))))
-  
+
   (defun column-save-mapping (column)
     (let ((slot (first column)))
       `(column-save-value ,slot ,(make-keyword (string (second column))))))
-  
+
   (defun column-normalizer (column)
     (let ((name (intern (string (car column)))))
       (list name
@@ -245,7 +245,7 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
      (with-slots ,(mapcar #'car columns) object
        (v:info :db "Updating record in ~a ∀ ~a=~a" ,table
                ,(lisp-to-db-name (caar columns))
-               ,(caar columns)) 
+               ,(caar columns))
        (cl-dbi:execute query
                        ,@(mapcar #'column-save-mapping (rest columns))
                        ,(column-save-mapping (car columns)))
@@ -332,7 +332,7 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
                                       (list (intern (concatenate 'string
                                                                  (string name)
                                                                  "-"
-                                                                 (string (first column)))) 
+                                                                 (string (first column))))
                                             basename))))
                         columns))))))
 

@@ -13,7 +13,7 @@
         ($key (gensym "KEY-"))
         ($value (gensym "VALUE-")))
     `(if cl-memcached:*memcache*
-         (let* ((,$db ,db) (,$query ,query) 
+         (let* ((,$db ,db) (,$query ,query)
                 (,$key (query-to-memcache-key ,$db ,$query)))
            (if-let (,$value (cl-memcached:mc-get-value ,$key))
              (apply #'values (read-from-string ,$value))
@@ -39,7 +39,7 @@
 (defmacro with-dbi ((moniker) &body body)
   (let ((connection$ (gensym "DBI-")))
     `(let* ((,connection$ (apply #'cl-dbi:connect-cached (db-config ,moniker)))
-            (*dbi-connection* ,connection$)) 
+            (*dbi-connection* ,connection$))
        (unwind-protect
             ,@body
          (cl-dbi:disconnect ,connection$)))))
@@ -75,13 +75,13 @@ Uses MemCacheD when available."
   (let ((results
          (with-dbi (*db*)
            (destructuring-bind (columns values) (split-plist columns+values)
-             (let* ((query (cl-dbi:prepare tootsville::*dbi-connection* 
-                                           (build-simple-column-query 
+             (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
+                                           (build-simple-column-query
                                             table column columns)))
-                    (result-set (apply #'cl-dbi:execute query values))) 
+                    (result-set (apply #'cl-dbi:execute query values)))
                (with-memcached-query (*db* query)
                  (cl-dbi:fetch-all result-set)))))))
-    (cond ((= 1 (length results)) 
+    (cond ((= 1 (length results))
            (caar results))
           ((zerop (length results))
            (error 'not-found :the (cons table columns+values)))
@@ -97,7 +97,7 @@ Signals an error if more than one record is returned.
 
 Signals NOT-FOUND if none are found."
   (let ((results (apply #'db-select-records-simply table columns+values)))
-    (cond ((= 1 (length results)) 
+    (cond ((= 1 (length results))
            (first results))
           ((zerop (length results))
            (error 'not-found :the (cons table columns+values)))
@@ -113,9 +113,9 @@ Uses MemCache when available."
   (with-dbi (*db*)
     (if columns+values
         (destructuring-bind (columns values) (split-plist columns+values)
-          (let* ((query (cl-dbi:prepare tootsville::*dbi-connection* 
+          (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
                                         (build-simple-query table columns)))
-                 (result-set (apply #'cl-dbi:execute query values))) 
+                 (result-set (apply #'cl-dbi:execute query values)))
             (with-memcached-query (*db* query)
               (cl-dbi:fetch-all result-set))))
         (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
@@ -135,11 +135,9 @@ Selects one record at a time from TABLE. Does not use MemCacheD."
         ($result-set (gensym "RESULT-SET-")))
     `(with-dbi (*db*)
        (destructuring-bind (,$columns ,$values) (split-plist (list ,@columns+values))
-         (let* ((,$query (cl-dbi:prepare tootsville::*dbi-connection* 
+         (let* ((,$query (cl-dbi:prepare tootsville::*dbi-connection*
                                          (build-simple-query ,table ,$columns)))
-                (,$result-set (apply #'cl-dbi:execute ,$query ,$values))) 
+                (,$result-set (apply #'cl-dbi:execute ,$query ,$values)))
            (loop for ,record-var = (cl-dbi:fetch ,$result-set)
               while ,record-var
               do (progn ,@body)))))))
-
-

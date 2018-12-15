@@ -2,7 +2,7 @@
 
 (defrecord db.person (:friendly "people")
   (uuid uuid)
-  (display-name string) 
+  (display-name string)
   (given-name string)
   (surname string)
   (date-of-birth timestamp)
@@ -18,7 +18,7 @@
   (:method ((person uuid:uuid))
     (find-record 'db.person :uuid person))
   (:method ((person real))
-    (check-type person (real (0) (#.(expt 2 128)))) 
+    (check-type person (real (0) (#.(expt 2 128))))
     (find-record 'db.person :uuid person))
   (:method ((person cons))
     (assert (= 2 (length person)))
@@ -69,7 +69,7 @@
 
 (defrecord db.toot (:friendly "toots")
   (uuid uuid)
-  (name string) 
+  (name string)
   (pattern number ref db.pattern)
   (base-color color24)
   (pattern-color color24)
@@ -103,7 +103,7 @@
   (energy-kind keyword)
   (energy-max number)
   (on-zero keyword)
-  (wear-slot number ref db.wear-slot) 
+  (wear-slot number ref db.wear-slot)
   (weight number))
 
 (defrecord db.item (:friendly "items")
@@ -117,4 +117,4 @@
   (person uuid ref db.person)
   (toot uuid ref db.toot)
   (item uuid ref db.item)
-  (equipped keyword)) 
+  (equipped keyword))

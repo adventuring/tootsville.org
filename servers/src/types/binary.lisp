@@ -38,7 +38,7 @@ The VECTOR should be in big-endian (aka \"network\") order."
 
 (defun sha1-hex (string)
   (ironclad:byte-array-to-hex-string
-   (ironclad:digest-sequence :sha1 
+   (ironclad:digest-sequence :sha1
                              (trivial-utf-8:string-to-utf-8-bytes string))))
 
 (defun ensure-integer (value)

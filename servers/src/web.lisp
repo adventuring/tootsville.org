@@ -74,7 +74,7 @@ as well.)"
     content-bytes))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  
+
   (defun apply-extension-to-template (template extension)
     "Create a clone of TEMPLATE with EXTENSION."
     (if template
@@ -83,18 +83,18 @@ as well.)"
               temp
               (rest temp)))
         (list "index" extension)))
-  
+
   (defun without-sem (string)
     "The subset of STRING up to the first semicolon, if any."
     (if-let (sem (position #\; string))
       (subseq string 0 sem)
       string))
-  
+
   (defun first-line (string)
     "The first line, or, lacking a shorter break, first 100 characters of STRING."
     (let ((newline (or (position #\newline string) 100)))
       (subseq string 0 (min newline 100 (length string)))))
-  
+
   (defun defendpoint/make-endpoint-function (&key fname content-type
                                                   λ-list docstring body)
     `(defun ,fname (,@λ-list) ,docstring
@@ -268,7 +268,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                  "application/json; charset=utf-8"))
   (assert (equal (add-charset "image/png")
                  "image/png"))
-  
+
   (defun constituentp (ch)
     "Is character CH a constituent character of a Lisp name {without escaping it}?"
     (let ((cc (char-code (char-upcase ch))))
@@ -276,7 +276,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
           (<= (char-code #\A) cc (char-code #\Z))
           (<= (char-code #\0) cc (char-code #\9))
           (find ch "-/!?." :test #'char=))))
-  
+
   (defun make-endpoint-function-name (method uri accept-type)
     "Create the name of the endpoint function for METHOD, URI, and ACCEPT-TYPE."
     (intern (format nil "ENDPOINT-~a-~a→~a"
@@ -286,7 +286,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                       (null #\?)
                       (string (name-for-content-type accept-type))
                       (symbol (name-for-content-type (string accept-type)))))))
-  
+
   (defun lambda-list-as-variables (λ-list)
     "Convert Λ-LIST into variables for an endpoint function."
     (if λ-list
@@ -294,7 +294,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                               (list 'quote var))
                             λ-list))
         'nil))
-  
+
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)
     "Define an HTTP endpoint accessing URI via METHOD and accepting CONTENT-TYPE."
@@ -370,7 +370,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 (defun query-string->plist (query-string)
   "Split an HTTP QUERY-STRING into a  PList.
- 
+
 Probably a duplicate of something done in Hunchentoot or Drakma?"
   (mapcan (lambda (pair)
             (destructuring-bind (key value)

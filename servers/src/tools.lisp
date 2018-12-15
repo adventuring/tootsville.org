@@ -3,8 +3,8 @@
 
 
 (defmacro with-user-brp (() &body body)
-  `(let ((*user* (find-record 'db.person :uuid (uuid:make-uuid-from-string "480B0917-3C7A-4D13-B55B-AA56105C5E00")))) 
-     (with-user () 
+  `(let ((*user* (find-record 'db.person :uuid (uuid:make-uuid-from-string "480B0917-3C7A-4D13-B55B-AA56105C5E00"))))
+     (with-user ()
        ,@body)))
 
 
@@ -74,7 +74,7 @@
 (defun import-toot-to-db (record)
   (let ((toot (find-record 'db.toot
                            :name (getf record :toot-name)))
-        (email (ensure-record 'db.person-link 
+        (email (ensure-record 'db.person-link
                               :rel :contact
                               :url (format nil "mailto:~a" (getf record :gmail))
                               :provenance "Tootsville V Pre-Registration")))
@@ -89,16 +89,16 @@
         (setf (db.toot-player toot) (db.person-uuid person)
               (db.person-link-person email) (db.person-uuid person))
         (save-record toot))))
-  ;;;(error (c) nil)
-  
+ ;;;(error (c) nil)
+
   (return-from import-toot-to-db)
-  
+
   (unless (getf record :own-toot-p)
     (return-from import-toot-to-db))    ; TODO
   (let ((person (ensure-user-for-plist
                  (list :email (getf record :gmail)
                        :email-verified-p t))))
-    (ignore-duplicates 
+    (ignore-duplicates
       (ensure-record 'db.person-link
                      :person (db.person-uuid person)
                      :rel :CONTACT
@@ -113,7 +113,7 @@
     (let ((toot (ensure-record
                  'db.toot
                  :name (getf record :toot-name)
-                 :pattern (db.pattern-id (find-record 'db.pattern 
+                 :pattern (db.pattern-id (find-record 'db.pattern
                                                       :name (getf record :pattern-name)))
                  :base-color (parse-color24 (string (getf record :base-color)))
                  :pad-color (parse-color24 (string (getf record :pads-color)))

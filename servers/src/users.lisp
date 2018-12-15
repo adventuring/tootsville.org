@@ -10,9 +10,9 @@
     (subseq address 0 (position #\@ address))))
 
 (defmacro ignore-duplicates (&body body)
-  `(restart-case 
+  `(restart-case
        (handler-bind
-           ((dbi.error:<dbi-database-error> 
+           ((dbi.error:<dbi-database-error>
              (lambda (c)
                (when (= 1062 (slot-value c 'DBI.ERROR::ERROR-CODE))
                  (invoke-restart 'continue)))))
@@ -25,7 +25,7 @@
           (ensure-record 'db.credential
                          :person (db.person-uuid person)
                          :id-token id
-                         :uid id 
+                         :uid id
                          :provider provider))))
 
 (defun person-links-to-email (email)
@@ -36,7 +36,7 @@
 
 (defun all-links-to-same-person-p (links)
   (let ((first (db.person-link-person (first links))))
-    (every (lambda (link) 
+    (every (lambda (link)
              (uuid:uuid= (db.person-link-person link) first))
            (rest links))))
 
@@ -46,7 +46,7 @@
 PLIST  can  have  keys  that  align to  a  DB.PERSON  or  their  contact
 infos (eg,  email) and is expected  to have been validated  already (eg,
 come from a trusted authentication provider like Google Firebase)."
-  (let ((person 
+  (let ((person
          (or (when-let (email (and (getf plist :email-verified-p)
                                    (getf plist :email)))
                (when-let (links (person-links-to-email email))
@@ -70,7 +70,7 @@ come from a trusted authentication provider like Google Firebase)."
                    :url (concatenate 'string "mailto:"
                                      (getf plist :email))
                    :provenance "Provided by Firebase login")
-    (associate-credentials person (getf plist :credentials)) 
+    (associate-credentials person (getf plist :credentials))
     (when-let (picture (getf plist :picture))
       (ensure-record 'db.person-link
                      :person (db.person-uuid person)
@@ -183,7 +183,7 @@ come from a trusted authentication provider like Google Firebase)."
 (defun assert-my-character (Toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
   (check-type Toot-name Toot-name)
-  (unless (find-record 'db.toot 
+  (unless (find-record 'db.toot
                        :player (db.person-uuid user)
                        :name Toot-name)
     (error 'not-your-Toot-error :name Toot-name)))
@@ -237,5 +237,3 @@ limitations under the License. |#
                              (drakma::alist-to-url-encoded-string parameters
                                                                   :utf-8 #'drakma:url-encode))
                      +gravatar-base-uri+)))
-
-

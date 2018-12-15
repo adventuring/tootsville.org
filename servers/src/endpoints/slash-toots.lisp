@@ -16,4 +16,3 @@
                   :last-seen ,(local-time:format-timestring
                                nil (local-time:now))
                   :exists-p "maybe?"))))
-

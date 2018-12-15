@@ -66,8 +66,8 @@ headlines on Tootsbook."
                       :radix 10))))))
 
 (defpost FIXME-NAME ()
- (string= (unescape-& "We&#8217;ve")
-                 "We’ve"))
+  (string= (unescape-& "We&#8217;ve")
+           "We’ve"))
 
 (defun get-text-of-element (node element)
   "Extracts  the  text  under  the  given ELEMENT  type  under  NODE  as

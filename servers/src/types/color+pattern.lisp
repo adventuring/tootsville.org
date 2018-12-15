@@ -180,8 +180,8 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 
 (defun integer-to-color24 (number)
   (make-color24 :red (ldb (byte 8 16) number)
-	      :green (ldb (byte 8 8) number)
-	      :blue (ldb (byte 8 0) number)))
+                :green (ldb (byte 8 8) number)
+                :blue (ldb (byte 8 0) number)))
 
 (defun color24-to-integer (color)
   (+ (ash (color24-red color) 16)
@@ -221,7 +221,7 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 
 (defun parse-color24 (color)
   "Parse COLOR as a name for a color, or a hex 24-bit color value"
-  (integer-to-color24 
+  (integer-to-color24
    (etypecase color
      (string (if-let (as (assoc (substitute #\- #\Space color)
                                 +color24-names+ :test #'string-equal))
