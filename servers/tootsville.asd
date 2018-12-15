@@ -7,7 +7,7 @@
 
 
 (defsystem Tootsville
-  :version "0.3.18"
+  :version "0.3.17"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
   :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
@@ -21,6 +21,7 @@ REST services for the front-end."
 
                ;; systems from Quicklisp
                :bordeaux-threads
+               :cl-base64
                :cl-dbi
                :cl-memcached
                :cl-ppcre
