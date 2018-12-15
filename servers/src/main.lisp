@@ -169,7 +169,23 @@ process's PID."
                                   (swank/backend:getpid))))
   port)
 
+
 
+(defmethod v:format-message ((stream stream) (message v:message))
+  (format stream "~&~a	{~a}	[~a: ~{~@(~a~)~^, ~}]~%⦘	~a~%" 
+          (format-timestring nil (v:timestamp message)
+                             :format
+                             '((:year 4) #\- (:month 2) #\- (:day 2) 
+                               #\Space
+                               (:hour 2) #\: (:min 2) #\: (:sec 2)
+                               #\Space
+                               :nsec))
+          (thread-name (v:thread message))
+          (v:level message)
+          (v:categories message)
+          (v:content message)))
+
+
 ;;; Web servers
 
 (defun start-hunchentoot (&key (host "localhost") (port 5000))
