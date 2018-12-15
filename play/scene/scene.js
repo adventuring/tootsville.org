@@ -62,7 +62,7 @@ Tootsville.tank.convertCanvasEventTo3D = function (event)
 
 Tootsville.tank.init3DEngine = function ()
 { return new Promise (
-    (finish) => 
+    (finish) =>
         { Tootsville.tank.getCanvas ();
           if (! Tootsville.tank.engine)
           { console.log ("Initializing Babylon3D as graphics engine for tank");
