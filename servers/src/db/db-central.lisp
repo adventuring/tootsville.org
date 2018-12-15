@@ -81,11 +81,17 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:uri (and value (etypecase value
                        (puri:uri (puri:render-uri value nil))
                        (string value))))
-    (:color24 (and value (color24-to-integer value)))
-    (:uuid (and value
-                (subseq (cl-base64:usb8-array-to-base64-string
-                         (uuid:uuid-to-byte-array value))
-                        0 22)))
+    (:color24 (and value (format nil "~6,'0x"
+                                 (color24-to-integer value))))
+    (:uuid (etypecase value
+             (null nil)
+             (string (subseq (cl-base64:usb8-array-to-base64-string
+                              (uuid:uuid-to-byte-array 
+                               (uuid:make-uuid-from-string value)))
+                             0 22))
+             (uuid:uuid (subseq (cl-base64:usb8-array-to-base64-string
+                                 (uuid:uuid-to-byte-array value))
+                                0 22))))
     (:timestamp (and value (timestamp-to-unix value)))))
 
 (defun column-load-value (value type)
@@ -105,11 +111,10 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
      (etypecase value
        (null nil)
        (integer (integer-to-color24 value))
-       (string (parse-color24 value))
-       (vector (integer-to-color24 (byte-vector-to-integer value)))))
+       (string (parse-color24 value))))
     (:uuid (uuid:byte-array-to-uuid
             (cl-base64:base64-string-to-usb8-array
-             value)))
+             (format nil "~a==" value))))
     (:timestamp (let ((τ value))
                   (etypecase τ
                     (null nil)

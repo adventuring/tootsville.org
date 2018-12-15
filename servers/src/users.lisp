@@ -60,20 +60,23 @@ come from a trusted authentication provider like Google Firebase)."
               :given-name (or (getf plist :given-name)
                               (getf plist :name)
                               (email-lhs (getf plist :email)))
-              :surname (getf plist :surname)))))
+              :surname (or (getf plist :surname) "")
+              :gender :X
+              :lang "en_US")
+             )))
     (ensure-record 'db.person-link
                    :person (db.person-uuid person)
                    :rel :contact
                    :url (concatenate 'string "mailto:"
                                      (getf plist :email))
-                   :label "Provided by Firebase login")
+                   :provenance "Provided by Firebase login")
     (associate-credentials person (getf plist :credentials)) 
     (when-let (picture (getf plist :picture))
       (ensure-record 'db.person-link
                      :person (db.person-uuid person)
-                     :rel :portrait
+                     :rel :photo
                      :url picture
-                     :label "Provided by Firebase login"))
+                     :provenance "Provided by Firebase login"))
     (when-let (email (and (getf plist :email-verified-p)
                           (getf plist :email)))
       (update-gravatar person email))
@@ -83,8 +86,8 @@ come from a trusted authentication provider like Google Firebase)."
   (if-let ((gravatar (ignore-not-found
                        (find-record 'db.person-link
                                     :person (db.person-uuid person)
-                                    :rel :portrait
-                                    :label "Provided by Gravatar"))))
+                                    :rel :photo
+                                    :provenance "Provided by Gravatar"))))
     (setf (db.person-link-url gravatar)
           (gravatar-image-url email
                               :size 256
@@ -92,8 +95,8 @@ come from a trusted authentication provider like Google Firebase)."
                               :default :identicon))
     (make-record 'db.person-link
                  :person (db.person-uuid person)
-                 :rel :portrait
-                 :label "Provided by Gravatar"
+                 :rel :photo
+                 :provenance "Provided by Gravatar"
                  :url (gravatar-image-url email
                                           :size 256
                                           :rating :pg
@@ -135,7 +138,7 @@ come from a trusted authentication provider like Google Firebase)."
   (when-let (portraits (find-records 'db.person-link
                                      :person (db.person-uuid
                                               (ensure-person person))
-                                     :rel :PORTRAIT))
+                                     :rel :photo))
     (random-elt portraits)))
 
 (defun user-id (&optional (person *user*))
@@ -181,7 +184,7 @@ come from a trusted authentication provider like Google Firebase)."
   "Signal a security error if TOOT-NAME is not owned by USER"
   (check-type Toot-name Toot-name)
   (unless (find-record 'db.toot 
-                       :player (db.player-uuid user)
+                       :player (db.person-uuid user)
                        :name Toot-name)
     (error 'not-your-Toot-error :name Toot-name)))
 

@@ -32,7 +32,7 @@
 
 (defun Toot-info (Toot)
   (list :|name| (db.Toot-name Toot)
-        :|note| (db.Toot-note Toot)
+        :|note| (or (db.Toot-note Toot) "")
         :|avatar| (db.avatar-moniker (find-reference Toot :avatar))
         :|baseColor| (color24-name (db.Toot-base-color Toot))
         :|pattern| (string-downcase (db.pattern-name 

@@ -208,7 +208,9 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
       ("red" . #xe51b24)
       ("spring-green" . #xc4d82d)
       ("indigo" . #x0028ff)
-      ("orange" . #xff7b26))
+      ("orange" . #xff7b26)
+      ("cyan" . #xccffff)
+      ("rainbow" . #x000001))
   :test 'equalp)
 
 (define-constant +color24-values+
@@ -221,7 +223,8 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
   "Parse COLOR as a name for a color, or a hex 24-bit color value"
   (integer-to-color24 
    (etypecase color
-     (string (if-let (as (assoc color +color24-names+ :test #'string-equal))
+     (string (if-let (as (assoc (substitute #\- #\Space color)
+                                +color24-names+ :test #'string-equal))
                (cdr as)
                (parse-number color :radix 16)))
      (number color))))

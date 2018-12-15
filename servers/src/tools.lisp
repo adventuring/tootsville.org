@@ -72,48 +72,67 @@
             :gmail gmail))))
 
 (defun import-toot-to-db (record)
+  (let ((toot (find-record 'db.toot
+                           :name (getf record :toot-name)))
+        (email (ensure-record 'db.person-link 
+                              :rel :contact
+                              :url (format nil "mailto:~a" (getf record :gmail))
+                              :provenance "Tootsville V Pre-Registration")))
+    (unless (ignore-errors (find-reference email :person))
+      (format t "~& set owner toot ~a for ~a"
+              (getf record :toot-name) (getf record :gmail))
+      (let ((person (ensure-record 'db.person :given_name (getf record :gmail)
+                                   :display_name (getf record :gmail)
+                                   :surname ""
+                                   :gender :X
+                                   :language "en_US")))
+        (setf (db.toot-player toot) (db.person-uuid person)
+              (db.person-link-person email) (db.person-uuid person))
+        (save-record toot))))
+  ;;;(error (c) nil)
+  
+  (return-from import-toot-to-db)
+  
   (unless (getf record :own-toot-p)
     (return-from import-toot-to-db))    ; TODO
-  (let ((person (make-record 'db.person :child-code nil
-                             :display-name (getf record :gmail)
-                             :given-name (subseq (getf record :gmail)
-                                                 0
-                                                 (position #\@ (getf record :gmail)))
-                             :surname ""
-                             :gender "X"
-                             :lang "en")))
-    (make-record 'db.person-link
-                 :person (db.person-uuid person)
-                 :rel :CONTACT
-                 :url (concatenate 'string "mailto:" (getf record :gmail))
-                 :label "Toot Name Reservations GMail")
+  (let ((person (ensure-user-for-plist
+                 (list :email (getf record :gmail)
+                       :email-verified-p t))))
+    (ignore-duplicates 
+      (ensure-record 'db.person-link
+                     :person (db.person-uuid person)
+                     :rel :CONTACT
+                     :url (concatenate 'string "mailto:" (getf record :gmail))
+                     :provenance "Toot Name Reservations GMail"))
     (unless (getf record :own-toot-p)
       (setf (db.person-child-code person) "*"
             (db.person-display-name person) (getf record :child-name)
             (db.person-given-name person) (getf record :child-name))
-      ;; TODO
+      ;; TODO - link to parent
       )
-    (let ((toot (make-record
+    (let ((toot (ensure-record
                  'db.toot
                  :name (getf record :toot-name)
-                 :pattern (db.pattern-id (find-record 'db.pattern "name" 
-                                                      (getf record :pattern-name)))
+                 :pattern (db.pattern-id (find-record 'db.pattern 
+                                                      :name (getf record :pattern-name)))
                  :base-color (parse-color24 (string (getf record :base-color)))
                  :pad-color (parse-color24 (string (getf record :pads-color)))
                  :pattern-color (parse-color24 (string (getf record :pattern-color)))
                  :avatar 1
                  :player (db.person-uuid person)
-                 :last-active (or (getf record :created-at) (parse-timestring "2013-01-01T00:00:00"))
+                 :last-active (or (getf record :created-at)
+                                  (parse-timestring "2014-10-13T09:37:20"))
                  :note "Toot Name Pre-Registered"))
-          (gifts (list (make-record 'db.item :template 1)
-                       (make-record 'db.item :template 2)
-                       (make-record 'db.item :template 3))))
+          (gifts (list (ensure-record 'db.item :template 1)
+                       (ensure-record 'db.item :template 2)
+                       (ensure-record 'db.item :template 3))))
       (dolist (gift gifts)
-        (make-record 'db.inventory-item
-                     :person (db.person-uuid person)
-                     :toot (db.toot-uuid toot)
-                     :item (db.item-uuid gift)
-                     :equipped "N")))))
+        (ignore-errors (ensure-record 'db.inventory-item
+                                      :base-color (parse-color24 "periwinkle")
+                                      :person (db.person-uuid person)
+                                      :toot (db.toot-uuid toot)
+                                      :item (db.item-uuid gift)
+                                      :equipped "N"))))))
 
 ;; (make-record   'db.toot  :name   "Shade"   :pattern  13   :base-color
 ;; (make-color24  :red  #x90  :green  #x20  :blue  #x90)  :pattern-color

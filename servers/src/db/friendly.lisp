@@ -47,7 +47,8 @@
   (person uuid ref db.person)
   (rel keyword)
   (url uri)
-  (label string))
+  (label string)
+  (provenance string))
 
 (defrecord db.login (:friendly "logins")
   (uuid uuid)
@@ -108,6 +109,7 @@
 (defrecord db.item (:friendly "items")
   (uuid uuid)
   (base-color color24)
+  (alt-color color24)
   (template number ref db.item-template)
   (energy number))
 
