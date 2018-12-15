@@ -166,28 +166,33 @@
     (verbose:info :request "Calling ~s" match)
     (apply (fdefinition (endpoint-function endpoint)) bindings)))
 
+(defun handle-normal-request (method uri-parts ua-accept)
+  (if-let (match (find-best-endpoint method uri-parts ua-accept))
+    (dispatch-endpoint match)
+    (progn
+      (verbose:info :request "No match for ~s ~{/~a~} accepting ~s"
+                    method uri-parts ua-accept)
+      (error 'not-found :the (format nil "The URI you requsted")))))
+
 (defmethod hunchentoot:acceptor-dispatch-request
     ((acceptor Tootsville-REST-acceptor) request)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
-  (verbose:info :request "{~A} Dispatching request ~s via acceptor ~s"
-                (thread-name (current-thread)) request acceptor)
+  (verbose:info :request "Dispatching request ~s via acceptor ~s"
+                request acceptor)
   (let ((hunchentoot:*request* request)
         (*user* (find-user-for-headers (hunchentoot:header-in
                                         "X-Infinity-Auth" request))))
     (let ((method (hunchentoot:request-method*))
-          (uri-parts (split-sequence #\/ (namestring (hunchentoot:request-pathname request))
+          (uri-parts (split-sequence #\/ 
+                                     (namestring
+                                      (hunchentoot:request-pathname request))
                                      :remove-empty-subseqs t))
           (ua-accept (request-accept-types)))
       (with-http-conditions ()
-        (set-http-default-headers) 
+        (set-http-default-headers)
         (if (eql :options method)
             (handle-cors-request uri-parts ua-accept)
-            (if-let (match (find-best-endpoint method uri-parts ua-accept))
-              (dispatch-endpoint match)
-              (progn
-                (verbose:info :request "No match for ~s ~{/~a~} accepting ~s"
-                              method uri-parts ua-accept)
-                (error 'not-found :the (format nil "The URI you requsted")))))))))
+            (handle-normal-request method uri-parts ua-accept))))))
 
 (defmethod hunchentoot:acceptor-status-message
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code
