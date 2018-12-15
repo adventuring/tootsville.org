@@ -28,7 +28,8 @@
   (:method ((error error))
     (hunchentoot:maybe-invoke-debugger error))
   (:method ((error unimplemented))
-    (verbose:info :unimplemented "Unimplemented function called: ~s" error)))
+    (verbose:info :unimplemented 
+                  "Unimplemented function called: ~s" error)))
 
 (defun request-accept-types ()
   (when-let (accept (assoc :accept (hunchentoot:headers-in*)))
