@@ -102,7 +102,12 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:yornp (ecase
                 (make-keyword value)
               (:y t) (:n nil)))
-    (:number value)
+    (:number (etypecase value
+               (null nil)
+               (integer value)
+               (rational (format nil "~f" (* 1.0 value)))
+               (real (format nil "~f" value))
+               (t (error "Can't record number ~s?" value))))
     (:json (and value
                 (< 0 (length value))
                 (jonathan.decode:parse value)))
