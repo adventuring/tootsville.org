@@ -81,7 +81,7 @@ Uses MemCacheD when available."
                                            (build-simple-column-query
                                             table column columns)))
                     (result-set (apply #'cl-dbi:execute query values)))
-               (with-memcached-query (*db* query)
+               (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
                  (cl-dbi:fetch-all result-set)))))))
     (cond ((= 1 (length results))
            (caar results))
@@ -118,12 +118,12 @@ Uses MemCache when available."
           (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
                                         (build-simple-query table columns)))
                  (result-set (apply #'cl-dbi:execute query values)))
-            (with-memcached-query (*db* query)
+            (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
               (cl-dbi:fetch-all result-set))))
         (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
                                       (format nil "SELECT * FROM `~a`" table)))
                (result-set (cl-dbi:execute query)))
-          (with-memcached-query (*db* query)
+          (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) nil)
             (cl-dbi:fetch-all result-set))))))
 
 (defmacro do-db-records-simply ((record-var table &rest columns+values)
