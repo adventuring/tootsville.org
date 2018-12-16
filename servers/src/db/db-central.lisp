@@ -183,14 +183,15 @@ Used in `DEFRECORD', qv."
        ,@(mapcan #'column-load-mapping columns))))
 
 (defun arrange-columns+values-for-find (columns+values column-definitions)
-  (loop for (column value) on columns+values by #'cddr
-     for column-def = (assoc column column-definitions :test #'string=)
-     do (unless column-def
-          (error "Can't search on unknown column ~:(~a~); ~
+  (when columns+values
+    (loop for (column value) on columns+values by #'cddr
+       for column-def = (assoc column column-definitions :test #'string=)
+       do (unless column-def
+            (error "Can't search on unknown column ~:(~a~); ~
 columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
-     append (list (lisp-to-db-name column)
-                  (column-save-value value
-                                     (make-keyword (string (second column-def)))))))
+       append (list (lisp-to-db-name column)
+                    (column-save-value value
+                                       (make-keyword (string (second column-def))))))))
 
 (defun defrecord/find-record (name table columns)
   `(defmethod find-record ((class (eql ',name)) &rest columns+values)
