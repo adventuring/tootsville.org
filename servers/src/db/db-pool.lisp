@@ -1,24 +1,26 @@
 (in-package :Tootsville)
 
 
-(defun query-to-memcache-key (db query)
-  (if (< (length query) 128)
-      (format nil "~:(~a~):~a" db query)
-      (format nil "~:(~a~):~a…#~a"
-              db (subseq query 0 100) (sha1-hex query))))
+(defun query-to-memcache-key (db prepared args)
+  (let ((query (format nil "~a➕~{~a~^✜~}" prepared args)))
+    (if (< (length query) 128)
+        (format nil "~:(~a~):~a" db query)
+        (format nil "~:(~a~):~a…#~a"
+                db (subseq query 0 100) (sha1-hex query)))))
 
-(defmacro with-memcached-query ((db query) &body body)
+(defmacro with-memcached-query ((db query args) &body body)
   (let (($db (gensym "DB-"))
         ($query (gensym "QUERY-"))
         ($key (gensym "KEY-"))
-        ($value (gensym "VALUE-")))
+        ($value (gensym "VALUE-"))
+        ($args (gensym "ARGS-")))
     `(if cl-memcached:*memcache*
-         (let* ((,$db ,db) (,$query ,query)
-                (,$key (query-to-memcache-key ,$db ,$query)))
+         (let* ((,$db ,db) (,$query ,query) (,$args ,args)
+                (,$key (query-to-memcache-key ,$db ,$query ,$args)))
            (if-let (,$value (cl-memcached:mc-get-value ,$key))
-             (apply #'values (read-from-string ,$value))
-             (let ((,$value (values-list (progn ,@body))))
-               (cl-memcached:mc-store ,$key (princ-to-string ,$value))
+             (apply #'values (read-from-string (trivial-utf-8:utf-8-bytes-to-string ,$value)))
+             (let ((,$value (multiple-value-list (progn ,@body))))
+               (cl-memcached:mc-store ,$key (trivial-utf-8:string-to-utf-8-bytes (princ-to-string ,$value)))
                (apply #'values ,$value))))
          (progn ,@body))))
 
