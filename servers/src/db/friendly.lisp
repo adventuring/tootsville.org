@@ -139,3 +139,24 @@
   (starredp yornp)
   (added timestamp)
   (last-used timestamp))
+
+(defrecord db.music (:friendly "music")
+  (id number)
+  (title string)
+  (artist string)
+  (genre string)
+  (license string)
+  (moniker string))
+
+(defrecord db.character-music (:friendly "character_music")
+  (music number ref db.music)
+  (toot uuid ref db.toot))
+
+(defrecord db.locale-music (:friendly "locale_music")
+  (music number ref db.music)
+  (x number)
+  (y number) 
+  (z number)
+  (radius number))
+
+
