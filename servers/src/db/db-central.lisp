@@ -332,15 +332,17 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
     `(defmethod jonathan.encode:%to-json ((,basename ,name))
        (jonathan.encode:%to-json
         (list :|isA| ,(symbol-munger:lisp->studly-caps basename)
-              ,@(mapcan (lambda (column)
-                          (list (intern (symbol-munger:lisp->camel-case  (first column)) :keyword)
-                                (list 'jonathan.encode:%to-json
-                                      (list (intern (concatenate 'string
-                                                                 (string name)
-                                                                 "-"
-                                                                 (string (first column))))
-                                            basename))))
-                        columns))))))
+              ,@(mapcan 
+                 (lambda (column)
+                   (list (intern (symbol-munger:lisp->camel-case
+                                  (first column)) :keyword)
+                         (list 'jonathan.encode:%to-json
+                               (list (intern (concatenate
+                                              'string
+                                              (string name) "-"
+                                              (string (first column))))
+                                     basename))))
+                 columns))))))
 
 
 
