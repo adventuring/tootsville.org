@@ -132,3 +132,10 @@
   (item uuid ref db.item)
   (equipped keyword))
 
+(defrecord db.contact (:friendly "contacts")
+  (uuid uuid)
+  (owner uuid ref db.person)
+  (contact uuid ref db.person)
+  (starredp yornp)
+  (added timestamp)
+  (last-used timestamp))
