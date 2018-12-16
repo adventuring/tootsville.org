@@ -325,6 +325,15 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
        (save-record record)
        record)))
 
+(defun defrecord/column-to-json-pair (column)
+
+  (list (intern (symbol-munger:lisp->camel-case (first column)) :keyword)
+        (list 'jonathan.encode:%to-json
+              (list (intern (concatenate 'string
+                                         (string name) "-"
+                                         (string (first column))))
+                    basename))))
+
 (defun defrecord/to-json (name columns)
   (let ((basename (if (string-begins "DB." (string name))
                       (intern (subseq (string name) 3))
@@ -333,15 +342,7 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
        (jonathan.encode:%to-json
         (list :|isA| ,(symbol-munger:lisp->studly-caps basename)
               ,@(mapcan 
-                 (lambda (column)
-                   (list (intern (symbol-munger:lisp->camel-case
-                                  (first column)) :keyword)
-                         (list 'jonathan.encode:%to-json
-                               (list (intern (concatenate
-                                              'string
-                                              (string name) "-"
-                                              (string (first column))))
-                                     basename))))
+                 #'defrecord/column-to-json-pair
                  columns))))))
 
 
