@@ -159,4 +159,10 @@
   (z number)
   (radius number))
 
+(defrecord db.sms (:friendly "sms")
+  (uuid uuid)
+  (sender uuid ref db.toot)
+  (destination uuid ref db.toot)
+  (message string)
+  (mmsp yornp))
 
