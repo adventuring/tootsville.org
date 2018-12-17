@@ -12,22 +12,6 @@
   (gender keyword)
   (lang keyword))
 
-(defgeneric ensure-person (person-or-uuid-or-uid)
-  (:method ((person db.person))
-    person)
-  (:method ((person uuid:uuid))
-    (find-record 'db.person :uuid person))
-  (:method ((person real))
-    (check-type person (real (0) (#.(expt 2 128))))
-    (find-record 'db.person :uuid person))
-  (:method ((person cons))
-    (assert (= 2 (length person)))
-    (check-type (car person) string)
-    (check-type (cdr person) string)
-    (db-select-single-column "credentials" "person"
-                             "uid" (car person)
-                             "provider" (cdr person))))
-
 (defrecord db.parent-child (:friendly "parent_child")
   (parent uuid ref db.person)
   (child uuid ref db.person))
