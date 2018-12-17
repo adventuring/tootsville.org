@@ -85,6 +85,7 @@ REST services for the front-end."
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
      (:file "ws")
+     (:file "gossip" :depends-on ("db"))
      (:file "http-status-messages" :depends-on ("package-post"))
      (:file "acceptor" :depends-on ("types" "endpoint" "web" "auth"
                                             "http-status-messages"))
