@@ -84,13 +84,16 @@ REST services for the front-end."
             :depends-on ("view" "players" "errors" "config" "endpoint"))
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
+     (:file "ws")
      (:file "http-status-messages" :depends-on ("package-post"))
      (:file "acceptor" :depends-on ("types" "endpoint" "web" "auth"
                                             "http-status-messages"))
      (:file "main" :depends-on ("config" "view" "package-post" "acceptor"))
      (:module "db"
               :depends-on ("package-post")
-              :components ((:file "db-pool")
+              :components ((:file "memcached")
+                           (:file "couch")
+                           (:file "db-pool" :depends-on ("memcached"))
                            (:file "db-central" :depends-on ("db-pool"))
                            (:file "friendly" :depends-on ("db-central"))))
      (:module "auth"
