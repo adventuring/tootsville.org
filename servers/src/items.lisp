@@ -5,12 +5,12 @@
 
 (defun create-item (template-id)
   "Create an item as an instance of the given TEMPLATE-ID."
-  (let ((template (find-record 'db.item-template :id template-id)))
-    (make-record 'db.item 
+  (let ((template (find-record 'item-template :id template-id)))
+    (make-record 'item 
                  :template template-id
-                 :avatar-scale-x (db.item-template-avatar-scale-x template)
-                 :avatar-scale-y (db.item-template-avatar-scale-y template)
-                 :avatar-scale-z (db.item-template-avatar-scale-z template)
+                 :avatar-scale-x (item-template-avatar-scale-x template)
+                 :avatar-scale-y (item-template-avatar-scale-y template)
+                 :avatar-scale-z (item-template-avatar-scale-z template)
                  :x 0 :y 0 :z 0
                  :latitude 0 :longitude 0 :altitude -1000
                  :world :chor)))
@@ -19,18 +19,18 @@
   "Create a new instance of TEMPLATE-ID and give it to RECIPIENT."
   (let ((item (create-item template-id))
         (player-uuid (etypecase recipient
-                       (db.Toot (db.Toot-player recipient))
-                       (string (db.Toot-player (find-record 'db.Toot :name recipient)))
-                       (db.person recipient)))
+                       (Toot (Toot-player recipient))
+                       (string (Toot-player (find-record 'Toot :name recipient)))
+                       (person recipient)))
         (Toot  (etypecase recipient
-                 (db.Toot recipient)
-                 (string (find-record 'db.Toot :name recipient))
-                 (db.person nil))))
+                 (Toot recipient)
+                 (string (find-record 'Toot :name recipient))
+                 (person nil))))
     (player-alert player-uuid :inventory :get item)
-    (make-record 'db.inventory-item
-                 :item (db.item-uuid item)
+    (make-record 'inventory-item
+                 :item (item-uuid item)
                  :person player-uuid
-                 :Toot (db.Toot-uuid Toot)
+                 :Toot (Toot-uuid Toot)
                  :equipped :N)))
 
 (defun gift-item (item giver recipient)
@@ -39,30 +39,30 @@
     (unless (eql *user* giver)
       (error 'not-allowed)))
   (let ((giver-player (etypecase recipient
-                        (db.Toot (db.Toot-player recipient))
-                        (string (db.Toot-player (find-record 'db.Toot :name recipient)))
-                        (db.person recipient)))
+                        (Toot (Toot-player recipient))
+                        (string (Toot-player (find-record 'Toot :name recipient)))
+                        (person recipient)))
         (giver-Toot  (etypecase recipient
-                       (db.Toot recipient)
-                       (string (find-record 'db.Toot :name recipient))
-                       (db.person nil)))
+                       (Toot recipient)
+                       (string (find-record 'Toot :name recipient))
+                       (person nil)))
         (recipient-player (etypecase recipient
-                            (db.Toot (db.Toot-player recipient))
-                            (string (db.Toot-player (find-record 'db.Toot :name recipient)))
-                            (db.person recipient)))
+                            (Toot (Toot-player recipient))
+                            (string (Toot-player (find-record 'Toot :name recipient)))
+                            (person recipient)))
         (recipient-Toot  (etypecase recipient
-                           (db.Toot recipient)
-                           (string (find-record 'db.Toot :name recipient))
-                           (db.person nil))))
+                           (Toot recipient)
+                           (string (find-record 'Toot :name recipient))
+                           (person nil))))
     (player-alert recipient-player :inventory :get item)
     (player-alert giver-player :inventory :drop item)
-    (let ((inventory (find-record 'db.inventory
-                                  :item (db.item-uuid item)
-                                  :person (db.person-uuid giver-player)
-                                  :Toot (db.Toot-uuid giver-Toot))))
-      (setf (db.inventory-item-equipped inventory) :N
-            (db.inventory-item-person inventory) (db.person-uuid recipient-player)
-            (db.inventory-item-Toot inventory) (db.toot-uuid recipient-Toot))
+    (let ((inventory (find-record 'inventory
+                                  :item (item-uuid item)
+                                  :person (person-uuid giver-player)
+                                  :Toot (Toot-uuid giver-Toot))))
+      (setf (inventory-item-equipped inventory) :N
+            (inventory-item-person inventory) (person-uuid recipient-player)
+            (inventory-item-Toot inventory) (toot-uuid recipient-Toot))
       inventory)))
 
 (defun vanish-item (item)

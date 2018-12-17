@@ -22,22 +22,22 @@
 (defun associate-credentials (person credentials)
   (loop for (provider ids) on credentials by #'cddr
      do (dolist (id ids)
-          (ensure-record 'db.credential
-                         :person (db.person-uuid person)
+          (ensure-record 'credential
+                         :person (person-uuid person)
                          :id-token id
                          :uid id
                          :provider provider))))
 
 (defun person-links-to-email (email)
-  (find-records 'db.person-link
+  (find-records 'person-link
                 :url
                 (concatenate 'string
                              "mailto:" email)))
 
 (defun all-links-to-same-person-p (links)
-  (let ((first (db.person-link-person (first links))))
+  (let ((first (person-link-person (first links))))
     (every (lambda (link)
-             (uuid:uuid= (db.person-link-person link) first))
+             (uuid:uuid= (person-link-person link) first))
            (rest links))))
 
 (defun ensure-user-for-plist (plist)
@@ -54,7 +54,7 @@ come from a trusted authentication provider like Google Firebase)."
                                    (first links)))
                    (find-reference link :person))))
              (make-record
-              'db.person
+              'person
               :display-name (or (getf plist :name)
                                 (email-lhs (getf plist :email)))
               :given-name (or (getf plist :given-name)
@@ -64,16 +64,16 @@ come from a trusted authentication provider like Google Firebase)."
               :gender :X
               :lang "en_US")
              )))
-    (ensure-record 'db.person-link
-                   :person (db.person-uuid person)
+    (ensure-record 'person-link
+                   :person (person-uuid person)
                    :rel :contact
                    :url (concatenate 'string "mailto:"
                                      (getf plist :email))
                    :provenance "Provided by Firebase login")
     (associate-credentials person (getf plist :credentials))
     (when-let (picture (getf plist :picture))
-      (ensure-record 'db.person-link
-                     :person (db.person-uuid person)
+      (ensure-record 'person-link
+                     :person (person-uuid person)
                      :rel :photo
                      :url picture
                      :provenance "Provided by Firebase login"))
@@ -84,17 +84,17 @@ come from a trusted authentication provider like Google Firebase)."
 
 (defun update-gravatar (person email)
   (if-let ((gravatar (ignore-not-found
-                       (find-record 'db.person-link
-                                    :person (db.person-uuid person)
+                       (find-record 'person-link
+                                    :person (person-uuid person)
                                     :rel :photo
                                     :provenance "Provided by Gravatar"))))
-    (setf (db.person-link-url gravatar)
+    (setf (person-link-url gravatar)
           (gravatar-image-url email
                               :size 256
                               :rating :pg
                               :default :identicon))
-    (make-record 'db.person-link
-                 :person (db.person-uuid person)
+    (make-record 'person-link
+                 :person (person-uuid person)
                  :rel :photo
                  :provenance "Provided by Gravatar"
                  :url (gravatar-image-url email
@@ -114,35 +114,35 @@ come from a trusted authentication provider like Google Firebase)."
 ;;; User details
 
 (defun user-display-name (&optional (person *user*))
-  (db.person-display-name (ensure-person person)))
+  (person-display-name (ensure-person person)))
 
 (defun user-given-name (&optional (person *user*))
-  (db.person-given-name (ensure-person person)))
+  (person-given-name (ensure-person person)))
 
 (defun user-surname (&optional (person *user*))
-  (db.person-surname (ensure-person person)))
+  (person-surname (ensure-person person)))
 
 (defun user-email (&optional (person *user*))
   "Finds an email address for PERSON of type CONTACT."
   (when-let (mails (remove-if-not
                     (lambda (record)
-                      (string-begins "mailto:" (db.person-link-url record)))
-                    (find-records 'db.person-link
-                                  :person (db.person-uuid
+                      (string-begins "mailto:" (person-link-url record)))
+                    (find-records 'person-link
+                                  :person (person-uuid
                                            (ensure-person person))
                                   :rel :CONTACT)))
     (subseq (random-elt mails) 7)))
 
 (defun user-face (&optional (person *user*))
   "Finds a portrait URI for PERSON"
-  (when-let (portraits (find-records 'db.person-link
-                                     :person (db.person-uuid
+  (when-let (portraits (find-records 'person-link
+                                     :person (person-uuid
                                               (ensure-person person))
                                      :rel :photo))
     (random-elt portraits)))
 
 (defun user-id (&optional (person *user*))
-  (db.person-uuid (ensure-person person)))
+  (person-uuid (ensure-person person)))
 
 (defun user->alist (user)
   (list (cons :|displayName| (user-display-name user))
@@ -153,19 +153,19 @@ come from a trusted authentication provider like Google Firebase)."
 
 
 (defun player-childp (&optional (player *user*))
-  (< (or (when-let (dob (db.person-date-of-birth player)) (legal-age dob))
-         (db.person-age player)
-         (db.person-child-code player)
+  (< (or (when-let (dob (person-date-of-birth player)) (legal-age dob))
+         (person-age player)
+         (person-child-code player)
          1)
      13))
 
 (defun player-adultp (&optional (player *user*))
-  (>= (or (legal-age (db.person-date-of-birth player))
-          (db.person-age player))
+  (>= (or (legal-age (person-date-of-birth player))
+          (person-age player))
       18))
 
 (defun player-Toots (&optional (player *user*))
-  (find-records 'db.Toot :player (db.person-uuid player)))
+  (find-records 'Toot :player (person-uuid player)))
 
 
 
@@ -183,8 +183,8 @@ come from a trusted authentication provider like Google Firebase)."
 (defun assert-my-character (Toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
   (check-type Toot-name Toot-name)
-  (unless (find-record 'db.toot
-                       :player (db.person-uuid user)
+  (unless (find-record 'toot
+                       :player (person-uuid user)
                        :name Toot-name)
     (error 'not-your-Toot-error :name Toot-name)))
 

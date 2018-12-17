@@ -17,15 +17,15 @@
 
 (defun update-session-details ()
   (let ((origin (concatenate 'string "http←" (hunchentoot:remote-addr*)))
-        (login (find-record 'db.login
-                            "player" (db.person-uuid *user*)
+        (login (find-record 'login
+                            "player" (person-uuid *user*)
                             "credentials" *credentials*)))
     (if login
-        (unless (equal origin (db.login-origin login))
-          (setf (db.login-origin login) origin)))
-    (make-record 'db.login :player (db.person-uuid *user*) :origin origin
+        (unless (equal origin (login-origin login))
+          (setf (login-origin login) origin)))
+    (make-record 'login :player (person-uuid *user*) :origin origin
                  :credentials *credentials*)
-    (setf (db.login-last-seen login) (now))
+    (setf (login-last-seen login) (now))
     (save-record login)))
 
 (defun gossipnet-update-client ()
