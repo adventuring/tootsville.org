@@ -1,29 +1,79 @@
 (in-package :Tootsville)
 
-(defvar *gossip-offer-queue* (make-instance 'queues:queue))
-(defvar *gossip-ringing* (make-hash-table :test 'equal))
+(defstruct gossip-initiation
+  uuid
+  offeror
+  offer
+  answeror
+  answer)
 
-(defun gossip-signal-offers (offers)
-  (dolist (offer offers)
-    (gossip-signal-offer offer)))
+(defun gossip-initiation-uri (initiation)
+  (etypecase initiation
+    (uuid:uuid (format nil "/tootsville/gossip-exchange/~a" (uuid-to-uri initiation)))
+    (gossip-initiation (gossip-initiation-uri
+                        (gossip-initiation-uuid initiation)))))
 
-(defun gossip-name-for-sdp (sdp)
-  (format nil "/gossip/offers/sha="(sha1-hex offer-sdp))) 
+(defmethod save-record ((init gossip-initiation))
+  (unless (gossip-initiation-uuid init)
+    (setf (gossip-initiation-uuid init) (uuid:make-v1-uuid)))
+  (clouchdb:put-document init 
+                         :id (gossip-initiation-uri init))
+  (jonathan.encode:to-json init))
 
-(defun gossip-signal-offer (player offer-sdp)
-  (queues:qpush (list :player player :sdp offer-sdp :tendered (get-universal-time))
-                *gossip-offer-queue*))
+(defmethod load-record ((class (eql 'gossip-initiation)) alist)
+  (make-gossip-initiation :uuid (assoc-value alist :|uuid|)
+                          :offeror (assoc-value alist :|offeror|)
+                          :offer (assoc-value alist :|offer|)
+                          :answeror (assoc-value alist :|answeror|)
+                          :answer (assoc-value alist :|answer|)))
 
-(defun gossip-accept-offer ()
-  (let* ((ringing (queues:qpop *gossip-offer-queue*))
-         (sdp (getf ringing :sdp)))
-    (setf (gethash *gossip-ringing* sdp) ringing)
-    sdp))
+(defmethod make-record ((class (eql 'gossip-initiation)) &rest plist)
+  (let ((init (apply #'make-gossip-initiation plist)))
+    (save-record init)
+    init))
 
-(defun gossip-post-answer (offer-sdp answer-sdp)
-  (if-let (offer (gethash *gossip-ringing* offer-sdp))
-    (let ((offeror (getf offer :player)))
-      (player-alert offeror :gossip :get answer-sdp)
-      (remhash *gossip-ringing* offer-sdp))
-    (error 'not-found :the "Gossipnet SDP offer")))
+(defmethod find-record ((class (eql 'gossip-initiation)) 
+                        &key uuid)
+  (if uuid
+      (clouchdb:get-document (gossip-initiation-uri uuid)
+                             :if-missing :nil)
+      (error "Must provide UUID")))
 
+(defmethod find-records ((class (eql 'gossip-initiation)) 
+                         &key offeror 
+                              (answeror nil answerorp) 
+                              (answer nil answerp))
+  (cond
+    ((<= 1 (+ (if offeror 1 0)
+              (if answerorp 1 0)
+              (if answerp 1 0)))
+     (error "Can't search that way: ~
+supply exactly one of OFFEROR, ANSWEROR, ANSWER"))
+    (offeror
+     (mapcar (curry #'load-record 'gossip-initiation) 
+             (clouchdb:invoke-view 
+              "offeror" "offeror"
+              :key (uuid-to-uri (person-uuid offeror)))))
+    ((and answerp
+          (null answer))
+     (mapcar (curry #'load-record 'gossip-initiation) 
+             (clouchdb:invoke-view 
+              "pending" "pending")))
+    ((and answerorp
+          (null answeror))
+     (curry #'load-record 'gossip-initiation) 
+     (clouchdb:invoke-view 
+      "unanswered" "unanswered"))
+    (t (clouchdb:all-docs-by-seq))))
+
+(defun gossip-offer (sdp &optional (user *user*))
+  (let ((init (make-gossip-initiation :uuid (uuid-to-uri (uuid:make-v1-uuid)) 
+                                      :offeror user :offer sdp)))
+    (save-record init)))
+
+(defun gossip-pop-offer (&optional (user *user*))
+  (let ((offers (find-records 'gossip-initiation :answeror nil)))
+    (when offers
+      (let ((offer (first offers)))
+        (setf (gossip-initiation-answeror offer) (uuid-to-uri (person-uuid user)))
+        (save-record offer)))))
