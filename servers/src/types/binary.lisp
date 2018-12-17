@@ -38,7 +38,7 @@ The VECTOR should be in big-endian (aka \"network\") order."
 
 (defun uri-to-uuid (uuid)
   "Extract a UUID encoded in Base64 in URI form"
-  (uuid:byte-array-to-uuid (cl-base64:base64-string-to-usb8 
+  (uuid:byte-array-to-uuid (cl-base64:base64-string-to-usb8-array
                             (substitute #\/ #\- uuid))))
 
 (defun uuid-to-uri (uuid)
