@@ -174,7 +174,7 @@ process's PID."
 
 
 (defmethod v:format-message ((stream stream) (message v:message))
-  (format stream "~&~a	{~a}	[~a: ~{~@(~a~)~^, ~}]~%⦘	~a~%"
+  (format stream "~&~a	{~a}	[~a: ~{~a~^, ~}]~%⦘	~a~%"
           (format-timestring nil (v:timestamp message)
                              :format
                              '((:year 4) #\- (:month 2) #\- (:day 2)
@@ -184,7 +184,7 @@ process's PID."
                                :nsec))
           (thread-name (v:thread message))
           (v:level message)
-          (v:categories message)
+          (mapcar #'symbol-munger:lisp->english (v:categories message))
           (v:content message)))
 
 
