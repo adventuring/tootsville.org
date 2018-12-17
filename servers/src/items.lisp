@@ -26,6 +26,7 @@
                  (db.Toot recipient)
                  (string (find-record 'db.Toot :name recipient))
                  (db.person nil))))
+    (player-alert player-uuid :inventory :get item)
     (make-record 'db.inventory-item
                  :item (db.item-uuid item)
                  :person player-uuid
@@ -53,6 +54,8 @@
                            (db.Toot recipient)
                            (string (find-record 'db.Toot :name recipient))
                            (db.person nil))))
+    (player-alert recipient-player :inventory :get item)
+    (player-alert giver-player :inventory :drop item)
     (let ((inventory (find-record 'db.inventory
                                   :item (db.item-uuid item)
                                   :person (db.person-uuid giver-player)
