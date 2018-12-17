@@ -63,3 +63,19 @@ Tootsville.parrot.ynP = function (title, message)
                                 [  { tag: false, text: "No" },
                                    { tag: true, text: "Yes" } ]); }
 
+
+// 
+Tootsville.parrot.parrotErrorText = function (body)
+{ let code = body.error;
+  let text = body.status;
+  if (! text)
+  { if (code)
+    { text = "HTTP Error code " + code; }
+    else
+    { text = "The server did not respond with a regonizeable error reply." } }
+  if (! code)
+  { code = 500; }
+  return "<P>The server reported an error.</P>" +
+  "<P>" + text + "</P>" +
+  "<P> <A TARGET=\"new\"" +
+  " HREF=\"https://wiki.tootsville.org/wiki/Error_" + code + "\">Learn more ...</A></P>"; }
