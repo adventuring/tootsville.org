@@ -203,6 +203,6 @@
 
   (setf (hunchentoot:content-type*)
         "application/json;charset=utf-8")
-
+  (set-HTTP-default-headers)
   (format nil "{\"error\": ~d, \"status\":\"~a\"}"
           HTTP-status-code (gethash HTTP-status-code *http-status-message*)))
