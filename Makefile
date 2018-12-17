@@ -277,6 +277,9 @@ devel-test:	devel-serve devel-play
 devel-serve:	servers/Tootsville
 	servers/Tootsville server < /dev/null
 
+devel-play-watch:	devel-play
+	while inotifywait -r play ; do $(MAKE) devel-play ; done
+
 devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
