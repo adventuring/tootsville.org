@@ -240,7 +240,8 @@ ON DUPLICATE KEY UPDATE  ~
                                table
                                (mapcar (compose #'lisp-to-db-name #'car) columns)
                                (mapcar (compose #'lisp-to-db-name #'car) (rest columns))))))
-         (v:info :db "Saving record ~s" (type-of object))
+         (v:info :db "Saving ~a ∀ ~s=~s" (symbol-munger:lisp->english (type-of object))
+                 ',(caar columns) (,id-accessor object))
          (with-slots ,(mapcar #'car columns) object
            (cl-dbi:execute query
                            ,@(mapcar #'column-save-mapping columns)
