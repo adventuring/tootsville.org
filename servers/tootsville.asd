@@ -94,8 +94,8 @@ REST services for the front-end."
               :depends-on ("package-post")
               :components ((:file "memcached")
                            (:file "couch")
-                           (:file "db-pool" :depends-on ("memcached"))
-                           (:file "db-central" :depends-on ("db-pool"))
+                           (:file "maria" :depends-on ("memcached"))
+                           (:file "db-central" :depends-on ("maria"))
                            (:file "friendly" :depends-on ("db-central"))))
      (:module "auth"
               :depends-on ("package-post" "users")
