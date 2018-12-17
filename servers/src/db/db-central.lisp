@@ -320,14 +320,11 @@ ON DUPLICATE KEY UPDATE  ~
                     basename))))
 
 (defun defrecord/to-json (name columns)
-  (let ((basename (if (string-begins "DB." (string name))
-                      (intern (subseq (string name) 3))
-                      name)))
-    `(defmethod jonathan.encode:%to-json ((,basename ,name))
-       (jonathan.encode:%to-json
-        (list :|isA| ,(symbol-munger:lisp->studly-caps basename)
-              ,@(mapcan 
-                 (curry #'defrecord/column-to-json-pair name basename) columns))))))
+  `(defmethod jonathan.encode:%to-json ((,name ,name))
+     (jonathan.encode:%to-json
+       (list :|isA| ,(symbol-munger:lisp->studly-caps name)
+             ,@(mapcan 
+             (curry #'defrecord/column-to-json-pair name name) columns)))))
 
 
 
