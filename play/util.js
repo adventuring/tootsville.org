@@ -14,23 +14,7 @@ Tootsville.util.assertValidHostName = function (hostName)
   { return "https://tootsbook.com"; }
   Tootsville.error ("Unknown which host handles " + hostName);
   return undefined;
-};
-
-Tootsville.parrot.parrotErrorText = function (body)
-{ let code = body.error;
-  let text = body.status;
-  if (! text)
-  { if (code)
-    { text = "HTTP Error code " + code; }
-    else
-    { text = "The server did not respond with a regonizeable error reply." } }
-  if (! code)
-  { code = 500; }
-  return "<P>The server reported an error.</P>" +
-  "<P>" + text + "</P>" +
-  "<P> <A TARGET=\"new\"" +
-  " HREF=\"https://wiki.tootsville.org/wiki/Error_" + code + "\">Learn more ...</A></P>"; }
-    
+};    
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
