@@ -28,11 +28,10 @@
 
 
 (defun connect-cache ()
-  (setf cl-memcached:*memcache* 
-        (ignore-errors
-          (cl-memcached:make-memcache :ip (config :cache :host)
-                                      :port (or (config :cache :port) 11211)
-                                      :name (cluster-name))))
+  (dolist (server (config :cache))
+    (cl-memcached:make-memcache :ip (extract server :ip)
+                                :port (or (extract server :port) 11211)
+                                :name (extract server :name)))
   (let ((n (princ-to-string (random (expt 2 63))))
         (key (format nil "~a.~a" (machine-instance) (cluster-name))))
     (cl-memcached:mc-set key n)
