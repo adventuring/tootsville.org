@@ -70,6 +70,8 @@ The server will  be started running on port  5000 on local-loopback-only
 addresses  (127.0.0.1  and  ::1).  If an  existing  server  is  running,
 a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (load-config)
+  (connect-databases)
+  (power-on-self-test)
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
@@ -194,7 +196,6 @@ to keep the process running."
   (start :host host :port port)
   (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, ~
 or exit the REPL.")
-  (power-on-self-test)
   (start-repl))
 
 (defun debugger ()
