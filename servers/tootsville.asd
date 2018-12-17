@@ -32,6 +32,8 @@ REST services for the front-end."
                :drakma
                :envy
                :fare-memoization
+               :hunchentoot
+               :hunchensocket
                :jonathan
                :pngload
                :swank
