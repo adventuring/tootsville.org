@@ -25,8 +25,10 @@
 
 (defmacro do-records ((record-var type &rest columns+values) &body body)
   "Apply BODY to each row as if `FIND-RECORDS' were called."
-  `(do-db-records-simply (,record-var ,(db-table-for type) ,@columns+values)
-     ,@body))
+  (let (($record-var (gensym "RECORD-")))
+    `(do-db-records-simply (,$record-var ,(db-table-for type) ,@columns+values)
+       (let ((,record-var (load-record ',type ,$record-var))
+             ),@body))))
 
 
 
