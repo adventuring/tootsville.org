@@ -62,8 +62,7 @@ come from a trusted authentication provider like Google Firebase)."
                               (email-lhs (getf plist :email)))
               :surname (or (getf plist :surname) "")
               :gender :X
-              :lang "en_US")
-             )))
+              :lang "en_US"))))
     (ensure-record 'person-link
                    :person (person-uuid person)
                    :rel :contact
