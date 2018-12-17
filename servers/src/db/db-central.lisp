@@ -274,11 +274,16 @@ ON DUPLICATE KEY UPDATE  ~
              (signal 'update-nil))
            rows)))))
 
+(defun defrecord/record= (name id-accessor)
+  `(defun ,(intern (concatenate 'string name "=")) (a b)
+     ,(format nil "Returns true if A and B represent the same ~A record in the database.")))
+
 (defun defrecord/save-record-with-id-column (name database table columns)
   (when (id-column-for name)
     (let ((id-accessor (intern (concatenate 'string (string name) "-"
                                             (string (id-column-for name))))))
       `(progn
+         ,(defrecord/record= name id-accessor)
          ,(defrecord/save-record name id-accessor database table columns)
          ,(defrecord/destroy-record name id-accessor database table columns)))))
 
