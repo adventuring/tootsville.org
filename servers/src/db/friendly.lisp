@@ -124,12 +124,19 @@
   (energy number)
   (avatar-scale-x number)
   (avatar-scale-y number)
-  (avatar-scale-z number))
+  (avatar-scale-z number)
+  (x number)
+  (y number)
+  (z number)
+  (latitude number)
+  (longitude number)
+  (altitude number)
+  (world keyword))
 
-(defrecord db.inventory-item (:friendly "inventory")
+(defrecord db.inventory-item (:friendly "inventory" :id-column item)
+  (item uuid ref db.item)
   (person uuid ref db.person)
   (toot uuid ref db.toot)
-  (item uuid ref db.item)
   (equipped keyword))
 
 (defrecord db.contact (:friendly "contacts")
@@ -165,4 +172,3 @@
   (destination uuid ref db.toot)
   (message string)
   (mmsp yornp))
-

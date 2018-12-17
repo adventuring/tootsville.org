@@ -35,7 +35,8 @@
    "Which database table contains the data mirrored by the ORM TYPE"))
 (defgeneric id-column-for (type)
   (:documentation
-   "Which column (if any) provides the primary key for TYPE"))
+   "Which column (if any) provides the primary key for TYPE")
+  (:method ((x t)) (declare (ignore x)) nil))
 (defgeneric make-record (type &rest columns+values)
   (:documentation
    "Create a new record of TYPE with initial values COLUMNS+VALUES."))
@@ -267,11 +268,15 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
            ,(defrecord/save-record/insert id-accessor table columns)
            ,(defrecord/save-record/update table columns)))))
 
-(defun defrecord/id-column-for (name columns)
-  (when (or (string-equal "ID" (caar columns))
-            (string-equal "UUID" (caar columns)))
-    `(defmethod id-column-for ((type (eql ',name)))
-       ',(caar columns))))
+(defun defrecord/id-column-for (name columns id-column)
+  (cond
+    (id-column
+     `(defmethod id-column-for ((type (eql ',name)))
+        ',id-column))
+    ((or (string-equal "ID" (caar columns))
+         (string-equal "UUID" (caar columns)))
+     `(defmethod id-column-for ((type (eql ',name)))
+        ',(caar columns)))))
 
 (defun defrecord/destroy-record (name id-accessor database table columns)
   (declare (ignore id-accessor))
@@ -289,10 +294,9 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
            rows)))))
 
 (defun defrecord/save-record-with-id-column (name database table columns)
-  (when (or (string-equal "ID" (caar columns))
-            (string-equal "UUID" (caar columns)))
+  (when (id-column-for name)
     (let ((id-accessor (intern (concatenate 'string (string name) "-"
-                                            (string (caar columns))))))
+                                            (string (id-column-for name))))))
       `(progn
          ,(defrecord/save-record name id-accessor database table columns)
          ,(defrecord/destroy-record name id-accessor database table columns)))))
@@ -325,8 +329,8 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
        (save-record record)
        record)))
 
-(defun defrecord/column-to-json-pair (column)
-
+(defun defrecord/column-to-json-pair (name basename column)
+  
   (list (intern (symbol-munger:lisp->camel-case (first column)) :keyword)
         (list 'jonathan.encode:%to-json
               (list (intern (concatenate 'string
@@ -342,12 +346,11 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
        (jonathan.encode:%to-json
         (list :|isA| ,(symbol-munger:lisp->studly-caps basename)
               ,@(mapcan 
-                 #'defrecord/column-to-json-pair
-                 columns))))))
+                 (curry #'defrecord/column-to-json-pair name basename) columns))))))
 
 
 
-(defmacro defrecord (name (database table &key pull) &rest columns)
+(defmacro defrecord (name (database table &key pull id-column) &rest columns)
   "Define a database-mapping object type NAME, for DATABASE and TABLE, with COLUMNS.
 
 DATABASE  is the  symbolic name  of the  database, mapped  via `CONFIG';
@@ -401,7 +404,7 @@ translates to a LOCAL-TIME:TIMESTAMP on loading.
      (defstruct ,name
        ,@(mapcar #'car columns))
      (defmethod db-table-for ((class (eql ',name))) ,table)
-     ,(defrecord/id-column-for name columns)
+     ,(defrecord/id-column-for name columns id-column)
      ,(defrecord/make-record name)
      ,(defrecord/load-record name columns)
      ,(defrecord/find-record name table columns)
