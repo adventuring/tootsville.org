@@ -36,6 +36,20 @@ The VECTOR should be in big-endian (aka \"network\") order."
 
 
 
+(defun uri-to-uuid (uuid)
+  "Extract a UUID encoded in Base64 in URI form"
+  (uuid:byte-array-to-uuid (cl-base64:base64-string-to-usb8 
+                            (substitute #\/ #\- uuid))))
+
+(defun uuid-to-uri (uuid)
+  "Encode UUID in Base64 and escape for URIs.
+
+Swaps / characters for - characters to be more polite in an URI."
+  (substitute #\- #\/ (cl-base64:usb8-array-to-base64-string
+                       (uuid:uuid-to-byte-array uuid))))
+
+
+
 (defun sha1-hex (string)
   (ironclad:byte-array-to-hex-string
    (ironclad:digest-sequence :sha1
