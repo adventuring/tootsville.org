@@ -222,53 +222,31 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
     (cl-dbi:execute id-query)
     (caar (cl-dbi:fetch-all id-query))))
 
-(defun defrecord/save-record/insert (id-accessor table columns)
-  `(progn
-     ,(when (string-equal (caar columns) "UUID")
-        `(setf (,id-accessor object) (uuid:make-v4-uuid)))
-     (before-save-normalize object)
-     (let* ((query (cl-dbi:prepare
-                    *dbi-connection*
-                    ,(format nil "INSERT INTO `~a` (~{`~a`~^, ~})~
-~:* VALUES (~{?~*~^, ~});"
-                             table
-                             (mapcar (compose #'lisp-to-db-name #'car) columns)))))
-       (v:info :db "Inserting new record ~s" (type-of object))
-       (with-slots ,(mapcar #'car columns) object
-         (cl-dbi:execute query
-                         ,@(mapcar #'column-save-mapping columns))))
-     ,(when (string-equal (caar columns) "ID")
-        `(setf (,id-accessor object) (get-last-insert-id)))))
 
 (define-condition update-nil (condition) ())
-
-(defun defrecord/save-record/update (table columns)
-  `(let ((query (cl-dbi:prepare
-                 *dbi-connection*
-                 ,(format nil "UPDATE `~a` ~
- SET ~{`~a` = ?~^, ~} WHERE `~a` = ?;"
-                          table
-                          (mapcar (compose #'lisp-to-db-name #'car)
-                                  (rest columns))
-                          (lisp-to-db-name (caar columns))))))
-     (with-slots ,(mapcar #'car columns) object
-       (v:info :db "Updating record in ~a ∀ ~a=~a" ,table
-               ,(lisp-to-db-name (caar columns))
-               ,(caar columns))
-       (cl-dbi:execute query
-                       ,@(mapcar #'column-save-mapping (rest columns))
-                       ,(column-save-mapping (car columns)))
-       (let ((rows (cl-dbi:row-count *dbi-connection*)))
-         (when (zerop rows)
-           (signal 'update-nil))
-         rows))))
 
 (defun defrecord/save-record (name id-accessor database table columns )
   `(defmethod save-record ((object ,name))
      (with-dbi (,database)
-       (if (null (,id-accessor object))
-           ,(defrecord/save-record/insert id-accessor table columns)
-           ,(defrecord/save-record/update table columns)))))
+       ,(when (string-equal (caar columns) "UUID")
+          `(setf (,id-accessor object) (uuid:make-v4-uuid)))
+       (before-save-normalize object)
+       (let* ((query (cl-dbi:prepare
+                      *dbi-connection*
+                      ,(format nil "INSERT INTO `~a` (~{`~a`~^, ~})~
+~:* VALUES (~{?~*~^, ~}) ~
+ON DUPLICATE KEY UPDATE  ~
+~{`~a` = ?~^, ~};"
+                               table
+                               (mapcar (compose #'lisp-to-db-name #'car) columns)
+                               (mapcar (compose #'lisp-to-db-name #'car) (rest columns))))))
+         (v:info :db "Saving record ~s" (type-of object))
+         (with-slots ,(mapcar #'car columns) object
+           (cl-dbi:execute query
+                           ,@(mapcar #'column-save-mapping columns)
+                           ,@(mapcar #'column-save-mapping (rest columns)))))
+       ,(when (string-equal (caar columns) "ID")
+          `(setf (,id-accessor object) (get-last-insert-id))))))
 
 (defun defrecord/id-column-for (name columns id-column)
   (cond
