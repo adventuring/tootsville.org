@@ -54,7 +54,7 @@
   (id number)
   (name string))
 
-(defrecord toot (:friendly "toots")
+(defrecord Toot (:friendly "toots")
   (uuid uuid)
   (name string)
   (pattern number ref pattern)
@@ -68,6 +68,9 @@
   (avatar-scale-x number)
   (avatar-scale-y number)
   (avatar-scale-z number))
+
+(defmethod save-record :before ((Toot Toot))
+  (setf (Toot-last-active Toot) (now)))
 
 (defrecord wear-slot (:friendly "wear-slots")
   (id number)
