@@ -249,7 +249,8 @@ ON DUPLICATE KEY UPDATE  ~
                            ,@(mapcar #'column-save-mapping columns)
                            ,@(mapcar #'column-save-mapping (rest columns)))))
        ,(when (string-equal (caar columns) "ID")
-          `(setf (,id-accessor object) (get-last-insert-id))))))
+          `(setf (,id-accessor object) (get-last-insert-id))))
+     object))
 
 (defun defrecord/id-column-for (name columns id-column)
   (cond
