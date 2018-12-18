@@ -88,7 +88,7 @@
   (slot keyword)
   (valence number))
 
-(defrecord item-template (:friendly "item_templates")
+(defrecord item-template (:friendly "item_templates" :pull t)
   (id number)
   (name string)
   (default-base-color color24)
@@ -123,7 +123,7 @@
 (defrecord inventory-item (:friendly "inventory" :id-column item)
   (item uuid ref item)
   (person uuid ref person)
-  (toot uuid ref toot)
+  (Toot uuid ref Toot)
   (equipped keyword))
 
 (defrecord contact (:friendly "contacts")
@@ -134,7 +134,7 @@
   (added timestamp)
   (last-used timestamp))
 
-(defrecord music (:friendly "music")
+(defrecord music (:friendly "music" :pull t)
   (id number)
   (title string)
   (artist string)
@@ -142,11 +142,13 @@
   (license string)
   (moniker string))
 
-(defrecord character-music (:friendly "character_music")
+(defrecord character-music (:friendly "character_music"
+                                      :pull t)
   (music number ref music)
-  (toot uuid ref toot))
+  (Toot uuid ref Toot))
 
-(defrecord locale-music (:friendly "locale_music")
+(defrecord locale-music (:friendly "locale_music"
+                                   :pull t)
   (music number ref music)
   (x number)
   (y number) 
@@ -155,7 +157,7 @@
 
 (defrecord sms (:friendly "sms")
   (uuid uuid)
-  (sender uuid ref toot)
-  (destination uuid ref toot)
+  (sender uuid ref Toot)
+  (destination uuid ref Toot)
   (message string)
   (mmsp yornp))
