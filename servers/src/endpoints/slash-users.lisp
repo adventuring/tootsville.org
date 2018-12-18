@@ -104,11 +104,41 @@ Returns the Toot's information upon success.
 
 See GET /users/me/toots/:toot-name for the format.
 
+@subsection{Status: 200 OK}
+
+Toot already existed, no changes will be made.
+
 @subsection{Status: 307 Redirect}
 If the Toot had been previously created, returns a redirect (307)."
   (with-user ()
-    (assert-my-character Toot-name)
-    (list 201 nil (Toot-info (find-Toot-by-name Toot-name)))))
+    (if-let (pre-x (ignore-errors (find-record 'Toot :name Toot-name)))
+      (progn (assert-my-character pre-x)
+             (list 200 nil (Toot-info pre-x)))
+      (let* ((pattern (hunchentoot:parameter "pattern"))
+             (pattern-color (hunchentoot:parameter "pattern-color"))
+             (base-color (hunchentoot:parameter "base-color"))
+             (pad-color (hunchentoot:parameter "pad-color")))
+        (check-type pattern Toot-pattern-name)
+        (check-type pattern-color Toot-pattern-color-name)
+        (check-type base-color Toot-base-color-name)
+        (check-type pad-color Toot-pad-color-name)
+        (check-pattern-on-base-color pattern-color base-color)
+        (let ((new-Toot 
+               (make-record
+                'Toot
+                :name Toot-name
+                :avatar 1 ; UltraToot
+                :pattern pattern
+                :base-color base-color
+                :pattern-color pattern-color
+                :pad-color pad-color
+                :player (person-uuid *user*)
+                :last-active (now)
+                :note (or (hunchentoot:parameter "note") "")
+                :avatar-scale-x 1.0
+                :avatar-scale-y 1.0
+                :avatar-scale-z 1.0)))
+          (list 201 nil (Toot-info new-Toot)))))))
 
 (defendpoint (get "/users/me/toots/:toot-name" "application/json")
   "Gives detailed information about your Toot character TOOT-NAME.
