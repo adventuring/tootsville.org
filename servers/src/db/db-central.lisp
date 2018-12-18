@@ -126,13 +126,14 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:timestamp (let ((τ value))
                   (etypecase τ
                     (null nil)
-                    (integer (unix-to-timestamp τ))
+                    (integer (universal-to-timestamp τ))
                     (string (if (equalp τ "0000-00-00")
                                 nil
                                 (parse-timestring (substitute #\T #\Space τ))))
                     (vector (if (equalp τ #(48 48 48 48 45 48 48 45 48 48))
                                 nil
-                                (parse-timestring (substitute #\T #\Space (map 'string #'code-char τ))))))))))
+                                (parse-timestring 
+                                 (substitute #\T #\Space (map 'string #'code-char τ))))))))))
 
 
 
