@@ -9,7 +9,7 @@
              #:play-digits
              #:dial
              #:record
-             #:gather
+             #:with-gather
              ;; ——
              #:hangup
              #:enqueue
