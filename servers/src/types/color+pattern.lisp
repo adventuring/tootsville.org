@@ -15,21 +15,21 @@
   '(and string-designator
     (satisfies Toot-base-color-name-p)))
 
-(define-constant +Toot-pads-color-names+
+(define-constant +Toot-pad-color-names+
     '(Cyan Indigo Pink Red "Spring Green" Violet White Yellow)
   :test #'equalp
-  :documentation "Named colors allowed as Toot pads colors")
+  :documentation "Named colors allowed as Toot pad colors")
 
-(define-memo-function Toot-pads-color-name-p (string-designator)
+(define-memo-function Toot-pad-color-name-p (string-designator)
   "Is STRING-DESIGNATOR a color that can be used for foot pads and trunk tips"
   (check-type string-designator string-designator)
-  (member string-designator +Toot-pads-color-names+
+  (member string-designator +Toot-pad-color-names+
           :test #'string-equal))
 
-(deftype Toot-pads-color-name ()
+(deftype Toot-pad-color-name ()
   "A color name that can be used for Toot foot pads and nose tip"
   '(and string-designator
-    (satisfies Toot-pads-color-name-p)))
+    (satisfies Toot-pad-color-name-p)))
 
 (define-constant +Toot-pattern-color-names+
     '(Black Cyan Indigo Orange Pink Rainbow Turquoise Violet White Yellow)
@@ -83,7 +83,7 @@
 
 
 (defun check-pattern-on-base-color (pattern-color base-color
-                                    &key Toot-name pads-color pattern address)
+                                    &key Toot-name pad-color pattern address)
   (tagbody do-over
      (restart-case
          (progn
@@ -92,10 +92,10 @@
            (when (equal pattern-color base-color)
              (error "A Toot may not have the same base and pattern color; currently, both are ~:(~a~)~
 ~@[, with a pattern of ~:(~a~)~]~
-~@[, and pads color of ~:(~a~)~]~
+~@[, and pad color of ~:(~a~)~]~
 ~@[ for the Toot named ~a~]~
 ~@[ (player with e-mail ~a)~]."
-                    base-color pattern pads-color Toot-name address))
+                    base-color pattern pad-color Toot-name address))
            (list pattern-color base-color))
        (change-pattern-color (color)
          :report (lambda (s)
