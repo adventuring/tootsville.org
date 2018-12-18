@@ -28,6 +28,15 @@
                          :uid id
                          :provider provider))))
 
+(defun find-person-by-url (url &optional more)
+  (when-let (link (handler-case 
+                      (find-record 'person-link
+                                   :url (reduce (curry #'concatenate 'string) url more))
+                    (not-found (c)
+                      (declare (ignore c))
+                      nil)))
+    (find-record 'person :uuid (person-link-person link))))
+
 (defun person-links-to-email (email)
   (find-records 'person-link
                 :url
