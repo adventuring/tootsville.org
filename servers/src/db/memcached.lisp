@@ -50,7 +50,7 @@
   (handler-case
       (cl-memcached::mc-quick-test)
     (cl-memcached::memcached-server-unreachable (c)
-      (warn c))))
+      (warn (princ-to-string c)))))
 
 (defpost memcached-random-number-test ()
   "Store and fetch a random number"
@@ -64,4 +64,4 @@
                   n key))
         (cl-memcached:mc-del key))
     (cl-memcached::memcached-server-unreachable (c)
-      (warn c))))
+      (warn (princ-to-string c)))))
