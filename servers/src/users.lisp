@@ -246,3 +246,8 @@ limitations under the License. |#
                               parameters
                               :utf-8 #'drakma:url-encode))
                      +gravatar-base-uri+)))
+
+
+(defun person-is-patron-p (person)
+  ;; just me ☹
+  (eql (uuid-to-uri (person-uuid person)) "SAsJFzx6TRO1W6pWEFxeAA=="))
