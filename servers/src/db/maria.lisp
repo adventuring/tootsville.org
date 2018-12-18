@@ -49,20 +49,22 @@ Signal  an  error if more rows are returned.
 Signals NOT-FOUND if none are found.
 
 Uses MemCacheD when available."
-  (let ((results
-         (with-dbi (*db*)
-           (destructuring-bind (columns values) (split-plist columns+values)
-             (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
-                                           (build-simple-column-query
-                                            table column columns)))
-                    (result-set (apply #'cl-dbi:execute query values)))
-               (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
-                 (cl-dbi:fetch-all result-set)))))))
-    (cond ((= 1 (length results))
-           (caar results))
-          ((zerop (length results))
-           (error 'not-found :the (cons table columns+values)))
-          (t (error "Found ~p record~:p when expecting one" (length results))))))
+  (destructuring-bind (table &key pull)
+      (if (consp table) table (list table))
+    (let ((results
+           (with-dbi (*db*)
+             (destructuring-bind (columns values) (split-plist columns+values)
+               (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
+                                             (build-simple-column-query
+                                              table column columns)))
+                      (result-set (apply #'cl-dbi:execute query values)))
+                 (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
+                   (cl-dbi:fetch-all result-set)))))))
+      (cond ((= 1 (length results))
+             (caar results))
+            ((zerop (length results))
+             (error 'not-found :the (cons table columns+values)))
+            (t (error "Found ~p record~:p when expecting one" (length results)))))))
 
 (defun db-select-single-record (table &rest columns+values)
   "Select a single record from TABLE where columns = values as in COLUMNS+VALUES.
@@ -73,13 +75,16 @@ it's available.
 Signals an error if more than one record is returned.
 
 Signals NOT-FOUND if none are found."
-  (let ((results (apply #'db-select-records-simply table columns+values)))
-    (cond ((= 1 (length results))
-           (first results))
-          ((zerop (length results))
-           (error 'not-found :the (cons table columns+values)))
-          (t (error "Found ~p record~:p when expecting one" (length results))))
-    (first results)))
+  (destructuring-bind (table &key pull)
+      (if (consp table) table (list table))
+    (let ((results (apply #'db-select-records-simply (list table :pull pull)
+                          columns+values)))
+      (cond ((= 1 (length results))
+             (first results))
+            ((zerop (length results))
+             (error 'not-found :the (cons table columns+values)))
+            (t (error "Found ~p record~:p when expecting one" (length results))))
+      (first results))))
 
 (defun db-select-records-simply (table &rest columns+values)
   "Query TABLE where columns = values from the plist COLUMNS+VALUES.
@@ -87,19 +92,21 @@ Signals NOT-FOUND if none are found."
 Returns all results in a list, so don't use it with a (potentially) large set.
 
 Uses MemCache when available."
-  (with-dbi (*db*)
-    (if columns+values
-        (destructuring-bind (columns values) (split-plist columns+values)
+  (destructuring-bind (table &key pull)
+      (if (consp table) table (list table))
+    (with-dbi (*db*)
+      (if columns+values
+          (destructuring-bind (columns values) (split-plist columns+values)
+            (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
+                                          (build-simple-query table columns)))
+                   (result-set (apply #'cl-dbi:execute query values)))
+              (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
+                (cl-dbi:fetch-all result-set))))
           (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
-                                        (build-simple-query table columns)))
-                 (result-set (apply #'cl-dbi:execute query values)))
-            (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
-              (cl-dbi:fetch-all result-set))))
-        (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
-                                      (format nil "SELECT * FROM `~a`" table)))
-               (result-set (cl-dbi:execute query)))
-          (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) nil)
-            (cl-dbi:fetch-all result-set))))))
+                                        (format nil "SELECT * FROM `~a`" table)))
+                 (result-set (cl-dbi:execute query)))
+            (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) nil)
+              (cl-dbi:fetch-all result-set)))))))
 
 (defmacro do-db-records-simply ((record-var table &rest columns+values)
                                 &body body)
