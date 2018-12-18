@@ -95,7 +95,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
              (uuid:uuid (subseq (cl-base64:usb8-array-to-base64-string
                                  (uuid:uuid-to-byte-array value))
                                 0 22))))
-    (:timestamp (and value (timestamp-to-unix value)))))
+    (:timestamp (and value (substitute #\Space #\T (format-timestring nil value))))))
 
 (defun column-load-value (value type)
   "For a column of TYPE, interpret raw VALUE"
