@@ -234,3 +234,9 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
     (if-let (as (assoc n +color24-values+))
       (cdr as)
       (format nil "~6,'0x" n))))
+
+(defmethod print-object ((object color24) stream)
+  (princ "(Parse-Color24 \"" stream)
+  (princ (color24-name object) stream)
+  (princ "\")" stream)
+  nil)
