@@ -47,15 +47,21 @@
 
 (defpost memcached-quick-test ()
   "Quick test provided by CL-MemCacheD library"
-  (cl-memcached::mc-quick-test))
+  (handler-case
+      (cl-memcached::mc-quick-test)
+    (cl-memcached::memcached-server-unreachable (c)
+      (warn c))))
 
 (defpost memcached-random-number-test ()
   "Store and fetch a random number"
-  (let ((n (princ-to-string (random (expt 2 63))))
-        (key (format nil "~a.~a" (machine-instance) (cluster-name))))
-    (cl-memcached:mc-set key n)
-    (let ((m (cl-memcached:mc-get key)))
-      (assert (= n m) ()
-              "MemCacheD did not return the random number (~x) for key ~a"
-              n key))
-    (cl-memcached:mc-del key)))
+  (handler-case
+      (let ((n (princ-to-string (random (expt 2 63))))
+            (key (format nil "~a.~a" (machine-instance) (cluster-name))))
+        (cl-memcached:mc-set key n)
+        (let ((m (cl-memcached:mc-get key)))
+          (assert (= n m) ()
+                  "MemCacheD did not return the random number (~x) for key ~a"
+                  n key))
+        (cl-memcached:mc-del key))
+    (cl-memcached::memcached-server-unreachable (c)
+      (warn c))))
