@@ -73,11 +73,13 @@
             "Credentials token is from a future user authentication. You must be punished for violating causality.")
     (assert (string= (getf :|aud| payload) (config :firebase :project-id)) (token)
             "Credentias token was not for us (we are not its audience)")
+    ;; TODO: verify token |iss|uer as well?
+    ;; TODO: verify token |azp| as well?
     (assert (stringp sub) (token)
             "Credentials token subject should be a string")
     (assert (< 4 (length sub) 256) (token)
             "Credentials token subject length seems improper.")
-    (cljwt-custom:verify jwt
+    (cljwt-custom:verify token
                          (getf (getf :|kid| header) (get-google-account-keys))
                          :rs256
                          :fail-if-unsecured t
