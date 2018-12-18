@@ -230,7 +230,8 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
   `(defmethod save-record ((object ,name))
      (with-dbi (,database)
        ,(when (string-equal (caar columns) "UUID")
-          `(setf (,id-accessor object) (uuid:make-v4-uuid)))
+          `(when (null (,id-accessor object))
+             (setf (,id-accessor object) (uuid:make-v4-uuid))))
        (before-save-normalize object)
        (let* ((query (cl-dbi:prepare
                       *dbi-connection*
