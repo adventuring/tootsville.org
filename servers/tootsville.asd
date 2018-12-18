@@ -100,6 +100,7 @@ REST services for the front-end."
                            (:file "maria" :depends-on ("memcached"))
                            (:file "db-central" :depends-on ("maria"))
                            (:file "friendly" :depends-on ("db-central"))))
+     (:file "lib/twilio/twilio-simple")
      (:module "auth"
               :depends-on ("package-post" "users")
               :components
@@ -121,7 +122,7 @@ REST services for the front-end."
         "gossip"
         :depends-on ("slash-gossip")
         :components 
-        ((file "twilio")
+        ((:file "twilio")
          (:module
           "alexa"
           :components
