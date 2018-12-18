@@ -275,8 +275,14 @@ ON DUPLICATE KEY UPDATE  ~
            rows)))))
 
 (defun defrecord/record= (name id-accessor)
-  `(defun ,(intern (concatenate 'string name "=")) (a b)
-     ,(format nil "Returns true if A and B represent the same ~A record in the database.")))
+  (let (($fname (intern (concatenate 'string (string name) "="))))
+    `(defun ,$fname (a b &rest more)
+       ,(format nil
+                "Returns true if A and B represent the same ~A record in the database."
+                (symbol-munger:lisp->english name))
+       (if more 
+           (and (,$fname a b) (apply ,$fname a more))
+           (equalp (,id-accessor a) (,id-accessor b))))))
 
 (defun defrecord/save-record-with-id-column (name database table columns)
   (when (id-column-for name)
