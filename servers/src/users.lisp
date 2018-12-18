@@ -242,6 +242,7 @@ limitations under the License. |#
     (when rating (push `("r" . ,(string-downcase rating)) parameters))
     (puri:merge-uris (format nil "avatar/~a~@[?~a~]"
                              (gravatar-hash email)
-                             (drakma::alist-to-url-encoded-string parameters
-                                                                  :utf-8 #'drakma:url-encode))
+                             (drakma::alist-to-url-encoded-string
+                              parameters
+                              :utf-8 #'drakma:url-encode))
                      +gravatar-base-uri+)))
