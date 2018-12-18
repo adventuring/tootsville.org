@@ -118,6 +118,7 @@ If the Toot had been previously created, returns a redirect (307)."
              (pattern-color (hunchentoot:parameter "pattern-color"))
              (base-color (hunchentoot:parameter "base-color"))
              (pad-color (hunchentoot:parameter "pad-color")))
+        ;; TODO: assert that player doesn't  have too many Toots
         (check-type pattern Toot-pattern-name)
         (check-type pattern-color Toot-pattern-color-name)
         (check-type base-color Toot-base-color-name)
