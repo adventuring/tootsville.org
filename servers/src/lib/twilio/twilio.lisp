@@ -10,7 +10,7 @@
 ;;; https://github.com/twilio/twilio-ruby  and  therefore  inherits  its
 ;;; license:
 ;;;
-;;; 
+;;;
 ;;; MIT License
 ;;;
 ;;; Copyright © 2018, Twilio, Inc. help@twilio.com
@@ -25,7 +25,7 @@
 ;;;
 ;;; The  above copyright  notice  and this  permission  notice shall  be
 ;;; included in all copies or substantial portions of the Software.
-;;; 
+;;;
 ;;; THE  SOFTWARE IS  PROVIDED "AS  IS", WITHOUT  WARRANTY OF  ANY KIND,
 ;;; EXPRESS OR IMPLIED,  INCLUDING BUT NOT LIMITED TO  THE WARRANTIES OF
 ;;; MERCHANTABILITY,    FITNESS   FOR    A   PARTICULAR    PURPOSE   AND
@@ -41,7 +41,7 @@
 
 (defclass rest-domain ()
   ((client :accessor rest-domain-client
-           :initarg :client 
+           :initarg :client
            :initform (error ":CLIENT required"))
    (host)
    (base-url)
@@ -61,7 +61,7 @@
                  uri
                  (absolute-url domain uri))))
     (with-slots (host port client) domain
-      (apply #'http-request 
+      (apply #'http-request
              client host port method url
              key-args))))
 
@@ -185,10 +185,10 @@
   (let ((key (concatenate 'string (string-downcase direction) "_page_url"))
         (url-fn (intern (concatenate 'string (string direction) #:-page-url)))
         (go-fn (intern (concatenate 'string (string direction) #:-page-url)))))
-  `(progn 
+  `(progn
      (defun ,url-fn (page)
        (let ((payload (page-payload page)))
-         (if-let (url (and (extract payload "meta") 
+         (if-let (url (and (extract payload "meta")
                            (extract payload "meta" ,key)))
            (absolute-url (version-domain (page-version page)) url)
            (when-let ((url (extract payload ,key)))
@@ -232,7 +232,7 @@
 ~@[?~{~/cgi-escape/:~/cgi-escape/~^&~} ~]~
 ~%~@[ -G~]
 ~@[~{-d \"~a\"=\"~a\"~^~%~}~]~
-~@[~%~{-H \"~a\"=\"~a\"~^~%~}~]" 
+~@[~%~{-H \"~a\"=\"~a\"~^~%~}~]"
             auth method url
             params
             (equal "GET" method)
@@ -245,7 +245,7 @@
 
 (defclass response ()
   ((status-code :accessor response-status-code :initarg :status-code)
-   (body :accessor response-body :initarg :body) 
+   (body :accessor response-body :initarg :body)
    (headers :accessor response-headers :initarg :headers)))
 
 (defun make-response (status-code body &optional headers)

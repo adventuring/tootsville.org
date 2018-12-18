@@ -7,7 +7,7 @@
 
 
 (defsystem Tootsville
-  :version "0.3.16"
+  :version "0.3.17"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
   :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
@@ -20,8 +20,8 @@ REST services for the front-end."
   :depends-on (
 
                ;; systems from Quicklisp
-
                :bordeaux-threads
+               :cl-base64
                :cl-dbi
                :cl-memcached
                :cl-ppcre
@@ -32,6 +32,8 @@ REST services for the front-end."
                :drakma
                :envy
                :fare-memoization
+               :hunchentoot
+               :hunchensocket
                :jonathan
                :pngload
                :swank
@@ -54,37 +56,51 @@ REST services for the front-end."
     :components
     ((:file "lib/Chœrogryllum/Chœrogryllum")
      (:file "package")
-     (:file "utils" :depends-on ("package"))
-     (:file "types" :depends-on ("utils"))
-     (:file "config" :depends-on ("package" "types"))
+     (:file "utils" :depends-on ("package-post"))
+     (:module "types" :depends-on ("utils")
+              :components ((:file "binary")
+                           (:file "color+pattern")
+                           (:file "date+time")
+                           (:file "http-types")
+                           (:file "string-characteristics")
+                           (:file "uri-types")
+                           (:file "toot-names")))
+     (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
-     (:file "ldap-player" :depends-on ("package"))
-     (:file "users" :depends-on ("utils" "ldap-player"))
+     (:file "browser" :depends-on ("config"))
+     (:file "users" :depends-on ("utils"))
+     (:file "contacts" :depends-on ("utils"))
+     (:file "items" :depends-on ("utils"))
      (:file "toots" :depends-on ("utils" "users"))
      (:file "players" :depends-on ("utils" "users"))
-     (:file "errors" :depends-on ("package"))
-     (:file "terrain" :depends-on ("package"))
-     (:file "version" :depends-on ("package" "config"))
-     (:file "logging" :depends-on ("package" "version"))
-     (:file "write-docs" :depends-on ("package"))
-     (:file "power-on-self-test" :depends-on ("web" "endpoints"))
+     (:file "errors" :depends-on ("package-post"))
+     (:file "terrain" :depends-on ("package-post"))
+     (:file "version" :depends-on ("package-post" "config"))
+     (:file "logging" :depends-on ("package-post" "version"))
+     (:file "write-docs" :depends-on ("package-post"))
+     (:file "power-on-self-test" :depends-on ("package"))
+     (:file "package-post" :depends-on ("power-on-self-test"))
      (:file "command-line" :depends-on ("main" "logging" "write-docs"))
-     (:file "endpoint" :depends-on ("package"))
+     (:file "endpoint" :depends-on ("package-post"))
      (:file "web"
             :depends-on ("view" "players" "errors" "config" "endpoint"))
      (:file "http-error" :depends-on ("web"))
      (:file "redirect" :depends-on ("web"))
-     (:file "http-status-messages" :depends-on ("package"))
+     (:file "ws")
+     (:file "gossip" :depends-on ("db"))
+     (:file "http-status-messages" :depends-on ("package-post"))
      (:file "acceptor" :depends-on ("types" "endpoint" "web" "auth"
                                             "http-status-messages"))
-     (:file "main" :depends-on ("config" "view" "package" "acceptor"))
+     (:file "main" :depends-on ("config" "view" "package-post" "acceptor"))
      (:module "db"
-              :depends-on ("package")
-              :components ((:file "db-pool")
-                           (:file "db-central" :depends-on ("db-pool"))
+              :depends-on ("package-post")
+              :components ((:file "memcached")
+                           (:file "couch")
+                           (:file "maria" :depends-on ("memcached"))
+                           (:file "db-central" :depends-on ("maria"))
                            (:file "friendly" :depends-on ("db-central"))))
      (:module "auth"
-              :depends-on ("package" "users")
+              :depends-on ("package-post" "users")
               :components
               ((:file "auth-firebase")))
      (:module

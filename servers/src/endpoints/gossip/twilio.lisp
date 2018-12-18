@@ -15,7 +15,7 @@
                                  :state (hunchentoot:parameter "ToState")
                                  :postal-code (hunchentoot:parameter "ToZip")
                                  :country (hunchentoot:parameter "ToCountry")))
-         message-media-type 
+         message-media-type
          message-media-url)
      (let ((num-media (parse-integer (hunchentoot:parameter "NumMedia"))))
        (when (< 0 num-media)
@@ -28,25 +28,25 @@
 
 
 (defendpoint (post "/gossip/twilio/incoming/call" "text/xml")
-    "Respond to a phone call to NUMBER at Twilio.
+  "Respond to a phone call to NUMBER at Twilio.
 
 Someone has called us at NUMBER, and  Twilio needs to know how to reply.
 Send an XML (TwiML) response."
   (with-twilio-params ()
     (cxml:with-xml-output (cxml:make-octet-vector-sink)
       (cxml:with-element "Response"
-                         (cxml:with-element "Message" 
-                                            
-                                            (cxml:text 
-                                             
-                                             "Hello,   you   have   reached   the
+        (cxml:with-element "Message"
+
+          (cxml:text
+
+           "Hello,   you   have   reached   the
 Corporation for Inter-World Tourism and Adventuring, the not-for-profit company
 that maintains Tootsville."))))))
 
 
 
 (defendpoint (post "/gossip/twilio/incoming/fax" "text/xml")
-    "Respond to a fax call to NUMBER at Twilio.
+  "Respond to a fax call to NUMBER at Twilio.
 
 Someone has faxxed us at NUMBER, and  Twilio needs to know how to reply.
 Send an XML (TwiML) response."
@@ -56,7 +56,7 @@ Send an XML (TwiML) response."
 
 
 (defendpoint (post "/gossip/twilio/incoming/sms" "text/xml")
-    "Respond to an SMS or MMS message to NUMBER at Twilio.
+  "Respond to an SMS or MMS message to NUMBER at Twilio.
 
 Someone  has messaged  us at  NUMBER, and  Twilio needs  to know  how to
 reply. Send an XML (TwiML) response."
@@ -66,7 +66,7 @@ reply. Send an XML (TwiML) response."
 
 
 (defendpoint (post "/gossip/twilio/incoming/whatsapp" "text/xml")
-    "Respond to a WhatsApp message to NUMBER at Twilio.
+  "Respond to a WhatsApp message to NUMBER at Twilio.
 
 Someone  has messaged  us at  NUMBER, and  Twilio needs  to know  how to
 reply. Send an XML (TwiML) response."
@@ -76,12 +76,10 @@ reply. Send an XML (TwiML) response."
 
 
 (defendpoint (post "/gossip/twilio/incoming/verify" "text/xml")
-    "Check a Verify code from a user's phone.
+  "Check a Verify code from a user's phone.
 
 We have sent a Verify code  to someone through Twilio. They have replied
 by entering  that code, which  we now need  to verify through  the Authy
 Verify endpoint."
   (with-twilio-params ()
     (error 'unimplemented)))
-
-

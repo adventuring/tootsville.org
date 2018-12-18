@@ -51,13 +51,13 @@ a moment and try that again.~%" c)
       (stop))))
 
 
-(defun power-on-self-test (&key (exitp t))
+(defun power-on-self-test (&key (exitp nil))
   "Perform some sanity checking as a part of testing.
 
 This testing should  be much more complete  than it really is  — it will
 need to be expanded a great deal to increase confidence in these tests."
   (format t "~2&Starting Power-On Self-Test … ~a" (now))
-  (let ((warnings 0) (serious 0) (errors 0))
+  (let ((warnings 0) (serious 0) (errors 0) (started (get-internal-real-time)))
     (dolist (test *post-tests-queue*)
       (handler-case
           (funcall test)
@@ -73,15 +73,17 @@ need to be expanded a great deal to increase confidence in these tests."
           (format *error-output* "~&SERIOUS-CONDITION: ~s~%~:*~A" c)
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf serious))))
-    (format t "~&Power-On Self Test completed ~a with ~
+    (format t "~&~a~%Power-On Self Test completed in ~a with ~
  ~[no errors~; ~:*~r error~:p~],
 ~[no other serious conditions~;~:*~r other serious condition~:p~], ~
  and~[ no warnings~; ~:*~r warning~:p~].~&"
-            (now) errors serious warnings)
+            (now)
+            (human-duration (/ (- (get-internal-real-time) started) internal-time-units-per-second))
+            errors serious warnings)
     (cond ((or (and (eql :prod (cluster)) (plusp errors))
-               (> serious 6)
-               (> errors 4)
-               (> warnings 8))
+               (> serious 3)
+               (> errors 0)
+               (> warnings 9))
            (princ "POST Failed")
            (if exitp
                (cl-user::exit :code 27 :abort t :timeout 5)

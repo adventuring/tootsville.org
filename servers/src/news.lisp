@@ -65,8 +65,9 @@ headlines on Tootsbook."
                       :start (first-elt reg-starts) :end (first-elt reg-ends)
                       :radix 10))))))
 
-(assert (string= (unescape-& "We&#8217;ve")
-                 "We’ve"))
+(defpost FIXME-NAME ()
+  (string= (unescape-& "We&#8217;ve")
+           "We’ve"))
 
 (defun get-text-of-element (node element)
   "Extracts  the  text  under  the  given ELEMENT  type  under  NODE  as

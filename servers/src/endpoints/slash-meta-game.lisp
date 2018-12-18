@@ -347,5 +347,5 @@ in transit."
               (alist-plist (hunchentoot::headers-in*)))))
 
 (defendpoint (get "/meta-game/ping" "text/plain")
-  "This endpoint always returns the 4-character string: @samp{pong}"
-  (list 200 () "pong"))
+  "This endpoint always returns the 6-character string: @samp{\"pong\"}"
+  (list 200 () "\"pong\""))

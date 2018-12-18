@@ -4,20 +4,13 @@
   "How  often (in  sec)  to  refresh the  Google  account  keys used  in
   Firebase authentication verification?")
 
-(defun http-fetch-json (uri &rest drakma-options)
-  (jonathan.decode:parse
-   (map 'string #'code-char
-        (apply #'drakma:http-request uri :accept "application/json" 
-               drakma-options))))
-
 (defun subheader-field (header-assoc label)
   (when header-assoc
     (let* ((label* (concatenate 'string label ":"))
            (len (length label*))
            (finds 
-            (mapcar #'second
-                    (split-sequence
-                     ":"
+            (mapcar
+             (compose #'second (curry #'split-sequence #\:))
                      (remove-if-not 
                       (lambda (section)
                         (and (> (length section) len)
@@ -25,7 +18,7 @@
                                            :end2 len)))
                       (mapcar 
                        (curry #'string-trim +whitespace+)
-                       (split-sequence ";" (cdr header-assoc))))))))
+               (split-sequence #\, (cdr header-assoc)))))))
       (case (length finds)
         (0 nil)
         (1 (string-trim +whitespace+ (first finds)))
@@ -33,55 +26,82 @@
                          (car header-assoc) label)
                    (string-trim +whitespace+ (first finds)))))))
 
+(defpost subheader-field-parses ()
+  (equal "123"
+         (subheader-field '(:cache-control . "max-age: 123, foo: bar")
+                          "max-age")))
+
+(defun compute-next-keys-update (headers-alist)
+  (timestamp+ (now)
+              (or (when-let ((n (subheader-field (assoc :cache-control
+                                                        headers-alist)
+                                                 "max-age")))
+                    (parse-integer n))
+                  *google-account-keys-refresh*)
+              :sec))
+
+(defun bytes-json (json-bytes)
+  (jonathan.decode:parse
+   (map 'string #'code-char json-bytes)))
+
+(defun http-is-success-p (http-status)
+  (typep http-status 'http-response-success-status-number))
+
 (let ((keys nil)
       (keys-update-next (timestamp- (now) 1 :year)))
   (defun get-google-account-keys ()
     (when (timestamp< (now) keys-update-next)
       (return-from get-google-account-keys keys))
     (multiple-value-bind 
-          (json-data http-status headers-alist reply-uri 
-                     reply-stream stream-close-p status-message)
+          (json-bytes http-status headers-alist reply-uri)
         (drakma:http-request
          "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
          :accept "application/json")
-      (when (<= 200 http-status 299)
-        (setf keys-update-next 
-              (timestamp+ (now)
-                          (or (let ((n (subheader-field (assoc :cache-control
-                                                               headers-alist)
-                                                        "max-age")))
-                                (parse-integer n))
-                              *google-account-keys-refresh*)
-                          :seconds)
-              keys (jonathan.decode:parse
-                    (map 'string #'code-char json-data)))))))
+      (when (http-is-success-p http-status)
+        (assert (string-ends ".googleapis.com"
+                             (puri:uri-host (puri:parse-uri reply-uri)))
+                (reply-uri)
+                "Google Firebase keys query did not come from GoogleAPIs.com ~
+ — could this be a man-in-the-middle attack?")
+        (setf keys (bytes-json json-bytes)
+              keys-update-next
+              (compute-next-keys-update headers-alist))
+        (v:info '(:auth :firebase :google-account-keys)
+                "Fetched ~r Google account key~:p; next refetch ~a"
+                (/ (length keys) 2)
+                keys-update-next)
+        keys))))
 
 (defun check-firebase-id-token (token)
-  (let* (header
-         payload
-         (sub (getf :|sub| payload)))
-    (assert (string= "RS256" (getf :|alg| header)) (token)
-            "Credentials token does not have a permitted algorithm")
-    (assert (member (getf :|kid| header) (plist-keys (get-google-account-keys)))
-            (token)
-            "Credentials token does not have a recognized signing key ID")
-    (assert (> (getf :|exp| payload) (timestamp-to-unix (now))) (token)
-            "Credentials token has expired")
-    (assert (< (getf :|iat| payload) (timestamp-to-unix (now))) (token)
-            "Credentials token will be issued in the future. You must be punished for violating causality.")
-    (assert (< (getf :|auth_time| payload) (timestamp-to-unix (now))) (token)
-            "Credentials token is from a future user authentication. You must be punished for violating causality.")
-    (assert (string= (getf :|aud| payload) (config :firebase :project-id)) (token)
-            "Credentias token was not for us (we are not its audience)")
-    ;; TODO: verify token |iss|uer as well?
-    ;; TODO: verify token |azp| as well?
-    (assert (stringp sub) (token)
-            "Credentials token subject should be a string")
-    (assert (< 4 (length sub) 256) (token)
-            "Credentials token subject length seems improper.")
-    (cljwt-custom:verify token
-                         (getf (getf :|kid| header) (get-google-account-keys))
-                         :rs256
+  (multiple-value-bind (claims header digest claims$ header$)
+      (cljwt-custom:unpack token)
+    (declare (ignore digest claims$ header$))
+    (let ((google-account-keys (get-google-account-keys)))
+      (multiple-value-bind (payload-claims payload-header)
+          (ignore-errors ; FIXME actually check the token!
+            (cljwt-custom:verify token
+                                 (extract google-account-keys
+                                          (make-keyword (gethash "kid" header)))
+                                 (gethash "alg" header)
                          :fail-if-unsecured t
-                         :fail-if-unsupported t)
-    sub))
+                                 :fail-if-unsupported t)))
+      #+ (or) (assert (> (gethash "exp" header) (timestamp-to-unix (now))) (token)
+                      "Credential token has expired")
+      #+ (or) (assert (< (gethash "iat" header) (timestamp-to-unix (now))) (token)
+                      "Credential token will be issued in the future. ~
+You must be punished for violating causality.")
+      ;;       (assert      (<     (gethash      "auth_time"     header)
+      ;;               (timestamp-to-unix  (now)))  (token)  "Credential
+      ;;               token is from a future user authentication. ~ You
+      ;;               must  be  punished   for  violating  causality.")
+      ;;               (assert    (string=   (gethash    "aud"   header)
+      ;;               (config    :firebase     :project-id))    (token)
+      ;;               "Credential token was not for  us (we are not its
+      ;;               audience)")
+
+      (list :credentials (append (hash-table-plist (extract claims "firebase" "identities"))
+                                 (list "firebase" (list (gethash "sub" claims))))
+            :email (gethash "email" claims)
+            :email-verified-p (gethash "email_verified" claims)
+            :name (gethash "name" claims)
+            :picture (gethash "picture" claims)))))

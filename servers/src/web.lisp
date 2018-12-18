@@ -1,5 +1,4 @@
 (in-package :Tootsville)
-
 
 
 (defun accepts-content-type-p (content-type)
@@ -32,6 +31,7 @@ as well.)"
 
 
 (defun contents-to-bytes (contents)
+  "Convert CONTENTS to a sequence of 8-bit bytes"
   (etypecase contents
     (string (flexi-streams:string-to-octets contents :external-format :utf-8))
     (vector contents)
@@ -39,6 +39,7 @@ as well.)"
                                           :external-format :utf-8))))
 
 (defun encode-endpoint-reply (reply)
+  "Handle the reply from an endpoint function gracefully."
   (let ((content-bytes #()))
     (cond
       ((stringp reply)
@@ -75,6 +76,7 @@ as well.)"
 (eval-when (:compile-toplevel :load-toplevel :execute)
 
   (defun apply-extension-to-template (template extension)
+    "Create a clone of TEMPLATE with EXTENSION."
     (if template
         (let ((temp (append template (list extension))))
           (if (first temp)
@@ -83,11 +85,13 @@ as well.)"
         (list "index" extension)))
 
   (defun without-sem (string)
+    "The subset of STRING up to the first semicolon, if any."
     (if-let (sem (position #\; string))
       (subseq string 0 sem)
       string))
 
   (defun first-line (string)
+    "The first line, or, lacking a shorter break, first 100 characters of STRING."
     (let ((newline (or (position #\newline string) 100)))
       (subseq string 0 (min newline 100 (length string)))))
 
@@ -109,8 +113,8 @@ as well.)"
                              "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
                              (thread-name (current-thread))
                              (hunchentoot:return-code*)
-                             (length (hunchentoot:headers-out*))
-                             (length bytes))
+                             (length (the list (hunchentoot:headers-out*)))
+                             (length (the vector bytes)))
                      bytes))
               (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
                       ,(concatenate 'string "{~a} Finished: " (first-line docstring))
@@ -266,6 +270,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                  "image/png"))
 
   (defun constituentp (ch)
+    "Is character CH a constituent character of a Lisp name {without escaping it}?"
     (let ((cc (char-code (char-upcase ch))))
       (or (< #xa0 cc)
           (<= (char-code #\A) cc (char-code #\Z))
@@ -273,6 +278,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
           (find ch "-/!?." :test #'char=))))
 
   (defun make-endpoint-function-name (method uri accept-type)
+    "Create the name of the endpoint function for METHOD, URI, and ACCEPT-TYPE."
     (intern (format nil "ENDPOINT-~a-~a→~a"
                     method
                     (remove-if-not #'constituentp uri)
@@ -282,6 +288,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                       (symbol (name-for-content-type (string accept-type)))))))
 
   (defun lambda-list-as-variables (λ-list)
+    "Convert Λ-LIST into variables for an endpoint function."
     (if λ-list
         (cons 'list (mapcar (lambda (var)
                               (list 'quote var))
@@ -290,6 +297,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)
+    "Define an HTTP endpoint accessing URI via METHOD and accepting CONTENT-TYPE."
     (let* ((method (make-keyword (string-upcase method)))
            (content-type (make-keyword (string-upcase content-type)))
            (fname (make-endpoint-function-name method uri content-type))
@@ -323,15 +331,21 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 (defendpoint (get "/" text/html)
   "GET on the root redirects to the main web page for the cluster (eg, @url{https://Tootsville.org/})"
-  (list 307 (list :location (format nil "https://www.~a.org/" (cluster-name))) ""))
+  (list 307 (list :location (format nil "https://www.~a.org/" (let ((cluster (cluster-name)))
+                                                                (if (search "tootsville" cluster)
+                                                                    cluster
+                                                                    "test.tootsville.org")))) ""))
 
 (defendpoint (get "/favicon" image/png)
+  "Get the Tootsville logo as a PNG"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.png") ""))
 
 (defendpoint (get "/favicon/ico")
+  "Get the Tootsville logo in Windows Icon format"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.ico") ""))
 
 (defendpoint (get "/favicon" image/gif)
+  "Get the Tootsville logo as a GIF"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.gif") ""))
 
 
@@ -340,6 +354,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 (defmethod print-object ((request hunchentoot:request) stream)
+  "Print a Hunchentoot Request object nicely"
   (print-unreadable-object (request stream :type t)
     (princ (hunchentoot:request-method request) stream)
     (write-char #\Space stream)
@@ -348,11 +363,15 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 (defmethod jonathan::%to-json ((symbol symbol))
+  "Supply a Lisp symbol in JavaScirpt string form"
   (jonathan.encode::string-to-json (string (symbol-munger:lisp->camel-case symbol))))
 
 
 
 (defun query-string->plist (query-string)
+  "Split an HTTP QUERY-STRING into a  PList.
+
+Probably a duplicate of something done in Hunchentoot or Drakma?"
   (mapcan (lambda (pair)
             (destructuring-bind (key value)
                 (split-sequence #\= pair)
@@ -363,6 +382,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
           (split-sequence #\& query-string)))
 
 (defun query-params ()
+  "Get parameters from the query string of the current Hunchentoot request."
   (let ((uri (hunchentoot:request-uri*)))
     (when-let (qq (position #\? uri))
       (let* ((query-string (subseq uri qq)))

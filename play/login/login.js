@@ -32,19 +32,19 @@ Tootsville.login.clearTootsList = function ()
 Tootsville.login.serverQueryCharacters = function ()
 { return new Promise (
     (finish, reject) =>
-        { Tootsville.util.rest (
-            '/users/me/toots',
-            { want: [ 'avatar', 'name', 'note', 'child-p', 'sensitive-p' ],
-              order: 'last-seen' }).
+        { Tootsville.util.rest ('GET', 'users/me/toots').
           then (
               response =>
                   { if (response.toots.length == 0)
                     { reject (); } else
                     { finish (response.toots); } },
               error =>
-                  { Tootsville.parrot.say ("Can't get Toots list",
-                                           "I can't get a list of your Toots. Are you connected to the Internet?");
-                    Tootsville.error ("Can't retrieve Toots list", error); } ); }); };
+                  { Tootsville.parrot.ask ("Can't get Toots list",
+                                           "I can't get a list of your Toots. Maybe there are network problems?",
+                                           [{ tag: "retry",
+                                             text: "Try Again" }]).
+                    then (Tootsville.login.serverQueryCharacters);
+                    Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
 Tootsville.login.createTootListItem = function (toot)
 { var li = document.createElement ('LI');
@@ -129,7 +129,7 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('pick-toot').style.display = 'none'; };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
-{ return Tootsville.util.rest ('users', 'play-with', { character: character }); };
+{ return Tootsville.util.rest ('POST', 'users/play-with', { character: character }); };
 
 Tootsville.login.removeChildOrSensitive = function (li)
 { var child = li.querySelector ('.child');
@@ -173,23 +173,23 @@ Tootsville.login.findSelectedChildMode = function (li)
   return 'adult'; };
 
 Tootsville.login.enableChildMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/child-p', { set: true });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: true });
   li['data-toot'].childP = true;
   li['data-toot'].sensitiveP = false;
   li.querySelector ('.define-child-code').style.display = 'block'; };
 
 Tootsville.login.disableChildMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/child-p', { set: false });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: false });
   li['data-toot'].childP = false;
   li.querySelector ('.define-child-code').style.display = 'none'; };
 
 Tootsville.login.enableSensitiveMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/sensitive-p', { set: true });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/sensitive-p', { set: true });
   li['data-toot'].childP = false;
   li['data-toot'].sensitiveP = true; };
 
 Tootsville.login.disableSensitiveMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/sensitive-p', { set: false });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/sensitive-p', { set: false });
   li['data-toot'].sensitiveP = false; };
 
 Tootsville.login.updateChildMode = function (name)
@@ -299,7 +299,6 @@ Tootsville.login.firebaseLogin = function (loginPanel)
 Tootsville.login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in", result);
   Tootsville.login.storeCredentialInfo (result);
-  Tootsville.login.switchTootsView();
   return false; };
 
 Tootsville.login.storeCredentialInfo = function (result)
@@ -316,10 +315,11 @@ Tootsville.login.storeCredentialInfo = function (result)
      * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
      * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
 
-    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-        // Send token to your backend via HTTPS TODO
-        // ...
-    }).catch(function(error) {
+  firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
+  then (function (idToken)
+        { Tootsville.login.firebaseAuth = idToken;
+          Tootsville.login.switchTootsView(); }).
+  catch(function(error) {
         // Handle error TODO
     });
     
@@ -335,7 +335,7 @@ Tootsville.login.storeCredentialInfo = function (result)
                                   user.providerData[0].photoURL ||
                                   addl.picture);
   Tootsville.login.player.gender = addl.gender;
-    Tootsville.login.player.locale = addl.locale;
+  Tootsville.login.player.locale = addl.locale;
 
 };
 

@@ -1,5 +1,7 @@
 (in-package :Tootsville)
 
+(declaim (optimize (speed 3)))
+
 (defendpoint (get "/users/me" "application/json")
   "Provides information about your user account.
 
@@ -36,19 +38,21 @@ Child accounts will have some tokens here that help us … TODO
 @subsection{Status: 403 Authorization Failed}
 
 "
-  (with-player ()
-    (list 200 nil
-          (list :hello "Hello, new user"
-                :fake "This is a totes fake response"
-                :toots "/users/me/toots.json"))))
+  ;; with-user TODO
+  (list 200 nil
+        (list :hello "Hello, new user"
+              :fake "This is a totes fake response"
+              :toots "/users/me/toots.json")))
 
 (defendpoint (put "/users/me" "application/json")
-  "Registers a new user account.
+  "Makes changes to an user account.
 
 Requires the user  to pass some external,  trusted authentication source
 information, like an OAuth2 login.
 
 @subsection{Status: 201 Created}
+
+XXX is there a better status for updates?
 
 @subsection{Status: 401 Authorization Required}
 
@@ -57,7 +61,7 @@ information, like an OAuth2 login.
 @subsection{Status: 405 Not Allowed}
 
 "
-  (with-player ()
+  (with-user ()
     (list 200 nil
           (list :hello "Hello, new user"
                 :fake "This is a totes fake response"
@@ -79,17 +83,18 @@ Requires a body with fields to be changed, and their new values. TODO.
 @subsection{Status: 405 Not Allowed}
 
 "
-  (with-player ()
+  (with-user ()
     (error 'unimplemented)))
 
 
 (defendpoint (get "/users/me/toots" "application/json")
   "Enumerates all Toot characters available to you."
-  (with-player ()
-    (list 200 (list :last-modified (header-time (yesterday)))
-          (list :toots (player-toots)))))
+  (with-user ()
+    (list 200
+          (list :Last-Modified (header-time (yesterday))) ; FIXME
+          (list :|toots| (mapcar #'Toot-info (player-Toots))))))
 
-(defendpoint (put "/users/me/toots/:toot-name" "application/json")
+(defendpoint (post "/users/me/toots/:toot-name" "application/json")
   "Create a new Toot character named TOOT-NAME.
 
 Requires player authentication.
@@ -101,9 +106,9 @@ See GET /users/me/toots/:toot-name for the format.
 
 @subsection{Status: 307 Redirect}
 If the Toot had been previously created, returns a redirect (307)."
-  (with-player ()
-    (assert-my-character toot-name)
-    (list 201 nil (toot-info (find-toot-by-name toot-name)))))
+  (with-user ()
+    (assert-my-character Toot-name)
+    (list 201 nil (Toot-info (find-Toot-by-name Toot-name)))))
 
 (defendpoint (get "/users/me/toots/:toot-name" "application/json")
   "Gives detailed information about your Toot character TOOT-NAME.
@@ -125,7 +130,7 @@ The user credentials presented were not recognized.
 @subsection{Status: 404 Not Found}
 
 "
-  (with-player ()
+  (with-user ()
     (assert-my-character toot-name)
     (error 'unimplemented)))
 
@@ -154,9 +159,11 @@ The Toot has  been deleted. Repeated calls will return  the same status,
 for the duration of the name lock on the Toot.
 
 @subsection{Status: 401 Authorization Required}
+
 No user credentials were passed.
 
 @subsection{Status: 403 Authorization Failed}
+
 The user credentials presented were not recognized.
 
 @subsection{Status: 404 Not Found}
@@ -169,6 +176,35 @@ The Toot named is  one that you have permission to use,  but are not the
 main owner of. This is usually a child account.
 
 "
-  (with-player ()
+  (with-user ()
+    (assert-my-character toot-name)
+    (error 'unimplemented)))
+
+(defendpoint (post "/users/me/play-with/:toot-name" "application/json")
+  "Begin playing with the Toot named TOOT-NAME.
+
+@subsection{Status: 200 OK}
+
+You are now in control of this Toot. The Toot's info will be returned.
+
+@subsection{Status: 401 Authorization Required}
+
+No user credentials were passed.
+
+@subsection{Status: 403 Authorization Failed}
+
+The user credentials presented were not recognized.
+
+@subsection{Status: 404 Not Found}
+
+The Toot named does not exist.
+
+@subsection{Status: 405 Not Allowed}
+
+The Toot named is  one that you have permission to use,  but are not the
+main owner of. This is usually a child account.
+
+"
+  (with-user ()
     (assert-my-character toot-name)
     (error 'unimplemented)))

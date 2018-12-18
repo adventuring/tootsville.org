@@ -2,6 +2,13 @@
 
 
 
+(defmacro with-user-brp (() &body body)
+  `(let ((*user* (find-record 'person :uuid (uuid:make-uuid-from-string "480B0917-3C7A-4D13-B55B-AA56105C5E00"))))
+     (with-user ()
+       ,@body)))
+
+
+
 (defun check-first-line/reservations (file)
   (let ((first-line (split-sequence #\Tab (read-line file))))
     (assert (equalp first-line
@@ -31,8 +38,9 @@
                                    pattern-name$
                                    age-range
                                    gmail1
-                                   child-name gmail2)
+                                   child-name gmail2 &rest _)
       (mapcar (curry #'string-trim +whitespace+) (split-sequence #\Tab line))
+    (declare (ignore _))
     (let* ((created-at (translate-american-ish-date created-at$))
            (base-color (or (remove-parentheticals base-color$)
                            (random-elt +Toot-base-color-names+)))
@@ -63,11 +71,82 @@
             :child-name (unless own-toot-p child-name)
             :gmail gmail))))
 
-(defun import-toot-name-reservations (&optional (file (merge-pathnames (user-homedir-pathname)
-                                                                       (make-pathname :name "Toots-Name-Reservations"))))
+(defun import-toot-to-db (record)
+  (let ((toot (find-record 'toot
+                           :name (getf record :toot-name)))
+        (email (ensure-record 'person-link
+                              :rel :contact
+                              :url (format nil "mailto:~a" (getf record :gmail))
+                              :provenance "Tootsville V Pre-Registration")))
+    (unless (ignore-errors (find-reference email :person))
+      (format t "~& set owner toot ~a for ~a"
+              (getf record :toot-name) (getf record :gmail))
+      (let ((person (ensure-record 'person :given_name (getf record :gmail)
+                                   :display_name (getf record :gmail)
+                                   :surname ""
+                                   :gender :X
+                                   :language "en_US")))
+        (setf (toot-player toot) (person-uuid person)
+              (person-link-person email) (person-uuid person))
+        (save-record toot))))
+ ;;;(error (c) nil)
+
+  (return-from import-toot-to-db)
+
+  (unless (getf record :own-toot-p)
+    (return-from import-toot-to-db))    ; TODO
+  (let ((person (ensure-user-for-plist
+                 (list :email (getf record :gmail)
+                       :email-verified-p t))))
+    (ignore-duplicates
+      (ensure-record 'person-link
+                     :person (person-uuid person)
+                     :rel :CONTACT
+                     :url (concatenate 'string "mailto:" (getf record :gmail))
+                     :provenance "Toot Name Reservations GMail"))
+    (unless (getf record :own-toot-p)
+      (setf (person-child-code person) "*"
+            (person-display-name person) (getf record :child-name)
+            (person-given-name person) (getf record :child-name))
+      ;; TODO - link to parent
+      )
+    (let ((toot (ensure-record
+                 'toot
+                 :name (getf record :toot-name)
+                 :pattern (pattern-id (find-record 'pattern
+                                                      :name (getf record :pattern-name)))
+                 :base-color (parse-color24 (string (getf record :base-color)))
+                 :pad-color (parse-color24 (string (getf record :pads-color)))
+                 :pattern-color (parse-color24 (string (getf record :pattern-color)))
+                 :avatar 1
+                 :player (person-uuid person)
+                 :last-active (or (getf record :created-at)
+                                  (parse-timestring "2014-10-13T09:37:20"))
+                 :note "Toot Name Pre-Registered"))
+          (gifts (list (ensure-record 'item :template 1)
+                       (ensure-record 'item :template 2)
+                       (ensure-record 'item :template 3))))
+      (dolist (gift gifts)
+        (ignore-errors (ensure-record 'inventory-item
+                                      :base-color (parse-color24 "periwinkle")
+                                      :person (person-uuid person)
+                                      :toot (toot-uuid toot)
+                                      :item (item-uuid gift)
+                                      :equipped "N"))))))
+
+;; (make-record   'toot  :name   "Shade"   :pattern  13   :base-color
+;; (make-color24  :red  #x90  :green  #x20  :blue  #x90)  :pattern-color
+;; (make-color24   :red  #xff   :green  #xff   :blue  #x00)   :pad-color
+;; (make-color24   :red   #xff   :green   #xff   :blue   #x00)   :avatar
+;; 8     :last-active     (parse-timestring    "2013-01-01")     :player
+;; (person-uuid ☠brp) :note "")
+
+(defun import-toot-name-reservations
+    (&optional (file (merge-pathnames (user-homedir-pathname)
+                                      (make-pathname :name "Toots-Name-Reservations"))))
   (with-input-from-file (file file)
     (check-first-line/reservations file)
-    (let ((roster nil))
+    (with-dbi (:friendly)
       (tagbody reading
          (let ((line (read-line file nil nil)))
            (unless line (go done))
@@ -75,7 +154,7 @@
              (go reading))
            (restart-case
                (progn
-                 (push (parse-line/reservations line) roster)
+                 (import-toot-to-db (parse-line/reservations line))
                  (format t "~&~:(~25a~)  for ~:[child of ~;~]~a"
                          (getf (parse-line/reservations line) :toot-name)
                          (getf (parse-line/reservations line) :own-toot-p)
@@ -86,5 +165,4 @@
                (format *error-output* "~&Skipping this record due to error:~%~a" line)
                (go reading)))
            (go reading))
-       done)
-      roster)))
+       done))))

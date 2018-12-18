@@ -2,11 +2,6 @@
 
 
 
-(defun debugger ()
-  (setf hunchentoot:*catch-errors-p* nil
-        hunchentoot:*show-lisp-errors-p* t
-        hunchentoot:*show-lisp-backtraces-p* t))
-
 (defvar *acceptors* nil)
 
 (defun find-acceptor (host port)
@@ -75,6 +70,9 @@ HOST is an address of a live interface; PORT may be a port number.
 The server will  be started running on port  5000 on local-loopback-only
 addresses  (127.0.0.1  and  ::1).  If an  existing  server  is  running,
 a restart will be presented to allow you to kill it (RESTART-SERVER)."
+  (load-config)
+  (connect-databases)
+  (power-on-self-test)
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
@@ -103,7 +101,8 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
                                        :port port)))))
               (setf (hunchentoot:acceptor-name acceptor)
                     (format nil "Tootsville ~:[Non-TLS ~;~](~a port ~d)"
-                            (config :ssl) host port)))
+                            (config :ssl) host port))
+              acceptor)
             *acceptors*)
     (change-port (port*)
       :report "Use a different port"
@@ -173,15 +172,55 @@ process's PID."
                                   (swank/backend:getpid))))
   port)
 
+
+
+(defmethod v:format-message ((stream stream) (message v:message))
+  (format stream "~&~a	{~a}	[~a: ~{~a~^, ~}]~%⦘	~a~%"
+          (format-timestring nil (v:timestamp message)
+                             :format
+                             '((:year 4) #\- (:month 2) #\- (:day 2)
+                               #\Space
+                               (:hour 2) #\: (:min 2) #\: (:sec 2)
+                               #\Space
+                               :nsec))
+          (thread-name (v:thread message))
+          (v:level message)
+          (mapcar #'symbol-munger:lisp->english (v:categories message))
+          (v:content message)))
+
 
 ;;; Web servers
 
-(defun start-hunchentoot (&key host port)
+(defun start-hunchentoot (&key (host "localhost") (port 5000))
   "Start a Hunchentoot  server via `START' and fall through  into a REPL
 to keep the process running."
   (start :host host :port port)
-  (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, or exit the REPL.")
+  (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, ~
+or exit the REPL.")
   (start-repl))
+
+(defun debugger ()
+  (swank:set-default-directory (asdf:component-relative-pathname
+                                (asdf:find-system  :Tootsville)))
+  (swank:set-package :Tootsville))
+
+(defun destroy-all-listeners ()
+  (map nil #'destroy-thread
+       (remove-if-not (lambda (th) (search "Hunchentoot Listening on Address"
+                                           (thread-name th)))
+                      (all-threads))))
+
+(defun destroy-all-idle-workers ()
+  (let ((workers (remove-if-not (lambda (th) (search "Idle Web Worker"
+                                                     (thread-name th)))
+                                (all-threads))))
+    (map nil #'destroy-thread workers)
+    workers))
+
+(defun destroy-all-web-tasks ()
+  (destroy-all-listeners)
+  (while (destroy-all-idle-workers)
+    (sleep 1)))
 
 (defparameter *trace-output-heartbeat-time* 90)
 
@@ -220,30 +259,10 @@ Hopefully you've already tested the changes?"
 
 (defun connect-databases ()
   (dolist (thread (mapcar (lambda (n)
-                            (make-thread n :name (string-capitalize n)))
-                          '(connect-mixer connect-directory #+ (or) connect-cache)))
-    (join-thread thread)))
+                            (make-thread n :name (symbol-munger:lisp->english n)))
+                          '(connect-mixer connect-cache connect-maria)))
+    (assert (join-thread thread))))
 
-(defun connect-mixer ()
-  (setf clouchdb:*couchdb*
-        (clouchdb:make-db :host (or (config :mixer :host))
-                          :port (or (config :mixer :port) "5984")
-                          :user (config :mixer :admin :name)
-                          :password (config :mixer :admin :password)
-                          :name "tootsville/5"))
-  (v:info :mixer "MOTD from Mixer: ~a" (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
 
-(defun connect-directory ())
-#+ (or)
-(defun connect-cache ()
-  (setf cl-memcached:*memcache*
-        (cl-memcached:make-memcache :ip (config :cache :host)
-                                    :port (or (config :cache :port) 11211)
-                                    :name (cluster-name)))
-  (let ((n (princ-to-string (random (expt 2 63))))
-        (key (format nil "~a.~a" (machine-instance) (cluster-name))))
-    (cl-memcached:mc-set key n)
-    (let ((m (cl-memcached:mc-get key)))
-      (assert (= n m) ()
-              "MemCacheD did not return the random number (~x) for key ~a"
-              n key))))
+
+
