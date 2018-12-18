@@ -28,6 +28,7 @@ REST services for the front-end."
                :cl-threadpool
                :cljwt-custom
                :clouchdb
+               :cxml
                :dbd-mysql
                :drakma
                :envy
@@ -37,14 +38,14 @@ REST services for the front-end."
                :jonathan
                :pngload
                :swank
-               :symbol-munger ;; XXX factor out
+               :symbol-munger
                :trivial-backtrace
                :trivial-ldap
                :uiop
                :uuid
 
                ;; Systems that travel bundled with Tootsville
-
+               
                :dreamhost
                :oliphaunt
                :rollbar
@@ -120,7 +121,8 @@ REST services for the front-end."
         "gossip"
         :depends-on ("slash-gossip")
         :components 
-        ((:module
+        ((file "twilio")
+         (:module
           "alexa"
           :components
           ((:file "alexa")
