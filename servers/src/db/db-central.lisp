@@ -284,7 +284,7 @@ ON DUPLICATE KEY UPDATE  ~
                 "Returns true if A and B represent the same ~A record in the database."
                 (symbol-munger:lisp->english name))
        (if more 
-           (and (,$fname a b) (apply ,$fname a more))
+           (and (,$fname a b) (apply ',$fname a more))
            (equalp (,id-accessor a) (,id-accessor b))))))
 
 (defun defrecord/save-record-with-id-column (name database table columns)
