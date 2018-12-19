@@ -35,6 +35,7 @@
 (defmethod apply-config progn ()
   "Apply configuration to Rollbar"
   (apply #'rollbar:configure (config :rollbar))
+  (setf rollbar:*person-hook* #'get-rollbar-person)
   (rollbar:configure :environment (cluster-net-name)
                      :code-version #.(run-program "git rev-parse HEAD" :output :string)
                      :framework (romance-ii-program-name/version)))
