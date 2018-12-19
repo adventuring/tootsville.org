@@ -1,5 +1,8 @@
 (in-package :Tootsville)
 
+(defvar *Toot* nil
+  "The Toot that the active user, is currectly using.")
+
 ;;; Toot character data.
 
 (defun find-Toot-by-name (Toot-name)
