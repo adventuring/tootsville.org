@@ -251,3 +251,12 @@ limitations under the License. |#
 (defun person-is-patron-p (person)
   ;; just me ☹
   (eql (uuid-to-uri (person-uuid person)) "SAsJFzx6TRO1W6pWEFxeAA=="))
+
+(defun get-rollbar-person (person)
+  (when *user*
+    (list :|person|
+          (list :|uid| (princ-to-string (person-uuid person))
+                :|username| (format nil "~@[Toot: ~a, ~]Person: ~a"
+                                    (when *Toot* (Toot-name *Toot*))
+                                    (person-display-name *user*))
+                :|email| (user-email)))))
