@@ -1,7 +1,5 @@
 (in-package :Tootsville)
 
-
-
 (defun query-to-memcache-key (db prepared args)
   (let ((query (format nil "~a➕~{~a~^✜~}" prepared args)))
     (if (< (length query) 128)
