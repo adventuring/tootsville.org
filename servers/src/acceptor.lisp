@@ -181,7 +181,8 @@
                 request acceptor)
   (let ((hunchentoot:*request* request)
         (*user* (find-user-for-headers (hunchentoot:header-in
-                                        "X-Infinity-Auth" request))))
+                                        "X-Infinity-Auth" request)))
+        (*Toot* (find-active-Toot-for-user)))
     (let ((method (hunchentoot:request-method*))
           (uri-parts (split-sequence #\/
                                      (namestring
