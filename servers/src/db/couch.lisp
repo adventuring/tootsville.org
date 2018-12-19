@@ -12,3 +12,9 @@
           (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
 
 
+(defun find-active-Toot-for-user (&optional (user *user*))
+  nil)
+
+(defun link-active-Toot-to-user (Toot &optional (user *user*))
+  (error 'unimplemented))
+
