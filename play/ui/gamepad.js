@@ -1,18 +1,49 @@
-/*
+/* -*- js2 -*-*/
+
+/*@license
  *
- * based  upon:  Gamepad API  Test  Written  in  2013 by  Ted  Mielczarek
- * <ted@mielczarek.org>
+ * ./play/ui/gamepad.js is part of Tootsville
  *
- * To the  extent possible under  law, the author(s) have  dedicated all
- * copyright and related and neighboring  rights to this software to the
- * public  domain  worldwide.  This   software  is  distributed  without
- * any warranty.
+ * Copyright  © 2018,2019  The Corporation  for Inter-World  Tourism and
+ * Adventuring (ciwta.org).
  *
- * You should have  received a copy of the CC0  Public Domain Dedication
- * along      with       this      software.      If       not,      see
- * <http://creativecommons.org/publicdomain/zero/1.0/>.
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
  *
- */
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received  a copy  of the  GNU Affero  General Public
+ * License     along    with     this    program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ *//*
+    *
+    * based  upon:  Gamepad API  Test  Written  in  2013 by  Ted  Mielczarek
+    * <ted@mielczarek.org>
+    *
+    * To the  extent possible under  law, the author(s) have  dedicated all
+    * copyright and related and neighboring  rights to this software to the
+    * public  domain  worldwide.  This   software  is  distributed  without
+    * any warranty.
+    *
+    * You should have  received a copy of the CC0  Public Domain Dedication
+    * along      with       this      software.      If       not,      see
+    * <http://creativecommons.org/publicdomain/zero/1.0/>.
+    *
+    */
 
 if (!('Tootsville' in window)) { Tootsville={ui:{gamepad:{}}}; }
 if (!('ui' in Tootsville)) { Tootsville.ui={gamepad:{}}; }

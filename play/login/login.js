@@ -1,4 +1,35 @@
-/* -*- js2 -*- */
+/* -*- js2 -*-*/
+
+/*@license
+ *
+ * ./play/login/login.js is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received  a copy  of the  GNU Affero  General Public
+ * License     along    with     this    program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
 if (!("Tootsville" in window)) { Tootsville = {}; }
 if (! ("login" in Tootsville)) { Tootsville.login = {}; }
 
@@ -42,7 +73,7 @@ Tootsville.login.serverQueryCharacters = function ()
                   { Tootsville.parrot.ask ("Can't get Toots list",
                                            "I can't get a list of your Toots. Maybe there are network problems?",
                                            [{ tag: "retry",
-                                             text: "Try Again" }]).
+                                              text: "Try Again" }]).
                     then (Tootsville.login.serverQueryCharacters);
                     Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
@@ -70,13 +101,13 @@ Tootsville.login.populateTootsList = function (list)
 Tootsville.login.generateNewToot = function ()
 { /* TODO let server generate new Toots with unique names */
     var toot =
-      { name: "Needs-Naming",
-        baseColor: "indigo",
-        patternColor: "yellow",
-        pattern: "lightning",
-        padColor: "spring-green",
-        childP: false,
-        sensitiveP: false };
+        { name: "Needs-Naming",
+          baseColor: "indigo",
+          patternColor: "yellow",
+          pattern: "lightning",
+          padColor: "spring-green",
+          childP: false,
+          sensitiveP: false };
     Tootsville.login.createTootListItem (toot);
     Tootsville.login.editToot (toot); };
 
@@ -146,9 +177,9 @@ Tootsville.login.appendChildMode = function (li, tag, label, checkedP)
 Tootsville.login.appendChildSensitiveRadioSet = function (li)
 { li.innerHTML += '<br clear="left"><hr>';
   Tootsville.login.appendChildMode (li, 'adult', '<i class="fas fa-graduation-cap fa-fw"></i> Adult account',
-                                   ! (li['data-toot'].childP || li['data-toot'].sensitiveP));
+                                    ! (li['data-toot'].childP || li['data-toot'].sensitiveP));
   appendChildMode (li, 'child', '<i class="fas fa-child fa-fw"></i> Child account',
-                  li['data-toot'].childP);
+                   li['data-toot'].childP);
   appendChildMode (li, 'sensitive', '<i class="fas fa-chess-queen fa-fw"></i> Sensitive Player account',
                    li['data-toot'].sensitiveP); };
 
@@ -271,7 +302,7 @@ Tootsville.login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
   Tootsville.trace ("Starting Firebase login");
   ui.start(
-      '#firebaseui-auth-container', 
+      '#firebaseui-auth-container',
       { callbacks:
         { signInSuccessWithAuthResult: Tootsville.login.acceptSignedIn,
           uiShown: function()
@@ -281,7 +312,7 @@ Tootsville.login.firebaseLogin = function (loginPanel)
         signInFlow: 'popup',
         tosUrl: 'https://wiki.tootsville.org/wiki/Core:ToS',
         privacyPolicyUrl: 'https://wiki.tootsville.org/wiki/Core:Privacy',
-        signInOptions: 
+        signInOptions:
         [ { provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             scopes:
             [ 'https://www.googleapis.com/auth/plus.login' ],
@@ -303,26 +334,26 @@ Tootsville.login.acceptSignedIn = function(result)
 
 Tootsville.login.storeCredentialInfo = function (result)
 { var cred = result.credential;
-    /* .accessToken,  idToken, providerId, signInMethod */
-    var addl = result.additionalUserInfo;
-    /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
-     * gender:  "male",  given_name,   hd:  "star-hope.org",  id,  link:
-     * google+ URI, locale: "en-GB", name, picture: URL, verified_email:
-     * true} */
+  /* .accessToken,  idToken, providerId, signInMethod */
+  var addl = result.additionalUserInfo;
+  /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
+   * gender:  "male",  given_name,   hd:  "star-hope.org",  id,  link:
+   * google+ URI, locale: "en-GB", name, picture: URL, verified_email:
+   * true} */
   var user = result.user;
-    /* o: "[DEFAULT]", refreshToken,  displayName, email, emailVerified,
-     * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
-     * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
-     * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
+  /* o: "[DEFAULT]", refreshToken,  displayName, email, emailVerified,
+   * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
+   * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
+   * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
 
   firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
   then (function (idToken)
         { Tootsville.login.firebaseAuth = idToken;
           Tootsville.login.switchTootsView(); }).
   catch(function(error) {
-        // Handle error TODO
-    });
-    
+      // Handle error TODO
+  });
+
   Tootsville.login.accessToken = cred.accessToken;
   Tootsville.login.idToken = cred.idToken;
   Tootsville.login.idProvider = cred.providerId;
@@ -341,5 +372,3 @@ Tootsville.login.storeCredentialInfo = function (result)
 
 Tootsville.login.quit = function ()
 { firebase.auth().signOut().then(document.reload); };
-
-

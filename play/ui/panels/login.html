@@ -1,4 +1,33 @@
 <!DOCTYPE html>
+<!-- -*- html -*- -->
+
+<!-- ./play/ui/panels/login.html is part of Tootsville
+
+      Copyright © 2016,2017 Bruce-Robert Pocock; © 2018,2019 The Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+
+      This  program is  Free Software:  you can  redistribute it  and/or
+      modify it under the terms of the GNU Affero General Public License
+      as published by the Free  Software Foundation; either version 3 of
+      the License, or (at your option) any later version.
+
+      This program  is distributed in the  hope that it will  be useful,
+      but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
+      MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
+      Affero General Public License for more details.
+
+      You should have  received a copy of the GNU  Affero General Public
+      License    along    with    this     program.    If    not,    see
+      <https://www.gnu.org/licenses/>.
+
+      You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+      PO Box 23095
+
+      Oakland Park, FL 33307-3095
+
+      USA
+
+   -->
 <html>
   <head>
     <meta charset="utf-8">
@@ -10,20 +39,20 @@
       HUD layer. </p>
 
     <div id="login" style="height: calc(100vh - 7rem); width: calc(100vw -
-    7rem); top: 1rem; left: 1rem; position: fixed; overflow: visible">
+                           7rem); top: 1rem; left: 1rem; position: fixed; overflow: visible">
       <audio autoplay loop style="display: none">
         <source
-          src="//jumbo.tootsville.org/Assets/Music/5/bensound-adventure.ogg"
-          />
-                <source
-          src="//jumbo.tootsville.org/Assets/Music/5/bensound-adventure.mp3"
-          />
+           src="//jumbo.tootsville.org/Assets/Music/5/bensound-adventure.ogg"
+           />
+        <source
+           src="//jumbo.tootsville.org/Assets/Music/5/bensound-adventure.mp3"
+           />
       </audio>
 
       <p class="footer">Music: <i>Adventure</i> by
         <a target="bensound"
            href="https://www.bensound.com/">Benjamin TISSOT (Bensound)</a> </p>
-      
+
       <h1><img src="https://jumbo.tootsville.org/Assets/Icons/tootsville-logo.svg"
                alt="Tootsville"></h1>
 
@@ -116,7 +145,7 @@
             <tt>&lt;</tt ><tt id="google-user-email" ><i class="fas fa-spin fa-spinnerfa-fw"
                                                          ></i></tt><tt>&gt;</tt>. </p>
           <button  onclick="Tootsville.ui.signOut()">   Quit  or  Change
-          Players </button>
+            Players </button>
         </div>
       </section>
     </div>

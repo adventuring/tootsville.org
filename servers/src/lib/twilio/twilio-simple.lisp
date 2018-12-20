@@ -1,6 +1,33 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/lib/twilio/twilio-simple.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (defpackage :twilio (:use :cl :cxml)
-            (:export 
-             
+            (:export
+
              #:as-response
              #:with-twilio-params
              ;; ——
@@ -82,13 +109,13 @@
   (check-type loop (or null (and fixnum (integer 0 *))))
   (cond
     ((null voice) ; auto-selects Alice when using languages only avail in Alice
-     (check-type language 
+     (check-type language
                  (or null (member :en :en-gb :es :fr :de
-                                  :da-dk :de-de 
-                                  :en-au :en-ca :en-in :en-us 
+                                  :da-dk :de-de
+                                  :en-au :en-ca :en-in :en-us
                                   :ca-es :es-es :es-mx
                                   :fi-fi :fr-ca :fr-fr :it-it
-                                  :ja-jp :ko-kr 
+                                  :ja-jp :ko-kr
                                   :nb-no :nl-nl :pl-pl
                                   :pt-br :pt-pt :ru-ru :sv-se
                                   :zh-cn :zh-hk :zh-tw
@@ -96,12 +123,12 @@
     ((member voice '(:man :woman))
      (check-type language (or null (member :en :en-gb :es :fr :de))))
     ((eql voice :alice)
-     (check-type language 
-                 (or null (member :da-dk :de-de 
-                                  :en-au :en-ca :en-gb :en-in :en-us 
+     (check-type language
+                 (or null (member :da-dk :de-de
+                                  :en-au :en-ca :en-gb :en-in :en-us
                                   :ca-es :es-es :es-mx
                                   :fi-fi :fr-ca :fr-fr :it-it
-                                  :ja-jp :ko-kr 
+                                  :ja-jp :ko-kr
                                   :nb-no :nl-nl :pl-pl
                                   :pt-br :pt-pt :ru-ru :sv-se
                                   :zh-cn :zh-hk :zh-tw
@@ -141,7 +168,7 @@
                   recording-status-callback-method
                   recording-status-callback-event
                   ring-tone time-limit timeout trim
-                  
+
                   client conference number queue
                   sim sip)
   (error 'tootsville::unimplemented))
@@ -149,7 +176,7 @@
 (defun record (&rest _)
   (error 'tootsville::unimplemented))
 
-(defun with-gather% (body 
+(defun with-gather% (body
                      &key action hints (finish-on-key #\#)
                           input language method num-digits
                           partial-result-callback
@@ -193,7 +220,7 @@
                    (string partial-result-callback)
                    (puri:uri (puri:render-uri partial-result-callback nil)))))
     (when partial-result-callback-method
-      (attribute "partialResultCallbackMethod" 
+      (attribute "partialResultCallbackMethod"
                  (string partial-result-callback-method)))
     (when profanity-filter?
       (attribute "profanityFilter" (if profanity-filter "true" "false")))
@@ -222,8 +249,8 @@
                      workflow-sid
                      name task)
   ;; sends additional: QueueResult QueueSid QueueTime
-  ;;; QueueResult ∈ bridged, bridging-in-progress, error, hangup, leave,
-  ;;; redirected, redirected-from-bridged, queue-full, system-error
+ ;;; QueueResult ∈ bridged,  bridging-in-progress, error, hangup, leave,
+ ;;; redirected, redirected-from-bridged, queue-full, system-error
   ;; wait-url ALSO gets — AvgQueueTime, CurrentQueueSize
   (check-type action (or null string puri:uri))
   (check-type method (or null (member :get :post)))

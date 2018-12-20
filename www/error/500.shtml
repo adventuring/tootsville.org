@@ -1,4 +1,33 @@
-<!--#include file="error-header.htmlf"-->
+<!DOCTYPE html> <!-- -*- html -*- -->
+
+<!-- ./www/error/500.shtml is part of Tootsville
+
+     Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+     Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+
+     This  program is  Free  Software: you  can  redistribute it  and/or
+     modify it under the terms of  the GNU Affero General Public License
+     as published by  the Free Software Foundation; either  version 3 of
+     the License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful, but
+     WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
+     MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
+     Affero General Public License for more details.
+
+     You should  have received a copy  of the GNU Affero  General Public
+     License    along     with    this    program.    If     not,    see
+     <https://www.gnu.org/licenses/>.
+
+     You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+     PO Box 23095
+
+     Oakland Park, FL 33307-3095
+
+     USA
+
+     --><!--#include file="error-header.htmlf"-->
 <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/shade.png"
      id="featured">
 
@@ -86,41 +115,44 @@
 <a href="https://wiki.tootsville.org/wiki/Error_500">(Learn More…)</a>
 
 <audio autoplay="t">
-  <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.mp3" />
-  <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.wav" />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.mp3"
+  />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.wav"
+  />
 </audio>
 
 
 <h2> What does this mean? </h2>
 
-<p>  We will  have to  fix  our software  before you  can continue  with
-  that action.  You might try clicking  the <strong>Back</strong> button
-  on your browser or starting again from one of the buttons below. </p>
+<p> We will have  to fix our software before you  can continue with that
+  action.  You might  try clicking  the <strong>Back</strong>  button on
+  your browser or starting again from one of the buttons below. </p>
 
 <h2> Report the error </h2>
 
 <p> We appreciate it if you send an
 
-<a href="mailto:support@tootsville.org?subject=500%20error&body=%0d%0a%0d%0aI%20encountered%20a%20500%20Internal%20Server%20Error%20message%20from%20https://<!--#echo
- var="HTTP_HOST" --><!--#echo    var="HTTP_REQUEST_URI"
-    -->.%0d%0aI%20was%20trying%20to%20_">email to our Support mailbox</a> so
-    we can find out about this problem.  Please let
-  us know what you were trying to do when this error occurred.</p>
+  <a href="mailto:support@tootsville.org?subject=500%20error&body=%0d%0a%0d%0aI%20encountered%20a%20500%20Internal%20Server%20Error%20message%20from%20https://<!--#echo
+           var="HTTP_HOST"                                  --><!--#echo
+           var="HTTP_REQUEST_URI" -->.%0d%0aI%20was%20trying%20to%20_">email
+           to  our Support  mailbox</a> so  we can  find out  about this
+           problem. Please let  us know what you were trying  to do when
+           this error occurred.</p>
 
 <h2> When will it be fixed? </h2>
 
-<p>    Technical   problems    like   this    are   usually    mentioned on
-  <a href="https://www.tootsbook.com/">Tootsbook</a>, along with information
-  about when we expect them to be corrected.  </p>
+<p> Technical problems like this are usually mentioned on
+  <a    href="https://www.tootsbook.com/">Tootsbook</a>,   along    with
+  information about when we expect them to be corrected. </p>
 
-<p>     More      technical     details      can     be      seen     on the
-  <a href="http://www.tootsville.org/development/">Development
-    board</a> (advanced users).  </p>
+<p> More technical details can be seen on the
+  <a href="http://www.tootsville.org/development/">Development board</a>
+    (advanced users). </p>
 
 <h2> Learn more </h2>
 
-<p>    You    can   learn    more    about    this   kind    of    error on
-  <a href="https://wiki.tootsville.org/wiki/Error_500">the
-    Wiki-Wiki page</a>. </p>
+<p> You can learn more about this kind of error on
+  <a   href="https://wiki.tootsville.org/wiki/Error_500">the   Wiki-Wiki
+    page</a>. </p>
 
 <!--#include file="error-footer.htmlf"-->

@@ -1,23 +1,50 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/auth/auth-firebase.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
 (defparameter *google-account-keys-refresh* (* 20 60)
   "How  often (in  sec)  to  refresh the  Google  account  keys used  in
-  Firebase authentication verification?")
+ Firebase authentication verification?")
 
 (defun subheader-field (header-assoc label)
   (when header-assoc
     (let* ((label* (concatenate 'string label ":"))
            (len (length label*))
-           (finds 
+           (finds
             (mapcar
              (compose #'second (curry #'split-sequence #\:))
-                     (remove-if-not 
-                      (lambda (section)
-                        (and (> (length section) len)
-                             (string-equal label* section
-                                           :end2 len)))
-                      (mapcar 
-                       (curry #'string-trim +whitespace+)
+             (remove-if-not
+              (lambda (section)
+                (and (> (length section) len)
+                     (string-equal label* section
+                                   :end2 len)))
+              (mapcar
+               (curry #'string-trim +whitespace+)
                (split-sequence #\, (cdr header-assoc)))))))
       (case (length finds)
         (0 nil)
@@ -52,7 +79,7 @@
   (defun get-google-account-keys ()
     (when (timestamp< (now) keys-update-next)
       (return-from get-google-account-keys keys))
-    (multiple-value-bind 
+    (multiple-value-bind
           (json-bytes http-status headers-alist reply-uri)
         (drakma:http-request
          "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
@@ -83,7 +110,7 @@
                                  (extract google-account-keys
                                           (make-keyword (gethash "kid" header)))
                                  (gethash "alg" header)
-                         :fail-if-unsecured t
+                                 :fail-if-unsecured t
                                  :fail-if-unsupported t)))
       #+ (or) (assert (> (gethash "exp" header) (timestamp-to-unix (now))) (token)
                       "Credential token has expired")

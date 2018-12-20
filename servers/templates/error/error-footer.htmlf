@@ -1,18 +1,40 @@
-<!-- -*- html -*- -->
+<!DOCTYPE html> <!-- -*- html -*- -->
+
+<!-- ./servers/templates/error/error-footer.htmlf is part of Tootsville
+
+         Copyright  © 2016,2017  Bruce-Robert Pocock;  © 2018,2019  The Corporation  for Inter-World
+         Tourism and Adventuring (ciwta.org).
+
+         This program is Free Software: you can redistribute  it and/or modify it under the terms of
+         the GNU Affero General Public License as  published by the Free Software Foundation; either
+         version 3 of the License, or (at your option) any later version.
+
+         This program is distributed  in the hope that it will be useful,  but WITHOUT ANY WARRANTY;
+         without even the  implied warranty of MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.
+         See the GNU Affero General Public License for more details.
+
+         You should have  received a copy of the  GNU Affero General Public License  along with this
+         program. If not, see <https://www.gnu.org/licenses/>.
+
+         You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+         PO Box 23095
+
+         Oakland Park, FL 33307-3095
+
+         USA
+
+         -->
+
 <section id="redirect">
   <ul>
-    <li> <a id="tootsvilleorg"
-            href="https://www.tootsville.org/">Tootsville.org</a>
+    <li> <a id="tootsvilleorg" href="https://www.tootsville.org/">Tootsville.org</a>
       <br> Fun, free, for everyone! </li>
-    <li> <a id="play-now"
-            href="https://play.tootsville.org/play">Play
-        Now</a>
+    <li> <a id="play-now" href="https://play.tootsville.org/play">Play Now</a>
       <br> No downloads needed! </li>
-    <li> <a id="tootsbook"
-            href="https://www.tootsbook.com/tootsbook/">Tootsbook</a>
+    <li> <a id="tootsbook" href="https://www.tootsbook.com/tootsbook/">Tootsbook</a>
       <br> News &amp; Blogs </li>
-    <li> <a id="wiki-wiki"
-            href="https://wiki.tootsville.org/">Wiki-Wiki</a>
+    <li> <a id="wiki-wiki" href="https://wiki.tootsville.org/">Wiki-Wiki</a>
       <br> Tootsville Encyclopædia </li>
   </ul>
 </section>
@@ -21,20 +43,20 @@
 
 <section style="border: 3pt solid red; padding: 1rem">
 
-  <h3>Tootsville.GA note</h3>
+  <h3>Test.Tootsville.org note</h3>
 
-  <p> Tootsville.GA is where we test software experiments. <strong>This is not
-      the real game.</strong> If you just want to play in Tootsville, you want to
-    visit <a href="https://tootsville.org/">Tootsville.org</a> instead. If you
-    are helping to test the latest experiments, then you're in the right place.
+  <p>  Test.Tootsville.org is  where we  test  software experiments.  <strong>This is  not the  real
+      game.</strong>    If   you    just   want    to   play    in   Tootsville,    you   want    to
+    visit <a href="https://tootsville.org/">Tootsville.org</a> instead. If you are helping to test
+    the latest experiments, then you're in the right place.
   </p>
 
 </section>
 
 <!--#endif-->
 
-<br> <small> This is the host <tt><!--#echo var="HTTP_HOST"--></tt> (server <tt><!--#echo
-                                                                                    var="SERVER_NAME"--></tt>). </small>
+<br>  <small>  This   is  the  host  <tt><!--#echo   var="HTTP_HOST"--></tt>  (server  <tt><!--#echo
+                                                                                               var="SERVER_NAME"--></tt>). </small>
 
 </body>
 </html>

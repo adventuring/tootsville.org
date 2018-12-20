@@ -1,9 +1,38 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/tools.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
 
 
 (defmacro with-user-brp (() &body body)
-  `(let ((*user* (find-record 'person :uuid (uuid:make-uuid-from-string "480B0917-3C7A-4D13-B55B-AA56105C5E00"))))
+  `(let ((*user* (find-record 'person :uuid
+                              (uuid:make-uuid-from-string
+                               "480B0917-3C7A-4D13-B55B-AA56105C5E00"))))
      (with-user ()
        ,@body)))
 
@@ -13,14 +42,14 @@
   (let ((first-line (split-sequence #\Tab (read-line file))))
     (assert (equalp first-line
                     '("Timestamp"	"Toot Name"
-	            "Pick your Toot's base (skin) color"
-	            "Pick your Toot's foot pads (palms) color"
-	            "Pick your Toot's pattern color"
-	            "Pick your Toot's Pattern. (Just the pattern, you already picked the color)"
-	            "Which age range are you?"
-	            "Your Google account's e-mail address"
-	            "Your child's name or nickname. (Used only for labelling Toots in your collection.)"
-	            "Your Google account's e-mail address")))))
+                      "Pick your Toot's base (skin) color"
+                      "Pick your Toot's foot pads (palms) color"
+                      "Pick your Toot's pattern color"
+                      "Pick your Toot's Pattern. (Just the pattern, you already picked the color)"
+                      "Which age range are you?"
+                      "Your Google account's e-mail address"
+                      "Your child's name or nickname. (Used only for labelling Toots in your collection.)"
+                      "Your Google account's e-mail address")))))
 
 (define-memo-function remove-parentheticals (string)
   (let ((s (copy-seq string)))
@@ -114,7 +143,7 @@
                  'toot
                  :name (getf record :toot-name)
                  :pattern (pattern-id (find-record 'pattern
-                                                      :name (getf record :pattern-name)))
+                                                   :name (getf record :pattern-name)))
                  :base-color (parse-color24 (string (getf record :base-color)))
                  :pad-color (parse-color24 (string (getf record :pads-color)))
                  :pattern-color (parse-color24 (string (getf record :pattern-color)))

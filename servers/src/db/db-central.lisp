@@ -1,5 +1,31 @@
-(in-package :Tootsville)
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/db/db-central.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
 
+(in-package :Tootsville)
 
 
 (defmethod jonathan.encode:%to-json ((uuid uuid:uuid))
@@ -132,7 +158,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
                                 (parse-timestring (substitute #\T #\Space τ))))
                     (vector (if (equalp τ #(48 48 48 48 45 48 48 45 48 48))
                                 nil
-                                (parse-timestring 
+                                (parse-timestring
                                  (substitute #\T #\Space (map 'string #'code-char τ))))))))))
 
 
@@ -283,7 +309,7 @@ ON DUPLICATE KEY UPDATE  ~
        ,(format nil
                 "Returns true if A and B represent the same ~A record in the database."
                 (symbol-munger:lisp->english name))
-       (if more 
+       (if more
            (and (,$fname a b) (apply ',$fname a more))
            (equalp (,id-accessor a) (,id-accessor b))))))
 
@@ -325,7 +351,7 @@ ON DUPLICATE KEY UPDATE  ~
        record)))
 
 (defun defrecord/column-to-json-pair (name basename column)
-  
+
   (list (intern (symbol-munger:lisp->camel-case (first column)) :keyword)
         (list 'jonathan.encode:%to-json
               (list (intern (concatenate 'string
@@ -336,9 +362,9 @@ ON DUPLICATE KEY UPDATE  ~
 (defun defrecord/to-json (name columns)
   `(defmethod jonathan.encode:%to-json ((,name ,name))
      (jonathan.encode:%to-json
-       (list :|isA| ,(symbol-munger:lisp->studly-caps name)
-             ,@(mapcan 
-             (curry #'defrecord/column-to-json-pair name name) columns)))))
+      (list :|isA| ,(symbol-munger:lisp->studly-caps name)
+            ,@(mapcan
+               (curry #'defrecord/column-to-json-pair name name) columns)))))
 
 
 
