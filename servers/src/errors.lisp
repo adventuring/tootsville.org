@@ -68,38 +68,6 @@
                              (position #\A header))))
       (list error-msg date-time frames))))
 
-
-;;; JSON encodings — XXX move these somewhere more reasonable
-
-(defmethod jonathan.encode:%to-json ((pathname pathname))
-  "Encode PATHNAME as a JSON object"
-  (jonathan.encode:%to-json
-   `(:is-a "pathname"
-           :host ,(typecase (pathname-host pathname)
-                    #+sbcl (sb-impl::unix-host (machine-instance))
-                    (t (princ-to-string (pathname-host pathname))))
-           :device ,(pathname-device pathname)
-           :directory ,(uiop:split-string (pathname-directory pathname)
-                                          :separator "/")
-           :name ,(pathname-name pathname)
-           :version ,(pathname-version pathname)
-           :type ,(pathname-type pathname))))
-
-(defmethod jonathan.encode:%to-json ((function function))
-  "Encode FUNCTION as a JSON object."
-  ;; TODO try to extract its source tree and pass it along, as well.
-  (let ((name (nth-value 2 (function-lambda-expression #'jonathan.encode:%to-json))))
-    (jonathan.encode:%to-json
-     `(:is-a "function"
-             :package ,(string-upcase (package-name (symbol-package name)))
-             :name ,(string-upcase (symbol-name name))
-             :source ,(function-lambda-exrpession)))))
-
-(defmethod jonathan.encode:%to-json ((object t))
-  "Return a JSON object that represents the state of OBJECT"
-  (jonathan.encode:%to-json
-   `(:is-a ,(string-capitalize (type-of object))
-           :t ,(format nil "~s" object))))
 
 
 ;;; Rendering a backtrace  … who defines this generic  function? XXX XXX
@@ -109,16 +77,15 @@
   "☠ deprecated"
   (break "☠deprecated RENDER BACKTRACE CONDITION ENVIRONMENT")
   (let* ((backtrace (parse-backtrace bt)))
-    (encode-json
-     `(:error ,(princ-to-string condition)
-              :condition ,(condition-name condition)
-              :location ,(if hunchentoot:*show-lisp-backtraces-p*
-                             backtrace
-                             (nth 0 backtrace))
-              :slots ,(slot-values condition)
-              :timestamp ,(nth 1 backtrace)
-              :env ,env
-              ))))
+    (jonathan.encode:%to-json
+     `(:|error| ,(princ-to-string condition)
+        :|condition| ,(condition-name condition)
+        :|location| ,(if hunchentoot:*show-lisp-backtraces-p*
+                         backtrace
+                         (nth 0 backtrace))
+        :|slots| ,(slot-values condition)
+        :|timestamp| ,(nth 1 backtrace)
+        :|env| ,env))))
 
 ;;; XXX make sure we don't use this
 

@@ -28,16 +28,6 @@
 (in-package :Tootsville)
 
 
-(defmethod jonathan.encode:%to-json ((uuid uuid:uuid))
-  (jonathan.encode:%write-string (princ-to-string uuid)))
-
-(defmethod jonathan.encode:%to-json ((color24 color24))
-  (jonathan.encode:%write-string (color24-name  color24)))
-
-(defmethod jonathan.encode:%to-json ((timestamp timestamp))
-  (jonathan.encode:%write-string (princ-to-string (timestamp-to-unix timestamp))))
-
-
 
 (defmacro ignore-not-found (&body body)
   `(handler-case (progn ,@body)
@@ -58,38 +48,11 @@
 
 
 
-(defgeneric db-table-for (type)
-  (:documentation
-   "Which database table contains the data mirrored by the ORM TYPE"))
-(defgeneric id-column-for (type)
-  (:documentation
-   "Which column (if any) provides the primary key for TYPE")
-  (:method ((x t)) (declare (ignore x)) nil))
-(defgeneric make-record (type &rest columns+values)
-  (:documentation
-   "Create a new record of TYPE with initial values COLUMNS+VALUES."))
-(defgeneric find-record (type &rest columns+values)
-  (:documentation
-   "Find a record of TYPE where each of COLUMNS+VALUES are exact matches.
+(defvar pull-records-cache nil)
 
-Expects to find 0 or 1 result."))
-(defgeneric find-records (type &rest columns+values)
-  (:documentation
-   "Find all records of TYPE where each of COLUMNS+VALUES are exact matches."))
-(defgeneric find-reference (object column)
-  (:documentation
-   "Following the reference COLUMN on OBJECT, return the object referred-to."))
-(defgeneric load-record (type columns)
-  (:documentation
-   "Create an object of TYPE from the raw data in COLUMNS"))
-(defgeneric save-record (object)
-  (:documentation
-   "Write OBJECT to the database, with any changes made"))
-(defgeneric destroy-record (object)
-  (:documentation
-   "Delete the row in the database representing OBJECT"))
-
-
+(defun pull-records (name)
+  (setf (getf pull-records-cache name)
+        (db-select-records-simply (db-table-for name))))
 
 (defun lisp-to-db-name (name)
   "Convert a Lispy name to an SQL-type one.
@@ -171,11 +134,11 @@ Used in `DEFRECORD', qv."
     (let ((key (make-keyword (lisp-to-db-name (car column)))))
       (list (make-keyword (string (car column)))
             `(column-load-value (getf record ,key) ,(make-keyword (string (second column)))))))
-
+  
   (defun column-save-mapping (column)
     (let ((slot (first column)))
       `(column-save-value ,slot ,(make-keyword (string (second column))))))
-
+  
   (defun column-normalizer (column)
     (let ((name (intern (string (car column)))))
       (list name
@@ -230,12 +193,29 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
                                 (arrange-columns+values-for-find
                                  columns+values ',columns)))))
 
+(defun defrecord/find-record/pull (name table columns)
+  `(defmethod find-record ((class (eql ',name)) &rest columns+values)
+     (let ((all (apply #'find-records class columns+values)))
+       (assert (= 1 (length all)))
+       (first all))))
+
 (defun defrecord/find-records (name table columns)
   `(defmethod find-records ((class (eql ',name)) &rest columns+values)
      (mapcar (lambda (record) (load-record ',name record))
              (apply #'db-select-records-simply ,table
                     (arrange-columns+values-for-find
                      columns+values ',columns)))))
+
+(defun defrecord/find-records/pull (name table columns)
+  `(defmethod find-records ((class (eql ',name)) &rest columns+values)
+     (loop
+        with solution = (copy-list (or (getf pull-records-cache ',name)
+                                       (pull-records ',name)))
+        for (column . value) on columns+values by #'cddr
+        do (setf solution (remove-if-not (lambda (row)
+                                           (equal (getf row column) value))
+                                         solution))
+        finally (return solution))))
 
 (defun defrecord/before-save-normalize (name columns)
   `(defmethod before-save-normalize ((object ,name))
@@ -366,6 +346,17 @@ ON DUPLICATE KEY UPDATE  ~
             ,@(mapcan
                (curry #'defrecord/column-to-json-pair name name) columns)))))
 
+(defun defrecord/invalidate-cache (name pull columns)
+  (if pull
+      `(defmethod invalidate-cache ((,name ,name))
+         (setf (getf pull-records-cache ',name) nil))
+      `(defmethod invalidate-cache ((,name ,name))
+         (with-slots (,@(mapcar #'car columns)) ,name
+           (erase-all-memcached-for 
+            ',name ,@(loop for column in columns
+                        collect (make-keyword (string-downcase (car column)))
+                        collect (car column)))))))
+
 
 
 (defmacro defrecord (name (database table &key pull id-column) &rest columns)
@@ -377,11 +368,9 @@ eg, :friendly
 TABLE is  the string table-name, exactly  as it exists in  the database;
 eg, \"toots\"
 
-PULL is NOT implemented; TODO.
-
 PULL  is meant  to indicate  an infrequently-changed,  short table  (ie,
 basically a  small enumeration) that  should be pulled into  local cache
-up-front.
+up-front and referenced from there directly.
 
 COLUMNS are a table of names, types, and foreign-key references, in the form:
  (LABEL TYPE &rest REFERENCE)
@@ -417,17 +406,23 @@ stored as CHAR VARying or TEXT, parsed at load time as a PURI:URI.
 translates to a LOCAL-TIME:TIMESTAMP on loading.
 @end table
 "
-  (declare (ignore pull)) ; TODO
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (defstruct ,name
        ,@(mapcar #'car columns))
      (defmethod db-table-for ((class (eql ',name))) ,table)
+     (defmethod database-for ((class (eql ',name))) (list :maria ,database))
      ,(defrecord/id-column-for name columns id-column)
+     ,(defrecord/invalidate-cache name pull columns)
      ,(defrecord/make-record name)
      ,(defrecord/load-record name columns)
-     ,(defrecord/find-record name table columns)
-     ,(defrecord/find-records name table columns)
+     ,(if pull
+          (defrecord/find-record/pull name table columns)
+          (defrecord/find-record name table columns))
+     ,(if pull
+          (defrecord/find-records/pull name table columns)
+          (defrecord/find-records name table columns))
      ,(defrecord/before-save-normalize name columns)
      ,(defrecord/save-record-with-id-column name database table columns)
-     ,(defrecord/to-json name columns)
+     ;;;,(defrecord/to-json name columns)
      ,(defrecord/find-reference-columns name columns)))
+

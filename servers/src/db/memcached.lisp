@@ -90,3 +90,21 @@
         (cl-memcached:mc-del key))
     (cl-memcached::memcached-server-unreachable (c)
       (warn (princ-to-string c)))))
+
+
+
+(defun powerset (list)
+  (if list
+      (mapcan (lambda (el) (list (cons (car list) el) el))
+              (powerset (cdr list)))
+      '(())))
+
+(defun erase-all-memcached-for (name &rest columns+values)
+  (let ((db (second (database-for name)))
+        (table (db-table-for name))
+        (columns (plist-keys columns+values)))
+    (loop for set in (powerset columns)
+       for columns+values-subset = (loop for column in set
+                                      collecting column
+                                      collecting (getf column columns+values))
+       do (cl-memcached:mc-del (query-to-memcache-key db table columns+values-subset)))))

@@ -91,7 +91,8 @@ REST services for the front-end."
                            (:file "http-types")
                            (:file "string-characteristics")
                            (:file "uri-types")
-                           (:file "toot-names")))
+                           (:file "toot-names")
+                           (:file "to-json")))
      (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
      (:file "browser" :depends-on ("config"))
@@ -122,9 +123,10 @@ REST services for the front-end."
      (:module "db"
               :depends-on ("package-post")
               :components ((:file "memcached")
-                           (:file "couch")
+                           (:file "couch" :depends-on ("generic-db"))
                            (:file "maria" :depends-on ("memcached"))
-                           (:file "db-central" :depends-on ("maria"))
+                           (:file "generic-db" :depends-on ("memcached"))
+                           (:file "db-central" :depends-on ("maria" "generic-db"))
                            (:file "friendly" :depends-on ("db-central"))))
      (:file "lib/twilio/twilio-simple")
      (:module "auth"
