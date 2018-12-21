@@ -29,52 +29,52 @@
 
 
 
-(defmethod jonathan.encode:%to-json ((uuid uuid:uuid))
+(defmethod %to-json ((uuid uuid:uuid))
   (jonathan.encode:%write-string (princ-to-string uuid)))
 
-(defmethod jonathan.encode:%to-json ((color24 color24))
+(defmethod %to-json ((color24 color24))
   (jonathan.encode:%write-string (color24-name color24)))
 
-(defmethod jonathan.encode:%to-json ((timestamp timestamp))
+(defmethod %to-json ((timestamp timestamp))
   (jonathan.encode:%write-string (princ-to-string (timestamp-to-unix timestamp))))
 
-(defmethod jonathan.encode:%to-json ((object t))
+(defmethod %to-json ((object t))
   "Return a JSON object that represents the state of OBJECT"
-  (jonathan.encode:%to-json
+  (%to-json
    `(:|isA| ,(string-capitalize (type-of object))
       :t ,(format nil "~s" object))))
 
-(defmethod jonathan.encode:%to-json ((object structure-object))
+(defmethod %to-json ((object structure-object))
   "Return a JSON object that represents the state of structure-object OBJECT"
-  (jonathan.encode:%to-json
+  (%to-json
    `(:|isA| ,(string-capitalize (class-name (class-of object)))
       ,@(loop for slot in (mapcar #'closer-mop:slot-definition-name
                                   (closer-mop:class-slots (class-of object)))
            collect (make-keyword (symbol-munger:lisp->camel-case slot))
            collect (slot-value object slot)))))
 
-(defmethod jonathan.encode:%to-json ((object standard-object))
+(defmethod %to-json ((object standard-object))
   "Return a JSON object that represents the state of standard-object OBJECT"
-  (jonathan.encode:%to-json
+  (%to-json
    `(:|isA| ,(string-capitalize (class-name (class-of object)))
       ,@(loop for slot in (mapcar #'closer-mop:slot-definition-name
                                   (closer-mop:class-slots (class-of object)))
            collect (make-keyword (symbol-munger:lisp->camel-case slot))
            collect (slot-value object slot)))))
 
-(defmethod jonathan.encode:%to-json ((function function))
+(defmethod %to-json ((function function))
   "Encode FUNCTION as a JSON object."
   ;; TODO try to extract its source tree and pass it along, as well.
   (let ((name (nth-value 2 (function-lambda-expression function))))
-    (jonathan.encode:%to-json
+    (%to-json
      `(:|isA| "function"
         :|package| ,(string-upcase (package-name (symbol-package name)))
         :|name| ,(string-upcase (symbol-name name))
         :|source| ,(function-lambda-expression function)))))
 
-(defmethod jonathan.encode:%to-json ((pathname pathname))
+(defmethod %to-json ((pathname pathname))
   "Encode PATHNAME as a JSON object"
-  (jonathan.encode:%to-json
+  (%to-json
    `(:|isA| "pathname"
       :|host| ,(typecase (pathname-host pathname)
                  #+sbcl (sb-impl::unix-host (machine-instance))

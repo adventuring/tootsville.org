@@ -271,7 +271,7 @@
     (when workflow-sid (attribute "workflowSid" workflow-sid))
     (text (or name (etypecase task
                      (string task)
-                     (cons (jonathan.encode:to-json task)))))))
+                     (cons (to-json task)))))))
 
 (defun leave ()
   (with-element "Leave"))

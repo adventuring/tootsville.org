@@ -69,7 +69,7 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:number value)
     (:json (and value
                 (with-output-to-string (*standard-output*)
-                  (jonathan.encode:%to-json value))))
+                  (%to-json value))))
     (:uri (and value (etypecase value
                        (puri:uri (puri:render-uri value nil))
                        (string value))))
@@ -333,15 +333,15 @@ ON DUPLICATE KEY UPDATE  ~
 (defun defrecord/column-to-json-pair (name basename column)
 
   (list (intern (symbol-munger:lisp->camel-case (first column)) :keyword)
-        (list 'jonathan.encode:%to-json
+        (list '%to-json
               (list (intern (concatenate 'string
                                          (string name) "-"
                                          (string (first column))))
                     basename))))
 
 (defun defrecord/to-json (name columns)
-  `(defmethod jonathan.encode:%to-json ((,name ,name))
-     (jonathan.encode:%to-json
+  `(defmethod %to-json ((,name ,name))
+     (%to-json
       (list :|isA| ,(symbol-munger:lisp->studly-caps name)
             ,@(mapcan
                (curry #'defrecord/column-to-json-pair name name) columns)))))

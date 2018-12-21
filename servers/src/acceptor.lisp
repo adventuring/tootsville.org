@@ -137,11 +137,11 @@
        (list (http-status-code c)
              '(:content-type "application/json; charset=utf-8")
              (if hunchentoot:*show-lisp-backtraces-p*
-                 (jonathan.encode:to-json
+                 (to-json
                   (list :error (http-status-code c)
                         :error-message (princ-to-string c)
                         :trace (rollbar::find-appropriate-backtrace)))
-                 (jonathan.encode:to-json
+                 (to-json
                   (list :error (http-status-code c)
                         :error-message (princ-to-string c))))))
       (encode-endpoint-reply

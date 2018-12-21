@@ -39,8 +39,10 @@
                           #:copy-file #:copy-stream ; conflicts with Alexandria.
                           #:directory-pathname-p)
   (:import-from :trivial-backtrace #:print-backtrace)
-  (:import-from :sb-introspect #:function-lambda-expression #:function-lambda-list)
+  (:import-from :sb-introspect
+                #:function-lambda-expression #:function-lambda-list)
   (:import-from :uiop #:run-program)
+  (:import-from :jonathan.encode #:%to-json #:to-json)
   (:export
    #:*application-root*
    #:*compiled*

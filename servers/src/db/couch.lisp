@@ -1,4 +1,4 @@
- ;;;; -*- lisp -*-
+;;;; -*- lisp -*-
 ;;;
 ;;;; ./servers/src/db/couch.lisp is part of Tootsville
 ;;;
@@ -55,7 +55,7 @@
 (defmethod id-column-for ((type (eql 'gossip-initiation)))
   :|uuid|)
 
-(defmethod jonathan.encode:%to-json ((object gossip-initiation)))
+(defmethod %to-json ((object gossip-initiation)))
 
 (defmethod destroy-record ((init gossip-initiation))
   (clouchdb:delete-document (to-json init)))
@@ -65,7 +65,7 @@
     (setf (gossip-initiation-uuid init) (uuid:make-v1-uuid)))
   (clouchdb:put-document (to-json init)
                          :id (gossip-initiation-uri init))
-  (jonathan.encode:to-json init))
+  (to-json init))
 
 (defmethod load-record ((class (eql 'gossip-initiation)) alist)
   (make-gossip-initiation :uuid (assoc-value alist :|uuid|)

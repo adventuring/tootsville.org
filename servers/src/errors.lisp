@@ -45,7 +45,7 @@
   (loop for slot in (condition-slots object)
      collecting
        (list :slot (symbol-name slot)
-             :value (jonathan.encode:%to-json (slot-value object slot)))))
+             :value (%to-json (slot-value object slot)))))
 
 
 ;;; Backtrace handling
@@ -77,7 +77,7 @@
   "☠ deprecated"
   (break "☠deprecated RENDER BACKTRACE CONDITION ENVIRONMENT")
   (let* ((backtrace (parse-backtrace bt)))
-    (jonathan.encode:%to-json
+    (%to-json
      `(:|error| ,(princ-to-string condition)
         :|condition| ,(condition-name condition)
         :|location| ,(if hunchentoot:*show-lisp-backtraces-p*
