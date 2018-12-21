@@ -389,12 +389,6 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 
-(defmethod jonathan::%to-json ((symbol symbol))
-  "Supply a Lisp symbol in JavaScirpt string form"
-  (jonathan.encode::string-to-json (string (symbol-munger:lisp->camel-case symbol))))
-
-
-
 (defun query-string->plist (query-string)
   "Split an HTTP QUERY-STRING into a  PList.
 
