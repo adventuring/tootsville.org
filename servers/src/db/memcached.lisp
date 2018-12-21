@@ -27,6 +27,10 @@
 
 (in-package :Tootsville)
 
+(declaim (optimize (speed 3)))
+
+
+
 (defun query-to-memcache-key (db prepared args)
   (let ((query (format nil "~a➕~{~a~^✜~}" prepared args)))
     (if (< (length query) 128)
@@ -75,16 +79,18 @@
   (handler-case
       (cl-memcached::mc-quick-test)
     (cl-memcached::memcached-server-unreachable (c)
-      (warn (princ-to-string c)))))
+      (warn (princ-to-string (the condition c))))))
 
 (defpost memcached-random-number-test ()
   "Store and fetch a random number"
   (handler-case
-      (let ((n (princ-to-string (random (expt 2 63))))
-            (key (format nil "~a.~a" (machine-instance) (cluster-name))))
+      (let ((n (princ-to-string (the (integer 0 *) 
+                                     (random (the (integer 0 *) 
+                                                  (expt 2 63))))))
+            (key (format nil "post.~a.~a" (machine-instance) (cluster-name))))
         (cl-memcached:mc-set key n)
         (let ((m (cl-memcached:mc-get key)))
-          (assert (= n m) ()
+          (assert (equal n m) ()
                   "MemCacheD did not return the random number (~x) for key ~a"
                   n key))
         (cl-memcached:mc-del key))
