@@ -36,7 +36,9 @@
  boot-up sequence."
   (let ((fn-name (intern (concatenate 'string "⊕POST-" (string name)))))
     `(progn
-       (defun ,fn-name () (block ,name ,@body))
+       (defun ,fn-name () 
+         (declare (optimize (speed 0)))
+         (block ,name ,@body))
        (pushnew ',fn-name *post-tests-queue*))))
 
 
