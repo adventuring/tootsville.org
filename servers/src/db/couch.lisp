@@ -27,6 +27,8 @@
 
 (in-package :Tootsville)
 
+(declaim (optimize (speed 3)))
+
 (defun connect-mixer ()
   (setf clouchdb:*couchdb*
         (ignore-errors
@@ -97,13 +99,13 @@
      (error "Can't search that way: ~
 supply exactly one of OFFEROR, ANSWEROR, ANSWER"))
     (offeror
-     (mapcar (curry #'load-record 'gossip-initiation)
+     (mapcar (lambda (r) (load-record 'gossip-initiation r))
              (clouchdb:invoke-view
               "offeror" "offeror"
               :key (uuid-to-uri (person-uuid offeror)))))
     ((and answerp
           (null answer))
-     (mapcar (curry #'load-record 'gossip-initiation)
+     (mapcar (lambda (r) (load-record 'gossip-initiation r))
              (clouchdb:invoke-view
               "pending" "pending")))
     ((and answerorp
@@ -115,9 +117,9 @@ supply exactly one of OFFEROR, ANSWEROR, ANSWER"))
 
 
 (defun find-active-Toot-for-user (&optional (user *user*))
-  nil)
-
-(defun link-active-Toot-to-user (Toot &optional (user *user*))
+  (declare (ignore user))
   (error 'unimplemented))
 
-
+(defun link-active-Toot-to-user (Toot &optional (user *user*))
+  (declare (ignore Toot user))
+  (error 'unimplemented))

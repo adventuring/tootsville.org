@@ -58,6 +58,7 @@
   "Convert a Lispy name to an SQL-type one.
 
 Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
+  (check-type name symbol)
   (cffi:translate-name-to-foreign (make-keyword (string name)) *package*))
 
 (defun column-save-value (value type)
@@ -77,12 +78,14 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
                                  (color24-to-integer value))))
     (:uuid (etypecase value
              (null nil)
-             (string (subseq (cl-base64:usb8-array-to-base64-string
-                              (uuid:uuid-to-byte-array
-                               (uuid:make-uuid-from-string value)))
+             (string (subseq (the string
+                                  (cl-base64:usb8-array-to-base64-string
+                                   (uuid:uuid-to-byte-array
+                                    (uuid:make-uuid-from-string value))))
                              0 22))
-             (uuid:uuid (subseq (cl-base64:usb8-array-to-base64-string
-                                 (uuid:uuid-to-byte-array value))
+             (uuid:uuid (subseq (the string
+                                     (cl-base64:usb8-array-to-base64-string
+                                      (uuid:uuid-to-byte-array value)))
                                 0 22))))
     (:timestamp (and value (substitute #\Space #\T (format-timestring nil value))))))
 
@@ -97,11 +100,11 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
     (:number (etypecase value
                (null nil)
                (integer value)
-               (rational (format nil "~f" (* 1.0 value)))
+               (rational (format nil "~f" (coerce value 'float)))
                (real (format nil "~f" value))
                (t (error "Can't record number ~s?" value))))
     (:json (and value
-                (< 0 (length value))
+                (< 0 (length (the string value)))
                 (jonathan.decode:parse value)))
     (:uri (puri:parse-uri value))
     (:color24
@@ -132,18 +135,19 @@ Particularly, changes CAPS-WITH-KEBABS to lower_with_snakes."
 
 Used in `DEFRECORD', qv."
     (let ((key (make-keyword (lisp-to-db-name (car column)))))
-      (list (make-keyword (string (car column)))
-            `(column-load-value (getf record ,key) ,(make-keyword (string (second column)))))))
-  
+      (list (make-keyword (symbol-name (car column)))
+            `(column-load-value (getf record ,key)
+                                ,(make-keyword (symbol-name (second column)))))))
+
   (defun column-save-mapping (column)
     (let ((slot (first column)))
-      `(column-save-value ,slot ,(make-keyword (string (second column))))))
-  
+      `(column-save-value ,slot ,(make-keyword (symbol-name (second column))))))
+
   (defun column-normalizer (column)
-    (let ((name (intern (string (car column)))))
+    (let ((name (intern (symbol-name (car column)))))
       (list name
             (list 'and name
-                  (ecase (make-keyword (string (second column)))
+                  (ecase (make-keyword (symbol-name (second column)))
                     (:string `(typecase ,name (string ,name) (t (princ-to-string ,name))))
                     (:keyword `(make-keyword (string ,name)))
                     (:yornp `(or ,name t)) ; T or NIL
@@ -172,7 +176,7 @@ Used in `DEFRECORD', qv."
 
 (defun defrecord/load-record (name columns)
   `(defmethod load-record ((class (eql ',name)) record)
-     (,(intern (concatenate 'string "MAKE-" (string name)))
+     (,(intern (concatenate 'string "MAKE-" (symbol-name name)))
        ,@(mapcan #'column-load-mapping columns))))
 
 (defun arrange-columns+values-for-find (columns+values column-definitions)
@@ -184,7 +188,8 @@ Used in `DEFRECORD', qv."
 columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
        append (list (lisp-to-db-name column)
                     (column-save-value value
-                                       (make-keyword (string (second column-def))))))))
+                                       (make-keyword (symbol-name
+                                                      (second column-def))))))))
 
 (defun defrecord/find-record (name table columns)
   `(defmethod find-record ((class (eql ',name)) &rest columns+values)
@@ -194,6 +199,7 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
                                  columns+values ',columns)))))
 
 (defun defrecord/find-record/pull (name table columns)
+  (declare (ignore table columns))
   `(defmethod find-record ((class (eql ',name)) &rest columns+values)
      (let ((all (apply #'find-records class columns+values)))
        (assert (= 1 (length all)))
@@ -207,6 +213,7 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
                      columns+values ',columns)))))
 
 (defun defrecord/find-records/pull (name table columns)
+  (declare (ignore table columns))
   `(defmethod find-records ((class (eql ',name)) &rest columns+values)
      (loop
         with solution = (copy-list (or (getf pull-records-cache ',name)
@@ -246,8 +253,12 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
 ON DUPLICATE KEY UPDATE  ~
 ~{`~a` = ?~^, ~};"
                                table
-                               (mapcar (compose #'lisp-to-db-name #'car) columns)
-                               (mapcar (compose #'lisp-to-db-name #'car) (rest columns))))))
+                               (mapcar (lambda (column)
+                                         (lisp-to-db-name (car column)))
+                                       (the proper-list columns))
+                               (mapcar (lambda (column)
+                                         (lisp-to-db-name (car column)))
+                                       (the proper-list (rest columns)))))))
          (v:info :db "Saving ~a ∀ ~s=~s" (symbol-munger:lisp->english (type-of object))
                  ',(caar columns) (,id-accessor object))
          (with-slots ,(mapcar #'car columns) object
@@ -284,7 +295,7 @@ ON DUPLICATE KEY UPDATE  ~
            rows)))))
 
 (defun defrecord/record= (name id-accessor)
-  (let (($fname (intern (concatenate 'string (string name) "="))))
+  (let (($fname (intern (concatenate 'string (symbol-name name) "="))))
     `(defun ,$fname (a b &rest more)
        ,(format nil
                 "Returns true if A and B represent the same ~A record in the database."
@@ -295,8 +306,8 @@ ON DUPLICATE KEY UPDATE  ~
 
 (defun defrecord/save-record-with-id-column (name database table columns)
   (when (id-column-for name)
-    (let ((id-accessor (intern (concatenate 'string (string name) "-"
-                                            (string (id-column-for name))))))
+    (let ((id-accessor (intern (concatenate 'string (symbol-name name) "-"
+                                            (symbol-name (id-column-for name))))))
       `(progn
          ,(defrecord/record= name id-accessor)
          ,(defrecord/save-record name id-accessor database table columns)
@@ -305,19 +316,21 @@ ON DUPLICATE KEY UPDATE  ~
 (defun defrecord/find-reference (name column)
   `(defmethod find-reference
        ((object ,name)
-        (reference (eql ,(make-keyword (string (first column))))))
+        (reference (eql ,(make-keyword (symbol-name (first column))))))
      (find-record ',(fourth column)
                   ,(make-keyword (id-column-for (fourth column)))
-                  (,(intern (concatenate 'string (string name)
+                  (,(intern (concatenate 'string (symbol-name name)
                                          "-"
-                                         (string (first column))))
+                                         (symbol-name (first column))))
                     object))))
 
 (defun defrecord/find-reference-columns (name columns)
-  (when (find-if (lambda (column) (< 2 (length column))) columns)
+  (when (find-if (lambda (column)
+                   (< 2 (length (the proper-list column))))
+                 (the proper-list columns))
     (cons 'progn
           (loop for column in columns
-             when (and (= 4 (length column))
+             when (and (= 4 (length (the proper-list column)))
                        (string-equal "REF" (third column)))
              collecting
                (defrecord/find-reference name column)))))
@@ -325,7 +338,8 @@ ON DUPLICATE KEY UPDATE  ~
 (defun defrecord/make-record (name)
   `(defmethod make-record ((class (eql ',name)) &rest columns+values)
      (let ((record (apply (function
-                           ,(intern (concatenate 'string "MAKE-" (string name))))
+                           ,(intern (concatenate 'string
+                                                 "MAKE-" (symbol-name name))))
                           columns+values)))
        (save-record record)
        record)))
@@ -335,8 +349,8 @@ ON DUPLICATE KEY UPDATE  ~
   (list (intern (symbol-munger:lisp->camel-case (first column)) :keyword)
         (list '%to-json
               (list (intern (concatenate 'string
-                                         (string name) "-"
-                                         (string (first column))))
+                                         (symbol-name name) "-"
+                                         (symbol-name (first column))))
                     basename))))
 
 (defun defrecord/to-json (name columns)
@@ -344,7 +358,9 @@ ON DUPLICATE KEY UPDATE  ~
      (%to-json
       (list :|isA| ,(symbol-munger:lisp->studly-caps name)
             ,@(mapcan
-               (curry #'defrecord/column-to-json-pair name name) columns)))))
+               (lambda (column)
+                 (defrecord/column-to-json-pair name name column))
+               columns)))))
 
 (defun defrecord/invalidate-cache (name pull columns)
   (if pull
@@ -352,7 +368,7 @@ ON DUPLICATE KEY UPDATE  ~
          (setf (getf pull-records-cache ',name) nil))
       `(defmethod invalidate-cache ((,name ,name))
          (with-slots (,@(mapcar #'car columns)) ,name
-           (erase-all-memcached-for 
+           (erase-all-memcached-for
             ',name ,@(loop for column in columns
                         collect (make-keyword (string-downcase (car column)))
                         collect (car column)))))))
@@ -423,6 +439,5 @@ translates to a LOCAL-TIME:TIMESTAMP on loading.
           (defrecord/find-records name table columns))
      ,(defrecord/before-save-normalize name columns)
      ,(defrecord/save-record-with-id-column name database table columns)
-     ;;;,(defrecord/to-json name columns)
+ ;;;,(defrecord/to-json name columns)
      ,(defrecord/find-reference-columns name columns)))
-
