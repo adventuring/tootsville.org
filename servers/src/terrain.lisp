@@ -1,16 +1,18 @@
 (in-package :Tootsville)
 
 (define-constant +habitat-colors+
-    '(((65 0 145) . :shaddow)
-      ((150 150 150) . :rocky)
-      ((239 14 78) . :swamp)
-      ((38 152 65) . :grassland)
-      ((236 237 138) . :desert)
-      ((145 82 0) . :savannah)
-      ((35 239 14) . :forest)
-      ((150 138 237) . :ocean)
-      ((255 255 255) . :ice))
-  :test 'equalp)
+    '(((color24-rgb 65 0 145) . :shaddow)
+      ((color24-rgb 150 150 150) . :rocky)
+      ((color24-rgb 239 14 78) . :swamp)
+      ((color24-rgb 38 152 65) . :grassland)
+      ((color24-rgb 236 237 138) . :desert)
+      ((color24-rgb 145 82 0) . :savannah)
+      ((color24-rgb 35 239 14) . :forest)
+      ((color24-rgb 150 138 237) . :ocean)
+      ((color24-rgb 255 255 255) .  :ice))
+   :test 'equalp
+   :documentation "The color triplets which represent each type of habitat
+  in the PNG habitat map.")
 
 (defvar *global-heightmap%)
 (defvar *global-heightmap-x%)
@@ -35,25 +37,37 @@
 
 (defvar *habitat-map*
   (pngload:load-file (asdf:system-relative-pathname :Tootsville
-                                                    "data/Tootanga-map"
-                                                    :type "png" )))
+                                                      "data/Tootanga-map"
+                                                      :type "png"))
+  "The Tootanga map contains color-coded pixels representing the various
+habitat areas of the game. Each pixel represents a 200m by 200m area; thus,
+the entire map area (800 by 600 pixels) represents a playable game area of
+160 by 120 km.")
+
 (defvar *elevation-map*
   (pngload:load-file (asdf:system-relative-pathname :Tootsville
                                                     "data/Tootanga-elevation"
-                                                    :type "png" )))
+                                                    :type "png"))
+  "The Tootangan elevation map provides a logarithmic altitude map of the
+approximate/net altitude of each 200 by 200 meter area of the game.")
 
 (defpost check-map-heights ()
+  "Ensure that both maps are 600px high."
   (= 600 (pngload:height *habitat-map*) (pngload:height *elevation-map*)))
+
 (defpost check-map-widths ()
+  "Ensure that both maps are 800px wide."
   (= 800 (pngload:width *habitat-map*) (pngload:width *elevation-map*)))
 
-(defun habitat<-pixel (r g b)
-  (let ((c (or (assoc (list r g b) +habitat-colors+ :test 'equalp)
-               (error "palette mismatch in habitat map on #~2,'0x~2,'0x~2,'0x"
-                      r g b))))
+(defun habitat<-pixel (color)
+  "Which habitat type does the given color triplet represent?"
+  (let ((c (or (assoc color +habitat-colors+ :test #'color24=)
+               (error "palette mismatch in habitat map on ~a"
+                      (color24-name color)))))
     (cdr c)))
 
 (defun get-9-terrain-tiles (x y)
+  "Returns 9 tiles of terrain centered on X Y as a 3 by 3 array"
   (let ((x-offset (1- (+ 400 (floor x 200))))
         (y-offset (1- (+ 300 (floor y 200))))
         (elevation (make-array '(3 3) :element-type '(unsigned-byte 8)))
@@ -68,9 +82,10 @@
 
               (aref habitat ix iy)
               (habitat<-pixel
-               (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 0)
-               (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 1)
-               (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 2)))))
+               (color24-rgb 
+                 (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 0)
+                 (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 1)
+                 (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 2))))))
     (list elevation habitat)))
 
 
@@ -86,20 +101,25 @@ If no adjacent tile has yet been spawned, small chance of creating a new
   (error 'unimplemented))
 
 (defun terrain/add-cactus ()
+  "Add a cactus"
   (error 'unimplemented))
 
 (defun terrain/add-tree ()
-  "Adds a random tree or bush."
+  "Add a random tree or bush."
   (error 'unimplemented))
+
 (defun terrain/add-mushrooms ()
-  "Adds a cluster of mushrooms or similar."
+  "Add a cluster of mushrooms or similar."
   (error 'unimplemented))
+
 (defun terrain/add-log ()
   "Adds a fallen log or similar feature."
   (error 'unimplemented))
+
 (defun terrain/add-flowers ()
   "Add a random cluster of appropriate flowers or herbs."
   (error 'unimplemented))
+
 (defun terrain/stream-present-p ()
   "Does a stream bisect the currently-active space?
 
@@ -108,9 +128,15 @@ Should return true  if a body of water exists  which enters the space
  Terminus of  a stream  or completely underwater  are not  “streams” by
  this definition."
   (error 'unimplemented))
+  
 (defun point-underwater-p (x y)
+  "Is the point underwater? TODO"
   (error 'unimplemented))
+  
 (defun find-random-point-if (function)
+  "Find a random point within the space for which FUNCTION is true.
+
+Returns (LIST X Y)"
   (loop
      for x = (/ (random 20000) 100)
      for y = (/ (random 20000) 100)
@@ -118,31 +144,50 @@ Should return true  if a body of water exists  which enters the space
      finally (return (list x y))))
 
 (defun terrain/add-small-pond ()
-  "Create a pool of water smaller than the tile and contained within it."
+  "Create a pool of water smaller than the tile and contained within it. TODO"
   (if (terrain/stream-present-p)
       (destructuring-bind (x y)
-          (find-random-point-if #'point-underwater-p))))
+          (find-random-point-if #'point-underwater-p)
+        (error 'unimplemented))
+      (error 'unimplemented)))
 
 (defun terrain/add-shaddow-bush ()
+  "Add a Shaddow bush to the area"
   (error 'unimplemented))
+
+(defun terrain/add-shaddow-stalagmite ()
+  "Add a Shaddow stalagmite to the area"
+  (error 'unimplemented))
+
 (defun terrain/add-shaddow-pit ()
+  "Add a Shaddow pit to the area"
   (error 'unimplemented))
 
 
 ;;; Per-habitat generation rules.
 
-(defgeneric generate-terrain-features (contour habitat))
+(defgeneric generate-terrain-features (contour habitat)
+  (:documentation "Generate the terrain features based upon the contour map
+  and habitat type.  Methods of this function specialize upon the habitat
+  type."))
 
 (defmethod generate-terrain-features :before (contour habitat)
+  "Connect streams, regardless of the habitat type."
   (terrain/connect-streams))
 
 (defmethod generate-terrain-features (contour (habitat (eql :shaddow)))
+  (loop repeat (random 100) do (terrain/add-shaddow-stalagmite))
   (loop repeat (random 100) do (terrain/add-shaddow-bush))
   (loop repeat (random 25) do (terrain/add-shaddow-pit)))
 
-(defmethod generate-terrain-features (contour (habitat (eql :swamp))))
-(defmethod generate-terrain-features (contour (habitat (eql :ocean))))
-(defmethod generate-terrain-features (contour (habitat (eql :grassland))))
+(defmethod generate-terrain-features (contour (habitat (eql :swamp)))
+  (error 'unimplemented))
+
+(defmethod generate-terrain-features (contour (habitat (eql :ocean)))
+  (error 'unimplemented))
+
+(defmethod generate-terrain-features (contour (habitat (eql :grassland)))
+  (error 'unimplemented))
 
 (defmethod generate-terrain-features (contour (habitat (eql :forest)))
   (loop repeat (random 200) do (terrain/add-tree))
@@ -151,14 +196,22 @@ Should return true  if a body of water exists  which enters the space
   (loop repeat (random 5) do (terrain/add-flowers))
   (loop repeat (random 5) do (terrain/add-small-pond)))
 
-(defmethod generate-terrain-features (contour (habitat (eql :desert))))
-(defmethod generate-terrain-features (contour (habitat (eql :savannah))))
-(defmethod generate-terrain-features (contour (habitat (eql :rocky))))
-(defmethod generate-terrain-features (contour (habitat (eql :ice))))
+(defmethod generate-terrain-features (contour (habitat (eql :desert)))
+  (error 'unimplemented))
+
+(defmethod generate-terrain-features (contour (habitat (eql :savannah)))
+  (error 'unimplemented))
+
+(defmethod generate-terrain-features (contour (habitat (eql :rocky)))
+  (error 'unimplemented))
+
+(defmethod generate-terrain-features (contour (habitat (eql :ice)))
+  (error 'unimplemented))
 
 
 
-(defgeneric generate-terrain-contour (9-elevations habitat x y scale))
+(defgeneric generate-terrain-contour (9-elevations habitat x y scale)
+ (:documentation "Generate the contour for a tile area"))
 
 (defun copy-terrain-edge-horz (start-x y end-x dest-x dest-y)
   (loop for xi from start-x to end-x
@@ -245,6 +298,7 @@ Should return true  if a body of water exists  which enters the space
   t)
 
 (defgeneric habitat-elevation-roughness (habitat)
+  (:documentation "How much relative roughness to the contour for this habitat?"
   (:method (habitat) 1)
   (:method ((habitat (eql :desert))) 1/100)
   (:method ((habitat (eql :grasslands))) 1/6)
@@ -252,6 +306,7 @@ Should return true  if a body of water exists  which enters the space
   (:method ((habitat (eql :ocean))) 1/2))
 
 (defun shift-contour-point (x y shift)
+  "Shift a point on the contour map vertically"
   (setf (global-heightmap-corner x y)
         (min #xff (max 0 (+ (global-heightmap-corner x y)
                             shift)))))
@@ -340,3 +395,6 @@ PLACE is one of :Tootanga, :Moon, :Other-Moon, :Pink-Moon.
 X and Y must be aligned to 200m increments."
   (or (terrain-exists-p place x y)
       (spawn-terrain place x y)))
+
+
+
