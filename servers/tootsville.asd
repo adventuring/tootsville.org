@@ -1,3 +1,29 @@
+;;;; -*- lisp -*-
+;;;
+;;;; tootsville.asd is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
 (cl:in-package :cl-user)
 
 (defpackage Tootsville-ASD
@@ -45,7 +71,7 @@ REST services for the front-end."
                :uuid
 
                ;; Systems that travel bundled with Tootsville
-               
+
                :dreamhost
                :oliphaunt
                :rollbar
@@ -65,7 +91,8 @@ REST services for the front-end."
                            (:file "http-types")
                            (:file "string-characteristics")
                            (:file "uri-types")
-                           (:file "toot-names")))
+                           (:file "toot-names")
+                           (:file "to-json")))
      (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
      (:file "browser" :depends-on ("config"))
@@ -96,9 +123,10 @@ REST services for the front-end."
      (:module "db"
               :depends-on ("package-post")
               :components ((:file "memcached")
-                           (:file "couch")
+                           (:file "couch" :depends-on ("generic-db"))
                            (:file "maria" :depends-on ("memcached"))
-                           (:file "db-central" :depends-on ("maria"))
+                           (:file "generic-db" :depends-on ("memcached"))
+                           (:file "db-central" :depends-on ("maria" "generic-db"))
                            (:file "friendly" :depends-on ("db-central"))))
      (:file "lib/twilio/twilio-simple")
      (:module "auth"
@@ -113,7 +141,7 @@ REST services for the front-end."
        (:file "slash-version")
        (:file "slash-maintenance")
        (:file "slash-meta-game")
-       
+
        (:file "slash-gossip")
        (:file "slash-toots")
        (:file "slash-users")
@@ -121,7 +149,7 @@ REST services for the front-end."
        (:module
         "gossip"
         :depends-on ("slash-gossip")
-        :components 
+        :components
         ((:file "twilio")
          (:module
           "alexa"

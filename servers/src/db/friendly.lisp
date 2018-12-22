@@ -1,5 +1,32 @@
-(in-package :Tootsville)
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/db/friendly.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
 
+(in-package :Tootsville)
+
 (defrecord person (:friendly "people")
   (uuid uuid)
   (display-name string)
@@ -43,6 +70,22 @@
   (last-seen timestamp)
   (origin string))
 
+(defrecord contact (:friendly "contacts")
+  (uuid uuid)
+  (owner uuid ref person)
+  (contact uuid ref person)
+  (starredp yornp)
+  (added timestamp)
+  (last-used timestamp))
+
+(defrecord sms (:friendly "sms")
+  (uuid uuid)
+  (sender uuid ref Toot)
+  (destination uuid ref Toot)
+  (message string)
+  (mmsp yornp))
+
+
 (defrecord avatar (:friendly "avatars" :pull t)
   (id number)
   (moniker string)
@@ -53,7 +96,7 @@
 (defrecord pattern (:friendly "patterns" :pull t)
   (id number)
   (name string))
-
+
 (defrecord Toot (:friendly "toots")
   (uuid uuid)
   (name string)
@@ -71,7 +114,7 @@
 
 (defmethod save-record :before ((Toot Toot))
   (setf (Toot-last-active Toot) (now)))
-
+
 (defrecord wear-slot (:friendly "wear-slots")
   (id number)
   (name string)
@@ -87,7 +130,7 @@
   (avatar number ref avatar)
   (slot keyword)
   (valence number))
-
+
 (defrecord item-template (:friendly "item_templates" :pull t)
   (id number)
   (name string)
@@ -126,14 +169,7 @@
   (Toot uuid ref Toot)
   (equipped keyword))
 
-(defrecord contact (:friendly "contacts")
-  (uuid uuid)
-  (owner uuid ref person)
-  (contact uuid ref person)
-  (starredp yornp)
-  (added timestamp)
-  (last-used timestamp))
-
+
 (defrecord music (:friendly "music" :pull t)
   (id number)
   (title string)
@@ -151,13 +187,6 @@
                                    :pull t)
   (music number ref music)
   (x number)
-  (y number) 
+  (y number)
   (z number)
   (radius number))
-
-(defrecord sms (:friendly "sms")
-  (uuid uuid)
-  (sender uuid ref Toot)
-  (destination uuid ref Toot)
-  (message string)
-  (mmsp yornp))

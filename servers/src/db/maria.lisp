@@ -1,6 +1,34 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/db/maria.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
-
+(declaim (optimize (speed 3)))
+
 (defvar *dbi-connection* :not-connected
   "The connection selected by a WITH-MARIA block")
 
@@ -8,9 +36,9 @@
   "The default database moniker")
 
 (defun db-config (&optional (moniker *db*))
-  (or (cdr (assoc moniker (config :databases)))
+  (or (cdr (assoc (the symbol moniker) (config :databases)))
       (and (load-config)
-           (cdr (assoc moniker (config :databases))))
+           (cdr (assoc (the symbol moniker) (config :databases))))
       (error "No database configuration for ~s" moniker)))
 
 (defmacro with-dbi ((moniker) &body body)
@@ -51,6 +79,7 @@ Signals NOT-FOUND if none are found.
 Uses MemCacheD when available."
   (destructuring-bind (table &key pull)
       (if (consp table) table (list table))
+    (declare (ignore pull))
     (let ((results
            (with-dbi (*db*)
              (destructuring-bind (columns values) (split-plist columns+values)
@@ -60,7 +89,7 @@ Uses MemCacheD when available."
                       (result-set (apply #'cl-dbi:execute query values)))
                  (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
                    (cl-dbi:fetch-all result-set)))))))
-      (cond ((= 1 (length results))
+      (cond ((= 1 (length (the proper-list results)))
              (caar results))
             ((zerop (length results))
              (error 'not-found :the (cons table columns+values)))
@@ -79,7 +108,7 @@ Signals NOT-FOUND if none are found."
       (if (consp table) table (list table))
     (let ((results (apply #'db-select-records-simply (list table :pull pull)
                           columns+values)))
-      (cond ((= 1 (length results))
+      (cond ((= 1 (length (the proper-list results)))
              (first results))
             ((zerop (length results))
              (error 'not-found :the (cons table columns+values)))
@@ -94,6 +123,7 @@ Returns all results in a list, so don't use it with a (potentially) large set.
 Uses MemCache when available."
   (destructuring-bind (table &key pull)
       (if (consp table) table (list table))
+    (declare (ignore pull))
     (with-dbi (*db*)
       (if columns+values
           (destructuring-bind (columns values) (split-plist columns+values)
@@ -138,4 +168,3 @@ connection in the pool."
     (let ((q (cl-dbi:prepare *dbi-connection* "SELECT 1 AS one;")))
       (cl-dbi:execute q)
       (assert (equalp '((:|one| 1)) (cl-dbi:fetch-all q))))))
-

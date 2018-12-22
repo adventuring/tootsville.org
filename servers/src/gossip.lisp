@@ -1,11 +1,33 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/gossip.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
-(defstruct gossip-initiation
-  uuid
-  offeror
-  offer
-  answeror
-  answer)
+
 
 (defun gossip-initiation-uri (initiation)
   (etypecase initiation
@@ -13,61 +35,9 @@
     (gossip-initiation (gossip-initiation-uri
                         (gossip-initiation-uuid initiation)))))
 
-(defmethod save-record ((init gossip-initiation))
-  (unless (gossip-initiation-uuid init)
-    (setf (gossip-initiation-uuid init) (uuid:make-v1-uuid)))
-  (clouchdb:put-document init 
-                         :id (gossip-initiation-uri init))
-  (jonathan.encode:to-json init))
-
-(defmethod load-record ((class (eql 'gossip-initiation)) alist)
-  (make-gossip-initiation :uuid (assoc-value alist :|uuid|)
-                          :offeror (assoc-value alist :|offeror|)
-                          :offer (assoc-value alist :|offer|)
-                          :answeror (assoc-value alist :|answeror|)
-                          :answer (assoc-value alist :|answer|)))
-
-(defmethod make-record ((class (eql 'gossip-initiation)) &rest plist)
-  (let ((init (apply #'make-gossip-initiation plist)))
-    (save-record init)
-    init))
-
-(defmethod find-record ((class (eql 'gossip-initiation)) 
-                        &key uuid)
-  (if uuid
-      (clouchdb:get-document (gossip-initiation-uri uuid)
-                             :if-missing :nil)
-      (error "Must provide UUID")))
-
-(defmethod find-records ((class (eql 'gossip-initiation)) 
-                         &key offeror 
-                              (answeror nil answerorp) 
-                              (answer nil answerp))
-  (cond
-    ((<= 1 (+ (if offeror 1 0)
-              (if answerorp 1 0)
-              (if answerp 1 0)))
-     (error "Can't search that way: ~
-supply exactly one of OFFEROR, ANSWEROR, ANSWER"))
-    (offeror
-     (mapcar (curry #'load-record 'gossip-initiation) 
-             (clouchdb:invoke-view 
-              "offeror" "offeror"
-              :key (uuid-to-uri (person-uuid offeror)))))
-    ((and answerp
-          (null answer))
-     (mapcar (curry #'load-record 'gossip-initiation) 
-             (clouchdb:invoke-view 
-              "pending" "pending")))
-    ((and answerorp
-          (null answeror))
-     (curry #'load-record 'gossip-initiation) 
-     (clouchdb:invoke-view 
-      "unanswered" "unanswered"))
-    (t (clouchdb:all-docs-by-seq))))
 
 (defun gossip-offer (sdp &optional (user *user*))
-  (let ((init (make-gossip-initiation :uuid (uuid-to-uri (uuid:make-v1-uuid)) 
+  (let ((init (make-gossip-initiation :uuid (uuid-to-uri (uuid:make-v1-uuid))
                                       :offeror user :offer sdp)))
     (save-record init)))
 

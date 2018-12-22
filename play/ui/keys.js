@@ -1,3 +1,36 @@
+/* -*- js2 -*-*/
+
+/*@license
+ *
+ * ./play/ui/keys.js is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received  a copy  of the  GNU Affero  General Public
+ * License     along    with     this    program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
+
 if (!('Tootsville' in window)) { Tootsville = { ui: { keys: {} }}; }
 if (!('ui' in Tootsville)) { Tootsville.ui = { keys: {} }; }
 if (!('keys' in Tootsville.ui)) { Tootsville.ui.keys = {}; }
@@ -123,7 +156,7 @@ Tootsville.ui.keys.prefixed = false;
 
 if (!('runCommand' in Tootsville.ui))
 { /* placeholder until Commands loads */
-    Tootsville.ui.runCommand = function (binding, event) {}}
+    Tootsville.ui.runCommand = function (binding, event) {}; }
 
 Tootsville.ui.keys.onKeypress = function (ev)
 { var coda = 'single';
@@ -132,6 +165,6 @@ Tootsville.ui.keys.onKeypress = function (ev)
   if (Tootsville.ui.keys.prefixed)
   { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings["afterControl" + Tootsville.ui.keys.prefixed][coda], ev); }
   else
-  { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings[coda], ev); }}
+  { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings[coda], ev); } };
 
 document.addEventListener('keypress', Tootsville.ui.keys.onKeypress);

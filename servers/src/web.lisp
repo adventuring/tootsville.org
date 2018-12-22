@@ -1,3 +1,30 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/web.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
 
@@ -359,12 +386,6 @@ This is basically just CHECK-TYPE for arguments passed by the user."
     (princ (hunchentoot:request-method request) stream)
     (write-char #\Space stream)
     (princ (hunchentoot:request-uri request) stream)))
-
-
-
-(defmethod jonathan::%to-json ((symbol symbol))
-  "Supply a Lisp symbol in JavaScirpt string form"
-  (jonathan.encode::string-to-json (string (symbol-munger:lisp->camel-case symbol))))
 
 
 
