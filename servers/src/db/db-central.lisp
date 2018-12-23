@@ -194,7 +194,7 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
 (defun defrecord/find-record (name table columns)
   `(defmethod find-record ((class (eql ',name)) &rest columns+values)
      (load-record ',name (apply #'db-select-single-record
-                                ,(lisp-to-db-name table)
+                                ,table
                                 (arrange-columns+values-for-find
                                  columns+values ',columns)))))
 
