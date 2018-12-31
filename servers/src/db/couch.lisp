@@ -31,12 +31,22 @@
 
 (defun connect-mixer ()
   (setf clouchdb:*couchdb*
-        (ignore-errors
-          (clouchdb:set-connection :host (or (config :mixer :host))
-                                   :port (or (config :mixer :port) "5984")
-                                   :user (config :mixer :admin :name)
-                                   :password (config :mixer :admin :password)
-                                   :name "tootsville/5")))
+        (let ((conf (car (db-config :mixer))))
+          (v:info :mixer "Connecting to mixer at ~a" (extract conf :host))
+          (run-program (list "ssh" "-f" (extract conf :host) "-L" 
+                             (format nil "27784:~a:~d"
+                                     (extract conf :host)
+                                     (or (extract conf :port) 5984))
+                             "sleep 2"))
+          (with-timeout (2)
+            (clouchdb:set-connection :host "localhost"
+                                     :port "27784"
+                                     :user (extract conf :player :name)
+                                     :password (extract conf :player :password)
+                                     :protocol "http"
+                                     :name "tootsville/5"
+                                     :document-fetch-fn #'identity
+                                     :document-update-fn #'identity))))
   (v:info :mixer "MOTD from Mixer: ~a"
           (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
 
