@@ -230,7 +230,8 @@ or exit the REPL.")
 (defun debugger ()
   (swank:set-default-directory (asdf:component-relative-pathname
                                 (asdf:find-system  :Tootsville)))
-  (swank:set-package :Tootsville))
+  (swank:set-package :Tootsville)
+  (start))
 
 (defun destroy-all-listeners ()
   (map nil #'destroy-thread
