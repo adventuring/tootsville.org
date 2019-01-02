@@ -66,7 +66,7 @@ a moment and try that again.~%" c)
 (defpost post-version-check ()
   (let ((port (+ (random 10) 27700)))
     (unwind-protect
-         (progn (handler-case (start :port port)
+         (progn (handler-case (start :port port :fullp nil)
                   (simple-error (c) (if (find-restart :restart-server)
                                         (invoke-restart :restart-server)
                                         (signal c))))
