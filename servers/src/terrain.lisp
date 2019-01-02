@@ -318,7 +318,7 @@ Returns (LIST X Y)"
   t)
 
 (defgeneric habitat-elevation-roughness (habitat)
-  (:documentation "How much relative roughness to the contour for this habitat?"
+  (:documentation "How much relative roughness to the contour for this habitat?")
   (:method (habitat) 1)
   (:method ((habitat (eql :desert))) 1/100)
   (:method ((habitat (eql :grasslands))) 1/6)
