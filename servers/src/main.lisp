@@ -151,9 +151,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (when acceptor
     (ignore-errors
       (hunchentoot:stop acceptor :soft t))
-    ;; TODO: wait for process to really be done
-    (setf *acceptors* (delete-if (curry #'eql acceptor)
-                                 *acceptors*))))
+    (removef *acceptors* acceptor)))
 
 
 
