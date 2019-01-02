@@ -47,8 +47,11 @@
                                      :name "tootsville/5"
                                      :document-fetch-fn #'identity
                                      :document-update-fn #'identity))))
-  (v:info :mixer "MOTD from Mixer: ~a"
-          (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
+  (if-let (motd (ignore-errors (clouchdb:get-document "tootsville%2f5/motd")))
+    (v:info :mixer "MotD from Mixer: ~a"
+            (cdr (assoc :|motd| motd)))
+    (v:info :mixer "Connected to Mixer; no MotD"))
+  clouchdb::*couchdb*)
 
 
 (defstruct gossip-initiation
