@@ -118,7 +118,11 @@ Requires a body with fields to be changed, and their new values. TODO.
   "Enumerates all Toot characters available to you."
   (with-user ()
     (list 200
-          (list :Last-Modified (header-time (yesterday))) ; FIXME
+          (list :Last-Modified (header-time 
+                                (universal-to-timestamp 
+                                 (loop for Toot in (player-Toots)
+                                    maximizing (timestamp-to-universal
+                                                (Toot-last-active Toot))))))
           (list :|toots| (mapcar #'Toot-info (player-Toots))))))
 
 (defendpoint (post "/users/me/toots/:toot-name" "application/json")
