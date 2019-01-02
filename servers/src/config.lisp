@@ -84,8 +84,11 @@
                             :file-write-date (universal-to-timestamp
                                               (file-write-date config-file))
                             :author (file-author config-file)))
-  (v:info :config "Loaded config from ~s" *config-file*)
-  *config-file*)
+  (v:info :config "Loaded config from (~{~:(~a~): ~s~^, ~}" *config-file*)
+  (v:info :config "Cluster is the ~:(~a~) cluster ~a" (cluster) (cluster-name))
+  (values *config-file*
+          (cluster)
+          (cluster-name)))
 
 
 
