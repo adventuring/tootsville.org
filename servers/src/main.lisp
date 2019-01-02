@@ -88,7 +88,6 @@
                        "{~a}: done" (thread-name (current-thread)))
          (setf (sb-thread:thread-name (current-thread)) idle-name))))))
 
-
 (defun start (&key (host "localhost") (port 5000) (fullp t))
   "Start a local Hunchentoot server.
 
@@ -140,7 +139,6 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
       (stonith :host host :port port)
       (start :host host :port port))))
 
-
 
 
 (defmethod usocket:socket-close ((socket null))
@@ -152,7 +150,6 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
     (ignore-errors
       (hunchentoot:stop acceptor :soft t))
     (removef *acceptors* acceptor)))
-
 
 
 ;;; build date/timestamp
@@ -181,7 +178,6 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
          :report-function (format *query-io* "Quit the REPL")))
     (let ((*package* (find-package :Oliphaunt-User)))
       (funcall (intern "REPL" (find-package :prepl))))))
-
 
 ;;; Swank
 
@@ -214,6 +210,7 @@ process's PID."
           (mapcar #'symbol-munger:lisp->english (v:categories message))
           (v:content message)))
 
+
 
 ;;; Web servers
 
