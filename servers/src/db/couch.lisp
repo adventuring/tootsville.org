@@ -37,7 +37,7 @@
                              (format nil "27784:~a:~d"
                                      (extract conf :host)
                                      (or (extract conf :port) 5984))
-                             "sleep 2"))
+                             "cat"))
           (with-timeout (2)
             (clouchdb:set-connection :host "localhost"
                                      :port "27784"
