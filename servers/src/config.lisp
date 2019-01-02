@@ -117,6 +117,8 @@ qa.tootsville.org
 @item
 tootsville.org
 @end itemize
+
+The local hostname is used in development (loopback) mode.
 "
   (case (cluster)
     (:test (format nil "~@[~a.~]test.tootsville.org" prefix))
