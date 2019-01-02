@@ -230,9 +230,4 @@
   (when (< (the fixnum HTTP-status-code) 400) (call-next-method))
 
   (gracefully-report-HTTP-client-error
-   (make-condition 'HTTP-client-error :status HTTP-status-code))
-  ;; (setf (hunchentoot:content-type*) "application/json;charset=utf-8")
-  ;;       (set-HTTP-default-headers)   (format  nil   "{\"error\":  ~d,
-  ;;       \"status\":\"~a\"}"         HTTP-status-code         (gethash
-  ;;       HTTP-status-code *http-status-message*))
-  )
+   (make-condition 'HTTP-client-error :status HTTP-status-code)))
