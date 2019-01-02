@@ -53,6 +53,7 @@
 (defmethod apply-config progn ()
   "Set up Hunchentoot and the taskmaster from configuration"
   (setf thread-pool-taskmaster:*developmentp* (config :taskmaster :devel)
+        hunchentoot:*catch-errors-p* (config :hunchentoot :catch-errors)
         hunchentoot:*log-lisp-warnings-p* (config :hunchentoot :log-warnings)
         hunchentoot:*log-lisp-errors-p* (config :hunchentoot :log-errors)
         hunchentoot:*log-lisp-backtraces-p* (config :hunchentoot :log-backtraces)
