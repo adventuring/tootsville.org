@@ -164,7 +164,8 @@ Selects one record at a time from TABLE. Does not use MemCacheD."
 
 This  ensures that  it is  reachable,  and that  there is  at least  one
 connection in the pool."
-  (with-dbi (:friendly) ; FIXME: Each DB defined in the config
+  (with-dbi (:friendly)          ; XXX Each DB defined in the config
     (let ((q (cl-dbi:prepare *dbi-connection* "SELECT 1 AS one;")))
       (cl-dbi:execute q)
-      (assert (equalp '((:|one| 1)) (cl-dbi:fetch-all q))))))
+      (assert (equalp '((:|one| 1)) (cl-dbi:fetch-all q)))))
+  t)
