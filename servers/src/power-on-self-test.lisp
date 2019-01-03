@@ -36,7 +36,7 @@
  boot-up sequence."
   (let ((fn-name (intern (concatenate 'string "⊕POST-" (string name)))))
     `(progn
-       (defun ,fn-name () 
+       (defun ,fn-name ()
          (declare (optimize (speed 0)))
          (block ,name ,@body))
        (pushnew ',fn-name *post-tests-queue*))))
@@ -56,8 +56,8 @@ version-page query locally."
            (cond ((minusp (decf retries))
                   (error "Failed POST: Can't connect to local server ~
 (after retries)~%~a" c))
-                 (t (format *error-output*
-                            "~&~a~%Hmm, maybe we need to wait ~
+                 (t (v:error :power-on-self-test
+                             "~&~a~%Hmm, maybe we need to wait ~
 a moment and try that again.~%" c)
                     (force-output *error-output*)
                     (sleep 1)
@@ -91,31 +91,33 @@ need to be expanded a great deal to increase confidence in these tests."
       (handler-case
           (funcall test)
         (warning (c)
-          (format *error-output* "~&WARNING: ~s~%~:*~A" c)
+          (v:error :power-on-self-test "~&WARNING: ~s~%~:*~A" c)
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf warnings))
         (error (c)
-          (format *error-output* "~&ERROR: ~s~%~:*~A" c)
+          (v:error :power-on-self-test "~&ERROR: ~s~%~:*~A" c)
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf errors))
         (serious-condition (c)
-          (format *error-output* "~&SERIOUS-CONDITION: ~s~%~:*~A" c)
+          (v:error :power-on-self-test "~&SERIOUS-CONDITION: ~s~%~:*~A" c)
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf serious))))
-    (format t "~&~a~%Power-On Self Test completed in ~a with ~
- ~[no errors~; ~:*~r error~:p~],
-~[no other serious conditions~;~:*~r other serious condition~:p~], ~
- and~[ no warnings~; ~:*~r warning~:p~].~&"
+    (v:info :power-on-self-test
+            "~&~a~%Power-On Self Test completed in ~a with ~
+ ~[no errors~:; ~:*~r error~:p~],
+~[no other serious conditions~:;~:*~r other serious condition~:p~], ~
+ and~[ no warnings~:; ~:*~r warning~:p~].~&"
             (now)
-            (human-duration (/ (- (get-internal-real-time) started) internal-time-units-per-second))
+            (human-duration (/ (- (get-internal-real-time) started)
+                               internal-time-units-per-second))
             errors serious warnings)
     (cond ((or (and (eql :prod (cluster)) (plusp errors))
                (> serious 3)
                (> errors 0)
                (> warnings 9))
-           (princ "POST Failed")
+           (v:error :power-on-self-test "POST Failed")
            (if exitp
                (cl-user::exit :code 27 :abort t :timeout 5)
                nil))
-          (t (princ "POST Passed")
+          (t (v:info :power-on-self-test "POST Passed")
              t))))

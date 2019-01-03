@@ -160,7 +160,28 @@ the index from 1 to ~d of a new base color in the list where 1=~{~a~^, ~}"
 
 (defstruct color24 red green blue)
 
+(defun color24= (a b &rest more)
+  "Comparator of two color24s"
+  (if more
+      (and (color24= a b)
+           (apply #'color24= a more))
+      (and (= (color24-red a)
+              (color24-red b))
+           (= (color24-green a)
+              (color24-green b))
+           (= (color24-blue a)
+              (color24-blue b)))))
+
+(defun color24/= (a b)
+  "Comparator of two color24s"
+  (not (color24= a b)))
+
+(defun color24-rgb (r g b)
+  "Construct a Color24 from a R G B triplet"
+  (make-color24 :red r :green g :blue b))
+
 (defun color24-hsv (color)
+  "Extract the Hue, Saturation, Value of a Color24 as a list of reals 0...1"
   (declare (optimize (speed 1) (safety 2)))
   (let* ((red (the (real 0 1)
                    (/ (the (unsigned-byte 8) (color24-red color))
