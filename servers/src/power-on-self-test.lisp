@@ -103,9 +103,9 @@ need to be expanded a great deal to increase confidence in these tests."
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf serious))))
     (format t "~&~a~%Power-On Self Test completed in ~a with ~
- ~[no errors~; ~:*~r error~:p~],
-~[no other serious conditions~;~:*~r other serious condition~:p~], ~
- and~[ no warnings~; ~:*~r warning~:p~].~&"
+ ~[no errors~:; ~:*~r error~:p~],
+~[no other serious conditions~:;~:*~r other serious condition~:p~], ~
+ and~[ no warnings~:; ~:*~r warning~:p~].~&"
             (now)
             (human-duration (/ (- (get-internal-real-time) started) internal-time-units-per-second))
             errors serious warnings)
