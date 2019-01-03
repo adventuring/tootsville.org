@@ -130,8 +130,8 @@ supply exactly one of OFFEROR, ANSWEROR, ANSWER"))
 
 
 (defun find-active-Toot-for-user (&optional (user *user*))
-  (declare (ignore user))
-  (error 'unimplemented))
+  (when user
+    (error 'unimplemented)))
 
 (defun link-active-Toot-to-user (Toot &optional (user *user*))
   (declare (ignore Toot user))
