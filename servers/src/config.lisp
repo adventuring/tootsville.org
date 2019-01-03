@@ -53,6 +53,7 @@
 (defmethod apply-config progn ()
   "Set up Hunchentoot and the taskmaster from configuration"
   (setf thread-pool-taskmaster:*developmentp* (config :taskmaster :devel)
+        hunchentoot:*catch-errors-p* (config :hunchentoot :catch-errors)
         hunchentoot:*log-lisp-warnings-p* (config :hunchentoot :log-warnings)
         hunchentoot:*log-lisp-errors-p* (config :hunchentoot :log-errors)
         hunchentoot:*log-lisp-backtraces-p* (config :hunchentoot :log-backtraces)
@@ -83,8 +84,11 @@
                             :file-write-date (universal-to-timestamp
                                               (file-write-date config-file))
                             :author (file-author config-file)))
-  (v:info :config "Loaded config from ~s" *config-file*)
-  *config-file*)
+  (v:info :config "Loaded config from (~{~:(~a~): ~s~^, ~}" *config-file*)
+  (v:info :config "Cluster is the ~:(~a~) cluster ~a" (cluster) (cluster-name))
+  (values *config-file*
+          (cluster)
+          (cluster-name)))
 
 
 
@@ -113,6 +117,8 @@ qa.tootsville.org
 @item
 tootsville.org
 @end itemize
+
+The local hostname is used in development (loopback) mode.
 "
   (case (cluster)
     (:test (format nil "~@[~a.~]test.tootsville.org" prefix))

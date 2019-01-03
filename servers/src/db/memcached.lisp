@@ -70,7 +70,8 @@
   (dolist (server (config :cache))
     (cl-memcached:make-memcache :ip (extract server :ip)
                                 :port (or (extract server :port) 11211)
-                                :name (extract server :name))))
+                                :name (extract server :name)))
+  (length (config :cache)))
 
 
 

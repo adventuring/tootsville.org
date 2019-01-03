@@ -89,7 +89,7 @@
          (setf (sb-thread:thread-name (current-thread)) idle-name))))))
 
 
-(defun start (&key (host "localhost") (port 5000))
+(defun start (&key (host "localhost") (port 5000) (fullp t))
   "Start a local Hunchentoot server.
 
 HOST is an address of a live interface; PORT may be a port number.
@@ -97,9 +97,10 @@ HOST is an address of a live interface; PORT may be a port number.
 The server will  be started running on port  5000 on local-loopback-only
 addresses  (127.0.0.1  and  ::1).  If an  existing  server  is  running,
 a restart will be presented to allow you to kill it (RESTART-SERVER)."
-  (load-config)
-  (connect-databases)
-  (power-on-self-test)
+  (when fullp
+    (load-config)
+    (connect-databases)
+    (power-on-self-test))
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
@@ -229,7 +230,8 @@ or exit the REPL.")
 (defun debugger ()
   (swank:set-default-directory (asdf:component-relative-pathname
                                 (asdf:find-system  :Tootsville)))
-  (swank:set-package :Tootsville))
+  (swank:set-package :Tootsville)
+  (start))
 
 (defun destroy-all-listeners ()
   (map nil #'destroy-thread
