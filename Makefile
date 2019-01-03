@@ -57,6 +57,9 @@ clusterorg=$(CLUSTER).tootsville.org
 clusternet=$(CLUSTER).tootsville.net
 endif
 
+GAMEHOSTS=game1 game3
+BALANCERS=balancer1 balancer2
+
 LOCAL_USERNAME=$(shell whoami)
 REVISION=$(shell git log -n 1 --pretty=format:"%H")
 REALNAME:=$(shell if which finger &>/dev/null ;\
@@ -436,7 +439,7 @@ deploy-play:	predeploy-play
 	     -F local_username=$(LOCAL_USERNAME)
 
 deploy-servers:	predeploy-servers
-	for host in game3 game2 game1 ; \
+	for host in $(GAMEHOSTS) ; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
                     scp ~/.config/Tootsville/Tootsville.config.lisp $$host.$(clusternet): ;\
@@ -471,9 +474,9 @@ connectivity:
 	echo " » Test connectivity"
 	ssh play.$(clusterorg) ls -1d play.$(clusterorg)/ | grep play.$(clusterorg)
 	ssh www.$(clusterorg) ls -1d www.$(clusterorg)/ | grep $(clusterorg)
-	ssh game1.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
-	ssh game2.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
-	ssh game3.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
+	for host in $(GAMEHOSTS); do \
+	   ssh $$host.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'; \
+	done
 
 
 no-fixmes:	TODO.scorecard
@@ -535,7 +538,7 @@ dist/www.$(clusterorg):	htaccess dist/www/2019.css
 	fi
 
 predeploy-servers:	servers quicklisp-update-servers
-	for host in game3 game2 game1 ;\
+	for host in $(GAMEHOSTS) ;\
 	do \
 		echo " » Pre-deploy $$host.$(clusternet)" ;\
 		rsync -essh --delete -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
@@ -545,7 +548,7 @@ predeploy-servers:	servers quicklisp-update-servers
 	done
 
 quicklisp-update-servers:
-	for host in game3 game2 game1 ; \
+	for host in $(GAMEHOSTS) ; \
 	do \
 		echo " » Ensure latest Quicklisp on $$host.$(clusternet)" ;\
 	    ssh $$host.$(clusternet) \
