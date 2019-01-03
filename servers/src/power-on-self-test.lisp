@@ -36,7 +36,7 @@
  boot-up sequence."
   (let ((fn-name (intern (concatenate 'string "⊕POST-" (string name)))))
     `(progn
-       (defun ,fn-name () 
+       (defun ,fn-name ()
          (declare (optimize (speed 0)))
          (block ,name ,@body))
        (pushnew ',fn-name *post-tests-queue*))))
@@ -102,12 +102,14 @@ need to be expanded a great deal to increase confidence in these tests."
           (v:error :power-on-self-test "~&SERIOUS-CONDITION: ~s~%~:*~A" c)
           (uiop/image:print-condition-backtrace c :stream *error-output*)
           (incf serious))))
-    (format t "~&~a~%Power-On Self Test completed in ~a with ~
+    (v:info :power-on-self-test
+            "~&~a~%Power-On Self Test completed in ~a with ~
  ~[no errors~:; ~:*~r error~:p~],
 ~[no other serious conditions~:;~:*~r other serious condition~:p~], ~
  and~[ no warnings~:; ~:*~r warning~:p~].~&"
             (now)
-            (human-duration (/ (- (get-internal-real-time) started) internal-time-units-per-second))
+            (human-duration (/ (- (get-internal-real-time) started)
+                               internal-time-units-per-second))
             errors serious warnings)
     (cond ((or (and (eql :prod (cluster)) (plusp errors))
                (> serious 3)
