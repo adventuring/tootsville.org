@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- -*- html -*- -->
+
+<!-- ./play/ui/panels/dummy.html is part of Tootsville
+
+     Copyright  ©  2016,2017  Bruce-Robert   Pocock;  ©  2018,2019  The
+     Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+
+     This  program is  Free Software:  you can  redistribute it  and/or
+     modify it under the terms of the GNU Affero General Public License
+     as published by the Free  Software Foundation; either version 3 of
+     the License, or (at your option) any later version.
+
+     This program  is distributed in the  hope that it will  be useful,
+     but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
+     MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
+     Affero General Public License for more details.
+
+     You should have  received a copy of the GNU  Affero General Public
+     License    along    with    this     program.    If    not,    see
+     <https://www.gnu.org/licenses/>.
+
+     You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+     PO Box 23095
+
+     Oakland Park, FL 33307-3095
+
+     USA
+
+     -->
+<html>
+  <meta charset="utf-8">
+  <body>
+    <b> This is a panel loaded by the UI. </b>
+    <div id="new-toot">
+      <h2> Create a New Toot </h2>
+      <button id="new-toot-base-color"
+              onclick="Tootsville.ui.newToot.changeColor('base',this)"></button>
+      <button id="new-toot-pad-color"
+              onclick="Tootsville.ui.newToot.changeColor('pad',this)"></button>
+      <button id="new-toot-pattern-color"
+              onclick="Tootsville.ui.newToot.changeColor('pattern',this)"></button>
+      <button id="new-toot-pattern"
+              onclick="Tootsville.ui.newToot.changePattern(this)"></button>
+      <button id="new-toot-t-shirt-color"
+              onclick="Tootsville.ui.newToot.changeColor('t-shirt',this)"></button>
+      <canvas id="new-toot-paperdoll"></canvas>
+      <frameset id="new-toot-name-block">
+        <legend><label for="new-toot-name">Name:</label></legend>
+        <input type="text" name="new-toot-name" id="new-toot-name"
+               size="32">
+        <div id="new-toot-name-problem">
+          <p> Choose a Toot name that: </p>
+          <ul>
+            <li id="new-toot-name-problem-begins-with-letter">
+              Begins with a letter </li>
+            <li id="new-toot-name-problem-mostly-letters">
+              Has only letters and hyphens (<tt>-</tt>), optionally
+              with a digit or two at the end </li>
+            <li id="new-toot-name-problem-offensive">
+              Is not offensive to other players </li>
+            <li id="new-toot-name-problem-3-32">
+              Is from 3-32 characters long </li>
+            <li id="new-toot-name-problem-repeat">
+              Has no more than 2 of the same letter in a row </li>
+          </ul>
+        </div>
+      <button onclick="Tootsville.ui.hud.closePanel();">🤷</button>
+    </div>
+  </body>
+</html>
