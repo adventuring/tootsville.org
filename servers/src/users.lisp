@@ -105,6 +105,7 @@ come from a trusted authentication provider like Google Firebase)."
                    :rel :contact
                    :url (concatenate 'string "mailto:"
                                      (getf plist :email))
+                   :label "email"
                    :provenance "Provided by Firebase login")
     (associate-credentials person (getf plist :credentials))
     (when-let (picture (getf plist :picture))
@@ -112,6 +113,7 @@ come from a trusted authentication provider like Google Firebase)."
                      :person (person-uuid person)
                      :rel :photo
                      :url picture
+                     :label "portrait"
                      :provenance "Provided by Firebase login"))
     (when-let (email (and (getf plist :email-verified-p)
                           (getf plist :email)))
@@ -132,6 +134,7 @@ come from a trusted authentication provider like Google Firebase)."
     (make-record 'person-link
                  :person (person-uuid person)
                  :rel :photo
+                 :label "Gravatar"
                  :provenance "Provided by Gravatar"
                  :url (gravatar-image-url email
                                           :size 256
