@@ -122,7 +122,7 @@ Requires a body with fields to be changed, and their new values. TODO.
                                 (universal-to-timestamp 
                                  (loop for Toot in (player-Toots)
                                     maximizing (timestamp-to-universal
-                                                (Toot-last-active Toot))))))
+                                                (or (Toot-last-active Toot) (now)))))))
           (list :|toots| (mapcar #'Toot-info (player-Toots))))))
 
 (defendpoint (post "/users/me/toots/:toot-name" "application/json")
