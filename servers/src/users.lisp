@@ -58,7 +58,8 @@
 (defun find-person-by-url (url &optional more)
   (when-let (link (handler-case
                       (find-record 'person-link
-                                   :url (reduce (curry #'concatenate 'string) url more))
+                                   :url (reduce (curry #'concatenate 'string)
+                                                (list url more)))
                     (not-found (c)
                       (declare (ignore c))
                       nil)))
