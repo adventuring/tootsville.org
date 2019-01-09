@@ -153,13 +153,13 @@ come from a trusted authentication provider like Google Firebase)."
 ;;; User details
 
 (defun user-display-name (&optional (person *user*))
-  (person-display-name (ensure-person person)))
+  (person-display-name person))
 
 (defun user-given-name (&optional (person *user*))
-  (person-given-name (ensure-person person)))
+  (person-given-name person))
 
 (defun user-surname (&optional (person *user*))
-  (person-surname (ensure-person person)))
+  (person-surname person))
 
 (defun user-email (&optional (person *user*))
   "Finds an email address for PERSON of type CONTACT."
