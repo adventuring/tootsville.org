@@ -113,5 +113,5 @@
     (loop for set in (powerset columns)
        for columns+values-subset = (loop for column in set
                                       collecting column
-                                      collecting (getf column columns+values))
+                                      collecting (getf columns+values column))
        do (cl-memcached:mc-del (query-to-memcache-key db table columns+values-subset)))))
