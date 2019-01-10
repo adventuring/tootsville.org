@@ -167,21 +167,19 @@ come from a trusted authentication provider like Google Firebase)."
                     (lambda (record)
                       (string-begins "mailto:" (person-link-url record)))
                     (find-records 'person-link
-                                  :person (person-uuid
-                                           (ensure-person person))
+                                  :person (person-uuid person)
                                   :rel :CONTACT)))
     (subseq (random-elt mails) 7)))
 
 (defun user-face (&optional (person *user*))
   "Finds a portrait URI for PERSON"
   (when-let (portraits (find-records 'person-link
-                                     :person (person-uuid
-                                              (ensure-person person))
+                                     :person (person-uuid person)
                                      :rel :photo))
     (random-elt portraits)))
 
 (defun user-id (&optional (person *user*))
-  (person-uuid (ensure-person person)))
+  (person-uuid person))
 
 (defun user->alist (user)
   (list (cons :|displayName| (user-display-name user))
