@@ -31,14 +31,14 @@
 
 (defgeneric database-for (type)
   (:documentation
-   "Which database contains the data mirrored by the ORM TYPE
+   "The database containing the data mirrored by the TYPE
 
-Returns  a list  of the  type  of database  (:MARIA or  :COUCH) and  the
-database or schema identification."))
+Returns a  pairs with the  type of database  (:MARIA or :COUCH)  and the
+database or schema identification (a proper list)."))
 
 (defgeneric db-table-for (type)
   (:documentation
-   "Which database table or view contains the data mirrored by the ORM TYPE."))
+   "The database table or view containing the data mirrored by the TYPE"))
 
 (defgeneric destroy-record (object)
   (:documentation
@@ -70,17 +70,23 @@ With  other kinds  of database  (e.g.  LDAP, Couch,  &c) the  equivalent
 constructions will be used.
 
 This method  is not suitable  for inequalities, set comparisons,  or the
-like — in fact, only value-like  equality is supported.
+like — in fact, only value-like equality is supported.
 
 The function returns NIL if no records are found."))
 
-(defgeneric find-reference (object column)
+(defgeneric find-reference (object field)
   (:documentation
-   "Following the reference COLUMN on OBJECT, return the object referred-to."))
+   "Following the FIELD on OBJECT, return the referenced object.
+
+Note that  this returns an  object of the  appropriate type, not  its ID
+code. The regular column  reference function (CLASS)-(FIELD) will return
+the ID value, which may be of any type (eg, UUID, STRING, NUMBER, &c)"))
 
 (defgeneric id-column-for (type)
   (:documentation
-   "Which column (if any) provides the primary key for TYPE.")
+   "The column (if any) providing the primary key for TYPE.
+
+May return NIL if there is no simple primary key.")
   (:method ((x t)) (declare (ignore x)) nil))
 
 (defgeneric invalidate-cache (object)
