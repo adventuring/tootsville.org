@@ -55,6 +55,7 @@ REST services for the front-end."
                :cljwt-custom
                :clouchdb
                :cxml
+               :darts.lib.email-address
                :dbd-mysql
                :drakma
                :envy
