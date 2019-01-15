@@ -80,7 +80,7 @@ Tootsville.parrot.ask = function (title, message, replies)
       buttonBox.setAttribute ('class', 'button-box');
       replies.forEach( (reply) =>
                        { var button = document.createElement ('BUTTON');
-                         button.innerText = reply.text;
+                         button.innerText = reply.text || reply.tag;
                          button.onclick = () => { Tootsville.parrot.done().then(function () {finish (reply.tag)}); };
                          buttonBox.append (button); });
       reply.append (buttonBox);

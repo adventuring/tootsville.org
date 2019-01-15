@@ -110,7 +110,7 @@ Tootsville.ui.hud.showHUDPanel = function (panel, div)
   return new Promise (
       finish =>
           { if (! div)
-            { Tootsville.trace ("No DIV for " + panel + " passed in");
+            { Tootsville.trace ("No DIV for " + panel + " passed in — looking for one");
               div = document.getElementById (panel); }
             if (div)
             { if (Tootsville.ui.hud.getOpenPanel () != div)

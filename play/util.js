@@ -72,7 +72,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
               Tootsville.parrot.ask (
                   "Uh-oh! Server trouble!",
                   Tootsville.parrot.parrotErrorText(response.json ()),
-                  [{ retry: "Retry the network operation" }]).then
+                  [{ tag: 'retry', text: "Retry the network operation" }]).then
               (() =>
                { return Tootsville.util.rest (method, uri, body, headers); }); }},
       error =>
@@ -80,7 +80,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
             Tootsville.parrot.ask (
                 "Uh-oh! Network trouble!",
                 "I got a network error: " + error + "<BR><BR>Did we get disconnected?",
-                [{ retry: "Retry the network operation" }]).then
+                [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
              { return Tootsville.util.rest (method, uri, body, headers); });} ); };
 

@@ -331,7 +331,7 @@ dist/www/httpd.pid:	dist/www/dev-www.httpd.conf
 		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
 	fi
 
-dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
+dist/play/httpd.pid:	dist/play/dev-play.httpd.conf dist/play/play.js
 	mkdir -p dist/play
 	if [ -f dist/play/httpd.pid ]; then \
 		kill -HUP $$(< dist/play/httpd.pid ) || \
@@ -442,7 +442,7 @@ deploy-servers:	predeploy-servers
 	for host in $(GAMEHOSTS) ; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
-                    scp ~/.config/Tootsville/Tootsville.config.lisp $$host.$(clusternet): ;\
+                    scp ~/.config/Tootsville/Tootsville.config.lisp $$host.$(clusternet):.config/Tootsville ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers install ;\
 		VERSION=$(shell servers/Tootsville version-info version) ;\
 		curl https://api.rollbar.com/api/1/deploy/ \

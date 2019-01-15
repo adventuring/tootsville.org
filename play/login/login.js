@@ -111,6 +111,9 @@ Tootsville.login.generateNewToot = function ()
     Tootsville.login.createTootListItem (toot);
     Tootsville.login.editToot (toot); };
 
+Tootsville.login.editToot = function (toot)
+{ Tootsville.ui.hud.showHUDPanel('new-toot') }
+
 Tootsville.login.startCharacterCreation = function ()
 { Tootsville.parrot.say ("Let's get started!",
                          "<p>Let's create your Toot character.</p>" +
