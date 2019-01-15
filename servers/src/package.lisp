@@ -48,6 +48,7 @@
    #:*compiled*
    #:config
    #:connection-settings
+   #:debugger
    #:db
    #:entry
    #:journal
