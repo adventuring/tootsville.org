@@ -3,45 +3,44 @@
 
 <!-- ./play/index.html is part of Tootsville
 
-   Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
-   Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+Copyright ©  2016,2017 Bruce-Robert Pocock; ©  2018,2019 The Corporation
+for Inter-World Tourism and Adventuring (ciwta.org).
 
-   This  program is  Free  Software: you  can  redistribute it  and/or
-   modify it under the terms of  the GNU Affero General Public License
-   as published by  the Free Software Foundation; either  version 3 of
-   the License, or (at your option) any later version.
+This program is Free Software: you  can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as published by
+the Free  Software Foundation; either version  3 of the License,  or (at
+your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
-   MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
-   Affero General Public License for more details.
+This program  is distributed  in the  hope that it  will be  useful, but
+WITHOUT   ANY   WARRANTY;  without   even   the   implied  warranty   of
+MERCHANTABILITY or FITNESS FOR A  PARTICULAR PURPOSE. See the GNU Affero
+General Public License for more details.
 
-   You should  have received a copy  of the GNU Affero  General Public
-   License    along     with    this    program.    If     not,    see
-   <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-   You can reach CIWTA at https://ciwta.org/, or write to us at:
+You can reach CIWTA at https://ciwta.org/, or write to us at:
 
-   PO Box 23095
+PO Box 23095
 
-   Oakland Park, FL 33307-3095
+Oakland Park, FL 33307-3095
 
-   USA
+USA
 
-   -->
+-->
 <html>
   <head>
     <meta charset="utf-8">
     <title>Tootsville</title>
     <script>
-      window.loadWatchdog2 = setTimeout( () => {
-          if (parseInt(window.location.port) > 5000)
-          { alert("Slow Loading watchdog fired"); }
-          else
-          { document.location =
-            'https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading'; }
-      },
-                                         60000);
+    window.loadWatchdog2 = setTimeout( () => {
+        if (parseInt(window.location.port) > 5000)
+        { alert("Slow Loading watchdog fired"); }
+        else
+        { document.location =
+          'https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading'; }
+    },
+                                       60000);
     </script>
     <link rel="stylesheet" href="play.css">
     <meta name="description"
@@ -106,7 +105,7 @@
     <!-- END:icon-common -->
 
     <!-- libraries -->
-    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css"
+    <link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
           rel="stylesheet">
     <script src='https://s3.amazonaws.com/instabug-pro/sdk_releases/instabugsdk-1.2.1-beta.min.js'></script>
   </head>
@@ -116,8 +115,8 @@
       <p>Tootsville is a  3D, multiplayer online game.  If you're seeing
         this  message, your  device  cannot play  online (HTML5)  games.
         You    should    probably   <a    href="https://getfirefox.com/"
-                                          ><i   class="fab  fa-firefox   fa-2x"></i>download  the   latest
-          Firefox</a>  (or  another modern  web  browser,  like Chrome  or
+        ><i   class="fab  fa-firefox   fa-2x"></i>download  the   latest
+        Firefox</a>  (or  another modern  web  browser,  like Chrome  or
         Opera).</p>
     </noscript>
     <script>
@@ -135,7 +134,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'UA-80917352-1');
     </script>
 
@@ -169,13 +167,14 @@
 
       <div id="toolbox-mobile-phone">
         <h3><i class="fa fa-mobile-alt fa-fw"></i></h3>
-        <div id="mobile-phone-info"
-             ><span    id="tootsville-time"><i     class="fas    fa-spin
-                                                          fa-spinner"></i>
-          </span><br>
-          <span id="tootsville-date"></span></div>
-        <div id="toolbox-contacts"
-             ><i class="fa fa-address-card fa-fw"></i>
+        <div id="mobile-phone-info"><span id="tootsville-time">
+            <i class="fas fa-spin fa-spinner"></i>
+          </span>
+          <br>
+          <span id="tootsville-date"></span>
+        </div>
+        <div id="toolbox-contacts">
+          <i class="fa fa-address-card fa-fw"></i>
           Contacts
         </div>
       </div>
@@ -220,7 +219,7 @@
         <h1 class="centered hide-when-game-ready"
             ><a
                 href="https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading"
-                >Trouble Loading? Click here for Troubleshooting.</a></h1>
+                >Trouble Loading? Click here for Trouble&shy;shooting.</a></h1>
         <div id="troubleshooting-icon">
           <i class="fas fa-bug fa-4x"></i>
           <i class="fas fa-bomb fa-4x"></i>
@@ -233,7 +232,7 @@
         <img id="parrot-image" alt="parrot"
              src="https://jumbo.tootsville.org/Assets/Avatars/Violet-Volts/Assets/MistParrot1080.png">
         <div id="parrot-speech">
-          I'm a talking parrot. Human want a cracker?
+          I’m a talking parrot. Human want a cracker?
         </div>
         <div id="parrot-reply">
           <div class="button-box">
@@ -271,5 +270,5 @@
 
   </body>
   <!-- load soon, but don't delay page render for it -->
-  <script src="//cdn.jsdelivr.net/pouchdb/latest/pouchdb.min.js"></script>
-</html>
+    <script src="//cdn.jsdelivr.net/pouchdb/latest/pouchdb.min.js"></script>
+    </html>
