@@ -42,8 +42,7 @@
 
 (defun Toot-item-info (inv)
   (let* ((item (find-reference inv :item))
-         (template (find-reference item :template))
-         (avatar (find-reference item :avatar)))
+         (template (find-reference item :template)))
     (list :|equipped| (inventory-item-equipped inv)
           :|uuid| (item-uuid item)
           :|baseColor| (item-base-color item)
@@ -51,7 +50,7 @@
           :|template| (item-template-id template)
           :|name| (item-template-name template)
           :|defaultBaseColor| (item-template-default-base-color template)
-          :|avatar| (avatar-moniker avatar)
+          :|avatar| (item-template-avatar template)
           :|energyKind| (item-template-energy-kind template)
           :|onZero| (item-template-on-zero template)
           :|wearSlot| (item-template-wear-slot template)
