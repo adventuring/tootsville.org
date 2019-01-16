@@ -117,7 +117,7 @@ Tootsville.login.editToot = function (toot)
 Tootsville.login.startCharacterCreation = function ()
 { Tootsville.parrot.say ("Let's get started!",
                          "<p>Let's create your Toot character.</p>" +
-                         "<p>You'll be able to get started about a minute. I'll create a new " +
+                         "<p>This takes about a minute. I'll create a new " +
                          "Toot character for you. You can change the name, colors, or " +
                          "pattern to be what you like. </p>").
   then(Tootsville.login.generateNewToot); };
