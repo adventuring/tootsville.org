@@ -1,4 +1,4 @@
-/* -*- js2 -*-*/
+/* -*- js2 -*- */
 
 /*@license
  *
@@ -374,4 +374,4 @@ Tootsville.login.storeCredentialInfo = function (result)
 };
 
 Tootsville.login.quit = function ()
-{ firebase.auth().signOut().then(document.reload); };
+{ firebase.auth().signOut().then(Tootsville.login.start); };
