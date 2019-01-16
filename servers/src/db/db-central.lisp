@@ -51,8 +51,10 @@
 (defvar pull-records-cache nil)
 
 (defun pull-records (name)
-  (setf (getf pull-records-cache name)
-        (db-select-records-simply (db-table-for name))))
+  (copy-list (or (getf pull-records-cache name)
+                 (setf (getf pull-records-cache name)
+                       (mapcar (lambda (raw) (load-record name raw))
+                               (db-select-records-simply (db-table-for name)))))))
 
 (defun lisp-to-db-name (name)
   "Convert a Lispy name to an SQL-type one.
@@ -216,11 +218,11 @@ columns are ~{~:(~a~)~^, ~}" column (mapcar #'car column-definitions)))
   (declare (ignore table columns))
   `(defmethod find-records ((class (eql ',name)) &rest columns+values)
      (loop
-        with solution = (copy-list (or (getf pull-records-cache ',name)
-                                       (pull-records ',name)))
+        with solution = (pull-records ',name)
         for (column . value) on columns+values by #'cddr
-        do (setf solution (remove-if-not (lambda (row)
-                                           (equal (getf row column) value))
+        do (setf solution (remove-if-not (lambda (record)
+                                           (equalp (slot-value record (intern (symbol-name column)))
+                                                   value))
                                          solution))
         finally (return solution))))
 
@@ -431,10 +433,10 @@ translates to a LOCAL-TIME:TIMESTAMP on loading.
      ,(defrecord/invalidate-cache name pull columns)
      ,(defrecord/make-record name)
      ,(defrecord/load-record name columns)
-     ,(if pull
+     ,(if (and nil pull)
           (defrecord/find-record/pull name table columns)
           (defrecord/find-record name table columns))
-     ,(if pull
+     ,(if (and nil pull)
           (defrecord/find-records/pull name table columns)
           (defrecord/find-records name table columns))
      ,(defrecord/before-save-normalize name columns)
