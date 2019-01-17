@@ -84,7 +84,8 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
         :template (endpoint-template endpoint)
         :content-type (endpoint-content-type endpoint)
         :fn (endpoint-function endpoint)
-        :docstring (documentation (endpoint-function endpoint) 'function)))
+        :docstring (documentation (endpoint-function endpoint) 'function)
+        :variables (remove-if-not #'symbolp (endpoint-template endpoint))))
 
 (defun enumerate-routes ()
   (sort
@@ -189,6 +190,26 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                                     docstring)
                "</p></section>"))
 
+(defun docstring->markdown (docstring)
+  (when (search "@table" docstring)
+    (setf docstring (replace-texinfo-tables docstring)))
+  (concatenate 'string
+               (regex-replace-pairs '(
+                                      ("`([A-Z0-9+/-])'" . "`\\1`")
+                                      ("@url{(.*?)}" . "\\1")
+                                      ("@samp{(.*?)}" . "`\\1`")
+                                      ("@var{(.*?)}" . "`\\1`")
+                                      ("@section{(.*?)}" . "\\1\\n==========\\n\\n")
+                                      ("@subsection{(.*?)}" ."\\1\\n==========\\n\\n")
+                                      ("@subsubsection{(.*?)}" . "\\1\\n==========\\n\\n")
+                                      ("@enumerate" . "")
+                                      ("@end enumerate" . "")
+                                      ("@itemize" . "")
+                                      ("@end itemize" . "")
+                                      ("@item" . " • ")
+                                      )
+                                    docstring)))
+
 (defun decorate-method-html (method)
   (format nil "<span class=\"method method-~(~a~)\">~:*~a</span>"
           method))
@@ -248,19 +269,73 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                       (keyword (format nil "{~:(~a~)}" element)))) 
                   template)))
 
+(defun concat (&rest args)
+  (format nil 
+          "~{~a~^~%~}" args))
+
+(defun find-var-in-docstring (variable docstring)
+  (let ((doc-stream (make-string-input-stream docstring))
+        docs)
+    (loop with goal = (concatenate 'string "@item " (string variable))
+       for line = (read-line doc-stream nil nil)
+       while line
+       when (string-equal (string-trim +whitespace+ line) goal)
+       do (loop for line₂ = (read-line doc-stream nil nil)
+             while line₂
+             until (or (and (<= 5 (length line₂))
+                            (string-begins "@item" line₂))
+                       (and (<= 3 (length line₂))
+                            (string-begins "@end" line₂)))
+             do (push line₂ docs)
+             finally (setf docs (nreverse docs))))
+    
+    (unless docs
+      (setf docs (format nil "The ~:(~a~) of: ~a" variable 
+                         (first-line docstring))))
+    (docstring->markdown (reduce #'concat docs))))
+
+(defun find-results-in-docstring (docstring)
+  (let ((doc-stream (make-string-input-stream docstring)))
+    (loop
+       for line = (read-line doc-stream nil nil)
+       while line
+       when (string-begins "@subsection{Status:" line)
+       collect (list*
+                (multiple-value-bind (status-number status-number-end) 
+                    (parse-integer (string-trim +whitespace+ (subseq line 20))
+                                   :junk-allowed t)
+                  (list (princ-to-string status-number)
+                        (string-trim +whitespace+
+                                     (subseq line (+ 20 status-number-end)
+                                             (position #\} line :from-end t)))))
+                (loop
+                   for line₂ = (read-line doc-stream nil nil)
+                   while line₂
+                   until (or (string-begins "@subsection" line₂)
+                             (string-begins "@section" line₂))
+                   collect line₂ into description
+                   finally (return (docstring->markdown 
+                                    (reduce #'concat description))))))))
+
 (defun route->openapi (route)
   "Convert a ROUTE description PList into an OpenAPI description. "
   (check-type route proper-list)
   (list (string-downcase (getf route :method))
-        (let ((partial (list :|summary|
-                             (getf route :docstring)
-                             :|responses|
-                             (list "200"
-                                   (list :|description|
-                                         "success (results are not documented in OpenAPI correctly. TODO)")
-                                   "default"
-                                   (list :|description|
-                                         "failure (results are not documented in OpenAPI correctly. TODO)")))))
+        (let ((partial 
+               (list :|summary|
+                     (docstring->markdown (getf route :docstring))
+                     :|responses|
+                     (plist-hash-table 
+                      (mapcan (lambda (results)
+                                (destructuring-bind (status+summary . description)
+                                    results
+                                  (destructuring-bind (status summary) 
+                                      status+summary
+                                    (list status
+                                          (plist-hash-table
+                                           (list :|description| description
+                                                 :|summary| summary))))))
+                              (find-results-in-docstring (getf route :docstring)))))))
           (if (getf route :variables)
               (list* :|parameters|
                      (route-vars->openapi route)
@@ -278,14 +353,14 @@ and :DOCSTRING."
     (check-type uri proper-list)
     (check-type routes proper-list)
     (list (template->openapi uri)
-          (mapcan #'route->openapi routes))))
+          (plist-hash-table (mapcan #'route->openapi routes)))))
 
 (defun route-vars->openapi (route)
   (loop for var in (getf route :variables)
      collecting
        (list :|name| (symbol-munger:lisp->camel-case var)
              :|in| "query"
-             :|description| (string-capitalize var)
+             :|description| (find-var-in-docstring var (getf route :docstring))
              :|required| t
              :|schema| (list :|type| "string"))))
 
@@ -380,8 +455,9 @@ The data  returned is  in the  JSON encoded form  of OpenAPI  3.0.0; see
                                     :|license| (list :|name| "AGPLv3"))
                       :|servers| (list (list :|url| (format nil "https://users.~a.tootsville.org/users/" *cluster*)))
                       :|paths|
-                      (mapcan #'path->openapi
-                              (group-plists (enumerate-routes) :template))
+                      (plist-hash-table 
+                       (mapcan #'path->openapi
+                               (group-plists (enumerate-routes) :template)))
                       :|components| #()))))
 
 (defendpoint (get "/meta-game/headers" "application/json")
