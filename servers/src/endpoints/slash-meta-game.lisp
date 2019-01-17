@@ -240,19 +240,16 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                "</li>" #(#\Newline)))
 
 (defun template->openapi (template)
-  (regex-replace-all "\\:([a-zA-Z0-9-]*)"
-                     (format nil "~{/~a~}" template)
-                     (lambda (whole _ __ match-start match-end ___ ____)
-                       (declare (ignore _ __ ___ ____))
-                       (concatenate
-                        'string
-                        "{"
-                        (symbol-munger:lisp->camel-case (subseq whole
-                                                                (1+ match-start)
-                                                                match-end))
-                        "}"))))
+  "Convert URI TEMPLATE into an OpenAPI template string."
+  (format nil "/~{~a~^/~}"
+          (mapcar (lambda (element) 
+                    (etypecase element
+                      (string element)
+                      (keyword (format nil "{~:(~a~)}" element)))) 
+                  template)))
 
 (defun route->openapi (route)
+  "Convert a ROUTE description PList into an OpenAPI description. "
   (check-type route proper-list)
   (list (string-downcase (getf route :method))
         (let ((partial (list :|summary|
@@ -271,8 +268,14 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
               partial))))
 
 (defun path->openapi (route-group)
+  "Given a path list ROUTE-GROUP, return an OpenAPI URI string.
+
+The path  list ROUTE-GROUP consists  a URI template of  constant strings
+and variables as symbols and a list of routes which share that template,
+each of which is a PList  with a :METHOD, :TEMPLATE, :CONTENT-TYPE, :FN,
+and :DOCSTRING."
   (destructuring-bind (uri &rest routes) route-group
-    (check-type uri string)
+    (check-type uri proper-list)
     (check-type routes proper-list)
     (list (template->openapi uri)
           (mapcan #'route->openapi routes))))
@@ -299,13 +302,30 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
        do (setf (cdr row) nil))
     map))
 
-(defun group-plists (plists key &key (test 'eql))
-  (let ((hash (make-hash-table :test test)))
-    (dolist (plist plists)
-      (if (gethash (getf plist key) hash nil)
-          (appendf (gethash (getf plist key) hash nil) plist)
-          (setf (gethash (getf plist key) hash nil) (list plist))))
-    (hash-table-alist hash)))
+(defun group-plists (plists key)
+  "Group PLISTS into a containing Alist by KEY.
+
+Each value of KEY in the proper-list  of Plists PLISTS will be an unique
+key in the resulting Alist."
+  (let (retval
+        current-value
+        current-group)
+    (flet ((maybe-save-current-group ()
+             (when current-group
+               (push (cons current-value (nreverse current-group)) retval)
+               (setf current-group nil))))
+      (dolist (plist plists)
+        (let ((value (getf plist key)))
+          (unless (equal value current-value)
+            (maybe-save-current-group))
+          (setf current-value value)
+          (push plist current-group)))
+      (maybe-save-current-group)
+      (nreverse retval))))
+
+(defpost group-plists ()
+  (equalp (group-plists '((:a 'foo :b 1) (:a 'foo :b 2) (:a 'bar :b 3)) :a)
+          '(('foo (:a 'foo :b 1) (:a 'foo :b 2)) ('bar (:a 'bar :b 3)))))
 
 
 
@@ -336,13 +356,13 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                                 :key #'car))
                   (endpoints-page-footer))))))
 
-(defendpoint (get "/meta-game/services" "application/json")
+(defendpoint (get "/meta-game/services/old" "application/json")
   "This is a sketchy  sort of listing of services in  a JSON format that
  is not  anybody's standard. It  exists as  a stop-gap measure  until the
  OpenAPI form is working nicely."
   (list 200 () (list :services (enumerate-routes))))
 
-(defendpoint (get "/meta-game/services/users"
+(defendpoint (get "/meta-game/services"
                   "application/vnd.oai.openapi;version=3.0")
   "Enumerate services for OpenAPI.
 
