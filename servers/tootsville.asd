@@ -97,7 +97,7 @@ REST services for the front-end."
      (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
      (:file "browser" :depends-on ("config"))
-     (:file "users" :depends-on ("utils"))
+     (:file "users" :depends-on ("utils" "db"))
      (:file "contacts" :depends-on ("utils"))
      (:file "items" :depends-on ("utils"))
      (:file "toots" :depends-on ("utils" "users"))

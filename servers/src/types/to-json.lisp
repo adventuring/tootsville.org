@@ -1,6 +1,6 @@
 ;;;; -*- lisp -*-
 ;;;
-;;;; ./servers/src/errors.lisp is part of Tootsville
+;;;; ./servers/src/to-json.lisp is part of Tootsville
 ;;;
 ;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
 ;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -30,10 +30,10 @@
 
 
 (defmethod %to-json ((uuid uuid:uuid))
-  (jonathan.encode:%write-string (princ-to-string uuid)))
+  (jonathan.encode:%write-string (format nil "\"~a\"" uuid)))
 
 (defmethod %to-json ((color24 color24))
-  (jonathan.encode:%write-string (color24-name color24)))
+  (jonathan.encode:%write-string (format nil "\"~a\"" (color24-name color24))))
 
 (defmethod %to-json ((timestamp timestamp))
   (jonathan.encode:%write-string (princ-to-string (timestamp-to-unix timestamp))))

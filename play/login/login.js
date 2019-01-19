@@ -112,7 +112,7 @@ Tootsville.login.generateNewToot = function ()
     Tootsville.login.editToot (toot); };
 
 Tootsville.login.editToot = function (toot)
-{ Tootsville.ui.hud.showHUDPanel('new-toot') }
+{ Tootsville.ui.hud.showHUDPanel('new-toot'); };
 
 Tootsville.login.startCharacterCreation = function ()
 { Tootsville.parrot.say ("Let's get started!",
@@ -163,7 +163,14 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('pick-toot').style.display = 'none'; };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
-{ return Tootsville.util.rest ('POST', 'users/play-with', { character: character }); };
+{ return Tootsville.util.rest ('POST', 'users/me/play-with/' + character).then(
+    () => { var loginMusic = querySelector("#login audio");
+            if (loginMusic) // should always be found
+            {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
+               setTimeout ( () => { loginMusic.volume = .25; }, 666 );
+               setTimeout ( () => { loginMusic.volume = 0; }, 1000 ); }
+          alert ("Signed in as " + character); },
+    error => { alert (character + " can't play right now. " + error); }); };
 
 Tootsville.login.removeChildOrSensitive = function (li)
 { var child = li.querySelector ('.child');

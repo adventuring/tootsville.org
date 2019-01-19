@@ -115,8 +115,11 @@ Requires a body with fields to be changed, and their new values. TODO.
 
 
 (defendpoint (get "/users/me/toots" "application/json")
-  "Enumerates all Toot characters available to you."
+  "Enumerate all Toot characters available to you."
   (with-user ()
+    (dolist (Toot (player-Toots))
+      (v:info '(:Toots) "Player ~a has Toot ~a" (person-display-name *user*) 
+              (Toot-name Toot)))
     (list 200
           (list :Last-Modified (header-time 
                                 (universal-to-timestamp 
@@ -244,6 +247,11 @@ main owner of. This is usually a child account.
 
 (defendpoint (post "/users/me/play-with/:toot-name" "application/json")
   "Begin playing with the Toot named TOOT-NAME.
+
+@table
+@item Toot-Name
+The name of the Toot character to play with.
+@end table
 
 @subsection{Status: 200 OK}
 
