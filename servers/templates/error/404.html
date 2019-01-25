@@ -29,16 +29,16 @@
 
      --><!--#include file="error-header.htmlf"-->
 
-<div id="bella-flight">
-  <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella.png"
-       id="bella">
-  <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella-Shadow.png"
-       id="bella-shadow">
-</div>
+     <div id="bella-flight">
+       <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella.png"
+            id="bella">
+       <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella-Shadow.png"
+            id="bella-shadow">
+     </div>
 
-<h1> 404: Not Found </h1>
+     <h1> 404: Not Found </h1>
 
-<!--#if expr="-z v('REDIRECT_URL')"-->
+     <!--#if expr="-z v('REDIRECT_URL')"-->
 <p>  There  is   no  resource  at  the  location   you  requested.  </p>
 <!--#else-->
 <p> There is no resource at “<!--#echo var="REDIRECT_URL"-->” </p>
@@ -48,7 +48,7 @@
   <li> If you typed the URL, check your spelling. </li>
   <li> If you  followed a link to get here,  please notify the webmaster
     of    the   site    that   sent    you   here.    <!--#if   expr="-z
-    v('HTTP_REFERER')"--> <!--#else-->  You seem to have  been sent here
+                                                          v('HTTP_REFERER')"--> <!--#else-->  You seem to have  been sent here
     by <tt><!--#echo var="HTTP_REFERER"--></tt>. <!--#endif-->
   </li>
 </ul>
