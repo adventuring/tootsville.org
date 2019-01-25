@@ -38,7 +38,7 @@
 (defun bool-sort (a b) (declare (ignore b)) a)
 
 (defun Toot-contacts (Toot)
-  (find-records 'contact :owner (Toot-uuid owner)))
+  (find-records 'contact :owner (Toot-uuid (Toot-player Toot))))
 
 (defun delete-contact (owner contact)
   (destroy-record
