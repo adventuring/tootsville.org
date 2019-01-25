@@ -78,16 +78,21 @@ Tootsville.login.serverQueryCharacters = function ()
                     then (Tootsville.login.serverQueryCharacters);
                     Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
-Tootsville.login.createTootListItem = function (toot)
+Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
-  li.className = 'toot';
-  li['data-toot'] = toot;
+  li.innerHTML = '<span class="toot-name">' +
+  tootName + '</span><i class="fas fa-spin fa-spinner"></i>';
   li.onclick = function () { Tootsville.login.pickCharacter (li); };
-  var canvas = document.createElement ('CANVAS');
-  li.appendChild (canvas);
-  li.innerHTML += '<span class="toot-name">' +
-  toot.name + '</span><span class="note">' + toot.note + '</span>';
-  Tootsville.login.addChildOrSensitiveFlag (li);
+  Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).then(
+      toot => { li.className = 'toot';
+                li['data-toot'] = toot;
+                var canvas = document.createElement ('CANVAS');
+                Tootsville.login.drawAvatarOnCanvas (toot, canvas);
+                li.innerHTML = '';
+                li.appendChild (canvas);
+                li.innerHTML += '<span class="toot-name">' +
+                toot.name + '</span><span class="note">' + toot.note + '</span>';
+                Tootsville.login.addChildOrSensitiveFlag (li); });
   return li; };
 
 Tootsville.login.populateTootsList = function (list)
@@ -95,9 +100,7 @@ Tootsville.login.populateTootsList = function (list)
   for (var i = 0; i < list.length; ++i)
   { var toot = list[i];
     var li = Tootsville.login.createTootListItem (toot);
-    document.getElementById ('toots-list').appendChild (li);
-    var canvas = li.querySelector ('canvas');
-    Tootsville.login.drawAvatarOnCanvas (toot, canvas); } };
+    document.getElementById ('toots-list').appendChild (li); } };
 
 Tootsville.login.generateNewToot = function ()
 { /* TODO let server generate new Toots with unique names */
