@@ -252,7 +252,9 @@ or exit the REPL.")
   "Start a Hunchentoot  server via `START' and daemonize with Swank"
   (disable-sbcl-ldb)
   (set-up-for-daemon/start-logging)
+  (v:info :starting "Starting on host interface ~a port ~a" host port)
   (start :host host :port port)
+  (v:info :starting "Starting Swank")
   (start-swank)
   (loop
      (trace-output-heartbeat)
