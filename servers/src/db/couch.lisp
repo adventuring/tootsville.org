@@ -45,6 +45,7 @@
                                        (extract conf :host)
                                        (or (extract conf :port) 5984))
                                "cat")))
+          (v:info :mixer "Tunnel established; connect to service…")
           (with-timeout (2)
             (clouchdb:set-connection :host "localhost"
                                      :port "27784"
