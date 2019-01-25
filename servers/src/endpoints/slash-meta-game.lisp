@@ -470,5 +470,9 @@ in transit."
               (alist-plist (hunchentoot::headers-in*)))))
 
 (defendpoint (get "/meta-game/ping" "text/plain")
-  "This endpoint always returns the 6-character string: @samp{\"pong\"}"
+  "Ping the server (test server presence and latency)
+
+@subsection{200: OK}
+
+This endpoint always returns the 6-character string: @samp{\"pong\"}"
   (list 200 () "\"pong\""))
