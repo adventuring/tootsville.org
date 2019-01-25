@@ -389,4 +389,9 @@ Tootsville.login.storeCredentialInfo = function (result)
 };
 
 Tootsville.login.quit = function ()
-{ firebase.auth().signOut().then(Tootsville.login.start); };
+{ Tootsville.player = null;
+  Tootsville.character = null;
+  Tootsville.login.accessToken = null;
+  Tootsville.login.idToken = null;
+  Tootsville.login.idProvider = null;
+  firebase.auth().signOut().then(Tootsville.login.start); };
