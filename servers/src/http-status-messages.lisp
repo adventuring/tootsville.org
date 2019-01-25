@@ -65,7 +65,6 @@
   (def-http-status 415 "Unsupported Media Type")
   (def-http-status 416 "Requested range not satisfiable")
   (def-http-status 417 "Expectation Failed")
-  (def-http-status 420 "Enhance Your Calm")
   (def-http-status 424 "Failed Dependency")
   (def-http-status 500 "Internal Server Error")
   (def-http-status 501 "Not Implemented")
