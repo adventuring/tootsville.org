@@ -38,7 +38,8 @@ Tootsville.login.overlay = function ()
 
 Tootsville.login.start = function ()
 { if (document.getElementById ("login") && document.getElementById ("login").style.display == "block")
-  { Tootsville.trace ("Not restarting login; panel already visible");
+  { Tootsville.trace ("Restarting login…");
+    Tootsville.login.startSignIn();
     return; }
   Tootsville.trace ("Start login");
   Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.firebaseLogin); };
