@@ -168,12 +168,16 @@ Tootsville.login.startSignIn = function ()
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
 { return Tootsville.util.rest ('POST', 'users/me/play-with/' + character).then(
-    () => { var loginMusic = querySelector("#login audio");
-            if (loginMusic) // should always be found
-            {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
-               setTimeout ( () => { loginMusic.volume = .25; }, 666 );
-               setTimeout ( () => { loginMusic.volume = 0; }, 1000 ); }
-          alert ("Signed in as " + character); },
+    reply => { var loginMusic = querySelector("#login audio");
+               if (loginMusic) // should always be found
+               {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
+                  setTimeout ( () => { loginMusic.volume = .25; }, 666 );
+                  setTimeout ( () => { loginMusic.volume = 0; }, 1000 ); }
+               alert ("Signed in as " + character);
+               Tootsville.ui.hud.closePanel ();
+               Tootsville.character = reply.toot;
+               Tootsville.player = reply.player;
+               Tootsville.tank.startSimulation (); },
     error => { alert (character + " can't play right now. " + error); }); };
 
 Tootsville.login.removeChildOrSensitive = function (li)
