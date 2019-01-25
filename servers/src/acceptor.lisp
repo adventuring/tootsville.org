@@ -119,7 +119,7 @@
     (if (string-begins "auth/Infinity/Alef/5.0 " (the string string))
         (destructuring-bind (provider token &rest _)
             (split-sequence #\Space (subseq string 23))
-          (declare (ignore _))
+          (declare (ignore _) (type string provider token))
           (v:info :auth "Provider ~a asserts token ~a…"
                   provider (subseq token 0 (min (length token) 40)))
           (assert (string-equal provider "Firebase"))
