@@ -93,7 +93,9 @@
       inventory)))
 
 (defun vanish-item (item)
-  "ITEM ceases to exist.")
+  "ITEM ceases to exist."
+  (v:info '(:vanish :item) "VANISH item ~a" item)
+  (destroy-record item))
 
 
 
@@ -103,13 +105,32 @@
 If the item's  energy reaches zero, the effect of  its :On-Zero flag will
 occur; either it will remain :EMPTY, or :VANISH.
 
-If ITEM's Energy-Kind is :COUNTABLE, then AMOUNT must be an integer.")
+If ITEM's Energy-Kind is :COUNTABLE, then AMOUNT must be an integer."
+  (when (eql :countable (item-template-energy-kind (item-template item)))
+    (assert (integerp amount)))
+  (cond
+    ((> (item-energy item) amount)
+     (decf (item-energy item) amount))
+    (t 
+     (setf (item-energy item) 0)
+     (ecase (item-template-on-zero (item-template item))
+       (:vanish (progn 
+                  (vanish-item item)
+                  (return-from item-lose-energy)))
+       ;; TODO ... on-zero cases
+       )))
+  (save-record item))
 
 (defun item-gain-energy (item amount)
   "Increate the energy of ITEM by AMOUNT (stopping at its :Energy-Max).
 
-If ITEM's Energy-Kind is :COUNTABLE, then AMOUNT must be an integer.")
+If ITEM's Energy-Kind is :COUNTABLE, then AMOUNT must be an integer."
+  (when (eql :countable (item-template-energy-kind (item-template item)))
+    (assert (integerp amount)))
+  (incf (item-energy item) amount)
+  (save-record item))
 
+
 
 (defun don-item (item slot)
   "Equip ITEM on its owning Toot in SLOT.
