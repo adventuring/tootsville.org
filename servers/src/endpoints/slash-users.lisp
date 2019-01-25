@@ -65,11 +65,11 @@ Child accounts will have some tokens here that help us … TODO
 @subsection{Status: 403 Authorization Failed}
 
 "
-  ;; with-user TODO
-  (list 200 nil
-        (list :hello "Hello, new user"
-              :fake "This is a totes fake response"
-              :toots "/users/me/toots.json")))
+  (with-user ()
+    (list 200 nil
+          (list :hello "Hello, new user"
+                :fake "This is a totes fake response"
+                :toots "/users/me/toots.json"))))
 
 (defendpoint (put "/users/me" "application/json")
   "Makes changes to an user account.
@@ -113,20 +113,26 @@ Requires a body with fields to be changed, and their new values. TODO.
   (with-user ()
     (error 'unimplemented)))
 
-
 (defendpoint (get "/users/me/toots" "application/json")
   "Enumerate all Toot characters available to you."
   (with-user ()
     (dolist (Toot (player-Toots))
-      (v:info '(:Toots) "Player ~a has Toot ~a" (person-display-name *user*) 
+      (v:info :Toots "Player ~a has Toot ~a" (person-display-name *user*) 
               (Toot-name Toot)))
     (list 200
           (list :Last-Modified (header-time 
                                 (universal-to-timestamp 
                                  (loop for Toot in (player-Toots)
-                                    maximizing (timestamp-to-universal
-                                                (or (Toot-last-active Toot) (now)))))))
-          (list :|toots| (mapcar #'Toot-info (player-Toots))))))
+                                    maximizing 
+                                      (the fixnum 
+                                           (timestamp-to-universal
+                                            (or (Toot-last-active Toot) (now))))))))
+          (list :|toots| (mapcar #'Toot-name
+                                 (sort (player-Toots)
+                                       #'timestamp<
+                                       :key (lambda (Toot)
+                                              (or (Toot-last-active Toot)
+                                                  (universal-to-timestamp 0)))))))))
 
 (defendpoint (post "/users/me/toots/:toot-name" "application/json")
   "Create a new Toot character named TOOT-NAME.
@@ -196,8 +202,11 @@ The user credentials presented were not recognized.
 
 "
   (with-user ()
-    (assert-my-character toot-name)
-    (error 'unimplemented)))
+    (assert-my-character Toot-name)
+    (let ((Toot (find-record 'Toot :name Toot-name)))
+      (list 200
+            () ;; (list :Last-Modified (Toot-last-active Toot))
+            (Toot-info Toot)))))
 
 (defendpoint (delete "/users/me/toots/:toot-name" "application/json")
   "Permanently destroys the Toot character TOOT-NAME.
@@ -276,5 +285,8 @@ main owner of. This is usually a child account.
 
 "
   (with-user ()
-    (assert-my-character toot-name)
-    (error 'unimplemented)))
+    (assert-my-character Toot-name)
+    (list 200
+          ()
+          (list :|toot| (Toot-info (find-record 'Toot :name Toot-name))
+                :|player| *user*))))
