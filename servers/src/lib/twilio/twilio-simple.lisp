@@ -96,10 +96,10 @@
                      (string-upcase (subseq name 3))))))
 
 (tootsville::defpost check-language-format-2 ()
-                     (assert (string= "en" (format-language :en))))
+  (assert (string= "en" (format-language :en))))
 
 (tootsville::defpost check-language-format-5 ()
-                     (assert (string= "en-GB" (format-language :en-gb))))
+  (assert (string= "en-GB" (format-language :en-gb))))
 
 
 

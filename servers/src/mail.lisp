@@ -22,15 +22,15 @@ which may be resolved in future."))))
 
 (defmacro with-mail-errors (() &body body)
   `(handler-bind
-       ((mail-error-no-user 
+       ((mail-error-no-user
          (lambda (c)
            (declare (ignore c))
            (sb-posix:exit #|EX_NOUSER|# 67)))
-        (mail-error-permission-denied 
+        (mail-error-permission-denied
          (lambda (c)
            (declare (ignore c))
            (sb-posix:exit #|EX_NOPERM|# 77)))
-        (mail-error-temp-failure 
+        (mail-error-temp-failure
          (lambda (c)
            (declare (ignore c))
            (sb-posix:exit #|EX_TEMPFAIL|# 75)))

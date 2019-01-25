@@ -110,49 +110,49 @@ as well.)"
               temp
               (rest temp)))
         (list "index" extension)))
-  
+
   (defun without-sem (string)
     "The subset of STRING up to the first semicolon, if any."
     (if-let (sem (position #\; string))
       (subseq string 0 sem)
       string))
-  
+
   (defun first-line (string)
     "The first line, or, lacking a shorter break, first 100 characters of STRING."
     (let ((newline (or (position #\newline string) 100)))
       (subseq string 0 (min newline 100 (length string)))))
-  
+
   (defun defendpoint/make-endpoint-function (&key fname content-type
                                                   λ-list docstring body)
     (let (($begin (gensym "BEGIN-"))
           ($elapsed (gensym "ELAPSED-")))
       `(defun ,fname (,@λ-list) ,docstring
               (let ((,$begin (get-internal-real-time)))
-               (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
-                       ,(concatenate 'string "Starting: " (first-line docstring)))
-               (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
-               (unwind-protect
-                    (let ((reply
-                           (catch 'endpoint
-                             (block endpoint
-                               (block ,fname
-                                 ,@body)))))
-                      (let ((bytes (encode-endpoint-reply reply)))
-                        (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
-                                "Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
-                               
-                                (hunchentoot:return-code*)
-                                (length (the list (hunchentoot:headers-out*)))
-                                (length (the vector bytes)))
-                        bytes))
-                 (let ((,$elapsed (* 1000.0 (/ (- (get-internal-real-time) ,$begin) internal-time-units-per-second))))
-                   (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
-                           ,(concatenate 'string "Finished: " (first-line docstring) " in ~:dms")
-                           ,$elapsed)
-                   (when (< 30 ,$elapsed)
-                     (v:error '(,(make-keyword fname) :endpoint :slow-query)
-                              "Slow query"))))))))
-  
+                (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
+                        ,(concatenate 'string "Starting: " (first-line docstring)))
+                (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
+                (unwind-protect
+                     (let ((reply
+                            (catch 'endpoint
+                              (block endpoint
+                                (block ,fname
+                                  ,@body)))))
+                       (let ((bytes (encode-endpoint-reply reply)))
+                         (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
+                                 "Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
+
+                                 (hunchentoot:return-code*)
+                                 (length (the list (hunchentoot:headers-out*)))
+                                 (length (the vector bytes)))
+                         bytes))
+                  (let ((,$elapsed (* 1000.0 (/ (- (get-internal-real-time) ,$begin) internal-time-units-per-second))))
+                    (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
+                            ,(concatenate 'string "Finished: " (first-line docstring) " in ~:dms")
+                            ,$elapsed)
+                    (when (< 30 ,$elapsed)
+                      (v:error '(,(make-keyword fname) :endpoint :slow-query)
+                               "Slow query"))))))))
+
   (defun after-slash (s)
     "Splits a string S at a slash. Useful for getting the end of a content-type."
     (if (find #\/ s)

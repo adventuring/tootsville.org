@@ -36,22 +36,22 @@ Someone has called us at NUMBER, and  Twilio needs to know how to reply.
 Send an XML (TwiML) response."
   (with-twilio-params ()
     (twilio:as-response
-     (twilio:say
-      (format nil "Hello~@[, ~a~], ~
+      (twilio:say
+       (format nil "Hello~@[, ~a~], ~
 this is the Tootsville telephone operator. ~
 ~@[Thank you for being a patron!~]"
-              (when message-from-user
-                (or (when-let (surname (person-surname message-from-user))
-                      (ecase (person-gender message-from-user)
-                        (:m (format nil "Mister ~a" surname))
-                        (:f (format nil "Mizz ~a" surname))
-                        (:x nil)))
-                    (person-display-name message-from-user)
-                    (person-given-name message-from-user)))
-              (when message-from-user
-                (person-is-patron-p message-from-user))))
-     (twilio:with-gather ()
-                         (twilio:say "This service is not available yet.")))))
+               (when message-from-user
+                 (or (when-let (surname (person-surname message-from-user))
+                       (ecase (person-gender message-from-user)
+                         (:m (format nil "Mister ~a" surname))
+                         (:f (format nil "Mizz ~a" surname))
+                         (:x nil)))
+                     (person-display-name message-from-user)
+                     (person-given-name message-from-user)))
+               (when message-from-user
+                 (person-is-patron-p message-from-user))))
+      (twilio:with-gather ()
+        (twilio:say "This service is not available yet.")))))
 
 
 
@@ -72,18 +72,18 @@ Someone  has messaged  us at  NUMBER, and  Twilio needs  to know  how to
 reply. Send an XML (TwiML) response."
   (with-twilio-params ()
     (twilio:as-response
-     (twilio:message
-      (format nil "Hello~@[, ~a~], ~
+      (twilio:message
+       (format nil "Hello~@[, ~a~], ~
 this is Tootsville. ~
 This service is not available now." ; TODO
-              (when message-from-user
-                (or (when-let (surname (person-surname message-from-user))
-                      (ecase (person-gender message-from-user)
-                        (:m (format nil "Mister ~a" surname))
-                        (:f (format nil "Mizz ~a" surname))
-                        (:x nil)))
-                    (person-display-name message-from-user)
-                    (person-given-name message-from-user))))))))
+               (when message-from-user
+                 (or (when-let (surname (person-surname message-from-user))
+                       (ecase (person-gender message-from-user)
+                         (:m (format nil "Mister ~a" surname))
+                         (:f (format nil "Mizz ~a" surname))
+                         (:x nil)))
+                     (person-display-name message-from-user)
+                     (person-given-name message-from-user))))))))
 
 
 
@@ -94,18 +94,18 @@ Someone  has messaged  us at  NUMBER, and  Twilio needs  to know  how to
 reply. Send an XML (TwiML) response."
   (with-twilio-params ()
     (twilio:as-response
-     (twilio:message
-      (format nil "Hello~@[, ~a~], ~
+      (twilio:message
+       (format nil "Hello~@[, ~a~], ~
 this is Tootsville. ~
 This service is not available now." ; TODO
-              (when message-from-user
-                (or (when-let (surname (person-surname message-from-user))
-                      (ecase (person-gender message-from-user)
-                        (:m (format nil "Mister ~a" surname))
-                        (:f (format nil "Mizz ~a" surname))
-                        (:x nil)))
-                    (person-display-name message-from-user)
-                    (person-given-name message-from-user))))))))
+               (when message-from-user
+                 (or (when-let (surname (person-surname message-from-user))
+                       (ecase (person-gender message-from-user)
+                         (:m (format nil "Mister ~a" surname))
+                         (:f (format nil "Mizz ~a" surname))
+                         (:x nil)))
+                     (person-display-name message-from-user)
+                     (person-given-name message-from-user))))))))
 
 
 

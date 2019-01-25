@@ -116,9 +116,9 @@
 
 <audio autoplay="t">
   <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.mp3"
-  />
+          />
   <source src="https://jumbo.tootsville.org/Assets/Voices/evil-laugh.wav"
-  />
+          />
 </audio>
 
 
@@ -134,10 +134,10 @@
 
   <a href="mailto:support@tootsville.org?subject=500%20error&body=%0d%0a%0d%0aI%20encountered%20a%20500%20Internal%20Server%20Error%20message%20from%20https://<!--#echo
            var="HTTP_HOST"                                  --><!--#echo
-           var="HTTP_REQUEST_URI" -->.%0d%0aI%20was%20trying%20to%20_">email
-           to  our Support  mailbox</a> so  we can  find out  about this
-           problem. Please let  us know what you were trying  to do when
-           this error occurred.</p>
+                          var="HTTP_REQUEST_URI" -->.%0d%0aI%20was%20trying%20to%20_">email
+    to  our Support  mailbox</a> so  we can  find out  about this
+  problem. Please let  us know what you were trying  to do when
+  this error occurred.</p>
 
 <h2> When will it be fixed? </h2>
 
@@ -147,7 +147,7 @@
 
 <p> More technical details can be seen on the
   <a href="http://www.tootsville.org/development/">Development board</a>
-    (advanced users). </p>
+  (advanced users). </p>
 
 <h2> Learn more </h2>
 

@@ -51,7 +51,7 @@
     of the site that sent you here.
     <!--#if expr="-z v('HTTP_REFERER')"-->
     <!--#else-->  You  seem to  have  been  sent here  by  <tt><!--#echo
-    var="HTTP_REFERER"--></tt>.
+                                                                   var="HTTP_REFERER"--></tt>.
     <!--#endif-->
   </li>
 </ul>

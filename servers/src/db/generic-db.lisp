@@ -92,7 +92,7 @@ May return NIL if there is no simple primary key.")
 (defgeneric invalidate-cache (object)
   (:documentation
    "Identify that the cache is dirty  and should be cleared of a certain
-   set of possible records.
+ set of possible records.
 
 This   is  called   by   the  :AFTER   methods   of  `SAVE-RECORD'   and
 `DESTROY-RECORD'."))
@@ -124,4 +124,3 @@ a  :BEFORE method  on this  function.  The default  :AFTER method  calls
 (defmethod save-record :after (object)
   "Invalidate any cached version of OBJECT"
   (invalidate-cache object))
-

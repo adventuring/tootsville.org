@@ -111,10 +111,10 @@ If ITEM's Energy-Kind is :COUNTABLE, then AMOUNT must be an integer."
   (cond
     ((> (item-energy item) amount)
      (decf (item-energy item) amount))
-    (t 
+    (t
      (setf (item-energy item) 0)
      (ecase (item-template-on-zero (item-template item))
-       (:vanish (progn 
+       (:vanish (progn
                   (vanish-item item)
                   (return-from item-lose-energy)))
        ;; TODO ... on-zero cases

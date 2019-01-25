@@ -263,14 +263,14 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
 (defun template->openapi (template)
   "Convert URI TEMPLATE into an OpenAPI template string."
   (format nil "/~{~a~^/~}"
-          (mapcar (lambda (element) 
+          (mapcar (lambda (element)
                     (etypecase element
                       (string element)
-                      (keyword (format nil "{~:(~a~)}" element)))) 
+                      (keyword (format nil "{~:(~a~)}" element))))
                   template)))
 
 (defun concat (&rest args)
-  (format nil 
+  (format nil
           "~{~a~^~%~}" args))
 
 (defun find-var-in-docstring (variable docstring)
@@ -288,9 +288,9 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                             (string-begins "@end" line₂)))
              do (push line₂ docs)
              finally (setf docs (nreverse docs))))
-    
+
     (unless docs
-      (setf docs (format nil "The ~:(~a~) of: ~a" variable 
+      (setf docs (format nil "The ~:(~a~) of: ~a" variable
                          (first-line docstring))))
     (docstring->markdown (reduce #'concat docs))))
 
@@ -301,7 +301,7 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
        while line
        when (string-begins "@subsection{Status:" line)
        collect (list*
-                (multiple-value-bind (status-number status-number-end) 
+                (multiple-value-bind (status-number status-number-end)
                     (parse-integer (string-trim +whitespace+ (subseq line 20))
                                    :junk-allowed t)
                   (list (princ-to-string status-number)
@@ -314,22 +314,22 @@ href=\"http://goethe.tootsville.org/devel/docs/Tootsville/"
                    until (or (string-begins "@subsection" line₂)
                              (string-begins "@section" line₂))
                    collect line₂ into description
-                   finally (return (docstring->markdown 
+                   finally (return (docstring->markdown
                                     (reduce #'concat description))))))))
 
 (defun route->openapi (route)
   "Convert a ROUTE description PList into an OpenAPI description. "
   (check-type route proper-list)
   (list (string-downcase (getf route :method))
-        (let ((partial 
+        (let ((partial
                (list :|summary|
                      (docstring->markdown (getf route :docstring))
                      :|responses|
-                     (plist-hash-table 
+                     (plist-hash-table
                       (mapcan (lambda (results)
                                 (destructuring-bind (status+summary . description)
                                     results
-                                  (destructuring-bind (status summary) 
+                                  (destructuring-bind (status summary)
                                       status+summary
                                     (list status
                                           (plist-hash-table
@@ -455,7 +455,7 @@ The data  returned is  in the  JSON encoded form  of OpenAPI  3.0.0; see
                                     :|license| (list :|name| "AGPLv3"))
                       :|servers| (list (list :|url| (format nil "https://users.~a.tootsville.org/users/" *cluster*)))
                       :|paths|
-                      (plist-hash-table 
+                      (plist-hash-table
                        (mapcan #'path->openapi
                                (group-plists (enumerate-routes) :template)))
                       :|components| #()))))

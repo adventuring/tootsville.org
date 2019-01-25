@@ -2,26 +2,28 @@
 
  ;;; Tootangan Climatology:
  ;;;
- ;;; * Each day is a sine curve from 10:00 (high an hour after noon) to an
- ;;;   hour before sunrise as the low temp (varying with sunrise times)
+ ;;; * Each day is a sine curve from  10:00 (high an hour after noon) to
+ ;;;   an  hour before  sunrise as  the low  temp (varying  with sunrise
+ ;;;   times)
  ;;;
  ;;; * The year is a sine curve of high temperatures
  ;;;
- ;;; * The height of winter is 21 Sirenia, the Winter Solstice; the height
- ;;;   of summer is 21 Pygmaeus (7/21), the Summer Solstice
+ ;;; * The  height of  winter is  21 Sirenia,  the Winter  Solstice; the
+ ;;;   height of summer is 21 Pygmaeus (7/21), the Summer Solstice
  ;;;
- ;;; * Daylight hours change with the solstices, also as a sine curve, with the
- ;;;   same high and low points
+ ;;; * Daylight hours change  with the solstices, also as  a sine curve,
+ ;;;   with the same high and low points
  ;;;
- ;;; * The delta between high and low temperatures is determined by the
- ;;;   daylight hours, so there is very little cooling-off in the summer,
- ;;;   but in the winter, the low temperature can be much lower
+ ;;; * The delta between high and  low temperatures is determined by the
+ ;;;   daylight  hours,  so there  is  very  little cooling-off  in  the
+ ;;;   summer, but in the winter, the  low temperature can be much lower
  ;;;   (relatively).
  ;;;
  ;;; * The basic reference point is Tootsville itself, at just above sea
- ;;;   level.  Higher altitudes have a relatively lower temperature, with
- ;;;   the higher peaks never rising above 0, while Tootsville will always
- ;;;   rise above 0 at least at noon, even on the Winter Solstice.
+ ;;;   level. Higher altitudes have a relatively lower temperature, with
+ ;;;   the  higher peaks  never rising  above 0,  while Tootsville  will
+ ;;;   always   rise  above   0  at   least   at  noon,   even  on   the
+ ;;;   Winter Solstice.
  ;;;
  ;;; * Precipitation chances are highest in the third months -- Inunguis,
  ;;;   Senecalensis, Elephas, and Tethytheria -- peaking at the 15th of each
@@ -46,5 +48,3 @@
  ;;;   fields affect the likelihood of precipitation, the wind fields alter
  ;;;   the direction of movement of the clouds.
  ;;;
-
-

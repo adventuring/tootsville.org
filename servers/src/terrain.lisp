@@ -37,9 +37,9 @@
       ((color24-rgb 35 239 14) . :forest)
       ((color24-rgb 150 138 237) . :ocean)
       ((color24-rgb 255 255 255) .  :ice))
-   :test 'equalp
-   :documentation "The color triplets which represent each type of habitat
-  in the PNG habitat map.")
+  :test 'equalp
+  :documentation "The color triplets which represent each type of habitat
+ in the PNG habitat map.")
 
 (defvar *global-heightmap%)
 (defvar *global-heightmap-x%)
@@ -64,8 +64,8 @@
 
 (defvar *habitat-map*
   (pngload:load-file (asdf:system-relative-pathname :Tootsville
-                                                      "data/Tootanga-map"
-                                                      :type "png"))
+                                                    "data/Tootanga-map"
+                                                    :type "png"))
   "The Tootanga map contains color-coded pixels representing the various
 habitat areas of the game. Each pixel represents a 200m by 200m area; thus,
 the entire map area (800 by 600 pixels) represents a playable game area of
@@ -109,10 +109,10 @@ approximate/net altitude of each 200 by 200 meter area of the game.")
 
               (aref habitat ix iy)
               (habitat<-pixel
-               (color24-rgb 
-                 (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 0)
-                 (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 1)
-                 (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 2))))))
+               (color24-rgb
+                (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 0)
+                (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 1)
+                (aref (pngload:data *habitat-map*) (+ x-offset ix) (+ y-offset iy) 2))))))
     (list elevation habitat)))
 
 
@@ -155,11 +155,11 @@ Should return true  if a body of water exists  which enters the space
  Terminus of  a stream  or completely underwater  are not  “streams” by
  this definition."
   (error 'unimplemented))
-  
+
 (defun point-underwater-p (x y)
   "Is the point underwater? TODO"
   (error 'unimplemented))
-  
+
 (defun find-random-point-if (function)
   "Find a random point within the space for which FUNCTION is true.
 
@@ -195,8 +195,8 @@ Returns (LIST X Y)"
 
 (defgeneric generate-terrain-features (contour habitat)
   (:documentation "Generate the terrain features based upon the contour map
-  and habitat type.  Methods of this function specialize upon the habitat
-  type."))
+ and habitat type.  Methods of this function specialize upon the habitat
+ type."))
 
 (defmethod generate-terrain-features :before (contour habitat)
   "Connect streams, regardless of the habitat type."
@@ -238,7 +238,7 @@ Returns (LIST X Y)"
 
 
 (defgeneric generate-terrain-contour (9-elevations habitat x y scale)
- (:documentation "Generate the contour for a tile area"))
+  (:documentation "Generate the contour for a tile area"))
 
 (defun copy-terrain-edge-horz (start-x y end-x dest-x dest-y)
   (loop for xi from start-x to end-x
@@ -422,6 +422,3 @@ PLACE is one of :Tootanga, :Moon, :Other-Moon, :Pink-Moon.
 X and Y must be aligned to 200m increments."
   (or (terrain-exists-p place x y)
       (spawn-terrain place x y)))
-
-
-

@@ -117,14 +117,14 @@ Requires a body with fields to be changed, and their new values. TODO.
   "Enumerate all Toot characters available to you."
   (with-user ()
     (dolist (Toot (player-Toots))
-      (v:info :Toots "Player ~a has Toot ~a" (person-display-name *user*) 
+      (v:info :Toots "Player ~a has Toot ~a" (person-display-name *user*)
               (Toot-name Toot)))
     (list 200
-          (list :Last-Modified (header-time 
-                                (universal-to-timestamp 
+          (list :Last-Modified (header-time
+                                (universal-to-timestamp
                                  (loop for Toot in (player-Toots)
-                                    maximizing 
-                                      (the fixnum 
+                                    maximizing
+                                      (the fixnum
                                            (timestamp-to-universal
                                             (or (Toot-last-active Toot) (now))))))))
           (list :|toots| (mapcar #'Toot-name
@@ -158,7 +158,7 @@ If the Toot had been previously created, returns a redirect (307)."
              (pattern-color (hunchentoot:parameter "pattern-color"))
              (base-color (hunchentoot:parameter "base-color"))
              (pad-color (hunchentoot:parameter "pad-color")))
-        ;; TODO: assert that player doesn't  have too many Toots
+        ;; TODO: assert that player doesn't have too many Toots
         (check-type pattern Toot-pattern-name)
         (check-type pattern-color Toot-pattern-color-name)
         (check-type base-color Toot-base-color-name)
