@@ -74,7 +74,7 @@
            (base-color (or (remove-parentheticals base-color$)
                            (random-elt +Toot-base-color-names+)))
            (pads-color (or (remove-parentheticals pads-color$)
-                           (random-elt +Toot-pads-color-names+)))
+                           (random-elt +Toot-pad-color-names+)))
            (pattern-color (or (remove-parentheticals pattern-color$)
                               (random-elt (allowed-pattern-colors-on-base base-color))))
            (pattern-name (or (remove-parentheticals pattern-name$)
@@ -83,11 +83,11 @@
                            (search "13" age-range)))
            (gmail (if own-toot-p gmail2 gmail1)))
       (check-Toot-name Toot-name)
-      (check-type pads-color Toot-pads-color-name)
+      (check-type pads-color Toot-pad-color-name)
       (check-type pattern-name Toot-pattern-name)
       (check-pattern-on-base-color pattern-color base-color
                                    :Toot-name Toot-name
-                                   :pads-color pads-color
+                                   :pad-color pads-color
                                    :pattern pattern-name
                                    :address gmail)
       (list :created-at created-at
