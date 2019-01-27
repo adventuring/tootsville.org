@@ -47,14 +47,14 @@
     top: 0;
     left: 0;
 }
-#login>h1>img {
+#login > h1 > img {
     max-width: 100%;
     max-height: 4rem;
     min-height: 3rem;
     margin-bottom: 1rem;
 }
-#login>section { margin: 1rem }
-#login>section>h2 { margin-bottom: .5rem}
+#login > section { margin: 1rem }
+#login > section > h2 { margin-bottom: .5rem}
 #featured {
     position: absolute;
     top: 0;
@@ -71,17 +71,17 @@
     max-height: 50%;
     float: left;
 }
-#login>ul {
+#login > ul {
     display: block;
     align-content: center;
     width: 33%;
     margin-left: 27.5%;
 }
-#login>ul>li {
+#login > ul > li {
     display: block;
     align-content: center;
 }
-#login>ul>li>a {
+#login > ul > li > a {
     display: block;
     text-decoration: none;
     text-align: center;
@@ -101,7 +101,7 @@
     font-variant: small-caps;
     padding: .5rem;
 }
-#login>ul>li>a:hover {
+#login > ul > li > a:hover {
     box-shadow:
         -.2rem -.2rem 0 #ffc636,
         .2rem -.2rem 0 #ffc636,
@@ -185,7 +185,7 @@ p {
         left: 0;
         margin: 0;
     }
-    #login>section {
+    #login > section {
         margin: 0;
     }
     #tootsville {
@@ -203,7 +203,7 @@ p {
         width: 4rem;
         margin-top: 3rem;
     }
-    #login>ul {
+    #login > ul {
         margin-left: 3rem;
         margin-right: 0;
         max-width: 100%;
@@ -239,7 +239,7 @@ p {
         width: 4rem;
         margin: .5rem;
     }
-    #login>ul {
+    #login > ul {
         display: block;
         margin-left: 3rem;
         margin-right: 0;
@@ -247,7 +247,7 @@ p {
         max-width: calc(100% - 4rem);
         width: 20rem;
     }
-    #login>ul>li {
+    #login > ul > li {
         display: inline-block;
         width: auto;
     }
@@ -260,10 +260,11 @@ p {
     border-radius: 1rem;
     min-height: 12rem;
     max-height: 50vh;
-    overflow: scroll;
+    overflow-x: show;
+    overflow-y: auto;
 }
 
-#toots-list>li {
+#toots-list > li {
     display: inline-block;
     width: 15rem;
     border: 1pt solid black;
@@ -296,7 +297,7 @@ p {
     color: #333;
     font-size: .9em;
 }
-#toots-list>li#new-toot {
+#toots-list > li#new-toot {
     display: block;
     float: right;
     margin-top: 2rem;
@@ -317,7 +318,7 @@ p {
     cursor: pointer;
 }
 
-#toots-list>li>canvas {
+#toots-list > li > canvas {
     margin-right: 1rem;
     height: 4rem;
     width: 3rem;
@@ -357,7 +358,7 @@ strong.green-plus {
     margin-right: .5rem;
 }
 
-#login>.footer {
+#login > .footer {
     position: fixed;
     bottom: 0;
     font-family: Cantarell, serif;
