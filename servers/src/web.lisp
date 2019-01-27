@@ -44,16 +44,8 @@
 Looks for  the canonical  \"Accept: application/json\", and  also checks
 the request URI for \".js\" (which  is, of course, a subseq of \".json\"
 as well.)"
-  (let ((accept (hunchentoot:header-in* :accept)))
-    (or (when (search "application/json" accept)
-          (verbose:info :json "Client Accepts application/json explicitly")
-          t)
-        (when (search ".js" (hunchentoot:request-uri*))
-          (verbose:info :json "Client request URI contains .js")
-          t)
-        (progn
-          (verbose:info :json "Client does not want JSON")
-          nil))))
+  (or (search "application/json" (hunchentoot:header-in* :accept))
+      (search ".js" (hunchentoot:request-uri*))))
 
 
 
