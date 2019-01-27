@@ -183,15 +183,16 @@ Tootsville.login.endLoginMusic = function ()
   if (loginMusic) // should always be found
   {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
      setTimeout ( () => { loginMusic.volume = .25; }, 666 );
-     setTimeout ( () => { loginMusic.volume = 0; }, 1000 ); } };
+     setTimeout ( () => { loginMusic.volume = 0; }, 1000 );
+     setTimeout ( () => { loginMusic.parentNode.removeChild (loginMusic); }, 1050 ); } };
 
 Tootsville.login.loginDone = function (reply)
 { Tootsville.trace ("loginDone", reply);
-  // Tootsville.login.endLoginMusic();
-  alert ("Signed in as " + reply.toot.name);
+  Tootsville.login.endLoginMusic ();
   Tootsville.ui.hud.closePanel ();
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
+  Tootsville.gossip.ensureConnected ();
   Tootsville.tank.start3D (); };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
