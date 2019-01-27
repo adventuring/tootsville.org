@@ -87,4 +87,4 @@ CODE must be a valid HTTP status code number, or 501 will be used.
                             (t 501))))
          (unless (typep code-number 'http-response-status-number)
            (setf code-number 501))
-         (redirect-to (format nil "/error/~d" code-number) :temp)))))
+         (redirect-to (format nil "/error/~d" code-number) :temporary)))))
