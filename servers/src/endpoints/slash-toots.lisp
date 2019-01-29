@@ -31,7 +31,7 @@
   (check-arg-type Toot-name Toot-name)
   (if-let (Toot (find-Toot-by-name Toot-name))
     (list 200
-          `(:last-modified ,(header-time (Toot-last-active Toot)))
+          `(:last-modified ,(header-time (or (Toot-last-active Toot) (now))))
           (Toot-info Toot))
     (list 404 nil nil)))
 
