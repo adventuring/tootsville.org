@@ -27,15 +27,24 @@
 
 (in-package :Tootsville)
 
-(defendpoint (post "/gossip/offers" "application/sdp")
+(defendpoint (post "/gossip/offers" "application/json")
   "Provide a new offer. Body is an SDP offer. Reply will be an offer URI."
-  (let ((body (hunchentoot:raw-post-data)))
-    (let ((uuid (gossip-offer body)))
-      (v:info '(:gossip :gossip-new) "New SDP offer ~a" uuid)
-      (list 202 (list :location (format nil "/gossip/offers/~a"
-                                        (uuid-to-uri uuid)))))))
+  (with-user ()
+    (let ((json (jonathan:parse (hunchentoot:raw-post-data)))
+          offers)
+      (dolist (offer (getf json :|offers|))
+        (let* ((uuid (uuid:make-v4-uuid)) 
+               (offer-object (make-record 'gossip-initiation
+                                          :offeror *user*
+                                          :offer offer
+                                          :uuid uuid)))
+          (save-record offer-object)
+          (v:info '(:gossip :gossip-new) "New SDP offer ~a" uuid)
+          (push uuid offers)))
+      (list 202 (list :location "/gossip/offers")
+            (list :|offers| (mapcar #'uuid-to-uri offers))))))
 
-(defendpoint (get "/gossip/offers" "application/sdp")
+(defendpoint (get "/gossip/offers/any" "application/sdp")
   "Ask for any, arbitrary offer to potentially accept."
   (let ((offer (gossip-pop-offer)))
     (if offer
@@ -47,6 +56,6 @@
 
 (defendpoint (put "/gossip/offers/:uuid64" "application/sdp")
   "Answer a particular offer with ID UUID64"
-  (let ((offer (gossip-get-offer (uri-to-uuid uuid64)))
+  (let ((offer (find-record 'gossip-initiation :uuid (uri-to-uuid uuid64)))
         (body (hunchentoot:raw-post-data)))
     (gossip-answer-offer offer body)))
