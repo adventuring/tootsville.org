@@ -179,7 +179,8 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('pick-toot').style.display = 'none'; };
 
 Tootsville.login.endLoginMusic = function ()
-{ var loginMusic = querySelector("#login audio");
+{ return; // TODO
+  var loginMusic = querySelector("#login audio");
   if (loginMusic) // should always be found
   {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
      setTimeout ( () => { loginMusic.volume = .25; }, 666 );
