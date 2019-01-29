@@ -48,3 +48,16 @@
  ;;;   fields affect the likelihood of precipitation, the wind fields alter
  ;;;   the direction of movement of the clouds.
  ;;;
+
+(defun current-temp (x y z) ;; TODO
+  (declare (ignore x y z))
+  (let ((low 15) (high 20))
+    (+ low (* (- high low) (sinus (get-universal-time) (* 18 60 60))))))
+
+(defun precipitation (x y z) ;; TODO
+  (declare (ignore x y z))
+  (values 0 nil))
+
+(defun clouds (x y z) ;; TODO
+  (declare (ignore x y z))
+  (list nil))
