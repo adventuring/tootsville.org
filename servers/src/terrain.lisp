@@ -377,9 +377,9 @@ Returns (LIST X Y)"
 ;;; (:Tootanga), in the  near-Chœrogryllum orbit (:Oribt), or  on one of
 ;;; the moons (:Moon, :Other-Moon, :Pink-Moon).
 
-(defgeneric spawn-terrain (place x-coord y-coord))
+(defgeneric spawn-terrain (place x-coord y-coord z-coord))
 
-(defmethod spawn-terrain ((place (eql :tootanga)) (x integer) (y integer))
+(defmethod spawn-terrain ((place (eql :tootanga)) (x integer) (y integer) (z integer))
   (assert (<= -80000 x 80000))
   (assert (<= -60000 y 60000))
   (let ((*global-heightmap% (make-array (list 202 202) :element-type '(unsigned-byte 8)))

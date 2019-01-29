@@ -3,113 +3,113 @@
 
 /<!-- ./servers/templates/error/500.html is part of Tootsville
 
-     Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
-     Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+      Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+      Corporation for Inter-World Tourism and Adventuring (ciwta.org).
 
-     This  program is  Free  Software: you  can  redistribute it  and/or
-     modify it under the terms of  the GNU Affero General Public License
-     as published by  the Free Software Foundation; either  version 3 of
-     the License, or (at your option) any later version.
+      This  program is  Free  Software: you  can  redistribute it  and/or
+      modify it under the terms of  the GNU Affero General Public License
+      as published by  the Free Software Foundation; either  version 3 of
+      the License, or (at your option) any later version.
 
-     This program is distributed in the hope that it will be useful, but
-     WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
-     MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
-     Affero General Public License for more details.
+      This program is distributed in the hope that it will be useful, but
+      WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
+      MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
+      Affero General Public License for more details.
 
-     You should  have received a copy  of the GNU Affero  General Public
-     License    along     with    this    program.    If     not,    see
-     <https://www.gnu.org/licenses/>.
+      You should  have received a copy  of the GNU Affero  General Public
+      License    along     with    this    program.    If     not,    see
+      <https://www.gnu.org/licenses/>.
 
-     You can reach CIWTA at https://ciwta.org/, or write to us at:
+      You can reach CIWTA at https://ciwta.org/, or write to us at:
 
-     PO Box 23095
+      PO Box 23095
 
-     Oakland Park, FL 33307-3095
+      Oakland Park, FL 33307-3095
 
-     USA
+      USA
 
-     --><!--#include file="error-header.htmlf"-->
-<img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/shade.png"
-     id="featured">
+      --><!--#include file="error-header.htmlf"-->
+      <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/shade.png"
+           id="featured">
 
-<link href="https://fonts.googleapis.com/css?family=Creepster" rel="stylesheet">
-<style>
-  #builder-toot { display: none; }
-  #featured { position: fixed;
-              top: 0;
-              left: 67vw;
-              width: 33vw;
-              height: auto;
-              max-height: 100vh;
-            }
-  #play-now { display: none; }
-  #tootsvilleorg { display: none; }
-  body { color: white; background-color: #333; }
-  html { background-color: #b117ff; }
-  a:visited, a:link { color: lightblue; }
+      <link href="https://fonts.googleapis.com/css?family=Creepster" rel="stylesheet">
+      <style>
+        #builder-toot { display: none; }
+        #featured { position: fixed;
+                    top: 0;
+                    left: 67vw;
+                    width: 33vw;
+                    height: auto;
+                    max-height: 100vh;
+                  }
+        #play-now { display: none; }
+        #tootsvilleorg { display: none; }
+        body { color: white; background-color: #333; }
+        html { background-color: #b117ff; }
+        a:visited, a:link { color: lightblue; }
 
 
-  #bwahaha {
-      color: rgba(255,0,0,0.5);
-      text-shadow: 0 0 5px rgba(0,0,0,0.5);
-      font-family: Creepster, Acme, sans-serif;
-      font-variant: small-caps;
-      letter-spacing: 2px;
-      font-size: 2em;
+        #bwahaha {
+            color: rgba(255,0,0,0.5);
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            font-family: Creepster, Acme, sans-serif;
+            font-variant: small-caps;
+            letter-spacing: 2px;
+            font-size: 2em;
 
-      position: fixed;
-      left: 50%;
-      top: 35%;
-      margin-left: -6rem;
+            position: fixed;
+            left: 50%;
+            top: 35%;
+            margin-left: -6rem;
 
-      animation: horror-animation 5s infinite;
+            animation: horror-animation 5s infinite;
 
-      cursor: default;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
+            cursor: default;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
 
-  }
+        }
 
-  @keyframes horror-animation {
-      0% {text-shadow: 0 0 10pt rgba(0,0,0,0.1); left: 51%; top: 36%;}
-      5% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 50%; top: 35%;}
-      10% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%; top: 34%;}
-      15% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%; top: 35%;}
-      16% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-      17% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%;}
-      20% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 49%}
-      25% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 49%}
-      30% {text-shadow: 0 0 10pt rgba(0,0,0,0.7); left: 50%}
-      35% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
-      36% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-      37% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
-      40% {text-shadow: 0 0 5pt rgba(0,0,0,0.9); left: 51%}
-      45% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 51%}
-      50% {text-shadow: 0 0 5pt rgba(0,0,0,0.7); left: 51%}
-      55% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 50%}
-      56% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-      57% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 52%}
-      60% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
-      65% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%}
-      70% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%}
-      75% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
-      76% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-      77% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
-      80% {text-shadow: 0 0 5pt rgba(0,0,0,0.1); left: 49%}
-      85% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
-      86% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
-      87% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
-      90% {text-shadow: 0 0 5pt rgba(0,0,0,0.3); left: 51%}
-      95% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 51%}
-      100% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
-  }
-</style>
-<h1> 500: Internal Error </h1>
-<h2 id="bwahaha">BWA HA HA HA HA HA!</h2>
+        @keyframes horror-animation {
+            0% {text-shadow: 0 0 10pt rgba(0,0,0,0.1); left: 51%; top: 36%;}
+            5% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 50%; top: 35%;}
+            10% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%; top: 34%;}
+            15% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%; top: 35%;}
+            16% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+            17% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%;}
+            20% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 49%}
+            25% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 49%}
+            30% {text-shadow: 0 0 10pt rgba(0,0,0,0.7); left: 50%}
+            35% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
+            36% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+            37% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 50%}
+            40% {text-shadow: 0 0 5pt rgba(0,0,0,0.9); left: 51%}
+            45% {text-shadow: 0 0 5pt rgba(0,0,0,0.8); left: 51%}
+            50% {text-shadow: 0 0 5pt rgba(0,0,0,0.7); left: 51%}
+            55% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 50%}
+            56% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+            57% {text-shadow: 0 0 10pt rgba(0,0,0,0.6); left: 52%}
+            60% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
+            65% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 50%}
+            70% {text-shadow: 0 0 10pt rgba(0,0,0,0.3); left: 49%}
+            75% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
+            76% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+            77% {text-shadow: 0 0 10pt rgba(0,0,0,0.2); left: 49%}
+            80% {text-shadow: 0 0 5pt rgba(0,0,0,0.1); left: 49%}
+            85% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
+            86% {text-shadow: 0 0 5pt @dark-gray; left: 50%}
+            87% {text-shadow: 0 0 5pt rgba(0,0,0,0.2); left: 51%}
+            90% {text-shadow: 0 0 5pt rgba(0,0,0,0.3); left: 51%}
+            95% {text-shadow: 0 0 10pt rgba(0,0,0,0.4); left: 51%}
+            100% {text-shadow: 0 0 10pt rgba(0,0,0,0.5); left: 50%}
+        }
+      </style>
+      <h1> 500: Internal Error </h1>
+      <h2 id="bwahaha">BWA HA HA HA HA HA!</h2>
 
 <p> An internal error occurred in the server software. </p>
 
