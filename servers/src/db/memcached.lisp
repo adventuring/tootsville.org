@@ -85,8 +85,8 @@
 (defpost memcached-random-number-test ()
   "Store and fetch a random number"
   (handler-case
-      (let ((n (princ-to-string (the (integer 0 *) 
-                                     (random (the (integer 0 *) 
+      (let ((n (princ-to-string (the (integer 0 *)
+                                     (random (the (integer 0 *)
                                                   (expt 2 63))))))
             (key (format nil "post.~a.~a" (machine-instance) (cluster-name))))
         (cl-memcached:mc-set key n)

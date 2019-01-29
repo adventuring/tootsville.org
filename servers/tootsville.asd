@@ -33,7 +33,7 @@
 
 
 (defsystem Tootsville
-  :version "0.3.18"
+  :version "0.3.20"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
   :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
@@ -97,7 +97,7 @@ REST services for the front-end."
      (:file "config" :depends-on ("package-post" "types"))
      (:file "view" :depends-on ("config"))
      (:file "browser" :depends-on ("config"))
-     (:file "users" :depends-on ("utils"))
+     (:file "users" :depends-on ("utils" "db"))
      (:file "contacts" :depends-on ("utils"))
      (:file "items" :depends-on ("utils"))
      (:file "toots" :depends-on ("utils" "users"))

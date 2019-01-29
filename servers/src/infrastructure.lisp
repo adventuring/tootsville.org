@@ -63,4 +63,5 @@ of *SCALING$$$*.
 @end itemize
 
 "
-  )
+  (declare (ignore server-kind))
+  nil)

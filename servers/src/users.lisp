@@ -289,3 +289,10 @@ limitations under the License. |#
                                     (when *Toot* (Toot-name *Toot*))
                                     (person-display-name *user*))
                 :|email| (user-email)))))
+
+
+
+(defun player-alert (person &rest message)
+  ;; TODO
+  (v:info :alert "Player Alert for person ~a; message ~{~a~^ ~}"
+          (person-display-name person) message))

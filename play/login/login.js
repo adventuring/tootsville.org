@@ -38,12 +38,13 @@ Tootsville.login.overlay = function ()
 
 Tootsville.login.start = function ()
 { if (document.getElementById ("login") && document.getElementById ("login").style.display == "block")
-  { Tootsville.trace ("Not restarting login; panel already visible");
+  { Tootsville.trace ("Restarting login…");
+    Tootsville.login.startSignIn();
     return; }
   Tootsville.trace ("Start login");
   Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.firebaseLogin); };
 
-Tootsville.login.drawAvatarOnCanvas = function (avatar,canvas)
+Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
 { /* TODO: Replace super-lame placeholder with paperdolls in Tootsville.login.drawAvatarOnCanvas */
     canvas.height = 128;
     canvas.width = 128;
@@ -56,17 +57,22 @@ Tootsville.login.drawAvatarOnCanvas = function (avatar,canvas)
     context.fillText (avatar.pattern, 0, 64); };
 
 Tootsville.login.clearTootsList = function ()
-{ var toots = document.querySelectorAll ('.toot');
+{ var spin = document.querySelector ('.toots-list-loading-spinner');
+  if (spin)
+  { spin.parentNode.removeChild (spin); }
+  var toots = document.querySelectorAll ('.toot');
   for (var i = 0; i < toots.length; ++i)
   { toots[i].parentNode.removeChild (toots[i]); } };
 
 Tootsville.login.serverQueryCharacters = function ()
-{ return new Promise (
+{ Tootsville.trace ("serverQueryCharacters");
+  return new Promise (
     (finish, reject) =>
         { Tootsville.util.rest ('GET', 'users/me/toots').
           then (
               response =>
-                  { if (response.toots.length == 0)
+                  { Tootsville.trace ("response from serverQueryCharacters", response);
+                    if (response.toots.length == 0)
                     { reject (); } else
                     { finish (response.toots); } },
               error =>
@@ -74,29 +80,38 @@ Tootsville.login.serverQueryCharacters = function ()
                                            "I can't get a list of your Toots. Maybe there are network problems?",
                                            [{ tag: "retry",
                                               text: "Try Again" }]).
-                    then (Tootsville.login.serverQueryCharacters);
+                    then (
+                        () => { Tootsville.trace("serverQueryCharacters retry");
+                                Tootsville.login.serverQueryCharacters ().then (finish, reject); });
                     Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
-Tootsville.login.createTootListItem = function (toot)
+Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
+  li.innerHTML = '<span class="toot-name">' +
+  tootName + '</span><i class="fas fa-spin fa-spinner"></i>';
   li.className = 'toot';
-  li['data-toot'] = toot;
+  li['data-toot'] = { name: tootName };
   li.onclick = function () { Tootsville.login.pickCharacter (li); };
-  var canvas = document.createElement ('CANVAS');
-  li.appendChild (canvas);
-  li.innerHTML += '<span class="toot-name">' +
-  toot.name + '</span><span class="note">' + toot.note + '</span>';
-  Tootsville.login.addChildOrSensitiveFlag (li);
+  Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).then(
+      toot => { li['data-toot'] = toot;
+                var canvas = document.createElement ('CANVAS');
+                Tootsville.login.drawAvatarOnCanvas (toot, canvas);
+                li.innerHTML = '';
+                li.appendChild (canvas);
+                li.innerHTML += '<span class="toot-name">' +
+                toot.name + '</span><span class="note">' + toot.note + '</span>';
+                Tootsville.login.addChildOrSensitiveFlag (li); });
   return li; };
 
 Tootsville.login.populateTootsList = function (list)
-{ Tootsville.login.clearTootsList ();
+{ Tootsville.trace("populateTootsList");
+  Tootsville.login.clearTootsList ();
+  Tootsville.trace("cleared list; adding back Toots");
   for (var i = 0; i < list.length; ++i)
   { var toot = list[i];
+    Tootsville.trace("adding " + toot);
     var li = Tootsville.login.createTootListItem (toot);
-    document.getElementById ('toots-list').appendChild (li);
-    var canvas = li.querySelector ('canvas');
-    Tootsville.login.drawAvatarOnCanvas (toot, canvas); } };
+    document.getElementById ('toots-list').appendChild (li); } };
 
 Tootsville.login.generateNewToot = function ()
 { /* TODO let server generate new Toots with unique names */
@@ -112,7 +127,7 @@ Tootsville.login.generateNewToot = function ()
     Tootsville.login.editToot (toot); };
 
 Tootsville.login.editToot = function (toot)
-{ Tootsville.ui.hud.showHUDPanel('new-toot') }
+{ Tootsville.ui.hud.showHUDPanel('new-toot'); };
 
 Tootsville.login.startCharacterCreation = function ()
 { Tootsville.parrot.say ("Let's get started!",
@@ -123,7 +138,8 @@ Tootsville.login.startCharacterCreation = function ()
   then(Tootsville.login.generateNewToot); };
 
 Tootsville.login.loadTootsList = function ()
-{ Tootsville.login.serverQueryCharacters ().then
+{ Tootsville.trace("loadTootsList");
+  Tootsville.login.serverQueryCharacters ().then
   (Tootsville.login.populateTootsList,
    Tootsville.login.startCharacterCreation); };
 
@@ -162,8 +178,26 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('login-warm-up').style.display = 'none';
   document.getElementById ('pick-toot').style.display = 'none'; };
 
+Tootsville.login.endLoginMusic = function ()
+{ var loginMusic = querySelector("#login audio");
+  if (loginMusic) // should always be found
+  {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
+     setTimeout ( () => { loginMusic.volume = .25; }, 666 );
+     setTimeout ( () => { loginMusic.volume = 0; }, 1000 ); } };
+
+Tootsville.login.loginDone = function (reply)
+{ Tootsville.trace ("loginDone", reply);
+  // Tootsville.login.endLoginMusic();
+  alert ("Signed in as " + reply.toot.name);
+  Tootsville.ui.hud.closePanel ();
+  Tootsville.character = reply.toot;
+  Tootsville.player = reply.player;
+  Tootsville.tank.start3D (); };
+
 Tootsville.login.serverLinkTokenToCharacter = function (character)
-{ return Tootsville.util.rest ('POST', 'users/play-with', { character: character }); };
+{ return Tootsville.util.rest ('POST', 'users/me/play-with/' + character).then(
+   Tootsville.login.loginDone,
+    error => { alert (character + " can't play right now. " + error); }); };
 
 Tootsville.login.removeChildOrSensitive = function (li)
 { var child = li.querySelector ('.child');
@@ -292,15 +326,6 @@ Tootsville.login.doneEditingSettings = function ()
   document.querySelector ('#new-toot-hint').style.display = 'block';
   document.querySelector ('#edit-toot-settings-done').style.display = 'none'; };
 
-// Tootsville.login.copyGoogleUserInfo = function ()
-// { Tootsville.login.googleIDToken = Tootsville.login.googleUser.getAuthResponse ().id_token;
-//   Tootsville.login.storeGoogleCredentials ();
-//   var profile = Tootsville.login.googleUser.getBasicProfile ();
-//   if (! Tootsville.login.player) { Tootsville.login.player = {} ; }
-//   Tootsville.login.player.name = profile.getName ();
-//   Tootsville.login.player.email = profile.getEmail ();
-//   Tootsville.login.player.face = profile.getImageUrl (); };
-
 Tootsville.login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
   Tootsville.trace ("Starting Firebase login");
@@ -374,4 +399,9 @@ Tootsville.login.storeCredentialInfo = function (result)
 };
 
 Tootsville.login.quit = function ()
-{ firebase.auth().signOut().then(Tootsville.login.start); };
+{ Tootsville.player = null;
+  Tootsville.character = null;
+  Tootsville.login.accessToken = null;
+  Tootsville.login.idToken = null;
+  Tootsville.login.idProvider = null;
+  firebase.auth().signOut().then(Tootsville.login.start); };

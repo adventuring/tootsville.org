@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- -*- html -*- -->
+<!-- -*- web-mode -*- -->
 <!-- ./www/error/408.shtml is part of Tootsville
 
      Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
@@ -33,4 +33,4 @@
   time. </p>
 
 <a              href="https://wiki.tootsville.org/wiki/Error_408">(Learn
-More…)</a> <!--#include file="error-footer.htmlf"-->
+  More…)</a> <!--#include file="error-footer.htmlf"-->

@@ -29,51 +29,58 @@
  *
  * USA
  *
- */Tootsville.audio = {
-     currentVolume: 100,
-     savedVolume: 100,
-     volumeUp: function() {
-         setVolume(Math.min(100, 10 + Tootsville.audio.currentVolume));
-     },
-     volumeDown: function() {
-         setVolume(Math.max(0, (Tootsville.audio.currentVolume - 10)));
-     },
+ */
 
-     volumeMute: function() {
-         if (Tootsville.audio.currentVolume < 9) {
-             Tootsville.audio.setVolume(Tootsville.audio.savedVolume);
-         } else {
-             Tootsville.audio.savedVolume = Tootsville.audio.currentVolume;
-             Tootsville.audio.setVolume(0);
-         }
-     },
+Tootsville.audio.volumeUp = function() 
+{ Tootsville.audio.setVolume(Math.min(100, 10 + Tootsville.audio.currentVolume));};
+Tootsville.audio.volumeDown = function() 
+{ Tootsville.audio.setVolume(Math.max(0, (Tootsville.audio.currentVolume - 10)));};
 
-     updateVolumeUI: function() {
-         Tootsville.audio.updateVolumeSlider();
-         Tootsville.audio.updateVolumeMuteIcon();
-     },
+Tootsville.audio.volumeMute = function() 
+{ if (Tootsville.audio.currentVolume < 9) 
+  { Tootsville.audio.setVolume(Tootsville.audio.savedVolume); }
+  else 
+  { Tootsville.audio.savedVolume = Tootsville.audio.currentVolume;
+    Tootsville.audio.setVolume(0); } };
 
-     setVolume: function(newVolume) {
-         Tootsville.audio.currentVolume = newVolume;
-         // TODO: apply to sound system;
-         Tootsville.audio.updateVolumeUI();
-     },
+Tootsville.audio.updateVolumeUI = function() 
+{ Tootsville.audio.updateVolumeSlider();
+  Tootsville.audio.updateVolumeMuteIcon(); };
 
-     updateVolumeSlider: function() {
-         var slider = document.getElementById('volume-slider');
-         if (slider) {
-             slider.value = Tootsville.audio.currentVolume;
-             slider.disabled = false;
-         }
-     },
+Tootsville.audio.setVolume = function(newVolume) 
+{ Tootsville.audio.currentVolume = newVolume;
+  Tootsville.audio.gainNode.gain.setValueAtTime(0, Tootsville.audio.context.currentTime);
+  Tootsville.audio.updateVolumeUI(); };
 
-     updateVolumeMuteIcon: function() {
-         var muteIcon = document.getElementById('mute-icon');
-         if (Tootsville.audio.currentVolume < 9) {
-             muteIcon.style.color = 'red';
-         } else {
-             muteIcon.style.color = 'black';
-         }
-     }
+Tootsville.audio.updateVolumeSlider = function() 
+{ var slider = document.getElementById('volume-slider');
+  if (slider) 
+  { slider.value = Tootsville.audio.currentVolume;
+    slider.disabled = false; } };
 
- };
+Tootsville.audio.updateVolumeMuteIcon = function() 
+{ var muteIcon = document.getElementById('mute-icon');
+  if (Tootsville.audio.currentVolume < 9) 
+  { muteIcon.style.color = 'red'; } else 
+  { muteIcon.style.color = 'black'; } };
+
+Tootsville.audio.context = new (window.AudioContext || window.webkitAudioContext)();
+Tootsville.audio.gainNode = Tootsville.audio.context.createGain();
+
+if (navigator.mediaDevices.getUserMedia) 
+{ navigator.mediaDevices.getUserMedia (
+    // constraints - only audio needed for this app
+    { audio: true },
+    // Success callback
+    stream =>
+        { var source = audioCtx.createMediaStreamSource(stream);
+          source.connect(Tootsville.audio.gainNode);
+          Tootsville.audio.gainNode.connect(Tootsville.audio.context.destination);},
+    // Error callback
+    err =>
+        { Tootsville.error('getUserMedia error occured: ' + err); }
+); } else 
+{ Tootsville.warn('getUserMedia not supported on your browser!');
+  // XXX hide volume controls
+}
+

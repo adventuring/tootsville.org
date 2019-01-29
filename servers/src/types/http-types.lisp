@@ -74,7 +74,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 <meta charset=\"utf-8\">
 <title> Error ~D — Tootsville</title>
 <link rel=\"stylesheet\"
-      href=\"https://www.tootsville.org/error/simple-error.2017.css\">
+ href=\"https://www.tootsville.org/error/simple-error.2017.css\">
 </head>
 <body>
 <h2> Error ~:*~D </h2>

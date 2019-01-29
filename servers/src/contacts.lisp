@@ -15,7 +15,7 @@
 ;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
 ;;; Affero General Public License for more details.
 ;;;
-;;; You yeshould  have received a  copy of  the GNU Affero  General Public
+;;; You yeshould have  received a copy of the GNU  Affero General Public
 ;;; License    along     with    this     program.    If     not,    see
 ;;; <https://www.gnu.org/licenses/>.
 ;;;
@@ -38,7 +38,7 @@
 (defun bool-sort (a b) (declare (ignore b)) a)
 
 (defun Toot-contacts (Toot)
-  (find-records 'contact :owner (Toot-uuid owner)))
+  (find-records 'contact :owner (Toot-uuid (Toot-player Toot))))
 
 (defun delete-contact (owner contact)
   (destroy-record

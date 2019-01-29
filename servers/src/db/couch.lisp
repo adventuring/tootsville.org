@@ -32,12 +32,24 @@
 (defun connect-mixer ()
   (setf clouchdb:*couchdb*
         (let ((conf (car (db-config :mixer))))
-          (v:info :mixer "Connecting to mixer at ~a" (extract conf :host))
-          (run-program (list "ssh" "-f" (extract conf :host) "-L" 
-                             (format nil "27784:~a:~d"
-                                     (extract conf :host)
-                                     (or (extract conf :port) 5984))
-                             "cat"))
+          (v:info :mixer "Connecting to Mixer at ~a" (extract conf :host))
+          (v:info :mixer "Connection tunnel: ~s"
+                  (list "ssh" "-f" (concatenate 'string "fedora@"
+                                                (extract conf :host))
+                        "-L"
+                        (format nil "27784:~a:~d"
+                                (extract conf :host)
+                                (or (extract conf :port) 5984))
+                        "cat"))
+          (with-timeout (2)
+            (run-program (list "ssh" "-f" (concatenate 'string "fedora@"
+                                                       (extract conf :host))
+                               "-L"
+                               (format nil "27784:~a:~d"
+                                       (extract conf :host)
+                                       (or (extract conf :port) 5984))
+                               "cat")))
+          (v:info :mixer "Tunnel established; connect to service…")
           (with-timeout (2)
             (clouchdb:set-connection :host "localhost"
                                      :port "27784"

@@ -135,9 +135,8 @@ lists, each made by `RDF-STORY-TO-PLIST'."
               ((<= 18 hour 22) "in the evening")
               (t "at night")))))
 
-;; (defroute "/news" ()
-;;   "Render the latest news from Tootsbook into the “news” template."
-;;   (setf (getf (response-headers *response*) :x-frame-options) "SAMEORIGIN")
-;;   (render #p"news.html"
-;;           (list :headlines (tootsbook-news-plists)
-;;                 :updated (pretty-date *tootsbook-fetched*))))
+;; (defroute "/news" () "Render the  latest news from Tootsbook into the
+;;   “news”      template."      (setf      (getf      (response-headers
+;;   *response*)  :x-frame-options) "SAMEORIGIN")  (render #p"news.html"
+;;   (list  :headlines   (tootsbook-news-plists)  :updated  (pretty-date
+;;   *tootsbook-fetched*))))

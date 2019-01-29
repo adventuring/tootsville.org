@@ -79,7 +79,9 @@ Tootsville.util.rest = function (method, uri, body, headers)
           { Tootsville.warn("Fetch error " + error);
             Tootsville.parrot.ask (
                 "Uh-oh! Network trouble!",
-                "I got a network error: " + error + "<BR><BR>Did we get disconnected?",
+                "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
+                    uri.replace('/', '/&shy;') +
+                    "</TT></SMALL></P><P>Did we get disconnected?</P>",
                 [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
              { return Tootsville.util.rest (method, uri, body, headers); });} ); };

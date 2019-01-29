@@ -44,16 +44,8 @@
 Looks for  the canonical  \"Accept: application/json\", and  also checks
 the request URI for \".js\" (which  is, of course, a subseq of \".json\"
 as well.)"
-  (let ((accept (hunchentoot:header-in* :accept)))
-    (or (when (search "application/json" accept)
-          (verbose:info :json "Client Accepts application/json explicitly")
-          t)
-        (when (search ".js" (hunchentoot:request-uri*))
-          (verbose:info :json "Client request URI contains .js")
-          t)
-        (progn
-          (verbose:info :json "Client does not want JSON")
-          nil))))
+  (or (search "application/json" (hunchentoot:header-in* :accept))
+      (search ".js" (hunchentoot:request-uri*))))
 
 
 
@@ -124,28 +116,34 @@ as well.)"
 
   (defun defendpoint/make-endpoint-function (&key fname content-type
                                                   λ-list docstring body)
-    `(defun ,fname (,@λ-list) ,docstring
-            (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
-                    ,(concatenate 'string "{~a} Starting: " (first-line docstring))
-                    (thread-name (current-thread)))
-            (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
-            (unwind-protect
-                 (let ((reply
-                        (catch 'endpoint
-                          (block endpoint
-                            (block ,fname
-                              ,@body)))))
-                   (let ((bytes (encode-endpoint-reply reply)))
-                     (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
-                             "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
-                             (thread-name (current-thread))
-                             (hunchentoot:return-code*)
-                             (length (the list (hunchentoot:headers-out*)))
-                             (length (the vector bytes)))
-                     bytes))
-              (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
-                      ,(concatenate 'string "{~a} Finished: " (first-line docstring))
-                      (thread-name (current-thread))))))
+    (let (($begin (gensym "BEGIN-"))
+          ($elapsed (gensym "ELAPSED-")))
+      `(defun ,fname (,@λ-list) ,docstring
+              (let ((,$begin (get-internal-real-time)))
+                (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
+                        ,(concatenate 'string "Starting: " (first-line docstring)))
+                (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
+                (unwind-protect
+                     (let ((reply
+                            (catch 'endpoint
+                              (block endpoint
+                                (block ,fname
+                                  ,@body)))))
+                       (let ((bytes (encode-endpoint-reply reply)))
+                         (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
+                                 "Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
+
+                                 (hunchentoot:return-code*)
+                                 (length (the list (hunchentoot:headers-out*)))
+                                 (length (the vector bytes)))
+                         bytes))
+                  (let ((,$elapsed (* 1000.0 (/ (- (get-internal-real-time) ,$begin) internal-time-units-per-second))))
+                    (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
+                            ,(concatenate 'string "Finished: " (first-line docstring) " in ~:dms")
+                            ,$elapsed)
+                    (when (< 30 ,$elapsed)
+                      (v:error '(,(make-keyword fname) :endpoint :slow-query)
+                               "Slow query"))))))))
 
   (defun after-slash (s)
     "Splits a string S at a slash. Useful for getting the end of a content-type."

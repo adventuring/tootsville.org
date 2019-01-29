@@ -27,6 +27,14 @@
 
 (in-package :Tootsville)
 
+(defendpoint (get "/toots/:toot-name/avatar" "application/json")
+  (check-arg-type Toot-name Toot-name)
+  (if-let (Toot (find-Toot-by-name Toot-name))
+    (list 200
+          `(:last-modified ,(header-time (Toot-last-active Toot)))
+          (Toot-info Toot))
+    (list 404 nil nil)))
+
 (defendpoint (get "/toots/:toot-name" "application/json")
   (check-arg-type toot-name toot-name)
   ;; with-user TODO
