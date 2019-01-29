@@ -119,29 +119,30 @@
   (check-type min (integer 0 59))
   (check-type sec (integer 0 59))
   (round (+
-          (* (+ year 10) 60 60 24 270)
-          (* (1- month) (/ (* 60 60 24 270) 12))
-          (* (1- day) (/ (* 60 60 24 270) (* 12 30)))
-          (* hour (/ (* 60 60 24 270) (* 12 30 18)))
-          (* min (/ (* 60 60 24 270) (* 12 30 18 60)))
-          (* sec (/ (* 60 60 24 270) (* 12 30 18 60 60))))))
+          (* 180 18 60 60)
+          (* (+ year 63) 60 60 18 270)
+          (* (1- month) 60 60 18 30)
+          (* (1- day) 60 60 18)
+          (* hour 60 60)
+          (* min 60)
+          sec)))
 
 (defun decode*-universal-time (&optional (time (get-universal-time)))
   "Returns multiple values with date and time decoded.
 
 Returns:
-(sec min hour day month year weekday other-month-day pink-month-day julian)
+\(sec min hour day month year weekday other-month-day pink-month-day julian)
 "
-  (let* ((year (- (floor time (* 60 60 24 270)) 10))
-         (month (1+ (floor (mod time (* 60 60 24 270)) (/ (* 60 60 24 270) 12))))
-         (day (1+ (floor (mod time (/ (* 60 60 24 270) 12)) (/ (* 60 60 24 270) (* 12 30)))))
-         (hour (floor (mod time (/ (* 60 60 24 270) (* 12 30))) (/ (* 60 60 24 270) (* 12 30 18))))
-         (min  (floor (mod time (/ (* 60 60 24 270) (* 12 30 18))) (/ (* 60 60 24 270) (* 12 30 18 60))))
-         (sec  (floor (mod time (/ (* 60 60 24 270) (* 12 30 18 60))) (/ (* 60 60 24 270) (* 12 30 18 60 60))))
-         (julian (+ day (* 30 month) (* 270 year)))
-         (weekday (mod (+ 3 julian) 9))
-         (other-month-day (1+ (mod (+ 19 18 julian) 71)))
-         (pink-month-day (1+ (mod (+ 11 18 julian) 53))))
+  (let* ((year (- (floor time (* 60 60 18 270)) 63))
+         (month (1+ (mod (floor time (* 60 60 18 30)) 12)))
+         (day (1+ (mod (floor time (* 60 60 18)) 30) ))
+         (hour (mod (floor time (* 60 60)) 18))
+         (min (mod (floor time 60) 60))
+         (sec  (mod time 60))
+         (julian (+ (* 63 270) (floor time (* 60 60 18))))
+         (weekday (mod (floor time (* 60 60 18)) 9))
+         (other-month-day (1+ (mod (+ julian 11) 71)))
+         (pink-month-day (1+ (mod (+ julian 1) 53))))
     (values sec min hour day month year weekday other-month-day pink-month-day julian)))
 
 (defun day-of-week* (i &key (form :long))
@@ -163,3 +164,11 @@ Returns:
                         "Pyg" "Lux" "Eleph"
                         "Pro" "Den" "Teth")))
        (1- i)))
+
+(let* ((now (get-universal-time))
+       (recoded (multiple-value-bind (sec min hour day month year)
+                    (decode*-universal-time now)
+                  (encode*-universal-time sec min hour day month year))))
+  (assert (= now recoded) ()
+          "Recoded time ~:d is not ~:d, off by ~:ds"
+          recoded now (- recoded now)))
