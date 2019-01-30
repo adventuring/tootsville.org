@@ -169,3 +169,91 @@ connection in the pool."
       (cl-dbi:execute q)
       (assert (equalp '((:|one| 1)) (cl-dbi:fetch-all q)))))
   t)
+
+
+
+
+(defmacro with-cluster-wide-lock-held ((lock-string &key (timeout nil)
+                                                    (if-not-locked :wait))
+                                       &body body)
+  "Execute BODY in a dynamic context owning database lock LOCK-STRING.
+
+LOCK-STRING is  passed to the MariaDB  server and a global  lock by that
+name is obtained via mySQL function GET_LOCK(STRING), if possible.
+
+If the lock is busy, IF-NOT-LOCKED determines the next action.
+
+@table
+
+@item :WAIT
+
+Wait for  up to TIMEOUT seconds  for the lock  to be freed. If  the lock
+cannot  be obtained  within TIMEOUT  seconds,  signal an  error of  type
+CLUSTER-WIDE-LOCK-BUSY-ERROR. If TIMEOUT is  NIL, wait indefinitely until
+the lock can be obtained.
+
+@item :SKIP
+
+Skip BODY and return NIL.
+
+@item :WARN
+
+Signal a warning of  type CLUSTER-WIDE-LOCK-BUSY-WARNING, then skip BODY
+and return NIL.
+
+@item :ERROR
+
+Signal an error of type CLUSTER-WIDE-LOCK-BUSY-ERROR.
+
+@end table
+
+Returns the values of BODY.
+"
+  (let (($lock (gensym "LOCK-")))
+    `(let ((,$lock (get-mariadb-lock ,lock-string
+                                     :if-not-locked ,if-not-locked
+                                     :timeout ,timeout)))
+       (unwind-protect
+            (progn ,@body)
+         (yield-mariadb-lock ,$lock)))))
+
+
+(defun get-mariadb-lock (lock-string &key if-not-locked timeout)
+  "Obtain database lock LOCK-STRING.
+
+See `WITH-CLUSTER-WIDE-LOCK-HELD' for a practical use of this.
+
+LOCK-STRING is  passed to the MariaDB  server and a global  lock by that
+name is obtained via mySQL function GET_LOCK(STRING), if possible.
+
+If the lock is busy, IF-NOT-LOCKED determines the next action.
+
+@table
+
+@item :WAIT
+
+Wait for  up to TIMEOUT seconds  for the lock  to be freed. If  the lock
+cannot  be obtained  within TIMEOUT  seconds,  signal an  error of  type
+CLUSTER-WIDE-LOCK-BUSY-ERROR. If TIMEOUT is  NIL, wait indefinitely until
+the lock can be obtained.
+
+@item :SKIP
+
+Skip BODY and return NIL.
+
+@item :WARN
+
+Signal a warning of  type CLUSTER-WIDE-LOCK-BUSY-WARNING, then skip BODY
+and return NIL.
+
+@item :ERROR
+
+Signal an error of type CLUSTER-WIDE-LOCK-BUSY-ERROR.
+
+@end table
+
+Returns an  opaque identifier that  can be passed to  `YIELD-DB-LOCK' to
+release the lock.
+")
+(defun yield-mariadb-lock (lock)
+  "Release the lock identified by LOCK.")
