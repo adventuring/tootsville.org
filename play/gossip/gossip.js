@@ -157,10 +157,13 @@ Tootsville.gossip.connectToOffer = function (offer)
 
 Tootsville.gossip.connect = function ()
 { var offers = Tootsville.gossip.createOffers (5);
-  Tootsville.util.rest ('POST', 'gossip/offers', { offers: offers }).then (
-      response =>
-          { Tootsville.inform ("Gossip", "Got directory", response.offers.length + ' offers');
-            response.offers.forEach (Tootsville.gossip.connectToOffer); }); };
+  console.log ("gossip.connect: created offers", offers);
+  return new Promise (
+      (success, failure) =>
+          { Tootsville.util.rest ('POST', 'gossip/offers', { offers: offers }).then (
+              response =>
+                  { Tootsville.inform ("Gossip", "Got directory", response.offers.length + ' offers');
+                    response.offers.forEach (Tootsville.gossip.connectToOffer); }); }); };
 
 Tootsville.gossip.ensureConnected = function ()
 { return new Promise (
