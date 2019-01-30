@@ -98,11 +98,11 @@ affected at all by precipitation during the spring and autumn months.
            (prevailing-wind-x (cos prevailing-wind-θ))
            (prevailing-wind-y (sin prevailing-wind-θ)))
       (loop for n from 1 upto precip-magnitude
-         for x = (* prevailing-wind-x (random 800))
-         for y = (* prevailing-wind-y (random 600))
+         for x = (round (* prevailing-wind-x (random 800)))
+         for y = (round (* prevailing-wind-y (random 600)))
          do (incf (aref *humidity-field* x y) (random chance-new-precip))))))
 
-(defvar *weather-kernel*)
+(defvar *weather-kernel* nil)
 
 (defun ensure-weather-kernel ()
   (or *weather-kernel*
