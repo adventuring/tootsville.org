@@ -42,55 +42,44 @@
       (return-from find-acceptor acceptor))))
 
 (defvar *async-tasks* nil)
-
-(defconstant +async-worker-threads+ 2)
+(defvar *async-channel* nil)
 
 (defun (setf thread-name) (name thread)
   #+sbcl (setf (sb-thread:thread-name thread) name))
-
-(defun name-all-async-threads-idle ()
-  (let ((length (length (slot-value *async-tasks*
-                                    'cl-threadpool::threads))))
-    (loop for thread in (slot-value *async-tasks*
-                                    'cl-threadpool::threads)
-       for i fixnum from 1
-       do (setf (thread-name thread)
-                (format nil "Idle Asyncronous Worker (#~d of ~d)" i length)))))
 
 (defun swank-connected-p ()
   (when (swank:connection-info) t))
 
 (defun init-async ()
   (setf *async-tasks*
-        (cl-threadpool:make-threadpool
-         +async-worker-threads+
-         :max-queue-size 1024
-         :name "Asynchronous Workers"
-         :resignal-job-conditions (not (swank-connected-p))))
-  (cl-threadpool:start *async-tasks*)
-  (name-all-async-threads-idle))
+        (lparallel:make-kernel (min 1 (round (/ (processor-count) 2)))
+                               :name "Asynchronous workers"))
+  (let ((lparallel:*kernel* *async-tasks*))
+    (setf *async-channel* (lparallel:make-channel))))
 
-(defun run-async (function)
+(defun run-async (function &key name)
   (unless *async-tasks*
     (init-async))
-  (cl-threadpool:add-job
-   *async-tasks*
-   (lambda ()
-     (let ((idle-name (thread-name (current-thread))))
-       (setf (thread-name (current-thread)) (format nil "Async: run ~s" function))
-       (unwind-protect
-            (thread-pool-taskmaster:with-pool-thread-restarts
-                ((thread-name (current-thread)))
-              (verbose:info '(:threadpool-worker :async-worker :worker-start)
-                            "{~a}: working" (thread-name (current-thread)))
-              (funcall function))
-         (verbose:info '(:threadpool-worker :async-worker :worker-finish)
-                       "{~a}: done" (thread-name (current-thread)))
-         (setf (sb-thread:thread-name (current-thread)) idle-name))))))
+  (let ((lparallel:*kernel* *async-tasks*))
+    (lparallel:submit-task
+     *async-channel*
+     (lambda ()
+       (let ((idle-name (thread-name (current-thread))))
+         (setf (thread-name (current-thread)) (or name
+                                                  (format nil "Async: run ~s" function)))
+         (unwind-protect
+              (thread-pool-taskmaster:with-pool-thread-restarts
+                  ((thread-name (current-thread)))
+                (verbose:info '(:threadpool-worker :async-worker :worker-start)
+                              "{~a}: working" (thread-name (current-thread)))
+                (funcall function))
+           (verbose:info '(:threadpool-worker :async-worker :worker-finish)
+                         "{~a}: done" (thread-name (current-thread)))
+           (setf (sb-thread:thread-name (current-thread)) idle-name)))))))
 
 (defun background-gc ()
   "Start a garbage collection in a different thread."
-  (make-thread (lambda () (sb-ext:gc))
+  (run-async (lambda () (sb-ext:gc))
                :name "Garbage Collection"))
 
 (defun start (&key (host "localhost") (port 5000) (fullp t))

@@ -32,11 +32,11 @@
              :initform (uuid:make-v4-uuid)
              :reader gossip-offer-id)))
 
-(defvar *gossip-channels*
-  (queues:make-queue :simple-cqueue :minimum-size 16))
+#+ (or) (defvar *gossip-channels*
+          (queues:make-queue :simple-cqueue :minimum-size 16))
 
-(defun ws-get-gossip-channel (request)
-  (queues:qpop *gossip-channels*))
+#+ (or) (defun ws-get-gossip-channel (request)
+          (queues:qpop *gossip-channels*))
 
 (defun ws-broadcast (channel sender message)
   (dolist (peer (hunchensocket:clients channel))
