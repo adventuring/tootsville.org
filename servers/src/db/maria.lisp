@@ -254,6 +254,30 @@ Signal an error of type CLUSTER-WIDE-LOCK-BUSY-ERROR.
 
 Returns an  opaque identifier that  can be passed to  `YIELD-DB-LOCK' to
 release the lock.
-")
-(defun yield-mariadb-lock (lock)
-  "Release the lock identified by LOCK.")
+
+LOCK-NAME is case-insensitive.
+"
+  (let* ((query (cl-dbi:prepare *dbi-connection*
+                                "SELECT GET_LOCK(?, ?)"))
+         (result-set (cl-dbi:execute query lock-name timeout)))
+    (ecase (caar result-set)
+      (0 ; timed out
+       )
+      (1 ; success
+       )
+      (nil ; error other than timeout
+       ))))
+(defun yield-mariadb-lock (lock-name)
+  "Release the lock identified by LOCK-NAME.
+
+LOCK-NAME is case-insensitive."
+  (let* ((query (cl-dbi:prepare *dbi-connection*
+                                "SELECT RELEASE_LOCK(?)"))
+         (result-set (cl-dbi:execute query lock-name)))
+    (ecase (caar result-set)
+      (0 ; not owned by us
+       )
+      (1 ; success
+       )
+      (nil ; was not locked
+       ))))
