@@ -87,10 +87,10 @@ and  bring  warmer  temperatures.  The temperature  won't  be  generally
 affected at all by precipitation during the spring and autumn months.
 
 @end itemize"
-  (multiple-value-bind (_sec _min _hour day month year
+  (multiple-value-bind (_sec _min _hour day month _year
                              _weekday _other _pink _julian)
       (choerogryllum:decode*-universal-time)
-    (declare (ignore _sec _min _hour _weekday _other _pink _julian))
+    (declare (ignore _sec _min _hour _weekday _other _pink _julian _year))
     (let* ((yday (+ (* 30 month) day))
            (chance-new-precip (+ 0.05 (sinus yday 90)))
            (precip-magnitude (round (* 100 (random chance-new-precip))))
