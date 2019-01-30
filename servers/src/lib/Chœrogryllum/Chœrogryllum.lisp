@@ -120,7 +120,7 @@
   (check-type sec (integer 0 59))
   (round (+
           (* 180 18 60 60)
-          (* (+ year 63) 60 60 18 270)
+          (* (+ year 63) 60 60 18 360)
           (* (1- month) 60 60 18 30)
           (* (1- day) 60 60 18)
           (* hour 60 60)
@@ -133,13 +133,13 @@
 Returns:
 \(sec min hour day month year weekday other-month-day pink-month-day julian)
 "
-  (let* ((year (- (floor time (* 60 60 18 270)) 63))
+  (let* ((year (- (floor time (* 60 60 18 360)) 63))
          (month (1+ (mod (floor time (* 60 60 18 30)) 12)))
          (day (1+ (mod (floor time (* 60 60 18)) 30) ))
          (hour (mod (floor time (* 60 60)) 18))
          (min (mod (floor time 60) 60))
          (sec  (mod time 60))
-         (julian (+ (* 63 270) (floor time (* 60 60 18))))
+         (julian (+ (* 63 360) (floor time (* 60 60 18))))
          (weekday (mod (floor time (* 60 60 18)) 9))
          (other-month-day (1+ (mod (+ julian 11) 71)))
          (pink-month-day (1+ (mod (+ julian 1) 53))))
