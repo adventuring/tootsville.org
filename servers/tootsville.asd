@@ -63,6 +63,7 @@ REST services for the front-end."
                :hunchentoot
                :hunchensocket
                :jonathan
+               :lparallel
                :pngload
                :swank
                :symbol-munger
@@ -104,6 +105,7 @@ REST services for the front-end."
      (:file "players" :depends-on ("utils" "users"))
      (:file "errors" :depends-on ("package-post"))
      (:file "terrain" :depends-on ("package-post"))
+     (:file "weather/weather" :depends-on ("package-post"))
      (:file "version" :depends-on ("package-post" "config"))
      (:file "logging" :depends-on ("package-post" "version"))
      (:file "write-docs" :depends-on ("package-post"))
@@ -136,7 +138,7 @@ REST services for the front-end."
               ((:file "auth-firebase")))
      (:module
       "endpoints"
-      :depends-on ("web" "terrain" "db")
+      :depends-on ("web" "terrain" "weather/weather" "db")
       :components
       ((:file "slash-login")
        (:file "slash-version")
