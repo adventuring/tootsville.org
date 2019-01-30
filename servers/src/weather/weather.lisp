@@ -63,7 +63,7 @@
 
 (defvar *humidity-field* 
   (make-array '(800 600)
-              :element-type 'fixnum
+              :element-type 'float
               :initial-element 0))
 
 (defun tick-weather-day ()
