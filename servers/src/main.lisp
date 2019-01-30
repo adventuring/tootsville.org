@@ -88,6 +88,11 @@
                        "{~a}: done" (thread-name (current-thread)))
          (setf (sb-thread:thread-name (current-thread)) idle-name))))))
 
+(defun background-gc ()
+  "Start a garbage collection in a different thread."
+  (make-thread (lambda () (sb-ext:gc))
+               :name "Garbage Collection"))
+
 (defun start (&key (host "localhost") (port 5000) (fullp t))
   "Start a local Hunchentoot server.
 
@@ -99,7 +104,8 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (when fullp
     (load-config)
     (connect-databases)
-    (power-on-self-test))
+    (power-on-self-test)
+    (background-gc))
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
