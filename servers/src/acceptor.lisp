@@ -152,6 +152,8 @@
 (defmacro with-http-conditions (() &body body)
   `(handler-case (progn ,@body)
      (http-client-error (c)
+       (gracefully-report-http-client-error c))
+     (error (c)
        (gracefully-report-http-client-error c))))
 
 (defun handle-cors-request (uri-parts ua-accept)
