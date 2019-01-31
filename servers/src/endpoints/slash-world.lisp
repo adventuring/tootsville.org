@@ -127,6 +127,17 @@ It is ~a.~]
   (list 200 () (chœrogryllum::cal-month.html 
                 (parse-integer year) (parse-integer month))))
 
+(defendpoint (GET "/world/clock/calendar/:year/:month" "text/html")
+  "Get a calendar as an HTML page for MONTH of YEAR."
+  (list 200 () 
+        (format nil "<html>
+<head><meta charset=\"utf-8\">
+<title> Month ~d of Year ~d — Chœrogryllum Calendar </title></head>
+<body>~a</body></html>"
+                month year
+                (chœrogryllum::cal-month.html 
+                 (parse-integer year) (parse-integer month)))))
+
 (defendpoint (GET "/world/clock/time/detailed" "text/plain")
   "Get a long string explaining the date, time, and other info."
   (detailed-time))
