@@ -28,6 +28,15 @@
 (in-package :Tootsville)
 
 (defun parse-uri-as-template (uri)
+  "Parse URI into a template list.
+
+URI  is  a  series  of  path elements  joined  by  @samp{/}  characters.
+Each  path   element  can   be  a  constant   string,  or   a  variable.
+Variable  terms begin  with @samp{:}  characters; string  constant terms
+do not.
+
+Returns a list  in which variable terms are keywords  and constant terms
+are strings."
   (let ((parts (split-sequence #\/ uri :remove-empty-subseqs t)))
     (loop for part in parts
        collecting (if (and (< 2 (length part))
@@ -51,8 +60,14 @@
                  :initarg :content-type
                  :reader endpoint-content-type)))
 
-(defvar *endpoints* (make-hash-table))
-(defvar *endpoint-list* nil)
+(defvar *endpoints* (make-hash-table)
+  "The hash-table of all endpoints currently defined.
+ 
+There is also a list version  *ENDPOINT-LIST* which is preferred in some
+cases. Both should be updated together.")
+(defvar *endpoint-list* nil
+  "A  list   version  of  *ENDPOINTS*  that   is  sometimes  preferable.
+  Both should be updated together.")
 
 (defmethod initialize-instance :after ((endpoint endpoint)
                                        &key template
@@ -70,10 +85,11 @@
   (:method ((endpoint endpoint))
     (endpoint-template-string (endpoint-template endpoint)))
   (:method ((template list))
-    (format nil "~{/~a~}"
-            (or (mapcar (lambda (el) (etypecase el
-                                       (symbol (concatenate 'string ":" (symbol-name el)))
-                                       (string el)))
+    (format nil "/~{~a~^/~}"            ; NOT ~{/~a~} because () → "/"
+            (or (mapcar (lambda (el)
+                          (etypecase el
+                            (symbol (concatenate 'string ":" (symbol-name el)))
+                            (string el)))
                         template)
                 '(""))))
   (:method ((uri string))
@@ -169,18 +185,30 @@ Neither solution has yet been implemented."
               :key #'endpoint-template-string)))
 
 (defun enumerate-endpoints ()
+  "Enumerate all endpoints in the system as a list."
   (copy-list *endpoint-list*))
 
 (defun clear-all-endpoints ()
+  "Destroy every endpoint mapping.
+
+Leaves the functions intact. Useful for debugging; should probably never
+run in production."
   (setf *endpoint-list* nil)
   (clrhash *endpoints*))
 
 (defun endpoint-close (endpoint method arity ua-accept)
+  "Is the given ENDPOINT similar to METHOD ARITY UA-ACCEPT?
+ 
+This is used to quickly filter endpoints using only fast integer `=' and
+symbol  `EQL'   comparisons,  so   that  the  more   expensive  template
+unification algorithm can run only on fewer, relatively similar URIs."
   (and (eql (endpoint-method endpoint) method)
        (= (endpoint-template-arity endpoint) arity)
        (member (endpoint-content-type endpoint) ua-accept)))
 
 (defun endpoint-close-key (endpoint)
+  "A small  list that  acts like  a hash for  ENDPOINT. Serves  the same
+purpose as `ENDPOINT-CLOSE'."
   (list (endpoint-method endpoint)
         (endpoint-template-arity endpoint)
         (endpoint-content-type endpoint)))
@@ -208,8 +236,6 @@ Neither solution has yet been implemented."
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0))
            (type list uri-parts ua-accept)
            (type symbol method))
-  #+ (or) (v:info :endpoint "{~a} Look for exact match ~a ~{/~a~} accepting ~s"
-                  (current-thread) method uri-parts ua-accept)
   (let* ((arity (length uri-parts))
          (maybes (the proper-list
                       (remove
@@ -218,17 +244,13 @@ Neither solution has yet been implemented."
                        :test (complement #'equalp)
                        :key #'endpoint-close-key))))
     (dolist (maybe maybes)
-      #+ (or) (v:info :endpoint "Looking closer at ~s" maybe)
       (when-let (match (endpoint-template-match maybe uri-parts))
-        #+ (or) (v:info :endpoint "Match! Return ~s" match)
         (return-from find-exact-endpoint match)))))
 
 (defun find-kinda-endpoint (method uri-parts)
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 0))
            (type list uri-parts)
            (type symbol method))
-  #+ (or) (v:info :endpoint "{~a} Look for acceptable match ~a ~{/~a~}"
-                  (current-thread) method uri-parts)
   (let* ((arity (length uri-parts))
          (maybes (the proper-list
                       (remove
@@ -237,9 +259,7 @@ Neither solution has yet been implemented."
                        :test (complement #'equalp)
                        :key #'endpoint-kinda-key))))
     (dolist (maybe maybes)
-      #+ (or) (v:info :endpoint "Looking closer at ~s" maybe)
       (when-let (match (endpoint-template-match maybe uri-parts))
-        #+ (or) (v:info :endpoint "Match! Return ~s" match)
         (return-from find-kinda-endpoint match)))))
 
 (defun find-best-endpoint (method uri-parts ua-accept)
@@ -257,6 +277,9 @@ Neither solution has yet been implemented."
         (find-kinda-endpoint method uri-parts))))
 
 (defmethod print-object ((endpoint endpoint) s)
+  "Print the unreadable object ENDPOINT.
+
+Contains the method, URI, content-type, and function-object."
   (print-unreadable-object (endpoint s :type t)
     (princ (endpoint-method endpoint) s)
     (princ " " s)
