@@ -53,7 +53,7 @@
 (defun init-async ()
   (setf *async-tasks*
         (lparallel:make-kernel (max 1 (round (/ (processor-count) 2)))
-                               :name "Asynchronous workers"))
+                               :name "Idle Asynchronous Worker"))
   (let ((lparallel:*kernel* *async-tasks*))
     (setf *async-channel* (lparallel:make-channel))))
 
