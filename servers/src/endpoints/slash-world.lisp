@@ -28,10 +28,11 @@
 (in-package :Tootsville)
 
 (defendpoint (GET "/world" "application/json")
-    (error 'unimplemented))
+  "Get world-related info in general. Not implemented."
+  (error 'unimplemented))
 
 (defendpoint (get "/world/tootanga/:x-coord/:y-coord/:z-coord" "application/json")
-    "Get the information about the area near (X-COORD,Y-COORD,Z-COORD)
+  "Get the information about the area near (X-COORD,Y-COORD,Z-COORD)
 
 The terrain and objects in that area, characters, &c. will be returned.
 
@@ -45,15 +46,19 @@ Your character must be able to observe that general area. No peeking!
 
 
 (defendpoint (GET "/world/clock/date" "text/plain")
-    (choerogryllum:date-string (get-universal-time)))
+  "Get the date on Chœrogryllum (pretty-printed date string)"
+  (choerogryllum:date-string (get-universal-time)))
 
 (defendpoint (GET "/world/clock/date/long" "text/plain")
+  "Get the date on Chœrogryllum (pretty-printed date string)"
   (choerogryllum:date-string (get-universal-time)))
 
 (defendpoint (GET "/world/clock/date/abbrev" "text/plain")
+  "Get the date on Chœrogryllum (abbreviated date string)"
   (choerogryllum:date-string (get-universal-time) :form :abbrev))
 
 (defendpoint (GET "/world/clock/time" "application/json")
+  "Get the date & time on Chœrogryllum as a JSON structure"
   (multiple-value-bind (sec min hour day month year weekday
                             other-month-day pink-month-day julian)
       (choerogryllum:decode*-universal-time (get-universal-time))
@@ -67,17 +72,19 @@ Your character must be able to observe that general area. No peeking!
           :other-month-day other-month-day
           :pink-month-day pink-month-day
           :julian julian
-          :julian-270 (mod julian 270)
+          :julian-360 (mod julian 360)
           :holiday (choerogryllum:holiday-on year month day))))
 
 (defendpoint (GET "/world/clock/time" "text/plain")
-    (multiple-value-bind (sec min hour day month year weekday
-                              other-month-day pink-month-day julian)
-        (choerogryllum:decode*-universal-time (get-universal-time))
-      (declare (ignore day month year weekday other-month-day pink-month-day julian))
-      (format nil "~2,'0d:~2,'0d:~2,'0d" hour min sec)))
+  "Get the current time on Chœrogryllum (time string with seconds)"
+  (multiple-value-bind (sec min hour day month year weekday
+                            other-month-day pink-month-day julian)
+      (choerogryllum:decode*-universal-time (get-universal-time))
+    (declare (ignore day month year weekday other-month-day pink-month-day julian))
+    (format nil "~2,'0d:~2,'0d:~2,'0d" hour min sec)))
 
 (defun detailed-time (&optional (now (get-universal-time)))
+  "Get a long string explaining the date, time, and other info."
   (multiple-value-bind (sec min hour day month year weekday
                             other-month-day pink-month-day julian)
       (choerogryllum:decode*-universal-time now)
@@ -97,7 +104,7 @@ It is the ~:*~:r day of The Moon's 30-day month.~]
 It is the ~:*~:r day of The Other Moon's 71-day month.~]
 ~[It is new moon for The Pink Moon.~:;~
 It is the ~:*~:r day of The Pink Moon's 53-day month.~]
-It is the ~:d~[th~;st~;nd~;rd~:;th~] day of the 270-day solar year.
+It is the ~:d~[th~;st~;nd~;rd~:;th~] day of the 360-day calendar year.
 ~@[
 
 It is ~a.~]
@@ -110,11 +117,18 @@ It is ~a.~]
             day
             other-month-day
             pink-month-day
-            (mod julian 270)
-            (mod (mod julian 270) 10)
+            (mod julian 360)
+            (let ((n (mod (mod julian 360) 10)))
+              (if (= 12 (mod julian 360)) 9 n))
             (choerogryllum:holiday-on year month day))))
 
+(defendpoint (GET "/world/clock/calendar/:year/:month/fragment" "text/html")
+  "Get a calendar fragment in HTML for MONTH of YEAR."
+  (list 200 () (chœrogryllum::cal-month.html 
+                (parse-integer year) (parse-integer month))))
+
 (defendpoint (GET "/world/clock/time/detailed" "text/plain")
+  "Get a long string explaining the date, time, and other info."
   (detailed-time))
 
 (defconstant +moon-year+ 3600000)
@@ -130,7 +144,7 @@ It is ~a.~]
 
 (defun sky-contents (x y z &optional (now (get-universal-time)))
   (let ((day (nth-value 9 (Choerogryllum:decode*-universal-time now))))
-    (list :|sun| (list :|azimuth| (sinus (- now (* 21 18 60 60)) (* 270 18 60 60))
+    (list :|sun| (list :|azimuth| (sinus (- now (* 21 18 60 60)) (* 360 18 60 60))
                        :|elevation| (sinus now (* 18 60 60)))
           :|moon| (list :|azimuth| (sinus now +moon-year+)
                         :|elevation| (sinus now +moon-day+)
@@ -154,7 +168,16 @@ It is ~a.~]
           :|clouds| (clouds x y z)
           :|precipitation| (multiple-value-list (precipitation x y z)))))
 
-(defendpoint (GET "/world/sky/:x-coord/:y-coord/:z-coord")
+(defendpoint (GET "/world/sky/tootanga/:x-coord/:y-coord/:z-coord")
+  "Get the contents of the sky visible over (X-COORD, Y-COORD, Z-COORD).
+
+This data  includes the position  of the Sun  (which could be  below the
+horizon), the position of each moon,  and the (fractional) phase of that
+moon. It  may also include  an array  of clouds, precipitation  (rain or
+snow), lightning patterns, &c.
+
+This will @emph{not} include things that are flying in the sky.
+"
   (list 200
         nil
         (sky-contents x-coord y-coord z-coord)))
