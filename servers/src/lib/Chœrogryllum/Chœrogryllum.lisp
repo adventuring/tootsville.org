@@ -64,6 +64,13 @@
 (defun first-weekday-of-month (year month)
   (nth-value 6 (decode*-universal-time (encode*-universal-time 0 0 9 1 month year))))
 
+(defun cal-month-header.html (year month stream)
+  (declare (ignore year))
+  (format stream "<thead><tr><th colspan=\"9\">~a</th></tr>
+<tr>~{<th>~a</th>~}</tr></thead>"
+          (month* month)
+          (mapcar (rcurry #'day-of-week* :form :abbrev) (range 0 8))))
+
 (defun cal-month-header (year month stream)
   (declare (ignore year))
   (format stream "~45@<~:@r. ~a  ~;---------------------------------------------~>
@@ -71,6 +78,25 @@
 ~{~a.~^ ~}~%"
           month (month* month)
           (mapcar (rcurry #'day-of-week* :form :abbrev) (range 0 8))))
+
+(defun cal-month.html (year month)
+  "Pretty-prints a one-month mini-calendar in HTML."
+  (let ((first-weekday-of-month (first-weekday-of-month year month)))
+    (with-output-to-string (s)
+      (princ "<table>" s)
+      (cal-month-header.html year month s)
+      (princ "<tbody><tr>" s)
+      (loop for pad-day below first-weekday-of-month
+         do (princ "<td>&nbsp;</td>" s))
+      (loop for day from 1 upto 30
+         for holiday = (holiday-on year month day)
+         do (if holiday
+                (format s "<td><abbr title=\"~a\">~d</abbr></td>" holiday day)
+                (format s "<td>~d</td>" day))
+         when (zerop (mod (+ day first-weekday-of-month) 9))
+         do (princ "</tr><tr>" s))
+      (princ "</tr></tbody></table>" s)
+      (terpri s))))
 
 (defun cal-month (year month)
   "Pretty-prints a one-month mini-calendar."
