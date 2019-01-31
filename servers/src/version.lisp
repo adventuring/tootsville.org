@@ -7,7 +7,7 @@
 
 (defun romance-ii-program-name ()
   "This program's name. Taken from ASDF."
-  (asdf:component-name (asdf:find-system :tootsville)))
+  (string-capitalize (asdf:component-name (asdf:find-system :tootsville))))
 
 (defun romance-ii-program-name/version ()
   "This program's name and version number, in name/version form, as used
