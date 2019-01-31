@@ -93,6 +93,24 @@
                       (string-upcase content-type))))))
 
 (defun endpoints-equal (a b)
+  "Are A and B references to the identical endpoint URI pattern?
+
+Note that  URIs that are  not ENDPOINTS-EQUAL  to one another  can still
+conflict with one another in URI space. A template could have a variable
+term which  differs from  the matching  term (URI  path element)  in the
+other  template,  but creates  an  ambiguity  between them  (both  could
+plausibly accept  some subset  of matching URIs).  The simplest  form is
+something  like:  @samp{/a/:x}  cv.  @samp{/a/b}  ---  it  is  perfectly
+possible that @samp{:x} could  be @samp{b}, making @samp{/a/b} ambiguous
+between the two URIs.
+
+There are two possible cures for  this bug; let's say, ``avoidance'' and
+``CLOS.'' With  the CLOS  solution, the  more specific  (less variables)
+method would override,  just as a more specific method  overrides a less
+specific  method  in the  default  method  combination method  in  CLOS.
+The alternative is to not permit such URI pairs to exist at all.
+
+Neither solution has yet been implemented."
   (and (eql (endpoint-method a)
             (endpoint-method b))
        (= (endpoint-template-arity a)
@@ -103,6 +121,8 @@
                (endpoint-template b))))
 
 (defmethod add-or-replace-endpoint (function method (uri string) &optional content-type)
+  ;; FIXME: This should be unified with the (TEMPLATE LIST) method.
+  ;; FIXME: Like the (TEMPLATE LIST) method, bug WRT unreachable endpoints
   (let ((instance (make-instance 'endpoint
                                  :function function
                                  :method method
@@ -115,6 +135,16 @@
     (remap-endpoints)))
 
 (defmethod add-or-replace-endpoint (function method (template list) &optional content-type)
+  ;; FIXME: It's possible to create a duplicate/unreachable endpoint.
+  ;; 
+  ;; This method @emph{should}  be changed to look for  an endpoint that
+  ;; would  be matching  if  the variable  elements  of either  template
+  ;; matched the constants in the same ordinal places.
+  ;;
+  ;; eg:  /a/b/c conflicts  with /a/:b/c  where :b  is a  variable which
+  ;; could be  “b.” This is not  permitted by our fast  dispatch scheme.
+  ;; This routine should destroy the older  one when the newer of a pair
+  ;; like these is added, with a warning.
   (let ((instance (make-instance 'endpoint
                                  :function function
                                  :method method
