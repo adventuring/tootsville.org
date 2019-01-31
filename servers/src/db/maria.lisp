@@ -214,8 +214,30 @@ Returns the values of BODY.
                                      :if-not-locked ,if-not-locked
                                      :timeout ,timeout)))
        (unwind-protect
-            (progn ,@body)
+            (when ,$lock
+              ,@body)
          (yield-mariadb-lock ,$lock)))))
+
+
+(define-condition cluster-wide-lock-condition 
+    (serious-condition)
+  ())
+(define-condition cluster-wide-lock-not-locked
+    (cluster-wide-lock-condition warning)
+  ())
+(define-condition cluster-wide-lock-busy-warning 
+    (cluster-wide-lock-condition warning)
+  ())
+(define-condition cluster-wide-lock-error 
+    (cluster-wide-lock-condition error)
+  ())
+(define-condition cluster-wide-lock-busy-error 
+    (cluster-wide-lock-error)
+  ())
+(define-condition cluster-wide-lock-not-ours 
+    (cluster-wide-lock-error)
+  ())
+
 
 
 (defun get-mariadb-lock (lock-string &key if-not-locked timeout)
@@ -259,14 +281,24 @@ LOCK-NAME is case-insensitive.
 "
   (let* ((query (cl-dbi:prepare *dbi-connection*
                                 "SELECT GET_LOCK(?, ?)"))
-         (result-set (cl-dbi:execute query lock-name timeout)))
-    (ecase (caar result-set)
-      (0 ; timed out
-       )
-      (1 ; success
-       )
-      (nil ; error other than timeout
-       ))))
+         (result-set (cl-dbi:execute query lock-string 
+                                     (case if-not-locked
+                                       (:wait (or timeout 90))
+                                       (otherwise 0)))))
+    (case (caar result-set)
+      (1 (string-upcase lock-string))
+      (otherwise
+       (ecase if-not-locked
+         (:skip nil)
+         (:wait 
+          (if timeout
+              (error 'cluster-wide-lock-busy-error)
+              (get-mariadb-lock lock-string 
+                                :if-not-locked :wait :timeout nil)))
+         (:error (error 'cluster-wide-lock-busy-error))
+         (:warn (warn 'cluster-wide-lock-busy-warning)
+                nil))))))
+
 (defun yield-mariadb-lock (lock-name)
   "Release the lock identified by LOCK-NAME.
 
@@ -275,9 +307,6 @@ LOCK-NAME is case-insensitive."
                                 "SELECT RELEASE_LOCK(?)"))
          (result-set (cl-dbi:execute query lock-name)))
     (ecase (caar result-set)
-      (0 ; not owned by us
-       )
-      (1 ; success
-       )
-      (nil ; was not locked
-       ))))
+      (0 (error 'cluster-wide-lock-not-ours))
+      (1 t)
+      ((nil) (warn 'cluster-wide-lock-not-locked)))))
