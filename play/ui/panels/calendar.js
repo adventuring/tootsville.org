@@ -30,3 +30,12 @@
  * USA
  *
  */
+
+Tootsville.tootnix.calendar_app_calendar_load = function () {
+    var calDiv = document.getElementById("calendar-app-calendar");
+    if (!calDiv) { return; };
+    Tootsville.ui.hud.loadHTML ("https://localhost:5000/world/clock/now/calendar/fragment.html").
+    then (
+        htmlf => { calDiv.innerHTML = htmlf; }
+    );
+}
