@@ -122,11 +122,13 @@
       (let (holidays)
         (loop for day from 1 upto 30
            for holiday = (holiday-on year month day)
-           do (format s " ~2d~2a" day (if holiday
-                                          (progn
-                                            (push day holidays)
-                                            (concatenate 'string "*" (exponent-digit (length holidays))))
-                                          "  "))
+           do (format s " ~2d~2a" day 
+                      (if holiday
+                          (progn
+                            (push day holidays)
+                            (concatenate 'string "*"
+                                         (exponent-digit (length holidays))))
+                          "  "))
            when (zerop (mod (+ day first-weekday-of-month) 9))
            do (terpri s))
         (terpri s)
