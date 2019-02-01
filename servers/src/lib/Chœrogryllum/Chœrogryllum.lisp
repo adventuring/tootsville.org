@@ -109,7 +109,7 @@
              
            do (if (and (= year y) (= month m) (= day d))
                   (princ "<td class=\"cal-today\">" s)
-                  (princ "<td>"))
+                  (princ "<td>" s))
              
            do (if holiday
                   (format s "<abbr title=\"~a\">~d</abbr>" holiday day)
