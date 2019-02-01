@@ -90,7 +90,7 @@
       (t (setf year y month m)))
     (let ((first-weekday-of-month (first-weekday-of-month year month)))
       (with-output-to-string (s)
-        (princ "<table>" s)
+        (princ "<table class=\"calendar\">" s)
         (cal-month-header.html year month s)
         (princ "<tbody><tr>" s)
         (loop for pad-day below first-weekday-of-month
@@ -98,9 +98,13 @@
         (loop for day from 1 upto 30
            for holiday = (holiday-on year month day)
              
+           do (if (and (= year y) (= month m) (= day d))
+                  (princ "<td class=\"cal-today\">" s)
+                  (princ "<td>"))
+             
            do (if holiday
-                  (format s "<td><abbr title=\"~a\">~d</abbr>" holiday day)
-                  (format s "<td>~d" day))
+                  (format s "<abbr title=\"~a\">~d</abbr>" holiday day)
+                  (format s "~d" day))
              
            when (and (= year y) (= month m) (= day d))
            do (princ " ★ " s)
