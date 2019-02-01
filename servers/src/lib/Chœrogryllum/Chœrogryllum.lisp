@@ -79,24 +79,38 @@
           month (month* month)
           (mapcar (rcurry #'day-of-week* :form :abbrev) (range 0 8))))
 
-(defun cal-month.html (year month)
+(defun cal-month.html (&optional year month)
   "Pretty-prints a one-month mini-calendar in HTML."
-  (let ((first-weekday-of-month (first-weekday-of-month year month)))
-    (with-output-to-string (s)
-      (princ "<table>" s)
-      (cal-month-header.html year month s)
-      (princ "<tbody><tr>" s)
-      (loop for pad-day below first-weekday-of-month
-         do (princ "<td>&nbsp;</td>" s))
-      (loop for day from 1 upto 30
-         for holiday = (holiday-on year month day)
-         do (if holiday
-                (format s "<td><abbr title=\"~a\">~d</abbr></td>" holiday day)
-                (format s "<td>~d</td>" day))
-         when (zerop (mod (+ day first-weekday-of-month) 9))
-         do (princ "</tr><tr>" s))
-      (princ "</tr></tbody></table>" s)
-      (terpri s))))
+  (multiple-value-bind (_s _m _h d m y) (decode*-universal-time)
+    (declare (ignore _h _m _s))
+    (cond 
+      ((and year month) nil)
+      ((or year month)
+       (error "Call with YEAR and MONTH or neither for current month"))
+      (t (setf year y month m)))
+    (let ((first-weekday-of-month (first-weekday-of-month year month)))
+      (with-output-to-string (s)
+        (princ "<table>" s)
+        (cal-month-header.html year month s)
+        (princ "<tbody><tr>" s)
+        (loop for pad-day below first-weekday-of-month
+           do (princ "<td>&nbsp;</td>" s))
+        (loop for day from 1 upto 30
+           for holiday = (holiday-on year month day)
+             
+           do (if holiday
+                  (format s "<td><abbr title=\"~a\">~d</abbr>" holiday day)
+                  (format s "<td>~d" day))
+             
+           when (and (= year y) (= month m) (= day d))
+           do (princ " ★ " s)
+             
+           do (princ "</td>" s)
+             
+           when (zerop (mod (+ day first-weekday-of-month) 9))
+           do (princ "</tr><tr>" s))
+        (princ "</tr></tbody></table>" s)
+        (terpri s)))))
 
 (defun cal-month (year month)
   "Pretty-prints a one-month mini-calendar."
