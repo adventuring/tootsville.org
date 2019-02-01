@@ -122,12 +122,25 @@ It is ~a.~]
               (if (= 12 (mod julian 360)) 9 n))
             (choerogryllum:holiday-on year month day))))
 
-(defendpoint (GET "/world/clock/calendar/:year/:month/fragment" "text/html")
+(defendpoint (GET "/world/clock/calendar/year/:year/month/:month/fragment"
+                  "text/html")
   "Get a calendar fragment in HTML for MONTH of YEAR."
-  (list 200 () (chœrogryllum::cal-month.html 
+  (list 200 () (chœrogryllum::cal-month.html
                 (parse-integer year) (parse-integer month))))
 
-(defendpoint (GET "/world/clock/calendar/:year/:month" "text/html")
+(defendpoint (GET "/world/clock/calendar/this-month/fragment" "text/html")
+  "Get a calendar fragment in HTML for MONTH of YEAR."
+  (list 200 () (chœrogryllum::cal-month.html)))
+
+(defendpoint (GET "/world/clock/calendar/year/:year/fragment" "text/html")
+  "Get a calendar fragment in HTML for 12 months of YEAR."
+  (list 200 () 
+        (format nil "~{~a~%~^<br>~%~}"
+                (loop for month from 1 upto 12
+                   collecting (chœrogryllum::cal-month.html 
+                               (parse-integer year) month)))))
+
+(defendpoint (GET "/world/clock/calendar/year/:year/month/:month" "text/html")
   "Get a calendar as an HTML page for MONTH of YEAR."
   (list 200 () 
         (format nil "<html>
