@@ -1,16 +1,21 @@
-table.calendar {
+#calendar table {
     thead {
         > tr:first-child th {
             background-color: @indigo;
-            color: white;
+            border-radius: 1rem 1rem 0 0;
         }
         th {
             background-color: @violet;
             color: white;
+            padding: .25rem;
+            text-align: center;
         }
     }
     tbody td {
-        border-color: black;
+        border: 1px solid black;
+        text-align: left;
+        padding-left: .15rem;
+        width: 2.5rem;
         &.cal-today {
             background-color: @spring-green;
         }
