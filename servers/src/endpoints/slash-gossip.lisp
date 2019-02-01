@@ -30,8 +30,9 @@
 (defendpoint (post "/gossip/offers" "application/json")
   "Provide a new offer. Body is an SDP offer. Reply will be an offer URI."
   (with-user ()
-    (let ((json (jonathan:parse (hunchentoot:raw-post-data)))
-          offers)
+    (let* ((json$ (hunchentoot:raw-post-data))
+           (json (jonathan:parse json$))
+           offers)
       (dolist (offer (getf json :|offers|))
         (let* ((uuid (uuid:make-v4-uuid)) 
                (offer-object (make-record 'gossip-initiation
