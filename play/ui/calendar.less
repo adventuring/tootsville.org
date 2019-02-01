@@ -1,0 +1,18 @@
+table.calendar {
+    thead {
+        > tr:first-child th {
+            background-color: @indigo;
+            color: white;
+        }
+        th {
+            background-color: @violet;
+            color: white;
+        }
+    }
+    tbody td {
+        border-color: black;
+        &.cal-today {
+            background-color: @spring-green;
+        }
+    }
+}
