@@ -128,7 +128,7 @@ It is ~a.~]
   (list 200 () (chœrogryllum::cal-month.html
                 (parse-integer year) (parse-integer month))))
 
-(defendpoint (GET "/world/clock/calendar/this-month/fragment" "text/html")
+(defendpoint (GET "/world/clock/calendar/now/fragment" "text/html")
   "Get a calendar fragment in HTML for MONTH of YEAR."
   (list 200 () (chœrogryllum::cal-month.html)))
 
