@@ -67,9 +67,18 @@
 (defun cal-month-header.html (year month stream)
   (declare (ignore year))
   (format stream "<thead><tr><th colspan=\"9\">~a</th></tr>
-<tr>~{<th>~a</th>~}</tr></thead>"
-          (month* month)
-          (mapcar (rcurry #'day-of-week* :form :abbrev) (range 0 8))))
+<tr>
+<th> <abbr for=\"Lightningday\"><i class=\"fas fa-bolt\"></i> Ltn.</a> </th>
+<th> <abbr for=\"Spotsday\"><i class=\"fas fa-circle\"></i> Spt.</a>  </th>
+<th> <abbr for=\"Starsday\"><i class=\"fas fa-star\"></i> Str.</a>  </th>
+<th> <abbr for=\"Notesday\"><i class=\"fas fa-music\"></i> Not.</a>  </th>
+<th> <abbr for=\"Sparklesday\"><i class=\"fas fa-haykal\"></i> Spk.</a>  </th>
+<th> <abbr for=\"Moosday\"><i class=\"fas fa-tools\"></i> Moo.</a>  </th>
+<th> <abbr for=\"Heartsday\"><i class=\"fas fa-heart\"></i> Hrt.</a>  </th>
+<th> <abbr for=\"Floralday\"><i class=\"fas fa-certificate\"></i> Flr.</a>  </th>
+<th> <abbr for=\"Blanksday\"><i class=\"fas fa-chalkboard\"></i> Blk.</a>  </th>
+</tr></thead>"
+          (month* month)))
 
 (defun cal-month-header (year month stream)
   (declare (ignore year))
