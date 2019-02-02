@@ -682,3 +682,79 @@ h1.centered {
     position: fixed;
     top: calc(33vh - 75px);
 }
+
+#talk-loud-menu {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem 1rem 1rem 0;
+    box-shadow: 5px 5px 5px 0px #000000;
+    bottom: 3rem;
+    position: fixed;
+    left: 13vw;
+    z-index: 100;
+}
+
+#talk-expression-menu {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem 1rem 1rem 0;
+    box-shadow: 5px 5px 5px 0px #000000;
+    bottom: 3rem;
+    position: fixed;
+    left: 16vw;
+    z-index: 100;
+    width: 15rem;
+}
+
+.speech {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 2rem;
+    box-shadow: 5px 5px 5px 0px #000000;
+    position: fixed;
+    z-index: 100;
+    min-width: 10rem;
+    max-width: 20rem;
+    font-family: acme;
+    color: black;
+    font-size: 1.25rem;
+    padding: 1rem;
+}
+
+.speech::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 1em solid transparent;
+    border-top-color: white;
+    border-bottom: 0;
+    margin-top: -1pt;
+    margin-left: -1em;
+    margin-bottom: -1em;
+}
+
+.shout {
+    font-size: 1.6667rem;
+    font-weight: bold;
+    background-color: @yellow;
+    border: 5pt dotted @red;
+}
+
+.shout::after {
+    border-top-color: @yellow;
+}
+
+.whisper {
+    font-size: 1rem;
+    color: @charcoal;
+    font-family: Cantarell;
+    background-color: @silver;
+    border: 2pt dashed @charcoal;
+}
+
+.whisper::after {
+    border-top-color: @silver;
+}
