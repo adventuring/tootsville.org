@@ -64,6 +64,9 @@ harmless  error   message  on  the  second   and  subsequent  attempts."
   ((http-status-code :type http-response-failure-status-number
                      :reader http-status-code)))
 
+(defmethod http-status-code ((error error))
+  500)
+
 
 
 (defun pretty-print-html-error (condition)
@@ -99,7 +102,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
               (gethash (http-status-code condition) *http-status-message*))
           (cluster-name)
           hunchentoot:*show-lisp-backtraces-p*
-          (rollbar::find-appropriate-backtrace)
+          (ignore-errors (rollbar::find-appropriate-backtrace))
           (if hunchentoot:*show-lisp-backtraces-p*
               (mapcar
                (lambda (restart)
