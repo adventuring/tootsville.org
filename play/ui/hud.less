@@ -62,6 +62,10 @@
     line-height: 2rem;
     vertical-align: middle;
     text-align: center;
+    cursor: pointer;
+    &:hover {
+        border: 1pt solid white;
+    }
 }
 
 .mini-round-button {
@@ -229,51 +233,13 @@ p {
     }
 }
 
-#talk-loud-selector {
-    display: inline-block;
-    border-radius: 2rem;
-    height: 2rem;
-    width: 2rem;
-    border: 1pt solid black;
-    background-color: #fff9;
-    color: black;
-    font-family: Acme;
-    font-size: 2rem;
-    line-height: 2rem;
-    vertical-align: middle;
-    text-align: center;
-
-    option[value=shout] {
-        background-color: @periwinkle;
-    }
-    option[value=talk] {
-        background-color: white;
-    }
-    option[value=whisper] {
-        background-color: @turquoise;
-    }
-
-    option[value=shout]:before {
-        font-family: 'FontAwesome';
-        content: '\f0a1'; /* bullhorn */
-    }
-    option[value=talk]:before {
-        font-family: 'FontAwesome';
-        content: '\f075'; /* comment */
-    }
-    option[value=whisper]:before {
-        font-family: 'FontAwesome';
-        content: '\f27a'; /* comment-alt */
-    }
-}
-
-#talk-expression, #talk-emoji {
+#talk-loud-selector, #talk-expression, #talk-emoji {
     .round-button;
     background-color: #fff9;
 }
 
 .with-caret-up {
-    &:after {
+    &:hover:after {
         position: absolute;
         margin-left: -.75rem;
         margin-top: -.5rem;
@@ -315,10 +281,15 @@ p {
     z-index: 300;
     &:hover {
         color: @spring-green;
+    text-shadow:
+        -1pt -1pt 1pt @white,
+        -1pt 1pt 1pt @white,
+        1pt -1pt 1pt @white,
+        1pt 1pt 1pt @white;
     }
 }
 
-select, #talk-expression, #talk-emoji {
+#talk-loud-selector, #talk-expression, #talk-emoji {
     .with-caret-up;
 }
 
@@ -333,6 +304,10 @@ select, #talk-expression, #talk-emoji {
     border-radius: .25rem;
     border: 1pt solid black;
     background-color: #fff8;
+    cursor: pointer;
+    &:hover {
+        font-size: 1.6667rem;
+    }
 }
 
 #paperdoll-mini {
@@ -692,6 +667,8 @@ h1.centered {
     position: fixed;
     left: 13vw;
     z-index: 100;
+    opacity: 0;
+    display: none;
 }
 
 #talk-expression-menu {
@@ -704,6 +681,33 @@ h1.centered {
     left: 16vw;
     z-index: 100;
     width: 15rem;
+    opacity: 0;
+    display: none;
+}
+
+#talk-emoji-menu {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem 1rem 1rem 0;
+    box-shadow: 5px 5px 5px 0px #000000;
+    bottom: 3rem;
+    position: fixed;
+    left: 18vw;
+    z-index: 100;
+    padding: 1rem;
+    max-width: 50vw;
+    width: 50vw;
+    font-size: 2.5rem;
+    min-height: 15rem;
+    max-height: 90vh;
+    height: 75vh;
+    overflow-y: scroll;
+    opacity: 0;
+    display: none;
+}
+
+#talk-emoji-menu section {
+    padding-bottom: 3rem;
 }
 
 .speech {
