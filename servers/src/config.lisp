@@ -44,32 +44,25 @@
 (defvar *config-file* nil
   "Metadata about the configuration file last loaded")
 
-(defgeneric apply-config ()
-  (:documentation "Whenever the configuration is loaded, these methods are called
+(defun apply-config ()
+  "Whenever the configuration is loaded, these methods are called
  to allow “external” packages (which may not use this configuration mechanism)
- to apply settings.")
-  (:method-combination progn))
-
-(defmethod apply-config progn ()
-  "Set up Hunchentoot and the taskmaster from configuration"
+ to apply settings."
+  
   (setf thread-pool-taskmaster:*developmentp* (config :taskmaster :devel)
         hunchentoot:*catch-errors-p* (config :hunchentoot :catch-errors)
         hunchentoot:*log-lisp-warnings-p* (config :hunchentoot :log-warnings)
         hunchentoot:*log-lisp-errors-p* (config :hunchentoot :log-errors)
         hunchentoot:*log-lisp-backtraces-p* (config :hunchentoot :log-backtraces)
         hunchentoot:*show-lisp-errors-p* (config :hunchentoot :show-errors)
-        hunchentoot:*show-lisp-backtraces-p* (config :hunchentoot :show-backtraces)))
-
-(defmethod apply-config progn ()
-  "Apply configuration to Rollbar"
+        hunchentoot:*show-lisp-backtraces-p* (config :hunchentoot :show-backtraces))
+  
   (apply #'rollbar:configure (config :rollbar))
   (setf rollbar:*person-hook* #'get-rollbar-person)
   (rollbar:configure :environment (cluster-net-name)
                      :code-version #.(run-program "git rev-parse HEAD" :output :string)
-                     :framework (romance-ii-program-name/version)))
-
-(defmethod apply-config progn ()
-  "Set site name from configuration"
+                     :framework (romance-ii-program-name/version))
+  
   ;; TODO: Set site name from configuration
   )
 
