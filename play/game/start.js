@@ -31,10 +31,9 @@
  *
  */
 
-window.onGoogleYoloLoad = function () {
-     Tootsville.login.startSignIn ();
-     Tootsville.login.googleYoloSignIn ();
- }
+window.onGoogleYoloLoad = function ()
+{ Tootsville.login.startSignIn ();
+  Tootsville.login.googleYoloSignIn (); };
 window.addEventListener ('load', () => {
     setTimeout (function () {
         document.getElementById ('control-panel-icon').style.width = '7vw';
@@ -46,6 +45,8 @@ window.addEventListener ('load', () => {
 
     Tootsville.game.hideWhenGameReady ();
     Tootsville.game.stopSlowLoadingWatchdogs ();
+
+    Tootsville.ui.hud.refreshHUD ();
 
     Tootsville.tank.prepareFor3D ();
 
