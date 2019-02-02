@@ -126,7 +126,7 @@ affected at all by precipitation during the spring and autumn months.
                                        (< 0 dest-y 600))
                               (incf (aref *humidity-field* dest-x dest-y) take)))))))
 
-#. (progn (ql:quickload :cl-jpeg) nil) ; FIXME
+;; #. (progn (ql:quickload :cl-jpeg) nil) ; FIXME
 (defun generate-skydome-cloud-layer ()
   (let ((lparallel:*kernel* (ensure-weather-kernel)))
     (let ((pixmap (make-array '(800 600) :element-type '(unsigned-byte 8) :initial-element 0)))
@@ -139,4 +139,5 @@ affected at all by precipitation during the spring and autumn months.
                                              (* #x100
                                                 (aref *humidity-field* x y))))))))
       ;; FIXME: and … crash.
-      (cl-jpeg:encode-image "/tmp/skydome.jpeg" pixmap nil 600 800 :q-tabs 1))))
+      ;;(cl-jpeg:encode-image "/tmp/skydome.jpeg" pixmap nil 600 800 :q-tabs 1)
+      )))
