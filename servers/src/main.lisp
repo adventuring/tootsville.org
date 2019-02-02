@@ -50,12 +50,24 @@
 (defun swank-connected-p ()
   (when (swank:connection-info) t))
 
+(defun name-idle-threads-sequentially (count)
+  (let ((n 0))
+    (dolist (thread (all-threads))
+      (when (string-equal "Idle Asynchronous Worker" (thread-name thread))
+        (setf (thread-name thread)
+              (format nil "Idle Asynchronous Worker № ~:d (of ~:d)"
+                      (incf (the fixnum n)) count))))))
+
 (defun init-async ()
-  (setf *async-tasks*
-        (lparallel:make-kernel (max 1 (round (/ (processor-count) 2)))
-                               :name "Idle Asynchronous Worker"))
+  (let ((count-threads (max 1 (round (/ (processor-count) 2)))))
+    (setf *async-tasks*
+          (lparallel:make-kernel count-threads
+                                 :name "Idle Asynchronous Worker"))
+    (name-idle-threads-sequentially count-threads))
   (let ((lparallel:*kernel* *async-tasks*))
-    (setf *async-channel* (lparallel:make-channel))))
+    (setf *async-channel* (lparallel:make-channel)))
+  (unless lparallel:*kernel*
+    (setf lparallel:*kernel* *async-tasks*)))
 
 (defun run-async (function &key name)
   (unless *async-tasks*
