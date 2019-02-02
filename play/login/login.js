@@ -179,13 +179,30 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('pick-toot').style.display = 'none'; };
 
 Tootsville.login.endLoginMusic = function ()
-{ return; // TODO
-  var loginMusic = querySelector("#login audio");
+{ var loginMusic = document.querySelector("#login audio");
   if (loginMusic) // should always be found
-  {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
-     setTimeout ( () => { loginMusic.volume = .25; }, 666 );
-     setTimeout ( () => { loginMusic.volume = 0; }, 1000 );
-     setTimeout ( () => { loginMusic.parentNode.removeChild (loginMusic); }, 1050 ); } };
+  {  setTimeout ( function () { loginMusic.volume = .5; }, 333 );
+     setTimeout ( function () { loginMusic.volume = .25; }, 666 );
+     setTimeout ( function () { loginMusic.volume = 0; }, 1000 );
+     setTimeout ( function () { loginMusic.parentNode.removeChild (loginMusic); }, 1050 );
+     setTimeout ( function ()
+                  { var audio = document.createElement ("AUDIO");
+                    audio.setAttribute ("ID", "backgroundMusic");
+                    audio.autoplay = true;
+                    audio.loop = true;
+                    audio.volume = 1;
+                    var source = document.createElement ("SRC");
+                    source.setAttribute ("SRC", "http://jumbo.tootsville.org/Assets/Music/5/bensound-smile.mp3");
+                    audio.appendChild (source);
+                    document.getElementById ("hud").appendChild (audio);
+                    var musicFooter = document.createElement ("P");
+                    musicFooter.setAttribute ("ID", "music-footer");
+                    musicFooter.innerHTML = "Music: <I ID=\"background-music-title\">SMILE</I> by <A TARGET=\"background-music\" ID=\"background-music-link\" HREF=\"https://www.bensound.com/\">Benjamin TISSOT (Bensound)</A>";
+                    document.getElementById ("hud").appendChild (musicFooter); },
+                  1500 );
+     setTimeout ( function ()
+                  { document.getElementById ("music-footer").opacity = 0; },
+                  6500 ); } };
 
 Tootsville.login.loginDone = function (reply)
 { Tootsville.trace ("loginDone", reply);
