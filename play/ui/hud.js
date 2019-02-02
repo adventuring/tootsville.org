@@ -306,9 +306,7 @@ Tootsville.ui.hud.refreshWallet = function ()
 { // TODO
 };
 
-window.addEventListener (
-    'load',
-    () =>
-        { Tootsville.ui.hud.refreshEquipment ();
-          Tootsville.ui.hud.refreshTalkStatus ();
-          Tootsville.ui.hud.refreshWallet (); });
+Tootsville.ui.hud.refreshHUD = function ()
+{ Tootsville.ui.hud.refreshEquipment ();
+  Tootsville.ui.hud.refreshTalkStatus ();
+  Tootsville.ui.hud.refreshWallet (); };
