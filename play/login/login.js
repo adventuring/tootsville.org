@@ -191,10 +191,11 @@ Tootsville.login.endLoginMusic = function ()
                     audio.autoplay = true;
                     audio.loop = true;
                     audio.volume = 1;
-                    var source = document.createElement ("SRC");
+                    var source = document.createElement ("SOURCE");
                     source.setAttribute ("SRC", "http://jumbo.tootsville.org/Assets/Music/5/bensound-smile.mp3");
                     audio.appendChild (source);
                     document.getElementById ("hud").appendChild (audio);
+                    console.log (audio);
                     var musicFooter = document.createElement ("P");
                     musicFooter.setAttribute ("ID", "music-footer");
                     musicFooter.innerHTML = "Music: <I ID=\"background-music-title\">SMILE</I> by <A TARGET=\"background-music\" ID=\"background-music-link\" HREF=\"https://www.bensound.com/\">Benjamin TISSOT (Bensound)</A>";

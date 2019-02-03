@@ -310,3 +310,20 @@ Tootsville.ui.hud.refreshHUD = function ()
 { Tootsville.ui.hud.refreshEquipment ();
   Tootsville.ui.hud.refreshTalkStatus ();
   Tootsville.ui.hud.refreshWallet (); };
+
+Tootsville.ui.hud.toggleTalkLoud = function ()
+{ };
+
+Tootsville.ui.hud.toggleTalkExpression = function ()
+{ };
+
+Tootsville.ui.hud.toggleTalkEmoji = function ()
+{ };
+
+Tootsville.ui.hud.connectTalkBox = function ()
+{ document.getElementById ("talk-loud-selector").addEventListener
+  ("click", Tootsville.ui.hud.toggleTalkLoud);};
+{ document.getElementById ("talk-expression").addEventListener
+  ("click", Tootsville.ui.hud.toggleTalkExpression);};
+{ document.getElementById ("talk-emoji").addEventListener
+  ("click", Tootsville.ui.hud.toggleTalkEmoji);};

@@ -47,6 +47,9 @@ window.addEventListener ('load', () => {
     Tootsville.game.stopSlowLoadingWatchdogs ();
 
     Tootsville.ui.hud.refreshHUD ();
+    Tootsville.ui.hud.connectTalkBox ();
+
+    document.addEventListener('keypress', Tootsville.ui.keys.onKeypress);
 
     Tootsville.tank.prepareFor3D ();
 

@@ -29,7 +29,9 @@
  *
  * USA
  *
- */if (!('Tootsville' in window)) { window.Tootsville = {ui:{}}; }
+ */
+
+if (!('Tootsville' in window)) { window.Tootsville = {ui:{}}; }
 if (!('ui' in Tootsville)) {Tootsville.ui={};}
 
 Tootsville.ui.makeDivOrParagraph = function (text)
