@@ -57,7 +57,7 @@
     width: 2rem;
     border: 1pt solid black;
     color: black;
-    font-family: Acme;
+    font-family: @ui-font;
     font-size: 2rem;
     line-height: 2rem;
     vertical-align: middle;
@@ -84,7 +84,7 @@
     border-radius: 1rem;
     border: 1pt solid black;
     background-color: white;
-    font-family: Acme;
+    font-family: @ui-font;
     text-align: left;
     box-shadow: 5px 5px 5px 0px #000000;
     padding: 1rem;
@@ -134,7 +134,7 @@
                 margin-left: 2rem;
                 padding: .25rem;
                 border-radius: .5rem;
-                font-family: Acme;
+                font-family: @ui-font;
                 text-align: center;
                 min-width: 5rem;
                 .cancel-button {
@@ -155,7 +155,7 @@
 }
 
 p {
-    font-family: Cantarell;
+    font-family: @font;
     text-indent: 1rem;
     line-height: 1.25rem;
     max-width: 40rem;
@@ -281,11 +281,11 @@ p {
     z-index: 300;
     &:hover {
         color: @spring-green;
-    text-shadow:
-        -1pt -1pt 1pt @white,
-        -1pt 1pt 1pt @white,
-        1pt -1pt 1pt @white,
-        1pt 1pt 1pt @white;
+        text-shadow:
+            -1pt -1pt 1pt @white,
+            -1pt 1pt 1pt @white,
+            1pt -1pt 1pt @white,
+            1pt 1pt 1pt @white;
     }
 }
 
@@ -294,7 +294,7 @@ p {
 }
 
 #talk-speak {
-    font-family: Cantarell;
+    font-family: @talk-font;
     font-size: 1.5rem;
     vertical-align: middle;
     text-align: left;
@@ -443,7 +443,7 @@ p {
     border: 1pt solid black;
     border-radius: 2rem;
     background-color: white;
-    font-family: Cantarell;
+    font-family: @font;
     position: fixed;
     padding: 1rem;
     top: 1.5rem;
@@ -452,7 +452,7 @@ p {
     bottom: 2rem;
     box-shadow: 5px 5px 5px 0px #000;
     > button {
-        font-family: Acme;
+        font-family: @ui-font;
         border: 2pt solid red;
         color: red;
         background-color: @silver;
@@ -484,7 +484,7 @@ p {
     text-shadow: -1px -1px 0 #0009, 1px 1px 0 #0009;
     color: @white;
     opacity: .9;
-    font-family: Acme;
+    font-family: @ui-font;
 }
 
 #mobile, #mobile-loading {
@@ -587,7 +587,7 @@ h1.centered {
     line-height: 4rem;
     color: @white;
     z-index: 400;
-    font-family: Acme;
+    font-family: @title-font;
     a:link, a:visited {
         color: @white;
     }
@@ -615,7 +615,7 @@ h1.centered {
         border: 2pt solid black;
         background-color: white;
         color: black;
-        font-family: Cantarell;
+        font-family: @talk-font;
         font-size: 2rem;
         border-radius: 1rem;
         padding: .75rem;
@@ -627,7 +627,7 @@ h1.centered {
         border: 0;
         background-color: rgba(255,255,255,33%);
         color: black;
-        font-family: Cantarell;
+        font-family: @ui-font;
         font-size: 1.5rem;
         border-radius: 1rem;
         padding: .75rem 3rem;
@@ -641,7 +641,7 @@ h1.centered {
             text-align: right;
             padding: .5rem 2rem;
             button {
-                font-family: Acme;
+                font-family: @ui-font;
                 font-size: 1.5rem;
                 border: 2pt solid black;
                 border-radius: .5rem;
@@ -719,7 +719,7 @@ h1.centered {
     z-index: 100;
     min-width: 10rem;
     max-width: 20rem;
-    font-family: acme;
+    font-family: @talk-font;
     color: black;
     font-size: 1.25rem;
     padding: 1rem;
@@ -754,7 +754,7 @@ h1.centered {
 .whisper {
     font-size: 1rem;
     color: @charcoal;
-    font-family: Cantarell;
+    font-family: @font;
     background-color: @silver;
     border: 2pt dashed @charcoal;
 }
@@ -762,3 +762,17 @@ h1.centered {
 .whisper::after {
     border-top-color: @silver;
 }
+
+.name-tag {
+    position: absolute;
+    font-family: @font;
+    color: white;
+    text-align: center;
+    background: #fff3;
+    padding: .25rem;
+    border: .5px solid #fff4;
+    border-radius: .5em;
+    text-shadow: 1px 1px 2px #0008,2px 2px 2px #0004;
+    font-size: 1rem;
+}
+
