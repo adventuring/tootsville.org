@@ -67,11 +67,11 @@
 
 
 (defun connect-cache ()
-  (dolist (server (config :cache))
+  (dolist (server (car (db-config :cache)))
     (cl-memcached:make-memcache :ip (extract server :ip)
                                 :port (or (extract server :port) 11211)
                                 :name (extract server :name)))
-  (length (config :cache)))
+  (length (db-config :cache)))
 
 
 
