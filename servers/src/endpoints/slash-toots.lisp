@@ -28,6 +28,7 @@
 (in-package :Tootsville)
 
 (defendpoint (get "/toots/:toot-name/avatar" "application/json")
+  "Get the avatar info for TOOT-NAME"
   (check-arg-type Toot-name Toot-name)
   (if-let (Toot (find-Toot-by-name Toot-name))
     (list 200
@@ -36,6 +37,7 @@
     (list 404 nil nil)))
 
 (defendpoint (get "/toots/:toot-name" "application/json")
+  "Get public info about TOOT-NAME"
   (check-arg-type toot-name toot-name)
   ;; with-user TODO
   (list 200
