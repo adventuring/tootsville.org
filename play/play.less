@@ -76,17 +76,45 @@ html {
   overflow: hidden;
 }
 
+@title-font: Acme, sans-serif;
+@ui-font: Acme, Chicago, Charcoal, sans-serif;
+@talk-font: Acme, "Comic Sans", sans-serif;
+@font: Cantarell, serif;
+
 body {
     overflow: hidden;
 }
-h1 { font-size: 3rem } 
-h2 { font-size: 2.5rem }
-h3 { font-size: 2rem }
-h4 { font-size: 1.5rem; font-family: Cantarell, sans-serif }
-h5 { font-size: 1rem; display: inline-block; margin-right: 2rem; }
-h6 { font-size: 1rem; display: inline-block; margin-right: 2rem; font-family: Cantarell, sans-serif }
+h1 { 
+    font-size: 3rem;
+    font-family: @title-font;
+} 
+h2 { 
+    font-size: 2.5rem;
+    font-family: @title-font;
+}
+h3 { 
+    font-size: 2rem;
+    font-family: @title-font;
+}
+h4 { 
+    font-size: 1.5rem; 
+    font-family: @font;
+}
+h5 { 
+    font-size: 1rem; 
+    display: inline-block; 
+    margin-right: 2rem; 
+}
+h6 { 
+    font-size: 1rem; 
+    display: inline-block; 
+    margin-right: 2rem; 
+    font-family: @font;
+}
 
-.mobile-only { display: none; }
+.mobile-only { 
+    display: none; 
+}
 
 button {
     background-color: white;
