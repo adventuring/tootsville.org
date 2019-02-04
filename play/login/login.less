@@ -297,7 +297,7 @@ p {
     color: #333;
     font-size: .9em;
 }
-#toots-list > li#new-toot {
+#toots-list > li#add-toot {
     display: block;
     float: right;
     margin-top: 2rem;
@@ -378,4 +378,26 @@ strong.green-plus {
     background: none;
     color: black;
     font-size: 3rem;
+}
+
+.color-picker {
+    width: 4rem;
+    height: 4rem;
+}
+
+#new-toot-base-color, #new-toot-pad-color, #new-toot-pattern-color, #new-toot-pattern, #new-toot-t-shirt-color {
+    .color-picker;
+}
+
+.color-picker-button {
+    .color-picker;
+}
+
+.new-toot-color-picker {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
