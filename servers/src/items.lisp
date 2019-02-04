@@ -135,19 +135,27 @@ If ITEM's Energy-Kind is :COUNTABLE, then AMOUNT must be an integer."
 (defun don-item (item slot)
   "Equip ITEM on its owning Toot in SLOT.
 
-If this conflicts with any other equipped items, remove them.")
+If this conflicts with any other equipped items, remove them."
+  (declare (ignore item slot))
+  (error 'unimplemented))
 
 (defun doff-item (item)
-  "Un-equip ITEM.")
+  "Un-equip ITEM."
+  (declare (ignore item))
+  (error 'unimplemented))
 
 (defun drop-item (item)
-  "Drop ITEM and cease to own it.")
+  "Drop ITEM and cease to own it."
+  (declare (ignore item))
+  (error 'unimplemented))
 
 (defun take-item (item recipient)
   "RECIPIENT becomes the new owner of ITEM.
 
 The RECIPIENT Toot must  be close enough to pick up  ITEM, and ITEM must
 be in the world, and not owned by any other player."
+  (declare (ignore item))
   (when *user*
     (unless (eql *user* recipient)
-      (error 'not-allowed))))
+      (error 'not-allowed))
+    (error 'unimplemented)))

@@ -115,42 +115,44 @@ Tootsville.Avatars.UltraTootBuilder =
         for (var i = 0; i < meshes.length; ++i) 
         { meshes[i].material = skinMaterial; } },
       addClothes: function (node, avatar) 
-      { // TODO },
-          addBillboards: function (node, avatar) 
-          { // TODO: add speech bubble/emote placeholder (s)
-              // TODO: add player name box
-              // TODO: add child/sensitive player diamond },
-              enablePhysics: function (node, avatar) 
-              { // TODO — BABYLON.PhysicsJoint.BallAndSocketJoint;
-                  node.physicsImpostor = new BABYLON.PhysicsImpostor (node,
-                                                                      BABYLON.PhysicsImpostor.SphereImpostor,
-                                                                      { mass: 1, restitution: 0.9 },
-                                                                      Tootsville.tank.scene); },
-              makeToot: function (avatar) 
-              { return new Promise ( (finish) => 
-                                     { if (avatar == 'UltraToot') 
-                                       { Tootsville.Avatars.UltraTootBuilder.getBaseModel ().then ( (model) => 
-                                                                                                    { var toot = model.clone ();
-                                                                                                      toot.name = 'avatar/' + avatar.name;
-                                                                                                      Tootsville.Avatars.UltraTootBuilder.enablePhysics (toot, avatar);
-                                                                                                      Tootsville.Avatars.UltraTootBuilder.setColors (toot, avatar);
-                                                                                                      Tootsville.Avatars.UltraTootBuilder.addClothes (toot, avatar);
-                                                                                                      finish (toot);
-                                                                                                      return; }); } else 
-                                       { Tootsville.warn ("Avatar is not UltraToot: " + avatar.toSource ());
-                                         var proxy = BABYLON.MeshBuilder.CreateSphere ('proxy for ' + avatar.name,
-                                                                                       { segments: 8, diameter: .25},
-                                                                                       Tootsville.tank.scene);
-                                         proxy.material = new BABYLON.StandardMaterial ('red', Tootsville.tank.scene);
-                                         proxy.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('red'));
-                                         finish (proxy);
-                                         return; } }); },
-              moveToot: function (toot, δv) 
-              { //         var forwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
-                  // forwards.negate ();
-                  // character.moveWithCollisions (forwards);
-                  // // or
-                  // var backwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, -gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
-                  // character.moveWithCollisions (backwards);
-              }
-          };
+      { // TODO
+      },
+      addBillboards: function (node, avatar) 
+      { // TODO: add speech bubble/emote placeholder (s)
+          // TODO: add player name box
+          // TODO: add child/sensitive player diamond
+      },
+      enablePhysics: function (node, avatar) 
+      { // TODO — BABYLON.PhysicsJoint.BallAndSocketJoint;
+          node.physicsImpostor = new BABYLON.PhysicsImpostor (node,
+                                                              BABYLON.PhysicsImpostor.SphereImpostor,
+                                                              { mass: 1, restitution: 0.9 },
+                                                              Tootsville.tank.scene); },
+      makeToot: function (avatar) 
+      { return new Promise ( (finish) => 
+                             { if (avatar == 'UltraToot') 
+                               { Tootsville.Avatars.UltraTootBuilder.getBaseModel ().then ( (model) => 
+                                                                                            { var toot = model.clone ();
+                                                                                              toot.name = 'avatar/' + avatar.name;
+                                                                                              Tootsville.Avatars.UltraTootBuilder.enablePhysics (toot, avatar);
+                                                                                              Tootsville.Avatars.UltraTootBuilder.setColors (toot, avatar);
+                                                                                              Tootsville.Avatars.UltraTootBuilder.addClothes (toot, avatar);
+                                                                                              finish (toot);
+                                                                                              return; }); } else 
+                               { Tootsville.warn ("Avatar is not UltraToot: " + avatar.toSource ());
+                                 var proxy = BABYLON.MeshBuilder.CreateSphere ('proxy for ' + avatar.name,
+                                                                               { segments: 8, diameter: .25},
+                                                                               Tootsville.tank.scene);
+                                 proxy.material = new BABYLON.StandardMaterial ('red', Tootsville.tank.scene);
+                                 proxy.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('red'));
+                                 finish (proxy);
+                                 return; } }); },
+      moveToot: function (toot, δv) 
+      { //         var forwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
+          // forwards.negate ();
+          // character.moveWithCollisions (forwards);
+          // // or
+          // var backwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, -gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
+          // character.moveWithCollisions (backwards);
+      }
+    };
