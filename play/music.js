@@ -40,7 +40,7 @@ Tootsville.ui.setBackgroundMusic = function (song)
                         { document.getElementByID ("background-music-title").innerText = "(" + song + ")"; }
                         if (json.link)
                         { document.getElementByID ("background-music-artist").href = json.link; }
-
+                        musicFooter.opacity = 1;
                         setTimeout ( function ()
                                      { document.getElementById ("music-footer").opacity = 0; },
                                      10000 ); }
