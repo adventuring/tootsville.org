@@ -22,6 +22,7 @@ play/ui/gamepad.js
 play/ui/hud.js
 play/ui/fit-steps.js
 play/ui/ui.js
+play/ui/music.js
 play/ui/fullscreen-polyfill.js
 play/ui/audio-control.js
 play/ui/keys.js
