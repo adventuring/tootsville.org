@@ -103,6 +103,9 @@ Tootsville.login.createTootListItem = function (tootName)
                 Tootsville.login.addChildOrSensitiveFlag (li); });
   return li; };
 
+Tootsville.login.saveTootsList = function (list)
+{ Tootsville.login.tootsList = list; };
+
 Tootsville.login.populateTootsList = function (list)
 { Tootsville.trace("populateTootsList");
   Tootsville.login.clearTootsList ();
@@ -140,7 +143,8 @@ Tootsville.login.startCharacterCreation = function ()
 Tootsville.login.loadTootsList = function ()
 { Tootsville.trace("loadTootsList");
   Tootsville.login.serverQueryCharacters ().then
-  (Tootsville.login.populateTootsList,
+  ( list => { Tootsville.login.saveTootsList (list);
+              Tootsville.login.populateTootsList (list); },
    Tootsville.login.startCharacterCreation); };
 
 Tootsville.login.dimUnpickedCharacters = function (picked)
@@ -279,11 +283,15 @@ Tootsville.login.ensureChildSettings = function (li)
   appendChildCodeEntry (li); };
 
 Tootsville.login.childSettings = function ()
-{ var toots = document.querySelectorAll ('#toots-list>.toot');
+{ Tootsville.login.populateTootsList (Tootsville.login.tootsList);
+  if (0 == Tootsville.login.tootsList.length) {
+      return; // XXX
+  }
+  var toots = document.querySelectorAll ('#toots-list>.toot');
   for (var i = 0; i < toots.length; ++i)
-  { ensureChildSettings (toots[i]); }
+  { Tootsville.login.ensureChildSettings (toots[i]); }
   document.querySelector ('#toots-list').style.backgroundColor = '#c4d82d';
-  document.querySelector ('#toots-list>#new-toot').style.display = 'none';
+  document.querySelector ('#toots-list>#add-toot').style.display = 'none';
   document.querySelector ('#pick-toot>h2').innerHTML = 'Edit Toot Characters';
   document.querySelector ('#pick-toot>p').innerHTML = 'Set up Child and Sensitive Player options here. Child accounts have a sign-in code. (TODO: link to help)';
   document.querySelector ('#edit-toot-settings').style.display = 'none';
@@ -315,7 +323,7 @@ Tootsville.login.doneEditingSettings = function ()
   for (var i = 0; i < toots.length; ++i)
   { stripChildSettings (toots[i]); }
   document.querySelector ('#toots-list').style.backgroundColor = '#ba9dca';
-  document.querySelector ('#toots-list>#new-toot').style.display = 'block';
+  document.querySelector ('#toots-list>#add-toot').style.display = 'block';
   document.querySelector ('#pick-toot>h2').innerHTML = 'Pick a Toot Character';
   document.querySelector ('#pick-toot>p').innerHTML = 'Click or tap a character to play now.';
   document.querySelector ('#edit-toot-settings').style.display = 'block';

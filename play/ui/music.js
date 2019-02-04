@@ -11,6 +11,8 @@ Tootsville.ui.setBackgroundMusic = function (song)
     setTimeout ( function () { backgroundMusic.volume = .25; }, 666 );
     setTimeout ( function () { backgroundMusic.volume = 0; }, 1000 );
     setTimeout ( function () { backgroundMusic.parentNode.removeChild (backgroundMusic); }, 1050 ); }
+  var musicFooter = document.querySelector("#music-footer");
+  if (musicFooter) { musicFooter.parentNode.removeChild (musicFooter); }
   console.log ("Scheduling to play " + song);
   setTimeout ( function ()
                { console.log ("Starting " + song);
@@ -26,8 +28,8 @@ Tootsville.ui.setBackgroundMusic = function (song)
                  console.log (audio);
                  var musicFooter = document.createElement ("P");
                  musicFooter.setAttribute ("ID", "music-footer");
-                 musicFooter.innerHTML = "Music: <A TARGET=\"background-music\" ID=\"background-music-link\"><I ID=\"background-music-title\"></I> by <SPAN ID=\"background-music-artist\"></SPAN></A>";
-                 musicFooter.opacity = 0;
+                 musicFooter.innerHTML = "Music: <A TARGET=\"background-music\" ID=\"background-music-link\"><Q ID=\"background-music-title\"></Q> by <SPAN ID=\"background-music-artist\"></SPAN></A>";
+                 musicFooter.style.opacity = 0;
                  document.getElementById ("hud").appendChild (musicFooter);
                  fetch("https://jumbo.tootsville.org/Assets/Music/5/" + song + ".json").
                  then (function (response)
@@ -35,19 +37,17 @@ Tootsville.ui.setBackgroundMusic = function (song)
                  then (function (json) {
                      console.log ("Credits for song " + song, json);
                      if (json.artist)
-                     { document.getElementByID ("background-music-artist").innerText = json.artist; }
+                     { document.getElementById ("background-music-artist").innerText = json.artist; }
                      else
-                     { document.getElementByID ("background-music-artist").innerText = "(Unknown Artist)"; }
+                     { document.getElementById ("background-music-artist").innerText = "(Unknown Artist)"; }
                      if (json.title)
-                     { document.getElementByID ("background-music-title").innerText = json.title; }
+                     { document.getElementById ("background-music-title").innerText = json.title; }
                      else
-                     { document.getElementByID ("background-music-title").innerText = "(" + song + ")"; }
+                     { document.getElementById ("background-music-title").innerText = "(" + song + ")"; }
                      if (json.link)
-                     { document.getElementByID ("background-music-artist").href = json.link; }
-                     musicFooter.opacity = 1;
+                     { document.getElementById ("background-music-link").href = json.link; }
+                     musicFooter.style.opacity = 1;
                      setTimeout ( function ()
-                                  { document.getElementById ("music-footer").opacity = 0; },
-                                  10000 ); }).
-                 catch (function ()
-                        { musicFooter.style.display = 'none'; }); },
+                                  { document.getElementById ("music-footer").style.opacity = 0; },
+                                  10000 ); }); },
                1500 ); };
