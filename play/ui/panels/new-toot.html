@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- -*- web-mode -*- -->
+<!DOCTYPE html> <!-- -*- web -*- -->
 
 <!-- ./play/ui/panels/dummy.html is part of Tootsville
 
@@ -48,7 +48,9 @@
       <frameset id="new-toot-name-block">
         <legend><label for="new-toot-name">Name:</label></legend>
         <input type="text" name="new-toot-name" id="new-toot-name"
-               size="32">
+                size="32"
+                placeholder="(Toot's name here)"
+        pattern="[[:alpha:]]-?([[:alnum]]+-?)([[:alnum:]]+|[[:alnum]]*[0-9]{1,2}">
         <div id="new-toot-name-problem">
           <p> Choose a Toot name that: </p>
           <ul>
@@ -65,7 +67,6 @@
               Has no more than 2 of the same letter in a row </li>
           </ul>
         </div>
-        <button onclick="Tootsville.ui.hud.closePanel();">🤷</button>
     </div>
   </body>
 </html>
