@@ -98,7 +98,7 @@ Tootsville.Avatars.UltraTootBuilder =
                   return; }
                 else 
                 { BABYLON.SceneLoader.ImportMesh ("UltraToot.mesh",
-                                                  "https://jumbo.tootsville.org/Assets/Avatars/Violet-Volts/Assets/",
+                                                  "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                                   "UltraToot.babylon",
                                                   Tootsville.tank.scene,
                                                   (meshes, foo, bar) => { Tootsville.Avatars.importUltraToot (finish, meshes, foo, bar); },
