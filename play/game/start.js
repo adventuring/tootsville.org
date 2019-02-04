@@ -46,6 +46,8 @@ window.addEventListener ('load', () => {
     Tootsville.game.hideWhenGameReady ();
     Tootsville.game.stopSlowLoadingWatchdogs ();
 
+    Tootsville.ui.setBackgroundMusic ("bensound-adventure");
+    
     Tootsville.ui.hud.refreshHUD ();
     Tootsville.ui.hud.connectTalkBox ();
 
