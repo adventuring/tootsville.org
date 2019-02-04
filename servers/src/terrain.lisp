@@ -158,6 +158,7 @@ Should return true  if a body of water exists  which enters the space
 
 (defun point-underwater-p (x y)
   "Is the point underwater? TODO"
+  (declare (ignore x y))
   (error 'unimplemented))
 
 (defun find-random-point-if (function)

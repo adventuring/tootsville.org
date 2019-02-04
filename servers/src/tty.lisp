@@ -44,6 +44,9 @@
     :dark-gray :light-red :light-green :light-yellow
     :light-blue :light-magenta :light-cyan :white))
 
+(deftype color-designator ()
+  '(or number (member colors-by-name)))
+
 ;; from https://stackoverflow.com/a/41645393/475150
 
 (defun rbgi-to-rgb (rgbi)

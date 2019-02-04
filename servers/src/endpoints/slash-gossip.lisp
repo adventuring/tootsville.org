@@ -27,21 +27,24 @@
 
 (in-package :Tootsville)
 
+(defun make-offers-from-json (json)
+  (let (offers)
+    (dolist (offer (coerce (getf json :|offers|) 'list))
+      (let* ((offer-object (make-record 'gossip-initiation
+                                        :offeror *user*
+                                        :offer offer)))
+        (save-record offer-object)
+        (v:info '(:gossip :gossip-new) 
+                "New SDP offer ~a" (gossip-initiation-uuid offer-object))
+        (push (gossip-initiation-uuid offer-object) offers)))
+    offers))
+
 (defendpoint (post "/gossip/offers" "application/json")
   "Provide a new offer. Body is an SDP offer. Reply will be an offer URI."
   (with-user ()
     (let* ((json$ (hunchentoot:raw-post-data))
            (json (jonathan:parse json$))
-           offers)
-      (dolist (offer (getf json :|offers|))
-        (let* ((uuid (uuid:make-v4-uuid)) 
-               (offer-object (make-record 'gossip-initiation
-                                          :offeror *user*
-                                          :offer offer
-                                          :uuid uuid)))
-          (save-record offer-object)
-          (v:info '(:gossip :gossip-new) "New SDP offer ~a" uuid)
-          (push uuid offers)))
+           (offers (make-offers-from-json json)))
       (list 202 (list :location "/gossip/offers")
             (list :|offers| (mapcar #'uuid-to-uri offers))))))
 

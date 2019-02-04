@@ -82,15 +82,23 @@
 (defmethod id-column-for ((type (eql 'gossip-initiation)))
   :|uuid|)
 
-(defmethod %to-json ((object gossip-initiation)))
+(defmethod %to-json ((object gossip-initiation))
+  (%to-json (to-plist object)))
+
+(defmethod to-plist ((object gossip-initiation))
+  (list :|uuid| (gossip-initiation-uuid object)
+        :|offeror| (gossip-initiation-offeror object)
+        :|offer| (gossip-initiation-offer object)
+        :|answeror| (gossip-initiation-answeror object)
+        :|answer| (gossip-initiation-answer object)))
 
 (defmethod destroy-record ((init gossip-initiation))
   (clouchdb:delete-document (to-json init)))
 
 (defmethod save-record ((init gossip-initiation))
   (unless (gossip-initiation-uuid init)
-    (setf (gossip-initiation-uuid init) (uuid:make-v1-uuid)))
-  (clouchdb:put-document (to-json init)
+    (setf (gossip-initiation-uuid init) (uuid:make-v4-uuid)))
+  (clouchdb:put-document (plist-alist (to-plist init))
                          :id (gossip-initiation-uri init))
   (to-json init))
 

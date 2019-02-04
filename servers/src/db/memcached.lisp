@@ -62,16 +62,24 @@
                                       :timeout ,timeout
                                       :noreply t)
                (apply #'values ,$value))))
-         (progn ,@body))))
+         (progn
+           (run-async #'connect-cache)
+           ,@body))))
 
 
 
 (defun connect-cache ()
+  (setf cl-memcached:*mc-use-pool* t)
   (dolist (server (car (db-config :cache)))
-    (cl-memcached:make-memcache :ip (extract server :ip)
-                                :port (or (extract server :port) 11211)
-                                :name (extract server :name)))
-  (length (db-config :cache)))
+    (setf cl-memcached:*memcache*
+          (cl-memcached:make-memcache
+           :ip (extract server :ip)
+           :port (or (extract server :port) 11211)
+           :name (extract server :name)
+           :pool-size (max 1 (floor (the (unsigned-byte 15) (processor-count))
+                                    3))))
+    )
+  (length (the proper-list (db-config :cache))))
 
 
 
@@ -107,11 +115,13 @@
       '(())))
 
 (defun erase-all-memcached-for (name &rest columns+values)
-  (let ((db (second (database-for name)))
-        (table (db-table-for name))
-        (columns (plist-keys columns+values)))
-    (loop for set in (powerset columns)
-       for columns+values-subset = (loop for column in set
-                                      collecting column
-                                      collecting (getf columns+values column))
-       do (cl-memcached:mc-del (query-to-memcache-key db table columns+values-subset)))))
+  (if cl-memcached:*memcache* 
+      (let ((db (second (database-for name)))
+            (table (db-table-for name))
+            (columns (plist-keys columns+values)))
+        (loop for set in (powerset columns)
+           for columns+values-subset = (loop for column in set
+                                          collecting column
+                                          collecting (getf columns+values column))
+           do (cl-memcached:mc-del (query-to-memcache-key db table columns+values-subset))))
+      (run-async #'connect-cache)))
