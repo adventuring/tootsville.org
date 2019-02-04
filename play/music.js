@@ -1,5 +1,8 @@
 /* -*- js2 -*- */
 
+if (!('Tootsville' in window)) { Tootsville = {}; }
+if (!('ui' in Tootsville)) { Tootsville.ui = {}; }
+
 Tootsville.ui.setBackgroundMusic = function (song)
 { var backgroundMusic = document.querySelector("#background-music");
   if (backgroundMusic) // should always be found
