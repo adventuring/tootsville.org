@@ -29,8 +29,7 @@
  *
  */
 
-@import url(https://fonts.googleapis.com/css?family=Acme);
-@import url(https://fonts.googleapis.com/css?family=Cantarell);
+@import url('https://fonts.googleapis.com/css?family=Acme|B612:400,700|Cantarell:400,700');
 @import url(palette.less);
 @import url(ui/hud.less);
 @import url(ui/tootnix.less);
@@ -77,8 +76,8 @@ html {
 }
 
 @title-font: Acme, sans-serif;
-@ui-font: Acme, Chicago, Charcoal, sans-serif;
-@talk-font: Acme, "Comic Sans", sans-serif;
+@ui-font: B612, Cantarell, Chicago, Charcoal, sans-serif;
+@talk-font: B612, Cantarell, "Comic Sans", sans-serif;
 @font: Cantarell, serif;
 
 body {
@@ -124,12 +123,35 @@ button {
     font-size: 1.25rem;
     vertical-align: middle;
     text-align: center;
-    margin: 1rem;
     padding: .25rem .5rem .25rem .5rem;
+    border-radius: 1rem;
+    border: 2pt solid black;
+    margin: 6pt;
+    box-shadow: 5pt 5pt 5pt black;
+    transition: .25s margin, .25s box-shadow, .25s background-color;
 }
 
 button:hover {
     background-color: #eee;
     color: #111;
+    box-shadow: 2pt 2pt 5pt black;
+    margin-top: 8pt;
+    margin-left: 8pt;
+    margin-right: 2pt;
+    margin-bottom: 2pt;
 }
 
+input[type="text"] {
+    border-top: 1pt solid @silver;
+    border-left: 1pt solid @silver;
+    border-right: 1pt solid @silver;
+    border-bottom: 2pt solid black;
+    font-family: @ui-font;
+    font-size: 1.25rem;
+}
+
+input[type="text"]:focus {
+    border-top: 1pt solid black;
+    border-left: 1pt solid black;
+    border-right: 1pt solid black;
+}
