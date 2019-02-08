@@ -99,10 +99,9 @@ Tootsville:	Tootsville.new
 	mv --backup=simple Tootsville.new Tootsville
 
 Tootsville.new:	quicklisp-manifest.tmp bin/buildapp
-	bin/buildapp --output Tootsville.new \
+	bin/buildapp --output ../Tootsville.new \
 		--manifest-file quicklisp-manifest.tmp \
-		--load "src/setup.lisp" \
-		--load tootsville.asd \
+		--load src/setup.lisp \
 		--eval '(ql:quickload :Tootsville)' \
 		--entry Tootsville:entry
 
@@ -113,7 +112,6 @@ quicklisp-manifest.tmp:	tootsville.asd \
 			-and -not -path \**/.\*)
 	sbcl --no-userinit --no-sysinit --non-interactive \
 		--load src/setup.lisp \
-		--load tootsville.asd \
 		--eval '(ql:quickload :Tootsville)' \
 		--eval '(ql:write-asdf-manifest-file "quicklisp-manifest.tmp")'
 	for asd in src/lib/*/*.asd ; \

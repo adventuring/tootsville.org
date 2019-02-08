@@ -46,6 +46,7 @@ Tootsville.login.start = function ()
 
 Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
 { /* TODO: Replace super-lame placeholder with paperdolls in Tootsville.login.drawAvatarOnCanvas */
+    console.log ("Avatar on canvas", avatar, canvas );
     canvas.height = 128;
     canvas.width = 128;
     canvas.className = 'toot-paperdoll';
@@ -54,7 +55,10 @@ Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
     context.fillRect (0, 0, 128, 128);
     context.font = '64px Acme';
     context.fillStyle = interpretTootColor (avatar.patternColor);
-    context.fillText (avatar.pattern, 0, 64); };
+    var patternFor = { lightning: '🗲', dots: '•', moo: 'Moo',
+                       flowers: '⚘', horseshoes: '∪', stars: '★',
+                       blank: '', sparkles: '⁂', notes: '♪'};
+    context.fillText (patternFor[avatar.pattern] || avatar.pattern, 0, 64); };
 
 Tootsville.login.clearTootsList = function ()
 { var spin = document.querySelector ('.toots-list-loading-spinner');
@@ -63,6 +67,8 @@ Tootsville.login.clearTootsList = function ()
   var toots = document.querySelectorAll ('.toot');
   for (var i = 0; i < toots.length; ++i)
   { toots[i].parentNode.removeChild (toots[i]); } };
+
+Tootsville.login.settingsP = false;
 
 Tootsville.login.serverQueryCharacters = function ()
 { Tootsville.trace ("serverQueryCharacters");
@@ -85,34 +91,43 @@ Tootsville.login.serverQueryCharacters = function ()
                                 Tootsville.login.serverQueryCharacters ().then (finish, reject); });
                     Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
+Tootsville.login.toots = {};
+
+Tootsville.login.createTootListItem2 = function (li, toot)
+{ li['data-toot'] = toot;
+  var canvas = document.createElement ('CANVAS');
+  Tootsville.login.drawAvatarOnCanvas (toot, canvas);
+  li.innerHTML = '';
+  li.appendChild (canvas);
+  li.innerHTML += '<SPAN CLASS="toot-name">' +
+  toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
+  Tootsville.login.addChildOrSensitiveFlag (li); };
+
 Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
-  li.innerHTML = '<span class="toot-name">' +
-  tootName + '</span><i class="fas fa-spin fa-spinner"></i>';
+  li.innerHTML = '<SPAN CLASS="toot-name">' +
+  tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
   li.className = 'toot';
   li['data-toot'] = { name: tootName };
-  li.onclick = function () { Tootsville.login.pickCharacter (li); };
-  Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).then(
-      toot => { li['data-toot'] = toot;
-                var canvas = document.createElement ('CANVAS');
-                Tootsville.login.drawAvatarOnCanvas (toot, canvas);
-                li.innerHTML = '';
-                li.appendChild (canvas);
-                li.innerHTML += '<span class="toot-name">' +
-                toot.name + '</span><span class="note">' + toot.note + '</span>';
-                Tootsville.login.addChildOrSensitiveFlag (li); });
+  if (! Tootsville.login.settingsP)
+  { li.onclick = function () { Tootsville.login.pickCharacter (li); }; }
+  if (Tootsville.login.toots[tootName])
+  { Tootsville.login.createTootListItem2 (li, Tootsville.login.toots[tootName]); }
+  else
+  { Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).
+    then (toot => { Tootsville.login.toots [tootName] = toot;
+                    Tootsville.login.createTootListItem2 (li, toot); }); }
   return li; };
+
+Tootsville.login.tootsList = null;
 
 Tootsville.login.saveTootsList = function (list)
 { Tootsville.login.tootsList = list; };
 
-Tootsville.login.populateTootsList = function (list)
-{ Tootsville.trace("populateTootsList");
-  Tootsville.login.clearTootsList ();
-  Tootsville.trace("cleared list; adding back Toots");
-  for (var i = 0; i < list.length; ++i)
-  { var toot = list[i];
-    Tootsville.trace("adding " + toot);
+Tootsville.login.populateTootsList = function ()
+{ Tootsville.login.clearTootsList ();
+  for (var i = 0; i < Tootsville.login.tootsList.length; ++i)
+  { var toot = Tootsville.login.tootsList[i];
     var li = Tootsville.login.createTootListItem (toot);
     document.getElementById ('toots-list').appendChild (li); } };
 
@@ -144,7 +159,7 @@ Tootsville.login.loadTootsList = function ()
 { Tootsville.trace("loadTootsList");
   Tootsville.login.serverQueryCharacters ().then
   ( list => { Tootsville.login.saveTootsList (list);
-              Tootsville.login.populateTootsList (list); },
+              Tootsville.login.populateTootsList (); },
    Tootsville.login.startCharacterCreation); };
 
 Tootsville.login.dimUnpickedCharacters = function (picked)
@@ -161,8 +176,11 @@ Tootsville.login.playWithCharacter = function (name)
 Tootsville.login.pickCharacter = function (picked)
 { Tootsville.login.dimUnpickedCharacters (picked);
   document.querySelector ('#edit-toot-settings').style.opacity = .25;
+  document.querySelector ('#edit-toot-settings').disabled = true;
   document.querySelector ('#new-toot-hint').style.opacity = .25;
+  document.querySelector ('#new-toot-hint').disabled = true;
   document.querySelector ('#switch-google-account').style.opacity = .25;
+  document.querySelector ('#switch-google-account').disabled = true;
   Tootsville.login.playWithCharacter (picked['data-toot'].name); };
 
 Tootsville.login.fillGoogleUserInfo = function ()
@@ -207,23 +225,23 @@ Tootsville.login.removeChildOrSensitive = function (li)
 
 Tootsville.login.appendChildMode = function (li, tag, label, checkedP)
 { var name = '"' + li['data-toot'].name + '/child-mode"';
-  li.innerHTML += '<label><input type="radio" onchange="updateChildMode (\'' + li['data-toot'].name +
-  '\')" name=' + name +
-  (checkedP ? 'checked ' : '') + ' value="' + tag + '"> ' + label + ' </label> <br>'; };
+  li.innerHTML += '<LABEL><INPUT TYPE="RADIO" onchange="Tootsville.login.updateChildMode (\'' + li['data-toot'].name +
+  '\')" NAME=' + name +
+  (checkedP ? 'CHECKED ' : '') + ' VALUE="' + tag + '"> ' + label + ' </LABEL> <BR>'; };
 
 Tootsville.login.appendChildSensitiveRadioSet = function (li)
-{ li.innerHTML += '<br clear="left"><hr>';
-  Tootsville.login.appendChildMode (li, 'adult', '<i class="fas fa-graduation-cap fa-fw"></i> Adult account',
+{ li.innerHTML += '<BR CLEAR="LEFT"><HR>';
+  Tootsville.login.appendChildMode (li, 'adult', '<I CLASS="fas fa-graduation-cap fa-fw"></I> Adult account',
                                     ! (li['data-toot'].childP || li['data-toot'].sensitiveP));
-  appendChildMode (li, 'child', '<i class="fas fa-child fa-fw"></i> Child account',
+  Tootsville.login.appendChildMode (li, 'child', '<I CLASS="fas fa-child fa-fw"></I> Child account',
                    li['data-toot'].childP);
-  appendChildMode (li, 'sensitive', '<i class="fas fa-chess-queen fa-fw"></i> Sensitive Player account',
+  Tootsville.login.appendChildMode (li, 'sensitive', '<I CLASS="fas fa-chess-queen fa-fw"></I> Sensitive Player account',
                    li['data-toot'].sensitiveP); };
 
 Tootsville.login.appendChildCodeEntry = function (li)
-{ li.innerHTML += '<div class="define-child-code"' +
+{ li.innerHTML += '<DIV CLASS="define-child-code"' +
   (li['data-toot'].childP ? '' : ' style="display: none"' )+
-  '>TODO: Child Code entry </div>'; };
+  '>TODO: Child Code entry </DIV>'; };
 
 Tootsville.login.findLIForToot = function (name)
 { var toots = document.querySelectorAll ('#toots-list>.toot');
@@ -261,29 +279,30 @@ Tootsville.login.disableSensitiveMode = function (li, name)
   li['data-toot'].sensitiveP = false; };
 
 Tootsville.login.updateChildMode = function (name)
-{ var li = findLIForToot (name);
-  var mode = findSelectedChildMode (li);
+{ var li = Tootsville.login.findLIForToot (name);
+  var mode = Tootsville.login.findSelectedChildMode (li);
   if (mode == 'child')
-  { enableChildMode (li, name);
-    disableSensitiveMode (li, name);
+  { Tootsville.login.enableChildMode (li, name);
+    Tootsville.login.disableSensitiveMode (li, name);
     return; }
   if (mode == 'sensitive')
-  { disableChildMode (li, name);
-    enableSensitiveMode (li, name);
+  { Tootsville.login.disableChildMode (li, name);
+    Tootsville.login.enableSensitiveMode (li, name);
     return; }
-  disableChildMode (li, name);
-  disableSensitiveMode (li, name); };
+  Tootsville.login.disableChildMode (li, name);
+  Tootsville.login.disableSensitiveMode (li, name); };
 
 Tootsville.login.ensureChildSettings = function (li)
-{ if (li.querySelector ('input[type="radio"]')) { return; }
+{ if (li.querySelector ('INPUT[TYPE="RADIO"]')) { return; }
   li.onclick = undefined;
   li.style.cursor = 'default';
-  removeChildOrSensitive (li);
-  appendChildSensitiveRadioSet (li);
-  appendChildCodeEntry (li); };
+  Tootsville.login.removeChildOrSensitive (li);
+  Tootsville.login.appendChildSensitiveRadioSet (li);
+  Tootsville.login.appendChildCodeEntry (li); };
 
 Tootsville.login.childSettings = function ()
-{ Tootsville.login.populateTootsList (Tootsville.login.tootsList);
+{ Tootsville.login.settingsP = true;
+  Tootsville.login.populateTootsList (Tootsville.login.tootsList);
   if (0 == Tootsville.login.tootsList.length) {
       return; // XXX
   }
@@ -299,29 +318,34 @@ Tootsville.login.childSettings = function ()
   document.querySelector ('#edit-toot-settings-done').style.display = 'block'; };
 
 Tootsville.login.stripChildSettings = function (li)
-{ var buttons = li.querySelectorAll ('label');
+{ var buttons = li.querySelectorAll ('LABEL');
   for (var i = 0; i < buttons.length; ++i)
   { li.removeChild (buttons[i]); }
-  var breaks = li.querySelectorAll ('br');
+  var breaks = li.querySelectorAll ('BR');
   for (var i = 0; i < breaks.length; ++i)
   { li.removeChild (breaks[i]); }
-  li.removeChild (li.querySelector ('hr'));
+  li.removeChild (li.querySelector ('HR'));
   li.removeChild (li.querySelector ('.define-child-code'));
 
-  li.onclick = function () { pickCharacter (li); };
-  addChildOrSensitiveFlag (li); };
+  li.onclick = function () { Tootsville.login.pickCharacter (li); };
+  Tootsville.login.addChildOrSensitiveFlag (li); };
 
 Tootsville.login.addChildOrSensitiveFlag = function (li)
 { var toot = li['data-toot'];
-  if (toot.childP)
-  { li.innerHTML += '<span class="child"><i class="fas fa-child fa-fw"></i> Child Account</span>'; }
-  if (toot.sensitiveP)
-  { li.innerHTML += '<span class="sensitive"><i class="fas fa-chess-queen fa-fw"></i> Sensitive Player</span>'; } };
+  if (Tootsville.login.settingsP)
+  { Tootsville.login.removeChildOrSensitive (li);
+    Tootsville.login.appendChildSensitiveRadioSet (li);
+    Tootsville.login.appendChildCodeEntry (li);  }
+  else
+  { if (toot.childP)
+    { li.innerHTML += '<BR><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN>'; }
+    if (toot.sensitiveP)
+    { li.innerHTML += '<BR><SPAN CLASS="sensitive"><I CLASS="fas fa-chess-queen fa-fw"></I> Sensitive Player</SPAN>'; }  }}; 
 
 Tootsville.login.doneEditingSettings = function ()
 { var toots = document.querySelectorAll ('#toots-list>.toot');
-  for (var i = 0; i < toots.length; ++i)
-  { stripChildSettings (toots[i]); }
+  Tootsville.login.settingsP = false;
+  Tootsville.login.populateTootsList ();
   document.querySelector ('#toots-list').style.backgroundColor = '#ba9dca';
   document.querySelector ('#toots-list>#add-toot').style.display = 'block';
   document.querySelector ('#pick-toot>h2').innerHTML = 'Pick a Toot Character';

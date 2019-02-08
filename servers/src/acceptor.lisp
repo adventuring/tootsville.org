@@ -140,7 +140,7 @@
                  (to-json
                   (list :error (http-status-code c)
                         :error-message (princ-to-string c)
-                        :trace (rollbar::find-appropriate-backtrace)))
+                        :trace (trivial-backtrace:backtrace-string)))
                  (to-json
                   (list :error (http-status-code c)
                         :error-message (princ-to-string c))))))

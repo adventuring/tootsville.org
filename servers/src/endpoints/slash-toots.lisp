@@ -39,17 +39,30 @@
 (defendpoint (get "/toots/:toot-name" "application/json")
   "Get public info about TOOT-NAME"
   (check-arg-type toot-name toot-name)
-  ;; with-user TODO
-  (list 200
-        `(:last-modified ,(header-time))
-        (if-let (toot (find-toot-by-name toot-name))
-          (toot-info toot)
-          `(:is-a "toot"
-                  :name ,(string-capitalize toot-name)
-                  :avatar "ultraToot"
-                  :child-p nil
-                  :sensitive-p t
-                  :online-p t
-                  :last-seen ,(local-time:format-timestring
-                               nil (local-time:now))
-                  :exists-p "maybe?"))))
+  (with-user ()
+    (let ((Toot (find-toot-by-name toot-name)))
+      (list 200
+            `(:last-modified ,(header-time))
+            (Toot-info Toot)))))
+
+(defendpoint (post "/toots/:toot-name/child-p" "application/json")
+  "Set CHILD-P flag for TOOT-NAME.
+
+Input JSON: { set: true } or { set: false }"
+  (check-arg-type Toot-name Toot-name)
+  (with-user ()
+    (let ((Toot (find-Toot-by-name Toot-name)))
+      (assert-my-character Toot))
+    (list 200
+          `(:last-modified ,(header-time (Toot-last-active Toot)))
+          (if-let (toot (find-toot-by-name toot-name))
+            (toot-info toot)
+            `(:is-a "toot"
+                    :name ,(string-capitalize toot-name)
+                    :avatar "ultraToot"
+                    :child-p nil
+                    :sensitive-p t
+                    :online-p t
+                    :last-seen ,(local-time:format-timestring
+                                 nil (local-time:now))
+                    :exists-p "maybe?")))))
