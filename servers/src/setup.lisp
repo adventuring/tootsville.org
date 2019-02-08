@@ -79,6 +79,7 @@
        (lib-dirs (merge-pathnames (make-pathname :directory '(:relative "lib")
                                                  :name :wild :type :wild)
                                   src-dir)))
+  (swank::set-default-directory src-dir)
   (pushnew (truename (merge-pathnames (make-pathname :directory '(:relative :up))
                                       src-dir))
            asdf:*central-registry*)
@@ -88,7 +89,7 @@
 (format *trace-output*
         "~2& System Definitions registry:
 ~{~& •  ~a~}"
-        (mapcar #'enough-namestring asdf:*central-registry*))
+        (mapcar #'enough-namestring (reverse asdf:*central-registry*)))
 
 ;;; misc
 #+sbcl
@@ -99,3 +100,4 @@
 (format *trace-output* "~&Setup script completed; ready to load.~4%")
 
 (setf *setup* t)
+

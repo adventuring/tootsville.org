@@ -255,7 +255,7 @@ p {
 
 #toots-list {
     display: block;
-    background-color: #ba9dca;
+    background-color: @violet;
     border: 1pt solid black;
     border-radius: 1rem;
     min-height: 12rem;
@@ -264,7 +264,7 @@ p {
     overflow-y: auto;
 }
 
-#toots-list > li {
+#toots-list > li.toot {
     display: inline-block;
     width: 15rem;
     border: 1pt solid black;
@@ -275,6 +275,13 @@ p {
     vertical-align: top;
     cursor: pointer;
     transition: .25s;
+
+    &:hover {
+        box-shadow: 5pt 5pt 3pt @periwinkle,
+                    5pt -5pt 3pt @periwinkle,
+                    -5pt 5pt 3pt @periwinkle,
+                    -5pt -5pt 3pt @periwinkle;
+    }
 }
 
 #toot-name, .toot-name {
