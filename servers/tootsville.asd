@@ -33,7 +33,7 @@
 
 
 (defsystem Tootsville
-  :version "0.4.0"
+  :version "0.4.1"
   :author "Bruce-Robert Pocock <BRPocock@ciwta.org>"
   :license "AGPL v3+"
   :bug-tracker "https://github.com/adventuring/tootsville.org/issues"
