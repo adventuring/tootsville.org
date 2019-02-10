@@ -101,7 +101,11 @@ doc:	server-doc js-doc
 server-doc: \
 	doc/Tootsville.txt \
 	doc/Tootsville.pdf \
-	doc/Tootsville.html.tar.gz
+	doc/Tootsville.html.tar.gz \
+	doc/Tootsville.info
+
+doc-install-info:	doc/Tootsville.info
+	install-info doc/Tootsville.info /usr/local/share/info/dir
 
 doc/Tootsville.texi:	servers/doc/Tootsville.texi
 	cp servers/doc/Tootsville.texi doc/
