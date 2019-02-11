@@ -42,8 +42,8 @@
 (defendpoint (post "/gossip/offers" "application/json")
   "Provide a new offer. Body is an SDP offer. Reply will be an offer URI."
   (with-user ()
-    (let* ((json$ (hunchentoot:raw-post-data))
-           (json (jonathan:parse json$))
+    (let* ((json$ (map 'string 'code-char (hunchentoot:raw-post-data)))
+           (json (jonathan.decode:parse json$))
            (offers (make-offers-from-json json)))
       (list 202 (list :location "/gossip/offers")
             (list :|offers| (mapcar #'uuid-to-uri offers))))))

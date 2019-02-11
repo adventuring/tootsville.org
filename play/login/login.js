@@ -58,7 +58,9 @@ Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
     var patternFor = { lightning: '🗲', dots: '•', moo: 'Moo',
                        flowers: '⚘', horseshoes: '∪', stars: '★',
                        blank: '', sparkles: '⁂', notes: '♪'};
-    context.fillText (patternFor[avatar.pattern] || avatar.pattern, 0, 64); };
+    context.fillText (patternFor[avatar.pattern] || avatar.pattern, 0, 64);
+    context.fillStyle = interpretTootColor (avatar.padColor);
+    context.fillRect (0, 120, 128, 128); };
 
 Tootsville.login.clearTootsList = function ()
 { var spin = document.querySelector ('.toots-list-loading-spinner');
@@ -78,7 +80,7 @@ Tootsville.login.serverQueryCharacters = function ()
           then (
               response =>
                   { Tootsville.trace ("response from serverQueryCharacters", response);
-                    if (response.toots.length == 0)
+                    if (0 == response.toots.length)
                     { reject (); } else
                     { finish (response.toots); } },
               error =>
@@ -96,25 +98,25 @@ Tootsville.login.toots = {};
 Tootsville.login.createTootListItem2 = function (li, toot)
 { li['data-toot'] = toot;
   var canvas = document.createElement ('CANVAS');
-  Tootsville.login.drawAvatarOnCanvas (toot, canvas);
   li.innerHTML = '';
   li.appendChild (canvas);
   li.innerHTML += '<SPAN CLASS="toot-name">' +
   toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
-  Tootsville.login.addChildOrSensitiveFlag (li); };
+  Tootsville.login.addChildOrSensitiveFlag (li);
+  Tootsville.login.drawAvatarOnCanvas (toot, canvas); };
 
 Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
-  li.innerHTML = '<SPAN CLASS="toot-name">' +
-  tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
-  li.className = 'toot';
-  li['data-toot'] = { name: tootName };
   if (! Tootsville.login.settingsP)
   { li.onclick = function () { Tootsville.login.pickCharacter (li); }; }
   if (Tootsville.login.toots[tootName])
   { Tootsville.login.createTootListItem2 (li, Tootsville.login.toots[tootName]); }
   else
-  { Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).
+  { li.innerHTML = '<SPAN CLASS="toot-name">' +
+  tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
+  li.className = 'toot';
+    li['data-toot'] = { name: tootName };
+    Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).
     then (toot => { Tootsville.login.toots [tootName] = toot;
                     Tootsville.login.createTootListItem2 (li, toot); }); }
   return li; };

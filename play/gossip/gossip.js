@@ -67,7 +67,8 @@ Tootsville.gossip.setConnectionHandlers = function (connection)
   connection.onsignalingstatechange = event =>
   { console.log (`[gossip] onsignalingstatechange`, connection.signalingState);
     document.getElementById ('signalingStateSpan').textContent = connection.signalingState; };
-  connection.ontrack = event => console.log (`[gossip] ontrack`, event);};
+  connection.ontrack = event => console.log (`[gossip] ontrack`, event);
+  return connection; };
 
 Tootsville.gossip.createOffer = function ()
 { var connection = new RTCPeerConnection ({ iceServers: Tootsville.gossip.iceServers });
@@ -77,9 +78,10 @@ Tootsville.gossip.createOffer = function ()
   connection.gossipChannel.onbufferedamountlow = event => { console.log (`[gossip] gossipChannel: onbufferedamountlow`, event); };
   connection.gossipChannel.onclose = event => { console.log (`[gossip] gossipChannel: onclose`, event); };
   connection.gossipChannel.onerror = event => { console.log (`[gossip] gossipChannel: onerror`, event); };
-  connection.gossipChannel.onopen = event => { console.log (`[gossip] gossipChannel:  onopen`, event); }; };
+  connection.gossipChannel.onopen = event => { console.log (`[gossip] gossipChannel:  onopen`, event); };
+  return connection; };
 
-Tootsville.gossip.linkOfferToPeer = function (peer)
+Tootsville.gossip.linkOfferToPeer = function (connection, peer)
 { connection.onicecandidate = event =>
   { if (event.candidate)
     { Tootsville.gossip.peerICECandidate (peer, event.candidate, event); } };
@@ -90,7 +92,8 @@ Tootsville.gossip.linkOfferToPeer = function (peer)
             ( () =>
              { Tootsville.util.rest ('POST', 'gossip/peer-offer',
                                     { peer: peer,
-                                      offer: { type: offer.type, sdp: offer.sdp } }); }); }); };
+                                      offer: { type: offer.type, sdp: offer.sdp } }); }); });
+  return connection; };
 
 Tootsville.gossip.createOffers = function (count)
 { var offers = [];
@@ -100,7 +103,7 @@ Tootsville.gossip.createOffers = function (count)
 
 Tootsville.gossip.peerDataChannel = function (peer, event)
 { console.log (`[gossip] ondatachannel`);
-  dataChannel = event.channel;
+  var dataChannel = event.channel;
 
   dataChannel.onbufferedamountlow = event => { console.log (`[gossip] dataChannel: onbuf;eredamountlow`, event); };
   dataChannel.onclose = event => { console.log (`[gossip] dataChannel: onclose`, event); };

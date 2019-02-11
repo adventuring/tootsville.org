@@ -6,10 +6,12 @@ if (!('gatekeeper' in Tootsville.game)) { Tootsville.game.gatekeeper = {}; }
 
 Tootsville.game.dispatchDatagram = function (datagram)
 { var from = datagram.from;
-  if (var handler = Tootsville.game.gatekeeper[ from ])
+  var handler;
+  if ((handler = Tootsville.game.gatekeeper[ from ]))
   { handler (datagram); }
   else
   { Tootsville.warn ("Unhandled datagram from: " + from, datagram); } };
+
 
 Tootsville.game.gatekeeper.logOK = function (memo)
 { Tootsville.warn ("unhandled datagram", memo); };
@@ -197,3 +199,5 @@ Tootsville.game.gatekeeper.forceMove = function (memo)
 
 Tootsville.game.gatekeeper.reportBug = function (memo)
 { Tootsville.warn ("unhandled datagram", memo); };
+
+Tootsville.game.gatekeeper.

@@ -49,7 +49,7 @@ Tootsville.util.assertValidHostName = function (hostName)
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
-  if (!(hostName == "http"))
+  if (!(hostName == "http" || hostName == 'https'))
   { hostName = Tootsville.util.assertValidHostName(hostName);
     uri = hostName + '/' + uri; }
   Tootsville.trace ('REST: ' + method + ' ' + uri);
@@ -61,17 +61,18 @@ Tootsville.util.rest = function (method, uri, body, headers)
   let opts = { method: method };
   if (body && (! ('Content-Type' in headers)))
   { headers['Content-Type'] = 'application/json';
-    opts.body = body; }
+    opts.body = JSON.stringify(body); }
   opts.headers = headers;
   return fetch (uri, opts).then(
       response =>
           { if (response.ok)
             { return response.json (); }
             else
-            { Tootsville.warn("Server error " + JSON.stringify(response.json ()));
-              Tootsville.parrot.ask (
+            { var json = response.json ();
+              Tootsville.warn("Server error from " + uri + " " + JSON.stringify(json));
+              return Tootsville.parrot.ask (
                   "Uh-oh! Server trouble!",
-                  Tootsville.parrot.parrotErrorText(response.json ()),
+                  Tootsville.parrot.parrotErrorText(json),
                   [{ tag: 'retry', text: "Retry the network operation" }]).then
               (() =>
                { return Tootsville.util.rest (method, uri, body, headers); }); }},

@@ -39,7 +39,7 @@
         black: "#000",
 
         "deep-purple": "#b117ff",
-        yellow: "#ff216f",
+        yellow: "#fff216",
         pink: "#e73e97",
         turquoise: "#00a290",
         cyan: "#00a290",
