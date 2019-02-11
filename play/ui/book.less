@@ -1,0 +1,124 @@
+#book {
+    width: 85vw;
+    left: 5vw;
+    top: 5vh;
+    height: 85vh;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+#close-book {
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 1rem;
+    background-color: @red;
+}
+
+#book-page-prev {
+    left: 2rem;
+    top: 5vh;
+    height: 85vh;
+    width: 1cm;
+    position: fixed;
+}
+
+#book-page-next {
+    top: 5vh;
+    right: 0;
+    width: 2cm;
+    height: 85vh;
+    position: fixed;
+}
+
+.book-cover {
+    background-color: @red;
+    border: 6pt solid @burgundy;
+    position: fixed;
+    top: 5vh;
+    height: 85vh;
+    left: calc(3rem + 2cm);
+    right: calc(3rem + 2cm);
+}
+
+.book-cover .book-title {
+    color: @violet;
+    font-family: Acme;
+    font-size: 3rem;
+    width: 100%;
+    text-align: center;
+    top: 5rem;
+    position: relative;
+    text-shadow: 2px 2px 0 white, 2px -2px 0 white, -2px 2px 0 white, -2px -2px white,
+                 -4px -4px 0 black, 4px -4px 0 black,4px 4px 0 black, -4px 4px 0 black;
+}
+
+.book-cover .book-byline {
+    color: @violet;
+    font-family: Acme;
+    font-size: 2rem;
+    width: 100%;
+    text-align: center;
+    top: 75%;
+    position: relative;
+    text-shadow: 1px 1px 0 white, 1px -1px 0 white, -1px 1px 0 white, -1px -1px white,
+                 -2px -2px 0 black, 2px -2px 0 black,2px 2px 0 black, -2px 2px 0 black;
+}
+
+.book-cover-open {
+    background-color: #400;
+    top: 5vh;
+    left: calc(3rem + 1cm);
+    position: fixed;
+    width: 85vw;
+    height: 85vh;
+    border: 1px solid #400;
+}
+
+.book-left-page {
+    position: fixed;
+    top: 5vh;
+    left: 4rem;
+    width: 5vw;
+    background: linear-gradient(to right, #bbb 0%,#fff 34%,#fff 54%,#bbb 84%,#000 100%);
+    height: 85vh;
+}
+
+.book-right-page {
+    position: fixed;
+    top: 5vh;
+    left: calc( 4rem + 5vw );
+    width: calc( 100vw - 10vw - 4rem );
+    background: linear-gradient(to right, #000 0%, #bbb .5rem, #fff 1rem, #fff 90%, #bbb 100%);
+    height: 85vh;
+}
+
+.book-cover-open .book-title {
+    width: 100%;
+    text-align: center;
+    margin-top: .5em;
+    font-size: 1.5rem;
+}
+
+.book-contents {
+	max-width: 40rem;
+	font-size: 1rem;
+	font-family: B612;
+	padding: 1rem;
+	height: 75vh;
+	overflow: hidden;
+}
+
+.book-cover-open .book-byline {
+    font-size: 1em;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+
+
+
+
+
