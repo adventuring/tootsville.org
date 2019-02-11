@@ -138,12 +138,12 @@
              '(:content-type "application/json; charset=utf-8")
              (if hunchentoot:*show-lisp-backtraces-p*
                  (to-json
-                  (list :error (http-status-code c)
-                        :error-message (princ-to-string c)
-                        :trace (trivial-backtrace:backtrace-string)))
+                  (list :|error| (http-status-code c)
+                        :|errorMessage| (princ-to-string c)
+                        :|trace| (rollbar::find-appropriate-backtrace)))
                  (to-json
-                  (list :error (http-status-code c)
-                        :error-message (princ-to-string c))))))
+                  (list :|error| (http-status-code c)
+                        :|errorMessage| (princ-to-string c))))))
       (encode-endpoint-reply
        (list (http-status-code c)
              '(:content-type "text/html; charset=utf-8")
