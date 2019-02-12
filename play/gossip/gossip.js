@@ -37,28 +37,14 @@ if (!Tootsville.gossip.peers)
 { Tootsville.gossip.peers = [];}
 
 Tootsville.gossip.connectedP = function ()
-{ for (var peer in Tootsville.gossip.peers)
-  { if (peer && peer.openP) { return true; } }
-  return false; };
+{ return (Tootsville.gossip.peers != []);; };
 
 Tootsville.gossip.stunServers = function ()
-{ var sample = [ { urls: [ "stun:stun.l.google.com:19302",
-                           "stun:stun1.l.google.com:19302",
-                           "stun:stun2.l.google.com:19302",
-                           "stun:stun3.l.google.com:19302" ] } ];
+{ var sample = [ { urls: [ "stun:stun.l.google.com:19302" ] } ];
   /* Firefox wants 2, preferably, and never more than 5, so 3 seems safe. */
   sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
   sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
   return sample; };
-
-Tootsville.gossip.makeConnection = function ()
-{ return { connection: undefined,
-           sendChannel: undefined,
-           receiveChannel: undefined,
-           pcConstraint: undefined,
-           dataConstraint: undefined }; };
-
-Tootsville.gossip.peers = [];
 
 Tootsville.gossip.postDescription = function (peer, description)
 { return new Promise (success =>
@@ -68,109 +54,46 @@ Tootsville.gossip.postDescription = function (peer, description)
 Tootsville.gossip.createConnection = function ()
 { var servers = Tootsville.gossip.stunServers ();
   Tootsville.trace ("STUN servers", servers);
-  var peer = Tootsville.gossip.makeConnection ();
-  Tootsville.trace ('Using SCTP based data channels');
-  // For  SCTP,  reliable  and  ordered delivery  is  true  by  default.
-  // Add peer.connection  to global  scope to make  it visible  from the
-  // browser console.
-  peer.connection = new RTCPeerConnection( { iceServers: servers }, peer.pcConstraint);
+  var peer = {connection: new RTCPeerConnection({ iceServers: servers, iceCandidatePoolSize: 10 }) };
   Tootsville.trace ('Created local peer connection object peer.connection');
+  peer.infinityChannel = peer.connection.createDataChannel('∞ Mode ℵ₀',
+                                                           { ordered: false,
+                                                             negotiated: false });
+  Tootsville.trace ('Created Infinity Mode data channel');
 
-  peer.sendChannel = peer.connection.createDataChannel('sendDataChannel',
-                                                       peer.dataConstraint);
-  Tootsville.trace ('Created send data channel');
-
-  peer.connection.onicecandidate = event => { Tootsville.gossip.iceCallback1 (peer, event); };
-  peer.sendChannel.onopen = event => { Tootsville.gossip.onSendChannelStateChange (peer, event); };
-  peer.sendChannel.onclose = event => { Tootsville.gossip.onSendChannelStateChange (peer, event); };
+  peer.infinityChannel.onopen = event => { Tootsville.gossip.openInfinityMode (peer, event); };
 
   peer.connection.createOffer().then(
-      desc => { Tootsville.gossip.gotDescription1 (peer, desc);
-                Tootsville.gossip.postDescription (peer, desc).then (
-                    answer =>
-                        { Tootsville.warn('Answer from remote peer', answer.sdp);
-                          peer.connection.setRemoteDescription (answer);
-                          Tootsville.gossip.peers = Tootsville.gossip.peers.concat (peer); });},
-      Tootsville.gossip.onCreateSessionDescriptionError ); };
+      () => { Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) ); }); };
 
-Tootsville.gossip.onCreateSessionDescriptionError = function (error)
- { Tootsville.error ('Failed to create session description: ' + error.toString()); };
-
-Tootsville.gossip.sendData = function (data)
- { sendChannel.send(data);
-   Tootsville.trace ('Sent Data', data); };
-
-Tootsville.gossip.closeDataChannels = function (peer)
-{ Tootsville.warn ('Closing data channels');
-  peer.sendChannel.close();
-  Tootsville.warn ('Closed data channel with label: ' + sendChannel.label);
-  peer.receiveChannel.close();
-  Tootsville.warn ('Closed data channel with label: ' + receiveChannel.label);
-  peer.connection.close();
-  peer.connection = null;
-  Tootsville.warn ('Closed peer connections'); };
-
-Tootsville.gossip.gotDescription1 = function (peer, desc)
-{ peer.connection.setLocalDescription(desc);
-  Tootsville.warn('Offer from peer.connection', desc.sdp); };
-
-Tootsville.gossip.iceCallback1 = function (peer, event)
-{ Tootsville.warn ('local ice callback');
-  if (event.candidate)
-  { Tootsville.warn ('ICE candidate', event.candidate);
-  peer.connection.addIceCandidate (event.candidate).
-    then(
-        () => { Tootsville.gossip.onAddIceCandidateSuccess (peer); },
-        Tootsville.gossip.onAddIceCandidateError
-    );}
+/**
+* Accept an inbound datagram.
+*
+* See the server documentation of `DEFINFINITY' for a description of the
+* Infinity Mode protocols.
+*/
+Tootsville.gossip.gatekeeperAccept = function (peer, event)
+{ var gram = event.data;
+  if (gram.c && Tootsville.game.commands [ gram.c ])
+  { Tootsville.game.commands [ gram.c ] (gram.d, gram.u, gram.r); }
+  else if (gram.from && Tootsville.game.gatekeeper [ gram.from ])
+  { Tootsville.game.gatekeeper [ gram.from ] (gram); }
+  else if (gram._cmd && gram._cmd == 'logOK')
+  { Tootsville.game.gatekeeper.logOK (gram); }
   else
-  { Tootsville.warn ("No candidate in ICE callback"); } };
+  { Tootsville.warn ("Unknown datagram type received", gram); }
+};
 
-Tootsville.gossip.iceCallback2 = function (peer, event)
-{ Tootsville.warn('remote ice callback');
-  if (event.candidate)
-  { peer.connection.addIceCandidate (event.candidate).
-    then(
-        () => { Tootsville.gossip.onAddIceCandidateSuccess (peer); },
-        Tootsville.gossip.onAddIceCandidateError
-    );
-    Tootsville.warn('Remote ICE candidate: \n ' + event.candidate.candidate); }
-  else
-  { Tootsville.warn ("No candidate in ICE callback", event); } };
+Tootsville.gossip.closeInfinityMode = function (peer, event)
+{ Tootsville.warn ("Dropped peer connection", peer, event);
+  Tootsville.gossip.peers = Tootsville.gossip.peers.filter ( el => { return el != peer; } ); };
 
-Tootsville.gossip.onAddIceCandidateSuccess = function (peer)
- {    Tootsville.warn('AddIceCandidate success.');
- };
-
-Tootsville.gossip.onAddIceCandidateError = function (error)
- {    Tootsville.warn('Failed to add Ice Candidate: ' + error.toString());
- };
-
-Tootsville.gossip.receiveChannelCallback = function (peer, event)
- { Tootsville.warn('Receive Channel Callback');
-   peer.receiveChannel = event.channel;
-   peer.receiveChannel.onmessage = Tootsville.gossip.onReceiveMessageCallback;
-   peer.receiveChannel.onopen = Tootsville.gossip.onReceiveChannelStateChange;
-   peer.receiveChannel.onclose = Tootsville.gossip.onReceiveChannelStateChange;
- };
-
-Tootsville.gossip.onReceiveMessageCallback = function (event)
- { Tootsville.warn('Received Message');
-   Tootsville.gossip.processIncomingDatagram(event.data);
- };
-
-Tootsville.gossip.onSendChannelStateChange = function (peer, event)
- { var readyState = peer.sendChannel.readyState;
-   Tootsville.warn('Send channel state is: ' + readyState);
-   if (readyState === 'open')
-   { peer.openP = true; }
-   else
-   { peer.openP = false; } };
-
-Tootsville.gossip.onReceiveChannelStateChange = function ()
- { var readyState = receiveChannel.readyState;
-    Tootsville.warn('Receive channel state is: ' + readyState);
- };
+Tootsville.gossip.openInfinityMode = function (peer, event)
+{ Tootsville.trace ("Added Infinity Mode connection", peer, event);
+  peer.infinityChannel.onmessage = event => { Tootsville.gossip.gatekeeperAccept (peer, event); };
+  peer.infinityChannel.onclose = event => { Tootsville.gossip.closeInfinityMode (peer, event); };
+  peer.infinityChannel.send (JSON.stringify ( { c: login, d: { userName: Tootsville.character, password: null, zone: 'Tootsville Ⅴ' }, r: '$Eden' }));
+  Tootsville.gossip.peers = Tootsville.gossip.peers.concat (peer); };
 
 Tootsville.gossip.connect = function ()
 { Tootsville.gossip.createConnection (); };
@@ -182,5 +105,5 @@ Tootsville.gossip.ensureConnected = function ()
           { Tootsville.warn ("Gossipnet already connected");
             success (); } else
           { Tootsville.warn ("Gossipnet not connected; connecting now");
-            Tootsville.gossip.connect ().then (success, failure); } }); };
+            Tootsville.gossip.connect ().then (success, failure); } } ); };
 
