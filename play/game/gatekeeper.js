@@ -200,4 +200,4 @@ Tootsville.game.gatekeeper.forceMove = function (memo)
 Tootsville.game.gatekeeper.reportBug = function (memo)
 { Tootsville.warn ("unhandled datagram", memo); };
 
-Tootsville.game.gatekeeper.
+
