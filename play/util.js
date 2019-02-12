@@ -101,4 +101,4 @@ Tootsville.util.ensureServersReachable = function ()
   ( (response) => { Tootsville.trace ("Ping replied", response); },
     (error) => { Tootsville.parrot.say (
         "Squawk! I don't see any servers!",
-        "I'm not able to reach any of the Tootsville game servers." ); } ); };
+        "I'm not able to reach any of the Tootsville game servers. This probably means you won't be able to sign in." ); } ); };
