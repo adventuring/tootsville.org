@@ -236,6 +236,14 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 
+dist/play/stun-list.js:	build/public-stun-list.txt
+	echo '/* File generated from build/public-stun-list.txt by Makefile */'  > dist/play/stun-list.js
+	echo 'if (!("Tootsville" in window)) { Tootsville = { gossip: {} }; };'  >> dist/play/stun-list.js
+	echo 'if (!("gossip" in Tootsville)) { Tootsville.gossip = {}; };'  >> dist/play/stun-list.js
+	echo 'Tootsville.gossip.stunList = ['  >> dist/play/stun-list.js
+	(while read stun ; do echo '"'$$stun'",' >> dist/play/stun-list.js; done) < build/public-stun-list.txt
+	echo '];'  >> dist/play/stun-list.js
+
 play:	dist/play.$(clusterorg)
 
 dist/play/play.map:	dist/play/play.js
