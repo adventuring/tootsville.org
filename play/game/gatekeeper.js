@@ -13,191 +13,191 @@ Tootsville.game.dispatchDatagram = function (datagram)
   { Tootsville.warn ("Unhandled datagram from: " + from, datagram); } };
 
 
-Tootsville.game.gatekeeper.logOK = function (memo)
-{ Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.logOK = function (gram)
+{ Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.avatars = function (memo)
-{ var world = memo.inRoom;
-  var avatars = memo.avatars;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.avatars = function (gram)
+{ var world = gram.inRoom;
+  var avatars = gram.avatars;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.bots = function (memo)
-{ var bots = memo.bots;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.bots = function (gram)
+{ var bots = gram.bots;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.passport = function (memo)
-{ var passport = memo.passport;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.passport = function (gram)
+{ var passport = gram.passport;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.startEvent = function (memo)
-{ var eventMoniker = memo.moniker;
-  var eventID = memo.eventID;
-  var scriptLanguage = memo.script || 'ActionScript';
-  var scriptVersion = memo.asVersion;
-  var vitOnlyP = memo.vitOnly;
-  var successP = memo.status;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.startEvent = function (gram)
+{ var eventMoniker = gram.moniker;
+  var eventID = gram.eventID;
+  var scriptLanguage = gram.script || 'ActionScript';
+  var scriptVersion = gram.asVersion;
+  var vitOnlyP = gram.vitOnly;
+  var successP = gram.status;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.scoreUpdate = function (memo)
-{ var successP = memo.status;
+Tootsville.game.gatekeeper.scoreUpdate = function (gram)
+{ var successP = gram.status;
   if (! successP ) { return; }
-  var rank = memo.place;
-  var score = memo.score;
-  Tootsville.warn ("unhandled datagram", memo);};
+  var rank = gram.place;
+  var score = gram.score;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.endEvent = function (memo)
-{ var successP = memo.status;
+Tootsville.game.gatekeeper.endEvent = function (gram)
+{ var successP = gram.status;
   if (! successP ) { return; }
-  var eventID = memo.eventID;
-  var peanuts = memo.peanuts;
-  var totalPeanuts = memo.totalPeanuts;
-  var canceledP = memo.canceled;
-  Tootsville.warn ("unhandled datagram", memo);};
+  var eventID = gram.eventID;
+  var peanuts = gram.peanuts;
+  var totalPeanuts = gram.totalPeanuts;
+  var canceledP = gram.canceled;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.gameAction = function (memo)
-{ var data = memo.data;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.gameAction = function (gram)
+{ var data = gram.data;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.beam = function (memo)
-{     var world = memo.room;
-      var x = memo.x;
-      var y = memo.y;
-      var z = memo.z;
-      Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.beam = function (gram)
+{     var world = gram.room;
+      var x = gram.x;
+      var y = gram.y;
+      var z = gram.z;
+      Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.earning = function (memo)
+Tootsville.game.gatekeeper.earning = function (gram)
 {     
-    Tootsville.warn ("unhandled datagram", memo);};
+    Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getAwardRankings = function (memo)
-{ var ranks = memo.ranks;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.getAwardRankings = function (gram)
+{ var ranks = gram.ranks;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getStoreItems = function (memo)
-{ var totalPeanuts = memo.totalPeanuts;
-  var stores = memo.stores;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.getStoreItems = function (gram)
+{ var totalPeanuts = gram.totalPeanuts;
+  var stores = gram.stores;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.purchase = function (memo)
-{ var totalPeanuts = memo.totalPeanuts;
-  var successP = memo.status;
+Tootsville.game.gatekeeper.purchase = function (gram)
+{ var totalPeanuts = gram.totalPeanuts;
+  var successP = gram.status;
   if (! successP ) { return; }
-  var bought = memo.bought;
-  Tootsville.warn ("unhandled datagram", memo);};
+  var bought = gram.bought;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.inventory = function (memo)
-{ var inv = memo.inv;
-  var type = memo.type;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.inventory = function (gram)
+{ var inv = gram.inv;
+  var type = gram.type;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getColorPalettes = function (memo)
-{ var baseColors = memo.baseColors;
-  var padColors = memo.extraColors;
-  var patternColors = memo.patternColors;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.getColorPalettes = function (gram)
+{ var baseColors = gram.baseColors;
+  var padColors = gram.extraColors;
+  var patternColors = gram.patternColors;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.wardrobe = function (memo)
-{ var avatar = memo.avatar;
-  var userName = memo.avatar.userName;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.wardrobe = function (gram)
+{ var avatar = gram.avatar;
+  var userName = gram.avatar.userName;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.initUserRoom = function (memo)
-{ var successP = memo.status;
+Tootsville.game.gatekeeper.initUserRoom = function (gram)
+{ var successP = gram.status;
   if (successP)
-  { var world = memo.moniker;
-    Tootsville.warn ("unhandled datagram", memo); }
+  { var world = gram.moniker;
+    Tootsville.warn ("unhandled datagram", gram); }
   else
-  { var err = memo.err;
+  { var err = gram.err;
     if ("showFirstRun" == err)
     {
-        Tootsville.warn ("unhandled datagram", memo); }
+        Tootsville.warn ("unhandled datagram", gram); }
     else if ("exists" == err)
-    { var world = memo.moniker;
-      Tootsville.warn ("unhandled datagram", memo); }}};
+    { var world = gram.moniker;
+      Tootsville.warn ("unhandled datagram", gram); }}};
 
-Tootsville.game.gatekeeper.getAvailableHouses = function (memo)
-{ var successP = memo.status;
+Tootsville.game.gatekeeper.getAvailableHouses = function (gram)
+{ var successP = gram.status;
   if (! successP ) { return; }
-  var lots = memo.lots;
-  var houses = memo.houses;
-  Tootsville.warn ("unhandled datagram", memo);};
+  var lots = gram.lots;
+  var houses = gram.houses;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getMainInBox = function (memo)
-{ var successP = memo.status;
+Tootsville.game.gatekeeper.getMainInBox = function (gram)
+{ var successP = gram.status;
   var mail;
   if (successP)
-  { mail = memo.mail; }
+  { mail = gram.mail; }
   else
   { mail = []; }
-  Tootsville.warn ("unhandled datagram", memo);};
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getMailMessage = function (memo)
-{ var successP = memo.status;
+Tootsville.game.gatekeeper.getMailMessage = function (gram)
+{ var successP = gram.status;
   if (! successP ) { return; }
-  var message = memo.message;
-  Tootsville.warn ("unhandled datagram", memo);}
+  var message = gram.message;
+  Tootsville.warn ("unhandled datagram", gram);}
 
-Tootsville.game.gatekeeper.sendMailMessage = function (memo)
-{ var successP = memo.status;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.sendMailMessage = function (gram)
+{ var successP = gram.status;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.postman = function (memo)
-{ var newMailP = memo.newMail;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.postman = function (gram)
+{ var newMailP = gram.newMail;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getUserLists = function (memo)
-{ var buddies = memo.buddyList || [];
-  var starred = memo.starred || [];
-  var ignored = memo.ignoreList || [];
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.getUserLists = function (gram)
+{ var buddies = gram.buddyList || [];
+  var starred = gram.starred || [];
+  var ignored = gram.ignoreList || [];
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.buddyList = function (memo)
-{ var notice = memo.notice;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.buddyList = function (gram)
+{ var notice = gram.notice;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.buddyRequest = function (memo)
-{ var sender = memo.sender;
-  var signature = memo.sign;
-  Tootsville.warn ("unhandled datagram", memo);};
+Tootsville.game.gatekeeper.buddyRequest = function (gram)
+{ var sender = gram.sender;
+  var signature = gram.sign;
+  Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.outOfBand = function (memo)
-{ var type = memo.type;
+Tootsville.game.gatekeeper.outOfBand = function (gram)
+{ var type = gram.type;
   if ("invite" == type)
-  { var body = memo.body;
-    Tootsville.warn ("unhandled datagram", memo);  }
+  { var body = gram.body;
+    Tootsville.warn ("unhandled datagram", gram);  }
   else if ("response" == type)
-  { var body = memo.body;
-    Tootsville.warn ("unhandled datagram", memo);  }
-  else if (true === memo.body.toRoom)
-  { var vars = memo.body.vars;
-    Tootsville.warn ("unhandled datagram", memo);  }
+  { var body = gram.body;
+    Tootsville.warn ("unhandled datagram", gram);  }
+  else if (true === gram.body.toRoom)
+  { var vars = gram.body.vars;
+    Tootsville.warn ("unhandled datagram", gram);  }
   else
   { Tootsville.warn("Unhandled out-of-band message type " + type); } };
 
-Tootsville.game.gatekeeper.admin = function (memo)
-{ var title = memo.title;
-  var message = memo.message;
-  var label = memo.label;
+Tootsville.game.gatekeeper.admin = function (gram)
+{ var title = gram.title;
+  var message = gram.message;
+  var label = gram.label;
   // FIXME call to parrot ⋯
   Tootsville.gossip.parrot.say (title, message, label); };
 
-Tootsville.game.gatekeeper.serverTime = function (memo)
-{ var successP = memo.status;
-  var serverTime = memo.serverTime;
-  var gameTime = memo.gameTime;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.serverTime = function (gram)
+{ var successP = gram.status;
+  var serverTime = gram.serverTime;
+  var gameTime = gram.gameTime;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.badgeUpdate = function (memo)
-{ var badges = memo.badges;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.badgeUpdate = function (gram)
+{ var badges = gram.badges;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.forceMove = function (memo)
-{ var x = memo.x;
-  var y = memo.y;
-  var z = memo.z;
-  Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.forceMove = function (gram)
+{ var x = gram.x;
+  var y = gram.y;
+  var z = gram.z;
+  Tootsville.warn ("unhandled datagram", gram); };
 
-Tootsville.game.gatekeeper.reportBug = function (memo)
-{ Tootsville.warn ("unhandled datagram", memo); };
+Tootsville.game.gatekeeper.reportBug = function (gram)
+{ Tootsville.warn ("unhandled datagram", gram); };
 
 
