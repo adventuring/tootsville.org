@@ -272,6 +272,10 @@ encode a response into a JSON form
 
 "
   )
+(definfinity get-apple (d u r)
+  "Get the apple to get into, or out of, $Eden"
+  )
+
 (definfinity get-Avatars (d u r)
   
   "Get avatar data for a list of (other) users. cv. finger
@@ -332,15 +336,15 @@ jso    -    {     type:    TYPE-STRING    }    —
  JSON object has the type of item from the strings in the config file.
 
 OR, you can specify  an item type by passing # plus its  ID, or a string
-of them; e.g. for items of type 1, pass "#1," for items of types 2 or 3,
-pass "#2:3"
+of them; e.g. for items of type 1, pass \"#1,\" for items of types 2 or 3,
+pass \"#2:3\"
 
 OR, you  can specify  a list  of item  type strings  using '$'  plus the
-string identifiers divided by ':', e.g. "$Pants:Shirts"
+string identifiers divided by ':', e.g. \"$Pants:Shirts\"
 
 Returns a  set of items  as inv:  { 0: {  id: 123, isActive:  boolean },
 ... } â€” furniture with placement data  will also have x, y, and facing
-vars. Other attributes are "from":"inventory", "type": matching the type
+vars. Other attributes are \"from\":\"inventory\", \"type\": matching the type
 of the question
 
 You can also supply withActive: false to screen out active items.
@@ -545,6 +549,17 @@ room.full
 u - the user joining the room
   
   ") 
+(definfinity login (d u r)
+  "Handle a login request
+
+We no longer do this …
+    Parameters:
+        jso - { userName: LOGIN, password: $(sha1hex(concat(apple, pass))), zone: ZONE }
+
+Response: logOK or { err: login.fail, msg: reason } with 
+"
+  )
+
 (definfinity logout (d u r)
   "Log out of this game session (or zone)
 
@@ -560,7 +575,7 @@ u - the user joining the room
   "
   )
 
-(definifinity mail-customer-service (d u r) 
+(definfinity mail-customer-service (d u r) 
   "  send an eMail to customer service (feedback)
 
   Parameters:
@@ -1022,21 +1037,14 @@ some additional data that is being provided.
        ") 
 
 (definfinity server-time ( d u r )
-  
-  "Accept  the client's  notification of  a server-time  adjustment.
+    "Accept  the client's  notification of  a server-time  adjustment.
 
        This is used to compute the client's round-trip lag time.
 
        jso - { serverTime: LONG milliseconds since epoch }
 ")
 (definfinity set-avatar-color (d u r)
-  "setAvatarColor(org.json.JSONObject jso,
-                                      AbstractUser u,
-                                      Room room)
-       throws org.json.JSONException,
-       SQLException
-
-       Set the avatar base and extra colours for the given user.
+    "Set the avatar base and extra colours for the given user.
 
        Colour numbers are given in X'RRGGBB' form as an integer â€” to compute one from byte (0..255) RGB values, do ( red << 16 & green << 8 & blue )
 
@@ -1050,15 +1058,14 @@ some additional data that is being provided.
 
        "
   (definfinity set-furniture (d u r)
-    "setFurniture(org.json.JSONObject jso,
-                                    AbstractUser u,
-                                    Room room)
-       throws org.json.JSONException,
-       NotFoundException
+      "Set or change a furniture item. 
 
-       Set or change a furniture item. To add a structural item to the room, put item: 123 without anything else. To place furniture on the floor, also add attributes x, y, and facing.
+To add  a structural item  to the room,  put item: 123  without anything
+else.  To place  furniture  on  the floor,  also  add  attributes x,  y,
+and facing.
 
-       To change furniture, replace item: with slot: (to avoid ambiguities about â€œwhich chairâ€)
+To  change furniture,  replace item:  with slot:  (to avoid  ambiguities
+about “which chair”)
 
        To remove an item from the room, send { slot: 123, remove: true }
 
@@ -1071,14 +1078,8 @@ some additional data that is being provided.
        NotFoundException - if the furniture doesn't exist
 
        ") (definfinity set-room-var ( d u r) 
-            
-"setRoomVar(org.json.JSONObject jso,
-                                  AbstractUser u,
-                                  Room room)
-       throws org.json.JSONException,
-       PrivilegeRequiredException
-
-       Set a room variable or set of room variables.
+              
+              "Set a room variable or set of room variables.
 
        Parameters:
        jso - key-value pair(s) for room variable(s) to be set
@@ -1107,15 +1108,8 @@ some additional data that is being provided.
        Throws:
        org.json.JSONException - if the JSO can't be decoded
 
-       "
-"spawnZone
-
-       public static void "
-"spawnZone(org.json.JSONObject jso,
-                                 AbstractUser u,
-                                 Room room)
-       throws org.json.JSONException,
-       PrivilegeRequiredException
+       ")(definfinity spawn-zone (d u r)
+             "spawnZone
 
        Spawn an additional zone.
 
@@ -1127,15 +1121,8 @@ some additional data that is being provided.
        org.json.JSONException - if something goes awry 
        PrivilegeRequiredException - if the user isn't a Developer
 
-       "
-"speak
-
-       public static void "
-"speak(org.json.JSONObject jso,
-                             AbstractUser u,
-                             Room room)
-       throws org.json.JSONException,
-       NotFoundException
+       ")(definfinity speak (d u r)
+             "speak
 
        Handle speech by the user. XXX This should be calling User.speak(Room, String) to do the dirty work: but, in fact, the reverse is currently true.
 
@@ -1185,20 +1172,13 @@ some additional data that is being provided.
 		}
 
 	private static String nonObnoxious (final String speech) {
-		return speech.replace ("!!", "!").replace (",,", ",").replace (
-				"....", "...").replace ("??", "?");
+		return speech.replace (\"!!\", \"!\").replace (\",,\", \",\").replace (
+				\"....\", \"...\").replace (\"??\", \"?\");
 	}
 
 
-       "
-"startEvent
-
-       public static void "
-"startEvent(org.json.JSONObject jso,
-                                  AbstractUser u,
-                                  Room room)
-       throws org.json.JSONException,
-       SQLException
+       ")(definfinity start-event (d u r)
+             "startEvent
 
        Attempt to begin an event. Might return an error. Uses Quaestor for the heavy lifting.
 
@@ -1209,8 +1189,9 @@ some additional data that is being provided.
        alreadyDone: true; status: false; err: \"event.alreadyDone\"
        This returns for fountains that have already given peanuts today (where today started at midnight, database local time)
        eventID: (NUM), filename: \"blah.swf\", asVersion: { 2, 3, or not }, status: true
-       For successfully registered events. Must be completed or canceled using "
-"endEvent(JSONObject ,AbstractUser , Room )
+       For successfully registered events. Must be completed or canceled using ")
+(definfinity end-event (d u r)
+    "endEvent(JSONObject ,AbstractUser , Room )
 
        Parameters:
        jso - JSON payload from the caller. Data: moniker = event moniker.
@@ -1220,14 +1201,9 @@ some additional data that is being provided.
        org.json.JSONException - if JSON data can't be put into a response, or gotten out of a command. 
        SQLException - probably means that the moniker is bad, but I'm not really doing much to validate it here
 
-       "
-"useEquipment
-
-       public static void "
-"useEquipment(org.json.JSONObject jso,
-                                    AbstractUser u,
-                                    Room r)
-       throws org.json.JSONException
+       ")
+(definfinity use-equipment (d u r)
+    "useEquipment
 
        WRITEME: Document this method brpocock@star-hope.org
 
@@ -1238,4 +1214,4 @@ some additional data that is being provided.
        Throws:
        org.json.JSONException - WRITEME
 
-       
+       ")
