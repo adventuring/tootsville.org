@@ -23,8 +23,15 @@
 .#*
 *.tmp
 *.orig
-tmp.*
+tmp*
 dumper*.lisp
+tmp
+temp
+temp*
+
+# Editor working files
+TAGS
+.project
 
 # Output files
 dist/
@@ -36,4 +43,5 @@ TODO.scorecard
 
 # NPM mess
 node_modules
-TAGS
+
+
