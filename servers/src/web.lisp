@@ -340,11 +340,14 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                                    method uri content-type))
                        (format nil "~2%This is a web service ~
 endpoint accessed by the HTTP method ~a at the URI template ~a. ~
-It returns a content-type of ~a.~
-~@[~{~2%~a is a parameter taken from the URI template.~}~]~
+~:[The returned content-type is not specified.~;~
+It returns a content-type of ~:*~(~a~).~]~2%~
+~[There are no URI parameters.~
+~;~{~a~} is a parameter from the URI.~
+~:;The URI includes parameters: ~{~a~^, ~}.~]~
 ~2%It will report a slow response if it takes longer than ~f seconds
 \(~f milliseconds) to complete."
-                               method uri content-type λ-list 
+                               method uri content-type (length λ-list) λ-list 
                                how-slow-is-slow (* 1000 how-slow-is-slow)))))
       `(progn
          ,(defendpoint/make-endpoint-function
