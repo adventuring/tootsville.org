@@ -2,7 +2,7 @@
 
 ;;; Copyright © 2009-2010, Bruce-Robert Pocock
 
-(define-operator-command $ (words u r) 
+(define-operator-command $ (words user plane) 
   "Execute a command script
 
     Usage: 
@@ -15,7 +15,7 @@ The script name must be a function previously defined by @samp{#SCRIPT}
 "
   
   )
-(define-operator-command addevent (words u r) 
+(define-operator-command addevent (words user plane) 
   "Add a GameEvent to a Zone
 
     Add a GameEvent to a Zone. Must have staff level 4 (DESIGNER) to use
@@ -37,20 +37,20 @@ The script name must be a function previously defined by @samp{#SCRIPT}
   
   )
 
-(define-operator-command agent (words u r) "
+(define-operator-command agent (words user plane) "
 
     WRITEME: Document this method brpocock@star-hope.org
 
     "
                          
                          )
-(define-operator-command askme (words u r) "
+(define-operator-command askme (words user plane) "
                      
 WRITEME
 "
                          
                          )
-(define-operator-command ban (words u r) "
+(define-operator-command ban (words user plane) "
                    
     Ban a user  permanently. Must have staff level 2  (MODERATOR) to use
     this command.
@@ -68,7 +68,7 @@ WRITEME
 See Also: `OPERATOR-KICK'"
                          
                          )
-(define-operator-command banhammer (words u r) 
+(define-operator-command banhammer (words user plane) 
   "Ban an IP address from connecting.
 
 Bans can be listed using @samp{#banhammer #list}
@@ -86,7 +86,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 @samp{#-ip}, or @samp{#user}, an additional parameter is needed."
   
   )
-(define-operator-command beam (words u r) "
+(define-operator-command beam (words user plane) "
                     throws org.json.JSONException,
                            PrivilegeRequiredException
 
@@ -108,15 +108,17 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                          
                          )
-(define-operator-command build (words u r) "
+(define-operator-command build (words user plane) "
 
-    Create a new room in the current zone. Must have staff level 8 (DEVELOPER) to use this command.
+    Create  a new  room  in  the current  zone.  Must  have staff  level
+    8 (DEVELOPER) to use this command.
 
     Syntax for use
     #spawnroom [MONIKER] [TITLE] [SWF]
     #spawnroom [MONIKER] [TITLE]
 
-    NOTE: Uses tootCastleJoust.swf as default. This can be set after the room has been created by setting the 'f' room variable.
+    NOTE: Uses tootCastleJoust.swf as default. This can be set after the
+    room has been created by setting the 'f' room variable.
 
     Examples
     #spawnroom tootCastleJoust2 Joust2 tootCastleJoust.swf
@@ -129,10 +131,13 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                          
                          )
-(define-operator-command census (words u r) "
+(define-operator-command census (words user plane) "
                       throws PrivilegeRequiredException
 
-    Simply reference a range of users, for testing purposes. Takes an optional low and high point, or runs 0â€¦250000. (250,000) This will assert free or paid member status, restore default free items, and seriously strain the cachÃ© and database subsystems.
+    Simply reference  a range of  users, for testing purposes.  Takes an
+    optional low and high point, or runs 0…250000. (250,000) This will
+    assert free or  paid member status, restore default  free items, and
+    seriously strain the caché and database subsystems.
 
     Parameters:
         words - optional low and high points of the range to be referenced.
@@ -143,7 +148,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                          
                          )
-(define-operator-command clearbadge (words u r) "
+(define-operator-command clearbadge (words user plane) "
 
     Clear badges off of the map interface. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -190,7 +195,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                          
                          )
-(define-operator-command clearevent (words u r) "
+(define-operator-command clearevent (words user plane) "
 
     Clear a GameEvent from a Zone. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -212,7 +217,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command clearvar (words u r) "
+(define-operator-command clearvar (words user plane) "
 
     Clear a room variable. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -249,7 +254,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command createroom (words u r) "
+(define-operator-command createroom (words user plane) "
                           throws PrivilegeRequiredException,
                                  NotReadyException
 
@@ -265,7 +270,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command dbcpinfo (words u r) "
+(define-operator-command dbcpinfo (words user plane) "
                         throws PrivilegeRequiredException,
                                NotFoundException,
                                SQLException
@@ -289,7 +294,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command dress (words u r) "
+(define-operator-command dress (words user plane) "
                      throws NumberFormatException,
                             DataException
 
@@ -311,7 +316,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                             
 )
-(define-operator-command drop (words u r) "
+(define-operator-command drop (words user plane) "
 
     find an item in your inventory based upon the item ID # and destroy (drop) it
 
@@ -322,7 +327,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command dropkick (words u r) "
+(define-operator-command dropkick (words user plane) "
 
     Silently remove the named user from the game by disconnection. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -339,7 +344,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command dumpthreads (words u r) "
+(define-operator-command dumpthreads (words user plane) "
 
     Dump debugging information including all running threads to a server-side file. Must have staff level 1 (STAFF) to use this command.
 
@@ -356,7 +361,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command enablepathfinder (words u r) "
+(define-operator-command enablepathfinder (words user plane) "
 
     Temporary test routine for testing pathfinders on users
 
@@ -367,7 +372,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command evacuate (words u r) "
+(define-operator-command evacuate (words user plane) "
 
     Evacuate all users from your current Zone into another Zone. Will error if the Zone specified does not exist. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -384,7 +389,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command filter (words u r) "
+(define-operator-command filter (words user plane) "
 
     Parameters:
         words - see op_testcensor(String[], AbstractUser, Room)
@@ -395,7 +400,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command finger (words u r) "
+(define-operator-command finger (words user plane) "
 
     Finger a user account. Return interesting details in an administrative message. Must have staff level 1 (STAFF) to use this command.
 
@@ -412,7 +417,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command flush (words u r) "
+(define-operator-command flush (words user plane) "
 
     Attempt to flush the pending database records to the database (if any). Reports back how many remain pending after the sweep. Does not affect the ongoing background sweep process, which will continue to run normally.
 
@@ -423,7 +428,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
                             )
-(define-operator-command game (words u r) "
+(define-operator-command game (words user plane) "
 
     Send a command into the operator command interpreter for a running game (if that game provides one)
 
@@ -436,7 +441,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getconfig (words u r) "
+(define-operator-command getconfig (words user plane) "
 
     Get a Appius configuration variable. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -453,7 +458,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getevents (words u r) "
+(define-operator-command getevents (words user plane) "
 
     List GameEvents in your current Zone. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -472,7 +477,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getmotd (words u r) "
+(define-operator-command getmotd (words user plane) "
 
     Retrieve the current Message Of The Day as a server message
 
@@ -483,7 +488,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getschedule (words u r) "
+(define-operator-command getschedule (words user plane) "
                            throws PrivilegeRequiredException
 
     WRITEME: Document this method brpocock@star-hope.org
@@ -497,7 +502,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getschedulefor (words u r) "
+(define-operator-command getschedulefor (words user plane) "
                               throws PrivilegeRequiredException,
                                      ClassNotFoundException
 
@@ -513,7 +518,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getuvar (words u r) "
+(define-operator-command getuvar (words user plane) "
 
     Get a user variable. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -536,8 +541,8 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         op_setuvar(String[], AbstractUser, Room), op_getuvars(String[], AbstractUser, Room)
 "
 
-)
-(define-operator-command getuvars (words u r) "
+                         )
+(define-operator-command getuvars (words user plane) "
 
     Get all user variables for a given user. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -561,7 +566,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getvar (words u r) "
+(define-operator-command getvar (words user plane) "
 
     Get a room variable. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -582,7 +587,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command getvars (words u r) "
+(define-operator-command getvars (words user plane) "
 
     Get all room variables. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -624,7 +629,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command givehead (words u r) "
+(define-operator-command givehead (words user plane) "
                         throws PrivilegeRequiredException
 
     Give an inventory item to a user. Must have staff level 1 (STAFF) to use this command.
@@ -648,7 +653,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command goto (words u r) "
+(define-operator-command goto (words user plane) "
                     throws PrivilegeRequiredException
 
     WRITEME: Document this method brpocock@star-hope.org
@@ -662,7 +667,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
                            )
-(define-operator-command grant (words u r) "
+(define-operator-command grant (words user plane) "
                      throws PrivilegeRequiredException
 
     Grant an item to a user. See op_givehead(String[], AbstractUser, Room)
@@ -674,9 +679,9 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     Throws:
         PrivilegeRequiredException - if the user doesn't have sufficient privileges
 "
-                            
-)
-(define-operator-command headcount (words u r) "
+                         
+                         )
+(define-operator-command headcount (words user plane) "
 
     Get headcount information about the running system. Must have staff level 1 (STAFF) to use this command.
 
@@ -691,37 +696,67 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #headcount #room
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
-    See Also:
-        headcount_all(AbstractUser, Room), headcount_highwater(AbstractUser, Room), headcount_rooms(AbstractUser, Room), headcount_members(AbstractUser, Room)
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+See Also:
+
+        headcount_all(AbstractUser,                               Room)
+
+        headcount_highwater(AbstractUser,                         Room)
+
+        headcount_rooms(AbstractUser,                             Room)
+
+        headcount_members(AbstractUser, Room)
 "
-                                
-)
-(define-operator-command inv (words u r) "
+                         
+                         )
+(define-operator-command inv (words user plane) "
                    throws PrivilegeRequiredException
 
-    Get inventory items for a particular user. By default, this will bring up only the active items â€” e.g. clothing being worn, and so forth.
+    Get inventory  items for  a particular user.  By default,  this will
+    bring up  only the active  items â€”  e.g. clothing being  worn, and
+    so forth.
 
     To get all active inventory for an user: #inv LOGIN
 
-    To get all inventory for an user, active or inactive (this may be very long!): #inv LOGIN #all
+    To get  all inventory for an  user, active or inactive  (this may be
+    very long!): #inv LOGIN #all
 
-    To get inventory of a particular type, active or inactive: #inv LOGIN #type TYPE
+    To  get inventory  of a  particular type,  active or  inactive: #inv
+    LOGIN #type TYPE
 
-    The type strings accepted are those accepted by Commands.do_getInventoryByType(JSONObject, AbstractUser, Room) ; this means that both the $SPECIFIC-TYPE and TYPE-SET-NAME forms are accepted. The list of specific types might include e.g. $Hair, and a type-set-name might be something like clothing. The set of available type-set-names is specified in the configuration file.
+    The    type    strings    accepted    are    those    accepted    by
+    Commands.do_getInventoryByType(JSONObject,  AbstractUser,   Room)  ;
+    this means that both the  $SPECIFIC-TYPE and TYPE-SET-NAME forms are
+    accepted. The list  of specific types might include  e.g. $Hair, and
+    a  type-set-name  might  be  something like  clothing.  The  set  of
+    available type-set-names is specified in the configuration file.
 
     Parameters:
-        words - User name, and optional tag #all to show all items instead of just active, or optional tag #type and a type string for items of a specific type. For item types, refer to Commands.do_getInventoryByType(JSONObject, AbstractUser, Room) â€” note that this supports only a single item type (or type-set)
-        u - user calling this command
-        room - the room in which that user is standing 
-    Throws:
+        
+words - User  name, and optional tag  #all to show all  items instead of
+just  active, or  optional tag  #type  and a  type string  for items  of
+a     specific      type.     For      item     types,      refer     to
+Commands.do_getInventoryByType(JSONObject, AbstractUser,  Room) â€” note
+that this supports only a single item type (or type-set)
+        
+u - user calling this command
+        
+room - the room in which that user is standing 
+    
+Throws:
         PrivilegeRequiredException - if the user lacks staff privileges to invoke this command
 "
 
 )
-(define-operator-command kick (words u r) "
+(define-operator-command kick (words user plane) "
                     throws NotFoundException
 
     Kick a user offline for a certain reason
@@ -761,10 +796,11 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
                            )
-(define-operator-command king (words u r) "
+(define-operator-command king (words user plane) "
                     throws org.json.JSONException
 
-    Apply a gift membership to an user. Must have staff level 4 (DESIGNER) to use this command.
+    Apply  a  gift  membership  to   an  user.  Must  have  staff  level
+    4 (DESIGNER) to use this command.
 
     Syntax for use
     #king [DAYS] [LOGIN]
@@ -781,13 +817,16 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command liftban (words u r) "
+(define-operator-command liftban (words user plane) "
                        throws PrivilegeRequiredException,
                               NotFoundException
 
-    Lift the ban upon a user. Must have staff level 2 (MODERATOR) to use this command.
+    Lift the ban upon a user. Must have staff level 2 (MODERATOR) to use
+    this command.
 
-    NOTE: In order to un-ban a user, you must key in the literal word â€œyesâ€ as the third parameter, and supply the ban reason as the first. This is to avoid accidentally lifting a ban.
+    NOTE: In order  to un-ban a user,  you must key in  the literal word
+    “yes” as  the third parameter,  and supply the ban  reason as
+    the first. This is to avoid accidentally lifting a ban.
 
     Syntax for use
     #liftban [BANREASON] [USER] yes
@@ -805,7 +844,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command loadlists (words u r) "
+(define-operator-command loadlists (words user plane) "
 
     Reload the censorship lists. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -822,7 +861,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command mem (words u r) "
+(define-operator-command mem (words user plane) "
 
     Display some memory usage and other debugging type information as an pop-up message. Must have Designer privileges to use this command.
 
@@ -838,10 +877,11 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
 "
 
-)
-(define-operator-command metronome (words u r) "
+                         )
+(define-operator-command metronome (words user plane) "
 
-    Display information about or micromanage the metronome. Must have staff level 8 (DEVELOPER) to use this command.
+    Display information  about or  micromanage the metronome.  Must have
+    staff level 8 (DEVELOPER) to use this command.
 
     Syntax for use
     #metronome [OPTION]
@@ -870,9 +910,10 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
                                 )
-(define-operator-command motd (words u r) "
+(define-operator-command motd (words user plane) "
 
-    Set the message of the day. Must have staff level 4 (DESIGNER) to use this command.
+    Set the  message of the day.  Must have staff level  4 (DESIGNER) to
+    use this command.
 
     Syntax for use
     #motd [MESSAGE...]
@@ -887,7 +928,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command mute (words u r) "
+(define-operator-command mute (words user plane) "
 
     Parameters:
         words - The command parameters (whitespace-delimited list) provided after the # command name
@@ -898,7 +939,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command nuke (words u r) "
+(define-operator-command nuke (words user plane) "
                     throws PrivilegeRequiredException
 
     Forcibly disconnect everyone in a room.
@@ -912,7 +953,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command parentapproves (words u r) "
+(define-operator-command parentapproves (words user plane) "
                               throws PrivilegeRequiredException,
                                      GameLogicException,
                                      ForbiddenUserException,
@@ -934,9 +975,10 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command ping (words u r) "
+(define-operator-command ping (words user plane) "
 
-    Ping the server, to force a neutral administrative message reply. Must have staff level 1 (STAFF) to use this command.
+    Ping the  server, to force  a neutral administrative  message reply.
+    Must have staff level 1 (STAFF) to use this command.
 
     Syntax for use
     #ping
@@ -951,10 +993,15 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                            
 )
-(define-operator-command place (words u r) "
+(define-operator-command place (words user plane) "
                      throws PrivilegeRequiredException
 
-    Add a Place to a room. This command supports the basic types of event Places, and adds them to the room in the given WHERE place. WHERE can be a diamond-shaped area around the operator issuing the command (using #here, #here-tiny, or #here-big), or can be an explicitly-issued polygon string. The event region ID will be automatically assigned.
+    Add a  Place to  a room.  This command supports  the basic  types of
+    event Places,  and adds them to  the room in the  given WHERE place.
+    WHERE can be  a diamond-shaped area around the  operator issuing the
+    command  (using  #here, #here-tiny,  or  #here-big),  or can  be  an
+    explicitly-issued  polygon  string.  The  event region  ID  will  be
+    automatically assigned.
 
      Usage:
      #place WHERE #item ITEM-NUMBER
@@ -978,7 +1025,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command purgephysics (words u r) "
+(define-operator-command purgephysics (words user plane) "
                             throws PrivilegeRequiredException
 
     WRITEME: Document this method brpocock@star-hope.org
@@ -992,7 +1039,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command push (words u r) "
+(define-operator-command push (words user plane) "
 
     WRITEME
 
@@ -1001,9 +1048,9 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         u - WRITEME
         room - WRITEME
 "
-                           
+                         
 )
-(define-operator-command put (words u r) "
+(define-operator-command put (words user plane) "
                    throws PrivilegeRequiredException
 
     WRITEME: Document this method brpocock@star-hope.org
@@ -1016,14 +1063,16 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         PrivilegeRequiredException - WRITEME
 "
 
-)
-(define-operator-command rc (words u r) "
+                         )
+(define-operator-command rc (words user plane) "
                   throws PrivilegeRequiredException,
                          InstantiationException,
                          IllegalAccessException,
                          ClassNotFoundException
 
-    Run an RC (RunCommands) script. Both the â€œsystem run commandsâ€ (â€œrunâ€) method and the â€œnew zone run commandsâ€ (â€œnewZoneâ€) method will be executed; the
+    Run   an   RC  (RunCommands)   script.   Both   the  â€œsystem   run
+    commandsâ€  (â€œrunâ€)  method  and   the  â€œnew  zone  run
+    commandsâ€ (â€œnewZoneâ€) method will be executed; the
 
     Parameters:
         words - class name
@@ -1037,7 +1086,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command reboot (words u r) "
+(define-operator-command reboot (words user plane) "
 
     Forces appius to restart. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -1054,7 +1103,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command reloadconfig (words u r) "
+(define-operator-command reloadconfig (words user plane) "
 
     Reloads configuration properties. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -1071,9 +1120,11 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command retire (words u r) "
+(define-operator-command retire (words user plane) "
 
-    Forces a zone to retire. This will disconnect anyone currently in the zone. Use #evacuate to move users to another zone. Must have staff level 8 (DEVELOPER) to use this command.
+    Forces a  zone to retire.  This will disconnect anyone  currently in
+    the zone.  Use #evacuate to  move users  to another zone.  Must have
+    staff level 8 (DEVELOPER) to use this command.
 
     Syntax for use
     #retire [ZONE]
@@ -1084,15 +1135,19 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #retire
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+words  - The  command parameter  s (whitespace-delimited  list) provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
-
-)
+                         
+                         )
 (define-operator-command run (words
-                          AbstractUser who,
-                          Room where)"
+                              u r)"
   throws ClassNotFoundException,
                           InstantiationException,
                           IllegalAccessException
@@ -1109,8 +1164,8 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         IllegalAccessException - WRITEME
 "
 
-)
-(define-operator-command saveroomvars (words u r) "
+                              )
+(define-operator-command saveroomvars (words user plane) "
 
     WRITEME: Document this method brpocock@star-hope.org
 
@@ -1121,7 +1176,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command scotty (words u r) "
+(define-operator-command scotty (words user plane) "
                       throws org.json.JSONException,
                              PrivilegeRequiredException
 
@@ -1143,7 +1198,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command setavatarcolors (words u r) "
+(define-operator-command setavatarcolors (words user plane) "
                                throws NumberFormatException,
                                       DataException
                                       
@@ -1173,7 +1228,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command setbadge (words u r) "
+(define-operator-command setbadge (words user plane) "
 
     Set the badge on a room. Must have staff level 4 (DESIGNER) to use this command on another character. Staff level 2 (MODERATOR) can use the command with the #me parameter.
 
@@ -1206,7 +1261,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command setconfig (words u r) "
+(define-operator-command setconfig (words user plane) "
 
     Set a config property. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -1225,7 +1280,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command setstafflevel (words u r) "
+(define-operator-command setstafflevel (words user plane) "
                              throws PrivilegeRequiredException,
                                     GameLogicException
 
@@ -1241,7 +1296,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command setuvar (words u r) "
+(define-operator-command setuvar (words user plane) "
 
     Set a user variable. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -1263,7 +1318,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command setvar (words u r) "
+(define-operator-command setvar (words user plane) "
 
     Set a room variable. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -1289,7 +1344,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command shanghai (words u r) "
+(define-operator-command shanghai (words user plane) "
                         throws org.json.JSONException
 
     Force a client into a different room and zone
@@ -1303,7 +1358,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command shout (words u r) "
+(define-operator-command shout (words user plane) "
 
     Speak in another zone. This is intended for using operator commands in a remote zone, not normal chat messages. Must have staff level 2 (MODERATOR) to use this command.
 
@@ -1321,7 +1376,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
                             )
-(define-operator-command spawnzone (words u r) "
+(define-operator-command spawnzone (words user plane) "
 
     Create a new zone. Must have staff level 8 (DEVELOPER) to use this command.
 
@@ -1336,9 +1391,9 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         u - The user invoking the operator command
         room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
 "
-
-)
-(define-operator-command speak (words u r) "
+                         
+                         )
+(define-operator-command speak (words user plane) "
 
     Allows a user to speak. Must have staff level 2 (MODERATOR) to use this command.
 
@@ -1353,9 +1408,9 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         u - The user invoking the operator command
         room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
 "
-
-)
-(define-operator-command stfu (words u r) "
+                         
+                         )
+(define-operator-command stfu (words user plane) "
 
     Silences a user. Must have staff level 2 (MODERATOR) to use this command.
 
@@ -1370,9 +1425,9 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         u - The user invoking the operator command
         room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
 "
-
-)
-(define-operator-command testcensor (words u r) "
+                         
+                         )
+(define-operator-command testcensor (words user plane) "
 
     Test a message with the censor, displays the filter result.
 
@@ -1383,15 +1438,21 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #testcensor This message will be filtered and the result will be displayed.
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
+                         
+                         )
+(define-operator-command time (words user plane) "
 
-)
-(define-operator-command time (words u r) "
-
-    Displays a message with the current time in Eastern Standard Time. Must have staff level 1 (STAFF) to use this command.
+    Displays a message  with the current time in  Eastern Standard Time.
+    Must have staff level 1 (STAFF) to use this command.
 
     Syntax for use
     #time
@@ -1400,13 +1461,18 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #time
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
-
-)
-(define-operator-command unbuild (words u r) "
+                         
+                         )
+(define-operator-command unbuild (words user plane) "
                        throws NotFoundException
 
     Destroys a room. Must have staff level 8 (DEVELOPER) to use this command.
@@ -1418,19 +1484,26 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #unbuild tootUniversity
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances. 
-    Throws:
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+Throws:
         NotFoundException - if the room doesn't exist
 "
-
-)
-(define-operator-command v (words u r) "
+                         
+                         )
+(define-operator-command v (words user plane) "
                  throws org.json.JSONException,
                         NotFoundException
 
-    Forces a user to say a message. Must have staff level 4 (DESIGNER) to use this command.
+    Forces a user  to say a message. Must have  staff level 4 (DESIGNER)
+    to use this command.
 
     Syntax for use
     #v [LOGIN] [MESSAGE...]
@@ -1439,10 +1512,16 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #v flappyperry I like to cause trouble in tootsville
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances. 
-    Throws:
+
+        words  -  The  command  parameters  (whitespace-delimited  list)
+        provided after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+Throws:
         org.json.JSONException - if the speech can't be represented in JSON somehow 
         NotFoundException - WRITEME
     See Also:
@@ -1461,7 +1540,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                                      
 )
-(define-operator-command wall (words u r) "
+(define-operator-command wall (words user plane) "
 
     Sends an pop-up message to everyone in the zone. Must have staff level 4 (DESIGNER) to use this command.
 
@@ -1472,15 +1551,21 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #wall This message will go to everyone in the zone I am in.
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
-
+                         
                          )
-(define-operator-command wallops (words u r) "
+(define-operator-command wallops (words user plane) "
 
-    Sends an pop-up message to all staff members in the zone. Must have staff level 2 (MODERATOR) to use this command.
+    Sends an pop-up message to all  staff members in the zone. Must have
+    staff level 2 (MODERATOR) to use this command.
 
     Syntax for use
     #wallops [MESSAGE...]
@@ -1489,15 +1574,21 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #wallops This message will go to all other staff members in this zone.
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
-
+                         
                          )
-(define-operator-command wallzones (words u r) "
+(define-operator-command wallzones (words user plane) "
 
-    Sends an pop-up message to all everyone in every zone. Must have staff level 8 (DEVELOPER) to use this command.
+    Sends an  pop-up message to  all everyone  in every zone.  Must have
+    staff level 8 (DEVELOPER) to use this command.
 
     Syntax for use
     #wallzones [MESSAGE...]
@@ -1506,13 +1597,18 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #wallzones This message will go to everyone in every zone.
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
-
+                         
                          )
-(define-operator-command warn (words u r) "
+(define-operator-command warn (words user plane) "
                     throws NotFoundException
 
     Warn a user about breaking a rule. Must have staff level 2 (MODERATOR) to use this command.
@@ -1540,21 +1636,28 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         APP.AGES = Lying about your birth date is against the law!
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances. 
-    Throws:
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+Throws:
         NotFoundException - if the warning reason code is not valid
     See Also:
         op_kick(String[], AbstractUser, Room), op_ban(String[], AbstractUser, Room)
 "
-
+                         
                          )
-(define-operator-command whatis (words u r) "
+(define-operator-command whatis (words user plane) "
                       throws NumberFormatException,
                              NotFoundException
 
-    Displays information about an item. Must have staff level 1 (STAFF) to use this command.
+    Displays information about an item.  Must have staff level 1 (STAFF)
+    to use this command.
 
     Syntax for use
     #whatis [ITEM]
@@ -1563,18 +1666,26 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #whatis 1337
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances. 
-    Throws:
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+Throws:
         NotFoundException - WRITEME 
         NumberFormatException - WRITEME
 "
-
+                         
                          )
-(define-operator-command whereami (words u r) "
+(define-operator-command whereami (words user plane) "
 
-    Return an administrative message with the name of the Zone in which the player is currently standing. Must have staff level 1 (STAFF) to use this command.
+    Return an administrative message with the  name of the Zone in which
+    the player is currently standing. Must have staff level 1 (STAFF) to
+    use this command.
 
     Syntax for use
     #whereami
@@ -1583,15 +1694,22 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #whereami
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
-
+                         
                          )
-(define-operator-command whereis (words u r) "
+(define-operator-command whereis (words user plane) "
 
-    Find out in what what room a character is standing, if s/he is logged in at the moment. Must have staff level 2 (MODERATOR) to use this command.
+    Find  out in  what what  room a  character is  standing, if  s/he is
+    logged in at the moment. Must  have staff level 2 (MODERATOR) to use
+    this command.
 
     Syntax for use
     #whereis [LOGIN]
@@ -1607,43 +1725,59 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     #whereis @tootSquare
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
-    See Also:
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+See Also:
         whereis_atRoom(AbstractUser, Room, String), whereis_everyone(AbstractUser, Room)
 "
-
+                         
                          )
-(define-operator-command who (words u r) "
+(define-operator-command who (words user plane) "
                    throws PrivilegeRequiredException,
                           NotFoundException
 
-    Displays a list of everyone currently in a room. Must have staff level 2 (MODERATOR) to use this command.
+    Displays a  list of everyone  currently in  a room. Must  have staff
+    level 2 (MODERATOR) to use this command.
 
     Syntax for use
     #who [ROOM]
     #who
 
-    NOTE: Leaving off the ROOM parameter will default to displaying for the room the command was initialized in.
+    NOTE: Leaving off the ROOM  parameter will default to displaying for
+    the room the command was initialized in.
 
     Examples
     #who tootSquare
     #whereis
 
     Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances. 
-    Throws:
+        
+words  - The  command  parameters  (whitespace-delimited list)  provided
+after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
+    
+Throws:
         PrivilegeRequiredException - if the user calling isn't a staff member 
         NotFoundException - if the chosen room does not exist
 "
-
+                         
                          )
-(define-operator-command whoami (words u r) "
+(define-operator-command whoami (words user plane) "
 
-    Cause the character to speak his/her name in the current room. Appears as dialogue in the form: â€œHello, my name is NAMEâ€. Must have staff level 1 (STAFF) to use this command.
+    Cause  the character  to speak  his/her  name in  the current  room.
+    Appears as  dialogue in the  form: â€œHello, my name  is NAMEâ€.
+    Must have staff level 1 (STAFF) to use this command.
 
     Syntax for use
     #whoami
@@ -1651,15 +1785,22 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     Examples
     #whoami
 
-    Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
+    Parameters: 
+ 
+words  - The  command  parameters  (whitespace-delimited list)  provided
+        after the # command name
+
         u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
                          )
-(define-operator-command whoareyou (words u r) "
+(define-operator-command whoareyou (words user plane) "
 
-    Ask the server who it is. This command should return version information on some of the critical classes used in the game server. Must have staff level 2 (MODERATOR) to use this command.
+    Ask  the  server who  it  is.  This  command should  return  version
+    information on some of the critical classes used in the game server.
+    Must have staff level 2 (MODERATOR) to use this command.
 
     Syntax for use
     #whoareyou
@@ -1667,13 +1808,18 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
     Examples
     #whoareyou
 
-    Parameters:
-        words - The command parameters (whitespace-delimited list) provided after the # command name
-        u - The user invoking the operator command
-        room - The room in which the user is standing (as a room number). This can be -1 under certain circumstances.
+    Parameters: 
+ 
+words  - The  command  parameters  (whitespace-delimited list)  provided
+        after the # command name
+        
+u - The user invoking the operator command
+        
+room  - The  room in  which the  user is  standing (as  a room  number).
+This can be -1 under certain circumstances.
 "
                          )
-(define-operator-command zoom (words u r) "
+(define-operator-command zoom (words user plane) "
 
     WRITEME: Document this method brpocock@star-hope.org
 
