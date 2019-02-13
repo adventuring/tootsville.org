@@ -54,7 +54,7 @@ window.addEventListener ('load', () => {
     document.addEventListener('keypress', Tootsville.ui.keys.onKeypress);
 
     Tootsville.tank.prepareFor3D ();
-
+    
     Tootsville.util.ensureServersReachable ();
 
     Tootsville.login.start ();
