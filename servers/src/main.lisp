@@ -203,19 +203,22 @@ process's PID."
 
 
 
-(defmethod v:format-message ((stream stream) (message v:message))
-  (format stream "~&~a	{~a}	[~a: ~{~a~^, ~}]~%⯮	~a~%"
-          (format-timestring nil (v:timestamp message)
-                             :format
-                             '((:year 4) #\- (:month 2) #\- (:day 2)
-                               #\Space
-                               (:hour 2) #\: (:min 2) #\: (:sec 2)
-                               #\Space
-                               :nsec))
-          (thread-name (v:thread message))
-          (v:level message)
-          (mapcar #'symbol-munger:lisp->english (v:categories message))
-          (v:content message)))
+(defvar *verbose-logging-lock* (make-lock "Verbose logging lock"))
+
+(defmethod verbose:format-message ((stream stream) (message v:message))
+  (with-lock-held (*verbose-logging-lock*)
+    (format stream "~&~a	{~a}	[~a: ~{~a~^, ~}]~%⯮	~a~%"
+            (format-timestring nil (v:timestamp message)
+                               :format
+                               '((:year 4) #\- (:month 2) #\- (:day 2)
+                                 #\Space
+                                 (:hour 2) #\: (:min 2) #\: (:sec 2)
+                                 #\Space
+                                 :nsec))
+            (thread-name (v:thread message))
+            (v:level message)
+            (mapcar #'symbol-munger:lisp->english (v:categories message))
+            (v:content message))))
 
 
 
