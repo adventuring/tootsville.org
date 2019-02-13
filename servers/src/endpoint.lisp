@@ -139,7 +139,8 @@ Neither solution has yet been implemented."
        (equalp (endpoint-template a)
                (endpoint-template b))))
 
-(defmethod add-or-replace-endpoint (function method (uri string) &optional content-type)
+(defmethod add-or-replace-endpoint (function method (uri string) 
+                                    &optional content-type (how-slow-is-slow .03))
   ;; FIXME: This should be unified with the (TEMPLATE LIST) method.
   ;; FIXME: Like the (TEMPLATE LIST) method, bug WRT unreachable endpoints
   (let ((instance (make-instance 'endpoint
@@ -149,11 +150,13 @@ Neither solution has yet been implemented."
                                  :content-type (make-keyword
                                                 (etypecase content-type
                                                   (string (string-upcase content-type))
-                                                  (symbol (symbol-name content-type)))))))
+                                                  (symbol (symbol-name content-type))))
+                                 :slow how-slow-is-slow)))
     (setf (gethash (endpoint-hash instance) *endpoints*) instance)
     (remap-endpoints)))
 
-(defmethod add-or-replace-endpoint (function method (template list) &optional content-type)
+(defmethod add-or-replace-endpoint (function method (template list) 
+                                    &optional content-type (how-slow-is-slow .03))
   ;; FIXME: It's possible to create a duplicate/unreachable endpoint.
   ;; 
   ;; This method @emph{should}  be changed to look for  an endpoint that
@@ -171,7 +174,8 @@ Neither solution has yet been implemented."
                                  :content-type (make-keyword
                                                 (etypecase content-type
                                                   (string (string-upcase content-type))
-                                                  (symbol (symbol-name content-type)))))))
+                                                  (symbol (symbol-name content-type))))
+                                 :slow how-slow-is-slow)))
     (setf (gethash (endpoint-hash instance) *endpoints*) instance)
     (remap-endpoints)))
 
