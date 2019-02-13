@@ -192,7 +192,7 @@ It is ~a.~]
           :|clouds| (clouds x y z)
           :|precipitation| (multiple-value-list (precipitation x y z)))))
 
-(defendpoint (GET "/world/sky/tootanga/:x-coord/:y-coord/:z-coord")
+(defendpoint (GET "/world/sky/tootanga/:x-coord/:y-coord/:z-coord" "application/json")
   "Get the contents of the sky visible over (X-COORD, Y-COORD, Z-COORD).
 
 This data  includes the position  of the Sun  (which could be  below the
