@@ -6,7 +6,7 @@
 ;;;
 ;;; These options were in existence for Romance 1.1 and/or 1.2. Some are
 ;;; deprecated;   others   are  now   useless   and   report  as   much.
-;;; Removed options will return an HTTP  410 “Gone” message over REST or
+;;; Removed options will return an HTTP  410 ``Gone'' message over REST or
 ;;; the analogous reply over a stream connection.
 ;;;
 ;;; TODO a manual section explaining the differences under DEFINFINITY
@@ -20,9 +20,9 @@
 
 (definfinity add-furniture ((&rest d) user plane)
   "Alias for `INFINITY-SET-FURNITURE', q.v."
-  (infinity-set-furniture d user plane))
+  (apply #'infinity-set-furniture (list d user plane)))
 
-(definfinity add-To-List ((&rest d) user plane)
+(definfinity add-To-List (nil user plane)
   "add a user to a buddy list or ignore list using the traditional (online-only, no notification engine) mechanism (using out of band methods). Compare vs. requestBuddy
 
 @subsection{410 Gone}
@@ -30,7 +30,7 @@
 This was a legacy feature removed in Romance 1.2."
   (error 'legacy-gone))
 
-(definfinity click ((&rest d) user plane)
+(definfinity click ((&key |on| |x| |y| |z| |with|) user plane)
   
   "Used by the client  to report a mouse click or  finger tap.
 
@@ -149,7 +149,7 @@ The click event is being ignored; ITEM-ID was not an interesting item to
 the server.
 "
   )
-(definfinity create-user-house ((&rest d) user plane)
+(definfinity create-user-house ((&key |lot| |house| |index|) user plane)
   
   "Either claim the user's house and lot, or add a room to their house.
 
@@ -168,8 +168,7 @@ TODO: document parameters
 
 TODO document Response with total avatar info from \"wardrobe\""
   )
-(definfinity don ((&rest d) user plane)
-  
+(definfinity don ((&key |slot| |color|) user plane)
   "Don an item
 
 JSON object has the item slot number to be worn (clothes, patterns, pivitz) and optionally set the color (for patterns)
@@ -177,7 +176,7 @@ JSON object has the item slot number to be worn (clothes, patterns, pivitz) and 
 Response with total avatar info from "wardrobe"
 
 Parameters:
-jso - { slot : ### } or { slot: ###, color: CCC } â€” valid formats defined in Colour.Colour(String)
+jso - { slot : ### } or { slot: ###, color: CCC } — valid formats defined in Colour.Colour(String)
 
 Throws:
 org.json.JSONException - Thrown if the data cannot be interpreted from the JSON objects passed in, or conversely, if we can't encode a response into a JSON form 
@@ -191,7 +190,7 @@ meant  for pattern  changing  in  1.2, which  must  now be  accomplished
 in-game via Doodle.
 
 "
-  )
+)
 (definfinity echo ((&rest d) user plane)
   "Echoes back the supplied JSON (or ActionScript) object to the client.
  
@@ -214,7 +213,7 @@ u - The user calling (to whom the response is sent)
 
 "
   )
-(definfinity endEvent ((&rest d) user plane)
+(definfinity endEvent ((&key |moniker| |eventID| |score| |status|) user plane)
   
   " This method  terminates an event (probably a  minigame, but possibly
 a fountain) which was initiated by startEvent.
@@ -243,12 +242,12 @@ status = one of \"cxl\" to cancel an event (in which case, score should be
 
 "
   )
-(definfinity finger ((&rest d) user plane)
+(definfinity finger ((&rest _+user-names) user plane)
   "Get public info for a list of (other) users.
 
 Reply format:
 
-{ from: avatars, status: true, avatars: { 0: { USER-INFO â€¦ }, â€¦ }
+{ from: avatars, status: true, avatars: { 0: { USER-INFO … }, … }
 
 
 User public information is in the format of AbstractUser.getPublicInfo()
@@ -257,14 +256,14 @@ jso - JSON object, with (ignored) keys tied to values which must be the names of
 
 "
   )
-(definfinity game-Action ((&rest d) user plane)
-
+(definfinity game-Action ((&key |action| &rest more-params &allow-other-keys) user plane)
+  
   "gameAction(org.json.JSONObject jso,
                                 AbstractUser u,
                                 Room room)
 throws org.json.JSONException
 
-WRITEME  â€” basically  similar  to an  sendOutOfBandMessage(JSONObject,
+WRITEME  — basically  similar  to an  sendOutOfBandMessage(JSONObject,
 AbstractUser, Room) but specifically something to do with a game
 
 Parameters: jso -  { \"action\": (verb), (other params...) }  u - The user
@@ -275,12 +274,11 @@ encode a response into a JSON form
 
 "
   )
-(definfinity get-apple ((&rest d) user plane)
+(definfinity get-apple (nil user plane)
   "Get the apple to get into, or out of, $Eden"
   )
 
-(definfinity get-Avatars ((&rest d) user plane)
-  
+(definfinity get-Avatars ((&rest _+user-names) user plane)
   "Get avatar data for a list of (other) users. cv. finger
 
 Parameters:
@@ -292,7 +290,7 @@ u - The calling user. The calling user's avatar data will not be returned.
 
 
 ")
-(definfinity get-color-palettes ((&rest _) user plane)
+(definfinity get-color-palettes (nil user plane)
   "getColorPalettes
 
 @subsection{410 Gone}
@@ -311,7 +309,7 @@ this routine was removed in Appius 1.2.0."
   (declare (ignore _))
   (error 'legacy-gone))
 
-(definfinity get-Inventory (() user plane)
+(definfinity get-Inventory ((&rest d) user plane)
   
   "get all inventory for an user — both active and inactive
 
@@ -328,7 +326,7 @@ d — empty
 
 u — The user whose inventory to be searched"
   )
-(definfinity get-Inventory-By-Type ((&rest d) user plane)
+(definfinity get-Inventory-By-Type ((&key |type|) user plane)
   
   "Get a subset of items from your own inventory
 
@@ -346,7 +344,7 @@ OR, you  can specify  a list  of item  type strings  using '$'  plus the
 string identifiers divided by ':', e.g. \"$Pants:Shirts\"
 
 Returns a  set of items  as inv:  { 0: {  id: 123, isActive:  boolean },
-... } â€” furniture with placement data  will also have x, y, and facing
+... } — furniture with placement data  will also have x, y, and facing
 vars. Other attributes are \"from\":\"inventory\", \"type\": matching the type
 of the question
 
@@ -357,7 +355,7 @@ Return data
   { from: inventory, for: USER-LOGIN, type: TYPE-STRING,
     inv: {
      #: { ITEM-INFO },
-      #: { ITEM-INFO } â€¦
+      #: { ITEM-INFO } …
     }
   }
 @end example
@@ -372,8 +370,7 @@ u - The user whose inventory to be searched, who is the caller of this routine
 
 "
   )
-(definfinity get-Online-Users ((&rest d) user plane)
-  
+(definfinity get-Online-Users ((&key |inRoom|) user plane)
   "Get a list of users in a Zone, or in a Room.
  
 This is an administrative function, only available to staff members.
@@ -398,11 +395,10 @@ NotFoundException - if the room requested doesn't exist
 
 "
   )
-(definfinity get-Room-List ((&rest d) user plane)
-  
-  "Get a list of all “well known” Rooms currently active/visible.
+(definfinity get-Room-List (nil user plane)
+  "Get a list of all ``well known'' Rooms currently active/visible.
 
-“Rooms” no longer exist. The “rooms” are now known as “planes.”
+``Rooms'' no longer exist. The ``rooms'' are now known as ``planes.''
 
 The following planes exist in Tootsville:
 
@@ -432,7 +428,7 @@ Pink-Moon
 "
   #("Tootanga" "Space" "Moon" "Other-Moon" "Pink-Moon"))
 
-(definfinity getServerTime ((&rest d) user plane)
+(definfinity getServerTime (nil user plane)
   "Send the server time to the client requesting it
  
 For synchronization purposes.
@@ -441,7 +437,6 @@ Sends a JSON object with a single property, serverTime, with the current
 time in milliseconds (give or take transit time). This is the Unix time,
 not the Universal time.")
 (definfinity get-session-apple ((&rest d) user plane)
-  
   "Initialise a session key for stream or batch mode operations
 
 Replies with { from: initSession, key: (OPAQUE-STRING) } 
@@ -454,7 +449,7 @@ jso - JavaScript array-style object where the key names are ignored, but the val
 
 "
   )
-(definfinity get-User-Lists ((&rest d) user plane)
+(definfinity get-User-Lists (nil user plane)
   
   "Get the user's buddy list and ignore list.
 
@@ -474,13 +469,13 @@ WRITEME: Document this method brpocock@star-hope.org
 
 "
   )
-(definfinity get-Zone-List ((&rest d) user plane)
-
+(definfinity get-Zone-List (nil user plane)
+  
   "Get a list of all Zones currently active/visible. 
 
 This returns \"Universe\" as the only Zone."
   #("Universe"))
-(definfinity give ((&rest d) user plane)
+(definfinity give ((&key |slot| |to|) user plane)
   
   "Give an item to another user
 
@@ -495,8 +490,7 @@ AlreadyExistsException - if the event can't be started for some reason
 
 "
   )
-(definfinity go ((&rest d) user plane)
-  
+(definfinity go ((&key |do| |x| |y| |z| |facing|) user plane)
   "go to a place and/or perform a gesture
 
 @example
@@ -509,30 +503,32 @@ facing: FACING (optional)
                                 
 u - the user doing something
 ")
-(definfinity init-user-room ((&rest d) user plane)
+(definfinity init-user-room ((&key |room| |autoJoin|) user plane)
   "
  
-Creates  room named  user/user's name/room  â€” room  is the  room index
-number given in  the JSON data as â€œroom,â€ it  will always be zero
-right now as  all users have single-room houses. This  will populate all
+Creates room  named user/user's  name/room — room  is the  room index
+number given in the JSON data as  ``room,'' it will always be zero right
+now  as  all users  have  single-room  houses.  This will  populate  all
 furniture-type items for that room onto a set of room variables owned by
 the user. The  user calling this method  must be the owner  of the room.
 If the  user has not visited  his/her house before, this  will return an
-asynchronous  "make a  new house"  notification  to do  the "first  run"
-screen, by sending a message of type { "from": "initUserRoom", "status":
-false, "err": "showFirstRun" }.
+asynchronous \"make a  new house\" notification to do  the \"first run\"
+screen,  by sending  a  message of  type  { \"from\":  \"initUserRoom\",
+\"status\": false, \"err\": \"showFirstRun\" }.
 
-Success:    responds   with    true,   and    "moniker":   the    room's moniker (user/WHOEVER/123)
+Success:   responds    with   true,   and   \"moniker\":    the   room's
+moniker (user/WHOEVER/123)
 
-If unneccessary, returns an error of "exists" meaning that the room is already existing
+If unneccessary, returns an error of \"exists\" meaning that the room is
+already existing
 
 @example
 jso - { room: (room-number), autoJoin: (boolean) }
 @end example
                                 
 u - The user whose house-room needs to be initialized
-") (definfinity join ((&rest d) user plane)
-  "Join a room.  On success, sends back the set  of room join events;
+") (definfinity join ((&key |room| |from|) user plane)
+     "Join a room.  On success, sends back the set  of room join events;
      but on failure, replies with  { from: roomJoin, status: false, err:
      ...}
 
@@ -557,7 +553,7 @@ room.full
 u - the user joining the room
   
   ") 
-(definfinity login ((&rest d) user plane)
+(definfinity login ((&key |userName| |password| |zone|) user plane)
   "Handle a login request
 
 We no longer do this …
@@ -571,14 +567,11 @@ Response: logOK or { err: login.fail, msg: reason } with
 (definfinity logout ((&rest d) user plane)
   "Log out of this game session (or zone)
 
-  There's a bug in the Persephone client that causes it to explode if we
-  log it out  before it receives & processes the  logout message. So, we
-  wait for the expected lag time to expire and then throw 2 full seconds
-  of wasted wait time after it, which had ought to be enough time
-
-  Note: in  the future, this  will be configured  to be off  by default.
-  Tootsville servers  will need to incorporate  the configuration key
-  value if Persephone 2 hasn't been fixed by that time.
+There was a bug in the Persephone client that caused it to explode if we
+logged it out before it received  & processed the logout message. So, we
+waited for the expected lag time to expire and then throw 2 full seconds
+of wasted wait time after it, which had ought to be enough time. This is
+no longer supported.
 
   "
   )
@@ -593,17 +586,24 @@ Response: logOK or { err: login.fail, msg: reason } with
 
   ")
 
-(definfinity peek-at-inventory ((&rest d) user plane)
+(definfinity peek-at-inventory ((&key |who| |type|) user plane)
   "Handle looking at other user's inventories
 
-  Parameters: jso - {\"who\": the login name  of the user of whom to get
-  the  inventory  };   optional  \"type\":  to  filter   by  type.  (see
-  getInventoryByType(JSONObject,  AbstractUser, AbstractUser,  Room) for
-  details) u  - The  user requesting  the inventory room  - The  room in
-  which the  request occurs  Throws: org.json.JSONException -  Thrown if
+Parameters: jso -  {\"who\": the login name  of the user of  whom to get
+the  inventory   };  optional   \"type\":  to   filter  by   type.  (see
+getInventoryByType(JSONObject,  AbstractUser,  AbstractUser,  Room)  for
+details)
+
+u  - The  user requesting  the inventory 
+
+room  - The  room in
+  which the  request occurs 
+ 
+Throws: org.json.JSONException -  Thrown if
   the data  cannot be interpreted  from the  JSON objects passed  in, or
   conversely,  if  we   can't  encode  a  response  into   a  JSON  form
-  NotFoundException - Could not find a user with that name
+  
+NotFoundException - Could not find a user with that name
 
   ")
 (definfinity ping (nil user plane)
@@ -614,7 +614,7 @@ This also updates the user's last-active timestamp, to prevent them from
 being idled offline.
   
   ")
-(definfinity prompt-reply ((&rest d) user plane)
+(definfinity prompt-reply ((&key |id| |reply|) user plane)
   
   "promptReply(org.json.JSONObject jso,
                                    AbstractUser u,
@@ -637,7 +637,7 @@ being idled offline.
   { \"label\" : $BUTTON_LABEL,
   \"label_en_US\" : $BUTTON_LABEL,
   \"type\" : $BUTTON_TYPE },
-  [ â€¦ ]
+  [ … ]
   }
   }
   
@@ -653,10 +653,10 @@ being idled offline.
 
   $TITLE = dialog title
 
-  Only one of either  â€œattachUserâ€ or â€œattachItemâ€ will be
+  Only one of either  ``attachUser'' or ``attachItem'' will be
   included. $AVATAR_LABEL is the full avatar label of the user/avatar to
-  which  the prompt  should  be attached  â€”  including â€œ$â€  and
-  instance ID, if necessary â€” where $ITEM_ID is the room variable item
+  which  the prompt  should  be attached  —  including ``$''  and
+  instance ID, if necessary — where $ITEM_ID is the room variable item
   ID for a placed item in the room.
 
   $TEXT = message text, may have  \n, will often need word-wrapping, and
@@ -762,7 +762,7 @@ Throws:
   org.json.JSONException - for really bad syntax errors
 
   ")
-(definfinity remove-from-list ((&rest d) user plane)
+(definfinity remove-from-list ((&key |buddy| |ignore|) user plane)
   "Remove someone from a buddy list or ignore list.
 
   jso - To remove a buddy: { buddy: (name) }; or to attend to someone who had previously been ignored: { ignore: (name) }
@@ -770,13 +770,13 @@ Throws:
   u - The user whose buddy list or ignore list will be updated
   ")
 
-(definfinity report-bug ((&rest d) user plane)
-  "This method allows the client to â€œphone homeâ€ to report a bug. The bug report itself is just a giant string embedded in the â€œbugâ€ element, but a â€œcauseâ€ element will be treated as the subject. Note that the bug report â€” like all JSON input â€” will be cut off at a certain limit (typically 4KiB), so it's most helpful to keep it short & sweet: Typically, this should be something like a single stack backtrace (with as much detail as possible), rather than a complete log trace or something.
+(definfinity report-bug ((&key |info|) user plane)
+  "This method allows the client to ``phone home'' to report a bug. The bug report itself is just a giant string embedded in the ``bug'' element, but a ``cause'' element will be treated as the subject. Note that the bug report — like all JSON input — will be cut off at a certain limit (typically 4KiB), so it's most helpful to keep it short & sweet: Typically, this should be something like a single stack backtrace (with as much detail as possible), rather than a complete log trace or something.
 
-  The suggested usage is to include the exception itself as â€œcause,â€ the backtrace up to a maximum of 1KiB, a log backtrace up to its last 1KiB as â€œbug,â€ and as much machine-formatted system information as possible in the â€œinfoâ€ object.
-  Fields of â€œinfoâ€
+  The suggested usage is to include the exception itself as ``cause,'' the backtrace up to a maximum of 1KiB, a log backtrace up to its last 1KiB as ``bug,'' and as much machine-formatted system information as possible in the ``info'' object.
+  Fields of ``info''
 
-  As many fields as possible, limit the contents to a reasonable length thoughâ€¦
+  As many fields as possible, limit the contents to a reasonable length though…
 
   Note that the keys listed are strings, so e.g.:
 
@@ -967,22 +967,22 @@ Throws:
        }
 @end example
        
-jso - Must contain a  single string attribute named â€œbug.â€ Should
-contain  an  attribute  named   â€œinfoâ€  with  system  information
-key-value pairs (see  above). May also have a  subject of â€œcauseâ€
+jso - Must contain a  single string attribute named ``bug.'' Should
+contain  an  attribute  named   ``info''  with  system  information
+key-value pairs (see  above). May also have a  subject of ``cause''
 as a string.
 
        u - The user reporting the bug.
        
        ")
 
-(definfinity report-user ((&rest d) user plane)
+(definfinity report-user ((&key |userName|) user plane)
   "Report an user to the moderator(s) on duty for breaking a rule
 
         { userName = user to be reported }
        
        ")
-(definfinity request-buddy ((&rest d) user plane)
+(definfinity request-buddy ((&key |buddy|) user plane)
   "Request adding a user to your buddy list (mutual-add) using the notification-based system
 
 (Added in 1.1)
@@ -991,7 +991,7 @@ as a string.
        
 u - user who is requesting the addition
 ")
-(definfinity send-out-of-band-message ((&rest d) user plane)
+(definfinity send-out-of-band-message ((&key |sender| |from| |status| |body| |sendRoomList|) user plane)
   
   "Send an arbitrary JSON packet to another user, or all of the users in a room, out of the band of communications.
  
@@ -1004,9 +1004,9 @@ some additional data that is being provided.
        Adds \"roomTitle\"  to body if  body contains \"room\"  and title
        can be determined
 
-       Add  â€œ\"sendRoomList\":  \"true\"â€  to give  the  user  an
+       Add  @samp{\"sendRoomList\":  \"true\"}  to give  the  user  an
        updated  room list  as well.  (Necessary for  invitations to  new
-       rooms.) Inviting to houses â€¦
+       rooms.) Inviting to houses …
 
        initUserRoom { room: 0, autoJoin: false }
        { from: initUserRoom, status: true, moniker: ROOM-MONIKER } ** OK
@@ -1044,17 +1044,17 @@ some additional data that is being provided.
 
        ") 
 
-(definfinity server-time ((&rest d) u r )
+(definfinity server-time ((&key |serverTime|) u r )
   "Accept  the client's  notification of  a server-time  adjustment.
 
        This is used to compute the client's round-trip lag time.
 
        jso - { serverTime: LONG milliseconds since epoch }
 ")
-(definfinity set-avatar-color ((&rest d) user plane)
+(definfinity set-avatar-color ((&key |base| |extra|) user plane)
   "Set the avatar base and extra colours for the given user.
 
-       Colour numbers are given in X'RRGGBB' form as an integer â€” to compute one from byte (0..255) RGB values, do ( red << 16 & green << 8 & blue )
+       Colour numbers are given in X'RRGGBB' form as an integer — to compute one from byte (0..255) RGB values, do ( red << 16 & green << 8 & blue )
 
        Parameters:
        jso - { \"base\": (colour number), \"extra\": (colour number) }
@@ -1065,7 +1065,7 @@ some additional data that is being provided.
        SQLException - if the palettes can't be loaded
 
        ")
-(definfinity set-furniture ((&rest d) user plane)
+(definfinity set-furniture ((&key |slot| |x| |y| |z| |facing| |remove|) user plane)
   "Set or change a furniture item. 
 
 To add  a structural item  to the room,  put item: 123  without anything
@@ -1073,7 +1073,7 @@ else.  To place  furniture  on  the floor,  also  add  attributes x,  y,
 and facing.
 
 To  change furniture,  replace item:  with slot:  (to avoid  ambiguities
-about “which chair”)
+about ``which chair'')
 
        To remove an item from the room, send { slot: 123, remove: true }
 
@@ -1087,7 +1087,7 @@ about “which chair”)
 
        ") 
 
-(definfinity set-room-var ((&rest d) user plane) 
+(definfinity set-room-var ((&rest key+value-pairs) user plane) 
   
   "Set a room variable or set of room variables.
 
@@ -1101,7 +1101,7 @@ about “which chair”)
 
        ") 
 
-(definfinity set-user-var ((&rest d) user plane)
+(definfinity set-user-var ((&rest key+value-pairs) user plane)
   "setUserVar
 
        public static void "
@@ -1137,7 +1137,7 @@ about “which chair”)
 
        ")
 
-(definfinity speak ((&rest d) user plane)
+(definfinity speak ((key |speech|) user plane)
   "speak
 
        Handle speech by the user. XXX This should be calling User.speak(Room, String) to do the dirty work: but, in fact, the reverse is currently true.
@@ -1195,12 +1195,12 @@ about “which chair”)
 
        ")
 (definfinity start-event ((&key |moniker|) user plane)
-           "Attempt to begin an event. Might return an error. Uses Quæstor for the heavy lifting.
+  "Attempt to begin an event. Might return an error. Uses Quæstor for the heavy lifting.
 
 
 TODO verify params
 
-Note that for all fountains, use the magic moniker “fountain”
+Note that for all fountains, use the magic moniker ``fountain''
 
 Calls back the user with either of:
 
