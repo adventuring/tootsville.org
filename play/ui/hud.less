@@ -101,8 +101,6 @@
     z-index: 600;
 }
 
-
-
 #hud {
     position: fixed;
     top: 0;
@@ -351,12 +349,6 @@ p {
         color: @periwinkle;
         padding: .5rem;
     }
-}
-
-#gamepad-loading, #gamepad {
-    top: 10vh;
-    left: 25vw;
-    width: 50vw;
 }
 
 #control-panel-loading {
@@ -710,6 +702,8 @@ h1.centered {
     padding-bottom: 3rem;
 }
 
+/*  Speech balloons and name tags */
+
 .speech {
     background-color: white;
     border: 1pt solid black;
@@ -774,5 +768,21 @@ h1.centered {
     border-radius: .5em;
     text-shadow: 1px 1px 2px #0008,2px 2px 2px #0004;
     font-size: 1rem;
+}
+
+/* Gamepads panel */
+
+#gamepad-loading, #gamepad {
+    top: 3rem;
+    height: calc(100vh - 3rem)
+                left: 20vw;
+    width: 60vw;
+    overflow-y: scroll;
+    #gamepads-assign {
+        button {
+            border-radius: 0;
+            padding: .5ex;             
+        }
+    }
 }
 

@@ -21,6 +21,7 @@ play/game/commands.js
 play/game/gatekeeper.js
 
 play/ui/connect.js
+play/ui/gamepad-layouts.js
 play/ui/gamepad.js
 play/ui/hud.js
 play/ui/fit-steps.js
