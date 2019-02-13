@@ -70,8 +70,7 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes)
         { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 13"); }
         for (var i = 0; i < meshes.length; ++i) 
         { meshes[i].setParent (modelRoot); } } } catch (e) 
-  { Tootsville.warn ("Error importing UltraToot: " + e.toString ());
-    console.warn (e);
+  { Tootsville.warn ("Error adding meshes to model root for  UltraToot", e);
     addProxyToot (modelRoot); }
   modelRoot.position.y = -Infinity;
   Tootsville.tank.scene.addTransformNode (modelRoot); // TODO: is this necessary?
@@ -81,14 +80,16 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes)
 Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, foo, bar) 
 { // XXX: private
     try 
-    { var modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
+    { Tootsville.trace ("Got UltraToot meshes", meshes);
+      var modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
       Tootsville.Avatars.addMeshesToModelRoot (meshes, modelRoot);
       modelRoot.position.y = -Infinity;
       Tootsville.tank.scene.addTransformNode (modelRoot); // TODO: is this necessary?
       Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
       finish (Tootsville.Avatars.UltraTootBuilder.model);
-      return; } catch (e) 
-    { Tootsville.error ("Error in importUltraToots: ", e); } };
+      return; }
+    catch (e) 
+    { Tootsville.error ("Error in importUltraToot: ", e); } };
 Tootsville.Avatars.UltraTootBuilder.getBaseModel = function () 
 { return new Promise (
     (finish) => 
