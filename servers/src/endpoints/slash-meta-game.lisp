@@ -406,7 +406,7 @@ key in the resulting Alist."
 
 
 
-(defendpoint (get "/meta-game/services" "text/html")
+(defendpoint (get "/meta-game/services" "text/html" .15)
   "Provide a listing of services available in this cluster.
 
  This provides a browseable catalog of  web services that are provided by
