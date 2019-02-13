@@ -36,14 +36,15 @@ if (!Tootsville.gossip) { Tootsville.gossip = {}; }
 if (!Tootsville.gossip.peers)
 { Tootsville.gossip.peers = [];}
 
-Tootsville.gossip.connectedP = function ()
-{ return (Tootsville.gossip.peers != []);; };
-
 Tootsville.gossip.stunServers = function ()
 { var sample = [ { urls: [ "stun:stun.l.google.com:19302" ] } ];
   /* Firefox wants 2, preferably, and never more than 5, so 3 seems safe. */
   sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
-  sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
+  sample = sample.concat ({ urls: [ 'turn:192.158.29.39:3478?transport=tcp' ],
+                            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                            username: '28224511:1379330808' });
+
+  //  sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
   return sample; };
 
 Tootsville.gossip.postDescription = function (peer, description)
@@ -63,15 +64,19 @@ Tootsville.gossip.createConnection = function ()
 
   peer.infinityChannel.onopen = event => { Tootsville.gossip.openInfinityMode (peer, event); };
 
-  peer.connection.createOffer().then(
+  Tootsville.trace ("Posting offer to servers");
+
+  peer.connection.createOffer ().then (
+      offer => { return peer.connection.setLocalDescription(offer); }
+  ).then (
       () => { Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) ); }); };
 
 /**
-* Accept an inbound datagram.
-*
-* See the server documentation of `DEFINFINITY' for a description of the
-* Infinity Mode protocols.
-*/
+ * Accept an inbound datagram.
+ *
+ * See the server documentation of `DEFINFINITY' for a description of the
+ * Infinity Mode protocols.
+ */
 Tootsville.gossip.gatekeeperAccept = function (peer, event)
 { var gram = event.data;
   if (gram.c && Tootsville.game.commands [ gram.c ])
@@ -93,17 +98,19 @@ Tootsville.gossip.openInfinityMode = function (peer, event)
   peer.infinityChannel.onmessage = event => { Tootsville.gossip.gatekeeperAccept (peer, event); };
   peer.infinityChannel.onclose = event => { Tootsville.gossip.closeInfinityMode (peer, event); };
   peer.infinityChannel.send (JSON.stringify ( { c: login, d: { userName: Tootsville.character, password: null, zone: 'Tootsville Ⅴ' }, r: '$Eden' }));
-  Tootsville.gossip.peers = Tootsville.gossip.peers.concat (peer); };
+  Tootsville.gossip.peers = Tootsville.gossip.peers.concat (peer);
+  Tootsville.gossip.ensureConnected (); };
 
 Tootsville.gossip.connect = function ()
 { Tootsville.gossip.createConnection (); };
 
-Tootsville.gossip.ensureConnected = function ()
-{ return new Promise (
-    (success, failure) =>
-        { if (Tootsville.gossip.connectedP ())
-          { Tootsville.warn ("Gossipnet already connected");
-            success (); } else
-          { Tootsville.warn ("Gossipnet not connected; connecting now");
-            Tootsville.gossip.connect ().then (success, failure); } } ); };
+Tootsville.gossip.connectedP = function ()
+{ return Tootsville.gossip.peers.length > 0; };
 
+Tootsville.gossip.ensureConnected = function ()
+{ var length = Tootsville.gossip.peers.length;
+  if (length > 4)
+  { Tootsville.warn ("Gossipnet already connected at " + length + " points");
+    success (); } else
+  { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
+    Tootsville.gossip.connect (); } };
