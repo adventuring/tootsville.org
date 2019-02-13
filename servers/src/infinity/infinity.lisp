@@ -97,6 +97,7 @@ XXX WRITEME
 "
   (let ((legacy-name (symbol-munger:lisp->camel-case (string name)))
         (docstring (when (stringp (first body)) (first body)))
+        (body (if (stringp (first body)) (rest body) body))
         (infinity-name (intern (concatenate 'string "INFINITY-" (string name))))
         (λ-list (if (eql '&rest (first lambda-list))
                     lambda-list
@@ -106,7 +107,9 @@ XXX WRITEME
     `(progn
        (defun ,infinity-name (d u r)
          ,docstring
+         (declare (ignorable u r))
          (destructuring-bind (,@λ-list) d
            ,@body))
-       (defendpoint (POST ,(concatenate 'string "/world/infinity/" name))
-           (call-infinity-from-rest  ',infinity-name )))))
+       (defendpoint (POST ,(concatenate 'string "/world/infinity/" (string-downcase name)))
+         ,docstring
+         (call-infinity-from-rest  ',infinity-name )))))
