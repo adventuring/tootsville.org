@@ -29,7 +29,9 @@
  *
  * USA
  *
- */(function () {
+ */
+
+(function () {
      var clickHandlers = {
          'control-panel-icon': () => { Tootsville.ui.hud.toggleHUDPanel('control-panel'); },
          'toolbox-mobile-phone': () => { Tootsville.ui.hud.showHUDPanel('mobile'); },
