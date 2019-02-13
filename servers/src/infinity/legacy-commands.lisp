@@ -17,17 +17,17 @@
 ;;; u is an @emph{authenticated} user object
 ;;;
 ;;; d is the d: element of the command already converted to plist form.
-(definfinity add-furniture (d u r)
+(definfinity add-furniture ((&rest d) u r)
   "Alias for `INFINITY-SET-FURNITURE', q.v."
   (infinity-set-furniture d u r))
-(definfinity add-To-List (d u r)
+(definfinity add-To-List ((&rest d) u r)
   "add a user to a buddy list or ignore list using the traditional (online-only, no notification engine) mechanism (using out of band methods). Compare vs. requestBuddy
 
 @subsection{410 Gone}
 
 This was a legacy feature removed in Romance 1.2."
   (error 'legacy-gone))
-(definfinity click (d u r)
+(definfinity click ((&rest d) u r)
   
   "Used by the client  to report a mouse click or  finger tap.
 
@@ -146,7 +146,7 @@ The click event is being ignored; ITEM-ID was not an interesting item to
 the server.
 "
   )
-(definfinity create-user-house (d u r)
+(definfinity create-user-house ((&rest d) u r)
   
   "Either claim the user's house and lot, or add a room to their house.
 
@@ -158,14 +158,14 @@ or adding a room, @verb{| { index: roomIndex } |}
 
 "
   )
-(definfinity doff (d u r)
+(definfinity doff ((&rest d) u r)
   "Doff an item
 
 TODO: document parameters
 
 TODO document Response with total avatar info from \"wardrobe\""
   )
-(definfinity don (d u r)
+(definfinity don ((&rest d) u r)
   
   "Don an item
 
@@ -189,7 +189,7 @@ in-game via Doodle.
 
 "
   )
-(definfinity echo (d u r)
+(definfinity echo ((&rest d) u r)
   "Echoes back the supplied JSON (or ActionScript) object to the client.
  
 This method exists solely for testing purposes.
@@ -211,7 +211,7 @@ u - The user calling (to whom the response is sent)
 
 "
   )
-(definfinity endEvent (d u r)
+(definfinity endEvent ((&rest d) u r)
   
   " This method  terminates an event (probably a  minigame, but possibly
 a fountain) which was initiated by startEvent.
@@ -240,7 +240,7 @@ status = one of \"cxl\" to cancel an event (in which case, score should be
 
 "
   )
-(definfinity finger (d u r)
+(definfinity finger ((&rest d) u r)
   "Get public info for a list of (other) users.
 
 Reply format:
@@ -254,7 +254,7 @@ jso - JSON object, with (ignored) keys tied to values which must be the names of
 
 "
   )
-(definfinity game-Action (d u r)
+(definfinity game-Action ((&rest d) u r)
 
   "gameAction(org.json.JSONObject jso,
                                 AbstractUser u,
@@ -272,11 +272,11 @@ encode a response into a JSON form
 
 "
   )
-(definfinity get-apple (d u r)
+(definfinity get-apple ((&rest d) u r)
   "Get the apple to get into, or out of, $Eden"
   )
 
-(definfinity get-Avatars (d u r)
+(definfinity get-Avatars ((&rest d) u r)
   
   "Get avatar data for a list of (other) users. cv. finger
 
@@ -289,7 +289,7 @@ u - The calling user. The calling user's avatar data will not be returned.
 
 
 ")
-(definfinity get-color-palettes (d u r)
+(definfinity get-color-palettes ((&rest _) u r)
   "getColorPalettes
 
 @subsection{410 Gone}
@@ -305,7 +305,7 @@ in the JSON result object (from: \"getColorPalettes\")
 Not used in Tootsville any more.  The analogous palettes in Li'l Vampies
 and Empires  of the Air are  being replaced with algorithmic  checks, so
 this routine was removed in Appius 1.2.0."
-  (declare (ignore d u r))
+  (declare (ignore _))
   (error 'legacy-gone))
 
 (definfinity get-Inventory (() u r)
@@ -325,7 +325,7 @@ d — empty
 
 u — The user whose inventory to be searched"
   )
-(definfinity get-Inventory-By-Type (d u r)
+(definfinity get-Inventory-By-Type ((&rest d) u r)
   
   "Get a subset of items from your own inventory
 
@@ -369,7 +369,7 @@ u - The user whose inventory to be searched, who is the caller of this routine
 
 "
   )
-(definfinity get-Online-Users (d u r)
+(definfinity get-Online-Users ((&rest d) u r)
   
   "Get a list of users in a Zone, or in a Room.
  
@@ -395,7 +395,7 @@ NotFoundException - if the room requested doesn't exist
 
 "
   )
-(definfinity get-Room-List (d u r)
+(definfinity get-Room-List ((&rest d) u r)
   
   "Get a list of all “well known” Rooms currently active/visible.
 
@@ -424,7 +424,7 @@ Pink-Moon
 "
   #("Tootanga" "Space" "Moon" "Other-Moon" "Pink-Moon"))
 
-(definfinity getServerTime (d u r)
+(definfinity getServerTime ((&rest d) u r)
   "Send the server time to the client requesting it
  
 For synchronization purposes.
@@ -432,21 +432,21 @@ For synchronization purposes.
 Sends a JSON object with a single property, serverTime, with the current
 time in milliseconds (give or take transit time). This is the Unix time,
 not the Universal time.")
-(definfinity get-session-apple (d u r)
+(definfinity get-session-apple ((&rest d) u r)
   
   "Initialise a session key for stream or batch mode operations
 
 Replies with { from: initSession, key: (OPAQUE-STRING) } 
 
 ")
-(definfinity get-store-item-info (d u r)
+(definfinity get-store-item-info ((&rest d) u r)
   "WRITEME: Document this method brpocock@star-hope.org
 
 jso - JavaScript array-style object where the key names are ignored, but the values are item ID's
 
 "
   )
-(definfinity get-User-Lists (d u r)
+(definfinity get-User-Lists ((&rest d) u r)
   
   "Get the user's buddy list and ignore list.
 
@@ -458,7 +458,7 @@ u - The user whose buddy and ignore lists will be fetched
 
 "
   )
-(definfinity get-Wallet (d u r)
+(definfinity get-Wallet ((&rest d) u r)
   
   "
 WRITEME: Document this method brpocock@star-hope.org
@@ -466,13 +466,13 @@ WRITEME: Document this method brpocock@star-hope.org
 
 "
   )
-(definfinity get-Zone-List (d u r)
+(definfinity get-Zone-List ((&rest d) u r)
 
   "Get a list of all Zones currently active/visible. 
 
 This returns \"Universe\" as the only Zone."
   #("Universe"))
-(definfinity give (d u r)
+(definfinity give ((&rest d) u r)
   
   "Give an item to another user
 
@@ -487,7 +487,7 @@ AlreadyExistsException - if the event can't be started for some reason
 
 "
   )
-(definfinity go (d u r)
+(definfinity go ((&rest d) u r)
   
   "go to a place and/or perform a gesture
 
@@ -501,7 +501,7 @@ facing: FACING (optional)
                                 
 u - the user doing something
 ")
-(definfinity init-user-room (d u r)
+(definfinity init-user-room ((&rest d) u r)
   "
  
 Creates  room named  user/user's name/room  â€” room  is the  room index
@@ -523,7 +523,7 @@ jso - { room: (room-number), autoJoin: (boolean) }
 @end example
                                 
 u - The user whose house-room needs to be initialized
-") (definfinity join (d u r)
+") (definfinity join ((&rest d) u r)
   "Join a room.  On success, sends back the set  of room join events;
      but on failure, replies with  { from: roomJoin, status: false, err:
      ...}
@@ -549,7 +549,7 @@ room.full
 u - the user joining the room
   
   ") 
-(definfinity login (d u r)
+(definfinity login ((&rest d) u r)
   "Handle a login request
 
 We no longer do this …
@@ -560,7 +560,7 @@ Response: logOK or { err: login.fail, msg: reason } with
 "
   )
 
-(definfinity logout (d u r)
+(definfinity logout ((&rest d) u r)
   "Log out of this game session (or zone)
 
   There's a bug in the Persephone client that causes it to explode if we
@@ -575,7 +575,7 @@ Response: logOK or { err: login.fail, msg: reason } with
   "
   )
 
-(definfinity mail-customer-service (d u r) 
+(definfinity mail-customer-service ((&rest d) u r) 
   "  send an eMail to customer service (feedback)
 
   Parameters:
@@ -585,7 +585,7 @@ Response: logOK or { err: login.fail, msg: reason } with
 
   ")
 
-(definfinity peek-at-inventory (d u r)
+(definfinity peek-at-inventory ((&rest d) u r)
   "Handle looking at other user's inventories
 
   Parameters: jso - {\"who\": the login name  of the user of whom to get
@@ -606,7 +606,7 @@ This also updates the user's last-active timestamp, to prevent them from
 being idled offline.
   
   ")
-(definfinity prompt-reply (d u r)
+(definfinity prompt-reply ((&rest d) u r)
   
   "promptReply(org.json.JSONObject jso,
                                    AbstractUser u,
@@ -754,7 +754,7 @@ Throws:
   org.json.JSONException - for really bad syntax errors
 
   ")
-(definfinity remove-from-list (d u r)
+(definfinity remove-from-list ((&rest d) u r)
   "Remove someone from a buddy list or ignore list.
 
   jso - To remove a buddy: { buddy: (name) }; or to attend to someone who had previously been ignored: { ignore: (name) }
@@ -762,7 +762,7 @@ Throws:
   u - The user whose buddy list or ignore list will be updated
   ")
 
-(definfinity report-bug (d u r)
+(definfinity report-bug ((&rest d) u r)
   "This method allows the client to â€œphone homeâ€ to report a bug. The bug report itself is just a giant string embedded in the â€œbugâ€ element, but a â€œcauseâ€ element will be treated as the subject. Note that the bug report â€” like all JSON input â€” will be cut off at a certain limit (typically 4KiB), so it's most helpful to keep it short & sweet: Typically, this should be something like a single stack backtrace (with as much detail as possible), rather than a complete log trace or something.
 
   The suggested usage is to include the exception itself as â€œcause,â€ the backtrace up to a maximum of 1KiB, a log backtrace up to its last 1KiB as â€œbug,â€ and as much machine-formatted system information as possible in the â€œinfoâ€ object.
@@ -968,13 +968,13 @@ as a string.
        
        ")
 
-(definfinity report-user (d u r)
+(definfinity report-user ((&rest d) u r)
   "Report an user to the moderator(s) on duty for breaking a rule
 
         { userName = user to be reported }
        
        ")
-(definfinity request-buddy (d u r)
+(definfinity request-buddy ((&rest d) u r)
   "Request adding a user to your buddy list (mutual-add) using the notification-based system
 
 (Added in 1.1)
@@ -983,7 +983,7 @@ as a string.
        
 u - user who is requesting the addition
 ")
-(definfinity send-out-of-band-message (d u r)
+(definfinity send-out-of-band-message ((&rest d) u r)
   
   "Send an arbitrary JSON packet to another user, or all of the users in a room, out of the band of communications.
  
@@ -1036,14 +1036,14 @@ some additional data that is being provided.
 
        ") 
 
-(definfinity server-time ( d u r )
-    "Accept  the client's  notification of  a server-time  adjustment.
+(definfinity server-time ((&rest d) u r )
+  "Accept  the client's  notification of  a server-time  adjustment.
 
        This is used to compute the client's round-trip lag time.
 
        jso - { serverTime: LONG milliseconds since epoch }
 ")
-(definfinity set-avatar-color (d u r)
+(definfinity set-avatar-color ((&rest d) u r)
     "Set the avatar base and extra colours for the given user.
 
        Colour numbers are given in X'RRGGBB' form as an integer â€” to compute one from byte (0..255) RGB values, do ( red << 16 & green << 8 & blue )
@@ -1057,7 +1057,7 @@ some additional data that is being provided.
        SQLException - if the palettes can't be loaded
 
        "
-  (definfinity set-furniture (d u r)
+  (definfinity set-furniture ((&rest d) u r)
       "Set or change a furniture item. 
 
 To add  a structural item  to the room,  put item: 123  without anything
@@ -1077,7 +1077,7 @@ about “which chair”)
        org.json.JSONException - Thrown if the data cannot be interpreted from the JSON objects passed in, or conversely, if we can't encode a response into a JSON form 
        NotFoundException - if the furniture doesn't exist
 
-       ") (definfinity set-room-var ( d u r) 
+       ") (definfinity set-room-var ((&rest d) u r) 
               
               "Set a room variable or set of room variables.
 
@@ -1089,7 +1089,7 @@ about “which chair”)
        org.json.JSONException - if the packet is malformed 
        PrivilegeRequiredException - if a non-privileged user attempts to set a room variable.
 
-       ") (definfinity set-user-var ( d u r) )
+       ") (definfinity set-user-var ((&rest d) u r) )
        "setUserVar
 
        public static void "
@@ -1108,7 +1108,7 @@ about “which chair”)
        Throws:
        org.json.JSONException - if the JSO can't be decoded
 
-       ")(definfinity spawn-zone (d u r)
+       ")(definfinity spawn-zone ((&rest d) u r)
              "spawnZone
 
        Spawn an additional zone.
@@ -1121,7 +1121,7 @@ about “which chair”)
        org.json.JSONException - if something goes awry 
        PrivilegeRequiredException - if the user isn't a Developer
 
-       ")(definfinity speak (d u r)
+       ")(definfinity speak ((&rest d) u r)
              "speak
 
        Handle speech by the user. XXX This should be calling User.speak(Room, String) to do the dirty work: but, in fact, the reverse is currently true.
@@ -1177,7 +1177,7 @@ about “which chair”)
 	}
 
 
-       ")(definfinity start-event (d u r)
+       ")(definfinity start-event ((&rest d) u r)
              "startEvent
 
        Attempt to begin an event. Might return an error. Uses Quaestor for the heavy lifting.
@@ -1190,7 +1190,7 @@ about “which chair”)
        This returns for fountains that have already given peanuts today (where today started at midnight, database local time)
        eventID: (NUM), filename: \"blah.swf\", asVersion: { 2, 3, or not }, status: true
        For successfully registered events. Must be completed or canceled using ")
-(definfinity end-event (d u r)
+(definfinity end-event ((&rest d) u r)
     "endEvent(JSONObject ,AbstractUser , Room )
 
        Parameters:
@@ -1202,7 +1202,7 @@ about “which chair”)
        SQLException - probably means that the moniker is bad, but I'm not really doing much to validate it here
 
        ")
-(definfinity use-equipment (d u r)
+(definfinity use-equipment ((&rest d) u r)
     "useEquipment
 
        WRITEME: Document this method brpocock@star-hope.org
