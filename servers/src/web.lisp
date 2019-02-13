@@ -115,7 +115,8 @@ as well.)"
       (subseq string 0 (min newline 100 (length string)))))
 
   (defun defendpoint/make-endpoint-function (&key fname content-type
-                                                  λ-list docstring body)
+                                                  λ-list docstring body
+                                                  (how-slow-is-slow .03))
     (let (($begin (gensym "BEGIN-"))
           ($elapsed (gensym "ELAPSED-")))
       `(defun ,fname (,@λ-list) ,docstring
@@ -132,7 +133,7 @@ as well.)"
                        (let ((bytes (encode-endpoint-reply reply)))
                          (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
                                  "Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
-
+                                 
                                  (hunchentoot:return-code*)
                                  (length (the list (hunchentoot:headers-out*)))
                                  (length (the vector bytes)))
@@ -141,7 +142,7 @@ as well.)"
                     (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
                             ,(concatenate 'string "Finished: " (first-line docstring) " in ~:dms")
                             ,$elapsed)
-                    (when (< 30 ,$elapsed)
+                    (when (< ,how-slow-is-slow ,$elapsed)
                       (v:error '(,(make-keyword fname) :endpoint :slow-query)
                                "Slow query"))))))))
 
@@ -320,7 +321,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                             λ-list))
         'nil))
 
-  (defmacro defendpoint ((method uri &optional content-type)
+  (defmacro defendpoint ((method uri &optional content-type (how-slow-is-slow .03))
                          &body body)
     "Define an HTTP endpoint accessing URI via METHOD and accepting CONTENT-TYPE."
     (let* ((method (make-keyword (string-upcase method)))
@@ -330,18 +331,29 @@ This is basically just CHECK-TYPE for arguments passed by the user."
            (λ-list (mapcar (lambda (s)
                              (intern (symbol-name s) (symbol-package fname)))
                            (remove-if-not #'symbolp template)))
-           (docstring (if (and (consp body) (stringp (first body)))
-                          (first body)
-                          (format nil
-                                  "Undocumented endpoint for ~a ~a → ~s"
-                                  method uri content-type))))
+           (docstring (concatenate 
+                       'string 
+                       (if (and (consp body) (stringp (first body)))
+                           (first body)
+                           (format nil
+                                   "Undocumented endpoint for ~a ~a → ~s"
+                                   method uri content-type))
+                       (format nil "~2%This is a web service ~
+endpoint accessed by the HTTP method ~a at the URI template ~a. ~
+It returns a content-type of ~a.~
+~@[~{~2%~a is a parameter taken from the URI template.~}~]~
+~2%It will report a slow response if it takes longer than ~f seconds
+\(~f milliseconds) to complete."
+                               method uri content-type λ-list 
+                               how-slow-is-slow (* 1000 how-slow-is-slow)))))
       `(progn
          ,(defendpoint/make-endpoint-function
               :fname fname
             :content-type content-type
             :λ-list λ-list
             :docstring docstring
-            :body body)
+            :body body
+            :how-slow-is-slow how-slow-is-slow)
          ,(when-let (extension (extension-for-content-type (string content-type)))
             `(add-or-replace-endpoint ',fname ,method
                                       ',(apply-extension-to-template template extension)
