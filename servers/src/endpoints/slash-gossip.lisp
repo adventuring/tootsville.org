@@ -61,7 +61,7 @@
         (list 200
               (list :location (format nil "/gossip/offers/~a"
                                       (uuid-to-uri (gossip-initiation-uuid offer))))
-              (getf offer :sdp))
+              (gossip-initiation-offer offer))
         (error 'not-found :the "Gossipnet initiation offer"))))
 
 (defendpoint (put "/gossip/offers/:uuid64" "application/sdp")
