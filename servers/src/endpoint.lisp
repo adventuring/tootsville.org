@@ -58,7 +58,10 @@ are strings."
                    :reader endpoint-template-arity)
    (content-type :type symbol
                  :initarg :content-type
-                 :reader endpoint-content-type)))
+                 :reader endpoint-content-type)
+   (how-slow-is-slow :type number
+                     :initarg :slow-after
+                     :reader how-slow-is-slow)))
 
 (defvar *endpoints* (make-hash-table)
   "The hash-table of all endpoints currently defined.
