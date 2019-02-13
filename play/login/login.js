@@ -211,7 +211,7 @@ Tootsville.login.loginDone = function (reply)
   Tootsville.ui.hud.closePanel ();
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
-  Tootsville.gossip.ensureConnected ();
+  Tootsville.gossip.getICE ();
   Tootsville.tank.start3D (); };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
