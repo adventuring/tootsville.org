@@ -39,6 +39,12 @@
         (push (gossip-initiation-uuid offer-object) offers)))
     offers))
 
+(defendpoint (get "/gossip/ice-servers" "application/json")
+  "Obtain STUN/TURN server credentials for ICE"
+  (with-user ()
+    (list 200 ()
+          (ice-credentials))))
+
 (defendpoint (post "/gossip/offers" "application/json")
   "Provide a new offer. Body is an SDP offer. Reply will be an offer URI."
   (with-user ()

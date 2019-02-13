@@ -33,19 +33,9 @@
 
 if (!Tootsville.gossip) { Tootsville.gossip = {}; }
 
-if (!Tootsville.gossip.peers)
-{ Tootsville.gossip.peers = [];}
+if (!Tootsville.gossip.peers) { Tootsville.gossip.peers = [];}
 
-Tootsville.gossip.stunServers = function ()
-{ var sample = [ { urls: [ "stun:stun.l.google.com:19302" ] } ];
-  /* Firefox wants 2, preferably, and never more than 5, so 3 seems safe. */
-  sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
-  sample = sample.concat ({ urls: [ 'turn:192.158.29.39:3478?transport=tcp' ],
-                            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                            username: '28224511:1379330808' });
-
-  //  sample = sample.concat ({ urls: [ Tootsville.gossip.stunList [Math.floor (Math.random () * Tootsville.gossip.stunList.length)] ]});
-  return sample; };
+if (!Tootsville.gossip.iceServers) { Tootsville.gossip.iceServers = {}; };
 
 Tootsville.gossip.postDescription = function (peer, description)
 { return new Promise (success =>
@@ -53,9 +43,7 @@ Tootsville.gossip.postDescription = function (peer, description)
                         then (success); }); };
 
 Tootsville.gossip.createConnection = function ()
-{ var servers = Tootsville.gossip.stunServers ();
-  Tootsville.trace ("STUN servers", servers);
-  var peer = {connection: new RTCPeerConnection({ iceServers: servers, iceCandidatePoolSize: 10 }) };
+{ var peer = {connection: new RTCPeerConnection({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 }) };
   Tootsville.trace ('Created local peer connection object peer.connection');
   peer.infinityChannel = peer.connection.createDataChannel('∞ Mode ℵ₀',
                                                            { ordered: false,
@@ -114,3 +102,11 @@ Tootsville.gossip.ensureConnected = function ()
     success (); } else
   { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
     Tootsville.gossip.connect (); } };
+
+Tootsville.gossip.getICE = function ()
+{ Tootsville.util.rest ('GET', 'gossip/ice-servers').then
+  ( response => { Tootsville.gossip.iceServers = response;
+                 Tootsville.gossip.ensureConnected (); },
+    error => { Tootsville.parrot.say (
+        "Squawk! Trouble getting connection servers",
+        "I'm not able to get connection servers needed to join the game. Are you online?" ); } ); };

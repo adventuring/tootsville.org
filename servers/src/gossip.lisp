@@ -54,3 +54,25 @@
               (equal (gossip-initiation-answeror offer)
                      (person-uuid user))))
   (setf (gossip-initiation-answer offer) sdp))
+
+(defvar *ice-credentials* nil)
+
+(defun ice-credentials ()
+  (or *ice-credentials*
+      (setf *ice-credentials*
+            (fetch-ice-credentials/xirsys))))
+
+(defun fetch-ice-credentials/xirsys ()
+  (let ((s (map 'string #'code-char
+                (drakma:http-request 
+                 (format nil "https://global.xirsys.net/_turn/~a"
+                         (config :xirsys :channel))
+                 :method :put
+                 :basic-authorization 
+                 (list (config :xirsys :username)
+                       (config :xirsys :password))))))
+    (let ((json (jonathan.decode:parse s)))
+      (unless (equal "ok" (extract json :|s|))
+        (sleep (random 5))
+        (return-from fetch-ice-credentials/xirsys (fetch-ice-credentials/xirsys)))
+      (extract json :|v| :|iceServers|))))
