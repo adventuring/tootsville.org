@@ -412,30 +412,32 @@ key in the resulting Alist."
  This provides a browseable catalog of  web services that are provided by
  this machine or its siblings."
   (list 200 ()
-        (reduce (curry #'concatenate 'string)
-                (flatten
-                 (list
-                  (endpoints-page-header)
-                  (mapcar (lambda (prefix-group)
-                            (format nil "~%<h2>~a</h2>~{~%~a~}"
-                                    (car prefix-group)
-                                    (with-timeout (.001)
+        (reduce 
+         (curry #'concatenate 'string)
+         (flatten
+          (list
+           (endpoints-page-header)
+           (mapcar (lambda (prefix-group)
+                     (format nil "~%<h2>~a</h2>~{~%~a~}"
+                             (car prefix-group)
+                             (with-timeout (.001)
                                         ; The  timeout   is  because  of
                                         ; something  that spiralled  out
                                         ; to doom in this area …
-                                      (mapcar #'route->html
-                                              (sort
-                                               (sort
-                                                (cdr prefix-group)
-                                                #'string-lessp
-                                                :key (rcurry #'getf :method))
-                                               #'string-lessp
-                                               :key (lambda (r)
-                                                      (format nil "~{/~a~}" (getf r :template))))))))
-                          (sort (routes-prefixed (enumerate-routes))
-                                #'string-lessp
-                                :key #'car))
-                  (endpoints-page-footer))))))
+                               (mapcar #'route->html
+                                       (sort
+                                        (sort
+                                         (cdr prefix-group)
+                                         #'string-lessp
+                                         :key (rcurry #'getf :method))
+                                        #'string-lessp
+                                        :key (lambda (r)
+                                               (format nil "~{/~a~}" 
+                                                       (getf r :template))))))))
+                   (sort (routes-prefixed (enumerate-routes))
+                         #'string-lessp
+                         :key #'car))
+           (endpoints-page-footer))))))
 
 (defendpoint (get "/meta-game/services/old" "application/json")
   "This is a sketchy  sort of listing of services in  a JSON format that
