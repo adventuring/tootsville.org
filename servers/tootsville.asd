@@ -165,5 +165,5 @@ REST services for the front-end."
       :depends-on ("endpoints")
       :components
       ((:file "infinity")
-       (:file "legacy-commands" :depends-on "infinity")
-       (:file "legacy-ops" :depends-on "infinity")))))))
+       (:file "legacy-commands" :depends-on ("infinity"))
+       (:file "legacy-ops" :depends-on ("infinity"))))))))
