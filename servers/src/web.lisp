@@ -128,8 +128,9 @@ as well.)"
                      (let ((reply
                             (catch 'endpoint
                               (block endpoint
-                                (block ,fname
-                                  ,@body)))))
+                                (with-timeout (,(* how-slow-is-slow 10))
+                                  (block ,fname
+                                    ,@body))))))
                        (let ((bytes (encode-endpoint-reply reply)))
                          (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
                                  "Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
