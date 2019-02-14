@@ -419,15 +419,19 @@ key in the resulting Alist."
                   (mapcar (lambda (prefix-group)
                             (format nil "~%<h2>~a</h2>~{~%~a~}"
                                     (car prefix-group)
-                                    (mapcar #'route->html
-                                            (sort
-                                             (sort
-                                              (cdr prefix-group)
-                                              #'string-lessp
-                                              :key (rcurry #'getf :method))
-                                             #'string-lessp
-                                             :key (lambda (r)
-                                                    (format nil "~{/~a~}" (getf r :template)))))))
+                                    (with-timeout (.001)
+                                        ; The  timeout   is  because  of
+                                        ; something  that spiralled  out
+                                        ; to doom in this area …
+                                      (mapcar #'route->html
+                                              (sort
+                                               (sort
+                                                (cdr prefix-group)
+                                                #'string-lessp
+                                                :key (rcurry #'getf :method))
+                                               #'string-lessp
+                                               :key (lambda (r)
+                                                      (format nil "~{/~a~}" (getf r :template))))))))
                           (sort (routes-prefixed (enumerate-routes))
                                 #'string-lessp
                                 :key #'car))
