@@ -159,4 +159,11 @@ REST services for the front-end."
           ((:file "alexa")
            (:file "info" :depends-on ("alexa"))
            (:file "chat" :depends-on ("alexa"))
-           (:file "clock" :depends-on ("alexa"))))))))))))
+           (:file "clock" :depends-on ("alexa"))))))))
+     (:module
+      "infinity"
+      :depends-on ("endpoints")
+      :components
+      ((:file "infinity")
+       (:file "legacy-commands" :depends-on "infinity")
+       (:file "legacy-ops" :depends-on "infinity")))))))
