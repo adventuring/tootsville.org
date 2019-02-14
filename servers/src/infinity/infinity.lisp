@@ -6,7 +6,7 @@
   (let* ((json$ (hunchentoot:post-parameters*))
          (json (jonathan.decode:parse json$)))
     (with-user ()
-      (list 200 () (funcall method json *user* (user-plan *user*))))))
+      (list 200 () (funcall method json *user* (user-plane *user*))))))
 
 (defmacro definfinity (name (lambda-list user-var world-var) &body body)
   "Define an Infinity-mode “c” command NAME.
@@ -113,3 +113,18 @@ XXX WRITEME
        (defendpoint (POST ,(concatenate 'string "/world/infinity/" (string-downcase name)))
          ,docstring
          (call-infinity-from-rest  ',infinity-name )))))
+
+(defpackage Tootsville-User
+  (:use :CL :CL-User :Bordeaux-Threads :Tootsville))
+
+(defmacro define-operator-command (command (words user plane) &body body)
+  (let ((docstring (when (stringp (first body)) (first body)))
+        (body (if (stringp (first body)) (rest body) body))
+        (command (if (find-symbol (string command) (find-package :CL))
+                     (concatenate 'string "*" (string command))
+                     command)))
+    `(progn
+       (defun ,(intern (string command) (find-package :Tootsville-User)) (&rest ,words)
+         ,docstring
+         (let ((,user *user*) (,plane (user-plane *user*)))
+           ,@body)))))
