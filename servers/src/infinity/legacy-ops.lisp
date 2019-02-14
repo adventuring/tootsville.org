@@ -179,7 +179,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
                          
                          )
-(define-operator-command clearcache (words u room r)"
+(define-operator-command clearcache (words user plane)"
                           throws com.whirlycott.cache.CacheException,
                                  PrivilegeRequiredException
 
@@ -240,7 +240,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
 )
-(define-operator-command cloneroom (words u room r)"
+(define-operator-command cloneroom (words u plane)"
                          throws PrivilegeRequiredException
 
     clone a room
@@ -253,7 +253,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         PrivilegeRequiredException - if the user doesn't have Designer level privileges, at least
 "
 
-)
+                         )
 (define-operator-command createroom (words user plane) "
                           throws PrivilegeRequiredException,
                                  NotReadyException
@@ -608,7 +608,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
 "
 
                               )
-(define-operator-command give (words u room r)"
+(define-operator-command give (words u plane)"
                     throws NumberFormatException,
                     org.json.JSONException,
                            AlreadyExistsException
@@ -628,7 +628,7 @@ Parameters:  the  first  word  is  a  subcommand;  one  of  @samp{#+ip},
         AlreadyExistsException - WRITEME
 "
 
-)
+                         )
 (define-operator-command givehead (words user plane) "
                         throws PrivilegeRequiredException
 
@@ -1038,7 +1038,7 @@ Throws:
         PrivilegeRequiredException - WRITEME
 "
 
-)
+                         )
 (define-operator-command push (words user plane) "
 
     WRITEME
@@ -1049,7 +1049,7 @@ Throws:
         room - WRITEME
 "
                          
-)
+                         )
 (define-operator-command put (words user plane) "
                    throws PrivilegeRequiredException
 
@@ -1529,7 +1529,7 @@ Throws:
 "
 
 )
-(define-operator-command verbosebugs (words u room r)"
+(define-operator-command verbosebugs (words u plane)"
 
     Set verbose bug backtrace reporting on or off
 
@@ -1538,8 +1538,8 @@ Throws:
         u - the user affected
         r - the room in which the user is standing
 "
-                                     
-)
+                         
+                         )
 (define-operator-command wall (words user plane) "
 
     Sends an pop-up message to everyone in the zone. Must have staff level 4 (DESIGNER) to use this command.
