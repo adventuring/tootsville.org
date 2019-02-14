@@ -8,7 +8,7 @@
     (with-user ()
       (list 200 () (funcall method json *user* (user-plane *user*))))))
 
-(defmacro definfinity (name (lambda-list user-var world-var) &body body)
+(defmacro definfinity (name (lambda-list user-var plane-var) &body body)
   "Define an Infinity-mode “c” command NAME.
 
 And now, let's talk about the Infinity Mode protocol.
@@ -105,9 +105,9 @@ XXX WRITEME
     (push (cons (string name) infinity-name) *infinity-ops*)
     (push (cons legacy-name infinity-name) *infinity-ops*)
     `(progn
-       (defun ,infinity-name (d u r)
+       (defun ,infinity-name (d ,user-var ,plane-var)
          ,docstring
-         (declare (ignorable u r))
+         (declare (ignorable ,user-var ,plane-var))
          (destructuring-bind (,@λ-list) d
            ,@body))
        (defendpoint (POST ,(concatenate 'string "/world/infinity/" (string-downcase name)))
