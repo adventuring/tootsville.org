@@ -30,7 +30,7 @@
 This was a legacy feature removed in Romance 1.2."
   (error 'legacy-gone))
 
-(definfinity click ((&key |on| |x| |y| |z| |with|) user plane)
+(definfinity click ((|on| |x| |y| |z| |with|) user plane)
   
   "Used by the client  to report a mouse click or  finger tap.
 
@@ -149,7 +149,7 @@ The click event is being ignored; ITEM-ID was not an interesting item to
 the server.
 "
   )
-(definfinity create-user-house ((&key |lot| |house| |index|) user plane)
+(definfinity create-user-house ((|lot| |house| |index|) user plane)
   
   "Either claim the user's house and lot, or add a room to their house.
 
@@ -168,7 +168,7 @@ TODO: document parameters
 
 TODO document Response with total avatar info from \"wardrobe\""
   )
-(definfinity don ((&key |slot| |color|) user plane)
+(definfinity don ((|slot| |color|) user plane)
   "Don an item
 
 JSON object has the item slot number to be worn (clothes, patterns, pivitz) and optionally set the color (for patterns)
@@ -213,7 +213,7 @@ u - The user calling (to whom the response is sent)
 
 "
   )
-(definfinity endEvent ((&key |moniker| |eventID| |score| |status|) user plane)
+(definfinity endEvent ((|moniker| |eventID| |score| |status|) user plane)
   
   " This method  terminates an event (probably a  minigame, but possibly
 a fountain) which was initiated by startEvent.
@@ -256,7 +256,7 @@ jso - JSON object, with (ignored) keys tied to values which must be the names of
 
 "
   )
-(definfinity game-Action ((&key |action| &rest more-params &allow-other-keys) user plane)
+(definfinity game-Action ((&rest more-params &key |action| &allow-other-keys) user plane)
   
   "gameAction(org.json.JSONObject jso,
                                 AbstractUser u,
@@ -326,7 +326,7 @@ d — empty
 
 u — The user whose inventory to be searched"
   )
-(definfinity get-Inventory-By-Type ((&key |type|) user plane)
+(definfinity get-Inventory-By-Type ((|type|) user plane)
   
   "Get a subset of items from your own inventory
 
@@ -370,7 +370,7 @@ u - The user whose inventory to be searched, who is the caller of this routine
 
 "
   )
-(definfinity get-Online-Users ((&key |inRoom|) user plane)
+(definfinity get-Online-Users ((|inRoom|) user plane)
   "Get a list of users in a Zone, or in a Room.
  
 This is an administrative function, only available to staff members.
@@ -475,7 +475,7 @@ WRITEME: Document this method brpocock@star-hope.org
 
 This returns \"Universe\" as the only Zone."
   #("Universe"))
-(definfinity give ((&key |slot| |to|) user plane)
+(definfinity give ((|slot| |to|) user plane)
   
   "Give an item to another user
 
@@ -490,7 +490,7 @@ AlreadyExistsException - if the event can't be started for some reason
 
 "
   )
-(definfinity go ((&key |do| |x| |y| |z| |facing|) user plane)
+(definfinity go ((|do| |x| |y| |z| |facing|) user plane)
   "go to a place and/or perform a gesture
 
 @example
@@ -503,7 +503,7 @@ facing: FACING (optional)
                                 
 u - the user doing something
 ")
-(definfinity init-user-room ((&key |room| |autoJoin|) user plane)
+(definfinity init-user-room ((|room| |autoJoin|) user plane)
   "
  
 Creates room  named user/user's  name/room — room  is the  room index
@@ -527,7 +527,7 @@ jso - { room: (room-number), autoJoin: (boolean) }
 @end example
                                 
 u - The user whose house-room needs to be initialized
-") (definfinity join ((&key |room| |from|) user plane)
+") (definfinity join ((|room| |from|) user plane)
      "Join a room.  On success, sends back the set  of room join events;
      but on failure, replies with  { from: roomJoin, status: false, err:
      ...}
@@ -553,7 +553,7 @@ room.full
 u - the user joining the room
   
   ") 
-(definfinity login ((&key |userName| |password| |zone|) user plane)
+(definfinity login ((|userName| |password| |zone|) user plane)
   "Handle a login request
 
 We no longer do this …
@@ -586,7 +586,7 @@ no longer supported.
 
   ")
 
-(definfinity peek-at-inventory ((&key |who| |type|) user plane)
+(definfinity peek-at-inventory ((|who| |type|) user plane)
   "Handle looking at other user's inventories
 
 Parameters: jso -  {\"who\": the login name  of the user of  whom to get
@@ -614,7 +614,7 @@ This also updates the user's last-active timestamp, to prevent them from
 being idled offline.
   
   ")
-(definfinity prompt-reply ((&key |id| |reply|) user plane)
+(definfinity prompt-reply ((|id| |reply|) user plane)
   
   "promptReply(org.json.JSONObject jso,
                                    AbstractUser u,
@@ -762,7 +762,7 @@ Throws:
   org.json.JSONException - for really bad syntax errors
 
   ")
-(definfinity remove-from-list ((&key |buddy| |ignore|) user plane)
+(definfinity remove-from-list ((|buddy| |ignore|) user plane)
   "Remove someone from a buddy list or ignore list.
 
   jso - To remove a buddy: { buddy: (name) }; or to attend to someone who had previously been ignored: { ignore: (name) }
@@ -770,7 +770,7 @@ Throws:
   u - The user whose buddy list or ignore list will be updated
   ")
 
-(definfinity report-bug ((&key |info|) user plane)
+(definfinity report-bug ((|info|) user plane)
   "This method allows the client to ``phone home'' to report a bug. The bug report itself is just a giant string embedded in the ``bug'' element, but a ``cause'' element will be treated as the subject. Note that the bug report — like all JSON input — will be cut off at a certain limit (typically 4KiB), so it's most helpful to keep it short & sweet: Typically, this should be something like a single stack backtrace (with as much detail as possible), rather than a complete log trace or something.
 
   The suggested usage is to include the exception itself as ``cause,'' the backtrace up to a maximum of 1KiB, a log backtrace up to its last 1KiB as ``bug,'' and as much machine-formatted system information as possible in the ``info'' object.
@@ -976,13 +976,13 @@ as a string.
        
        ")
 
-(definfinity report-user ((&key |userName|) user plane)
+(definfinity report-user ((|userName|) user plane)
   "Report an user to the moderator(s) on duty for breaking a rule
 
         { userName = user to be reported }
        
        ")
-(definfinity request-buddy ((&key |buddy|) user plane)
+(definfinity request-buddy ((|buddy|) user plane)
   "Request adding a user to your buddy list (mutual-add) using the notification-based system
 
 (Added in 1.1)
@@ -991,7 +991,7 @@ as a string.
        
 u - user who is requesting the addition
 ")
-(definfinity send-out-of-band-message ((&key |sender| |from| |status| |body| |sendRoomList|) user plane)
+(definfinity send-out-of-band-message ((|sender| |from| |status| |body| |sendRoomList|) user plane)
   
   "Send an arbitrary JSON packet to another user, or all of the users in a room, out of the band of communications.
  
@@ -1044,14 +1044,14 @@ some additional data that is being provided.
 
        ") 
 
-(definfinity server-time ((&key |serverTime|) u r )
+(definfinity server-time ((|serverTime|) u r )
   "Accept  the client's  notification of  a server-time  adjustment.
 
        This is used to compute the client's round-trip lag time.
 
        jso - { serverTime: LONG milliseconds since epoch }
 ")
-(definfinity set-avatar-color ((&key |base| |extra|) user plane)
+(definfinity set-avatar-color ((|base| |extra|) user plane)
   "Set the avatar base and extra colours for the given user.
 
        Colour numbers are given in X'RRGGBB' form as an integer — to compute one from byte (0..255) RGB values, do ( red << 16 & green << 8 & blue )
@@ -1065,7 +1065,7 @@ some additional data that is being provided.
        SQLException - if the palettes can't be loaded
 
        ")
-(definfinity set-furniture ((&key |slot| |x| |y| |z| |facing| |remove|) user plane)
+(definfinity set-furniture ((|slot| |x| |y| |z| |facing| |remove|) user plane)
   "Set or change a furniture item. 
 
 To add  a structural item  to the room,  put item: 123  without anything
@@ -1194,7 +1194,7 @@ about ``which chair'')
 
 
        ")
-(definfinity start-event ((&key |moniker|) user plane)
+(definfinity start-event ((|moniker|) user plane)
   "Attempt to begin an event. Might return an error. Uses Quæstor for the heavy lifting.
 
 
@@ -1211,7 +1211,7 @@ This returns for fountains that have already given peanuts today (where today st
 eventID: (NUM), filename: \"blah.swf\", asVersion: { 2, 3, or not }, status: true
 
 For successfully registered events. Must be completed or canceled using ")
-(definfinity end-event ((&key |moniker|) user plane)
+(definfinity end-event ((|moniker|) user plane)
   "endEvent(JSONObject ,AbstractUser , Room )
 
        Parameters:
@@ -1223,7 +1223,7 @@ For successfully registered events. Must be completed or canceled using ")
        SQLException - probably means that the moniker is bad, but I'm not really doing much to validate it here
 
        ")
-(definfinity use-equipment ((&key |t| |x| |y| |z| |on|) user plane)
+(definfinity use-equipment ((|t| |x| |y| |z| |on|) user plane)
     "useEquipment
 
        WRITEME: Document this method brpocock@star-hope.org
