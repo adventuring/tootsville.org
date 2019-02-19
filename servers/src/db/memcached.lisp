@@ -32,13 +32,10 @@
 
 
 (defun query-to-memcache-key (db prepared args)
-  (let ((query (format nil "~a➕~{~a~^✜~}" prepared args)))
-    (if (< (length query) 128)
-        (format nil "~:(~a~):~a" db query)
-        (format nil "~:(~a~):~a…#~a"
-                db (subseq query 0 100) (sha1-hex query)))))
+  (let ((query (format nil "~a~{~a~^~}" prepared args)))
+    (sha1-hex query)))
 
-(defmacro with-memcached-query ((db query args &key (timeout 120)) &body body)
+(defmacro with-memcached-query ((db query args &key (timeout 5)) &body body)
   (let (($db (gensym "DB-"))
         ($query (gensym "QUERY-"))
         ($key (gensym "KEY-"))
@@ -53,15 +50,18 @@
                 (*print-pretty* nil)
                 (*print-right-margin* 120))
            (if-let (,$value (cl-memcached:mc-get-value ,$key))
-             (apply #'values (read-from-string
-                              (trivial-utf-8:utf-8-bytes-to-string ,$value)))
-             (let ((,$value (multiple-value-list (progn ,@body))))
-               (cl-memcached:mc-store ,$key
-                                      (trivial-utf-8:string-to-utf-8-bytes
-                                       (format nil "~s" ,$value))
-                                      :timeout ,timeout
-                                      :noreply t)
-               (apply #'values ,$value))))
+             (apply #'values (read-from-string ,$value))
+             (progn
+               (v:warn :memcached "Cache miss on ~a" ,$key)
+               (let ((,$value (multiple-value-list (progn ,@body))))
+                 (v:warn :memcached "Caching ~:d values: ~a"
+                         (length ,$VALUE)
+                         (cl-memcached:mc-store ,$key
+                                                (trivial-utf-8:string-to-utf-8-bytes
+                                                 (format nil "~s" ,$value)
+                                                 :timeout ,timeout
+                                                 :command :replace :mc-use-pool t)))
+                 (apply #'values ,$value)))))
          (progn
            (run-async #'connect-cache)
            ,@body))))
