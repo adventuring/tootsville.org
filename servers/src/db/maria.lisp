@@ -127,16 +127,16 @@ Uses MemCache when available."
     (with-dbi (*db*)
       (if columns+values
           (destructuring-bind (columns values) (split-plist columns+values)
-            (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
-                                          (build-simple-query table columns)))
-                   (result-set (apply #'cl-dbi:execute query values)))
-              (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) values)
-                (cl-dbi:fetch-all result-set))))
-          (let* ((query (cl-dbi:prepare tootsville::*dbi-connection*
-                                        (format nil "SELECT * FROM `~a`" table)))
-                 (result-set (cl-dbi:execute query)))
-            (with-memcached-query (*db* (slot-value query 'dbi.driver::sql) nil)
-              (cl-dbi:fetch-all result-set)))))))
+            (let ((q (build-simple-query table columns)))
+              (with-memcached-query (*db* q values)
+                (let* ((query (cl-dbi:prepare tootsville::*dbi-connection* q))
+                       (result-set (apply #'cl-dbi:execute query values)))
+                  (cl-dbi:fetch-all result-set)))))
+          (let ((q (format nil "SELECT * FROM `~a`" table)))
+            (with-memcached-query (*db* q nil)
+              (let* ((query (cl-dbi:prepare tootsville::*dbi-connection* q))
+                     (result-set (cl-dbi:execute query)))
+                (cl-dbi:fetch-all result-set))))))))
 
 (defmacro do-db-records-simply ((record-var table &rest columns+values)
                                 &body body)
