@@ -52,12 +52,11 @@ Tootsville.gossip.createConnection = function ()
 
   peer.infinityChannel.onopen = event => { Tootsville.gossip.openInfinityMode (peer, event); };
 
-  Tootsville.trace ("Posting offer to servers");
-
   peer.connection.createOffer ().then (
       offer => { return peer.connection.setLocalDescription(offer); }
   ).then (
-      () => { Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) ); }); };
+      () => { Tootsville.trace ("Posting offer to servers");
+              Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) ); }); };
 
 /**
  * Accept an inbound datagram.
