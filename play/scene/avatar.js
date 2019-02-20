@@ -140,6 +140,7 @@ Tootsville.Avatars.UltraTootBuilder.makeToot = function (avatar)
                                                                                         finish (toot);
                                                                                         return; }); } else 
                          { Tootsville.warn ("Avatar is not UltraToot: " + avatar.toSource ());
+                           /* TODO  try to load non-UltraToot avatar */
                            var proxy = BABYLON.MeshBuilder.CreateSphere ('proxy for ' + avatar.name,
                                                                          { segments: 8, diameter: .25},
                                                                          Tootsville.tank.scene);
