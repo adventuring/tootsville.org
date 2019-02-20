@@ -132,7 +132,7 @@
                nil))))
 
 (defun gracefully-report-http-client-error (c)
-  (v:info "Gracefully reporting error to HTTP client: ~s" c)
+  (v:error :HTTP-client "Gracefully reporting error to HTTP client: ~a" c)
   (if (wants-json-p)
       (encode-endpoint-reply
        (list (http-status-code c)
