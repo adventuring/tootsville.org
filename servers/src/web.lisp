@@ -141,11 +141,12 @@ as well.)"
                          bytes))
                   (let ((,$elapsed (/ (- (get-internal-real-time) ,$begin) internal-time-units-per-second)))
                     (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
-                            ,(concatenate 'string "Finished: " (first-line docstring) " in ~:ds")
-                            ,$elapsed)
+                            ,(concatenate 'string "Finished: " (first-line docstring) " in ~,3fs")
+                            (* 1.0 ,$elapsed))
                     (when (< ,how-slow-is-slow ,$elapsed)
                       (v:error '(,(make-keyword fname) :endpoint :slow-query)
-                               "Slow query"))))))))
+                               "Slow query ~s took ~,3fs (>~,3fs allowed)"
+                               ',fname (* 1.0 ,$elapsed) ,how-slow-is-slow))))))))
 
   (defun after-slash (s)
     "Splits a string S at a slash. Useful for getting the end of a content-type."
