@@ -160,7 +160,37 @@ Data describing the user's lot
 or adding a room, @verb{| { index: roomIndex } |}
 
 "
-  )
+  (destructuring-bind (x1 y1 z1) (find-lot-by-id |lot|)
+    (let ((lot (find-record 'lot :x1 x1 :y1 y1 :z1 z1)))
+      (unless lot
+        (infinity-error 404 :lot-not-found))
+      (ecase (lot-ownership lot)
+        (:public (infinity-error 400 :lot-is-public-property))
+                                        ; TODO permission error, 403?
+        (:common  (infinity-error 400  :lot-is-common-property)) 
+                                        ;  TODO permission error, 403?
+        (:private
+         (cond
+           ((null (lot-owner-Toot lot))
+            ;; claim a lot and build a basic house
+            (unless (or (null |index|) (and (numberp |index|) (zerop |index|)))
+              (infinity-error 400 :empty-lot-use-house-not-index))
+            (setf (lot-owner-Toot lot) (Toot-uuid *Toot*))
+            ;; TODO check |house| is an house
+            ;; TODO place house on lot
+            )
+           ((equal (lot-owner-Toot) (Toot-uuid *Toot*))
+            (unless (null |house|)
+              (infinity-error 400 :did-you-want-house-or-room))
+            (when (or (null |index|)
+                      (not (numberp |index|)) 
+                      (zerop index)
+                      (minusp index)
+                      (> index 9))
+              (infinity-error 400 :index-not-valid))
+            ;; TODO create room and affix to house 
+            )))))))
+
 (definfinity doff ((&rest d) user plane)
   "Doff an item
 
@@ -171,15 +201,20 @@ TODO document Response with total avatar info from \"wardrobe\""
 (definfinity don ((|slot| |color|) user plane)
   "Don an item
 
-JSON object has the item slot number to be worn (clothes, patterns, pivitz) and optionally set the color (for patterns)
+JSON object  has the  item slot  number to  be worn  (clothes, patterns,
+pivitz) and optionally set the color (for patterns)
 
 Response with total avatar info from "wardrobe"
 
-Parameters:
-jso - { slot : ### } or { slot: ###, color: CCC } — valid formats defined in Colour.Colour(String)
+Parameters: jso -  { slot : ### }  or { slot: ###, color: CCC  } — valid
+formats defined in Colour.Colour(String)
 
 Throws:
-org.json.JSONException - Thrown if the data cannot be interpreted from the JSON objects passed in, or conversely, if we can't encode a response into a JSON form 
+
+org.json.JSONException - Thrown  if the data cannot  be interpreted from
+the JSON objects passed in, or conversely, if we can't encode a response
+into a JSON form
+
 DataException - for bad colour 
 NumberFormatException - for bad colour numeric parts
 
@@ -190,7 +225,7 @@ meant  for pattern  changing  in  1.2, which  must  now be  accomplished
 in-game via Doodle.
 
 "
-)
+  )
 (definfinity echo ((&rest d) user plane)
   "Echoes back the supplied JSON (or ActionScript) object to the client.
  
