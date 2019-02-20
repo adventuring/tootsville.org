@@ -40,31 +40,35 @@
         ($query (gensym "QUERY-"))
         ($key (gensym "KEY-"))
         ($value (gensym "VALUE-"))
-        ($args (gensym "ARGS-")))
-    `(if cl-memcached:*memcache*
-         (let* ((,$db ,db) (,$query ,query) (,$args ,args)
-                (,$key (query-to-memcache-key ,$db ,$query ,$args))
-                (cl-memcached:*mc-use-pool* t)
-                (cl-memcached:*mc-default-encoding* :utf-8)
-                (*print-readably* t)
-                (*print-pretty* nil)
-                (*print-right-margin* 120))
-           (if-let (,$value (cl-memcached:mc-get-value ,$key))
-             (apply #'values (read-from-string ,$value))
-             (progn
-               (v:warn :memcached "Cache miss on ~a" ,$key)
-               (let ((,$value (multiple-value-list (progn ,@body))))
-                 (v:warn :memcached "Caching ~:d values: ~a"
-                         (length ,$VALUE)
-                         (cl-memcached:mc-store ,$key
-                                                (trivial-utf-8:string-to-utf-8-bytes
-                                                 (format nil "~s" ,$value)
-                                                 :timeout ,timeout
-                                                 :command :replace :mc-use-pool t)))
-                 (apply #'values ,$value)))))
-         (progn
-           (run-async #'connect-cache)
-           ,@body))))
+        ($args (gensym "ARGS-"))
+        ($body (gensym "BODY-")))
+    `(flet ((,$body () ,@body))
+       (if cl-memcached:*memcache*
+           (handler-case
+               (let* ((,$db ,db) (,$query ,query) (,$args ,args)
+                      (,$key (query-to-memcache-key ,$db ,$query ,$args))
+                      (cl-memcached:*mc-default-encoding* :utf-8)
+                      (*print-readably* t)
+                      (*print-pretty* nil)
+                      (*print-right-margin* 120))
+                 (if-let (,$value (cl-memcached:mc-get-value ,$key))
+                   (apply #'values (read-from-string ,$value))
+                   (progn
+                     (v:warn :memcached "Cache miss on ~a" ,$key)
+                     (let ((,$value (multiple-value-list (,$body))))
+                       (v:warn :memcached "Caching ~:d values: ~a"
+                               (length ,$VALUE)
+                               (cl-memcached:mc-store ,$key
+                                                      (trivial-utf-8:string-to-utf-8-bytes
+                                                       (format nil "~s" ,$value)
+                                                       :timeout ,timeout
+                                                       :command :replace)))
+                       (apply #'values ,$value)))))
+             (cl-memcached::memcached-server-unreachable (c)
+               (,$body)))
+           (progn
+             (run-async #'connect-cache)
+             (,$body))))))
 
 
 
