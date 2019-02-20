@@ -67,20 +67,21 @@ Tootsville.audio.updateVolumeMuteIcon = function()
 Tootsville.audio.context = new (window.AudioContext || window.webkitAudioContext)();
 Tootsville.audio.gainNode = Tootsville.audio.context.createGain();
 
-if (navigator.mediaDevices.getUserMedia) 
-{ navigator.mediaDevices.getUserMedia (
-    // constraints - only audio needed for this app
-    { audio: true },
-    // Success callback
-    stream =>
-        { var source = audioCtx.createMediaStreamSource(stream);
-          source.connect(Tootsville.audio.gainNode);
-          Tootsville.audio.gainNode.connect(Tootsville.audio.context.destination);},
-    // Error callback
-    err =>
-        { Tootsville.error('getUserMedia error occured: ' + err); }
-); } else 
-{ Tootsville.warn('getUserMedia not supported on your browser!');
-  // XXX hide volume controls
-}
+// if (navigator.mediaDevices.getUserMedia) 
+// { navigator.mediaDevices.getUserMedia (
+//     // constraints - only audio needed for this app
+//     { audio: true },
+//     // Success callback
+//     stream =>
+//         { // var source = audioCtx.createMediaStreamSource(stream);
+//           // source.connect(Tootsville.audio.gainNode);
+//           // Tootsville.audio.gainNode.connect(Tootsville.audio.context.destination);
+//         },
+//     // Error callback
+//     err =>
+//         { Tootsville.error('getUserMedia error occured: ' + err); }
+// ); } else 
+// { Tootsville.warn('getUserMedia not supported on your browser!');
+//   // XXX hide volume controls
+// }
 
