@@ -51,6 +51,21 @@
 
 
 
+;;; XXX taken from https://github.com/hackinghat/cl-mysql/issues/2
+
+(defun com.hackinghat.cl-mysql-system:string-to-universal-time (string &optional len)
+  (declare (optimize (speed 3) (safety 3))
+           (type (or null simple-string) string)
+           (type (or null fixnum) len))
+  (cond
+    ((string= "0000-00-00 00:00:00" string)
+     0)
+    ((and string (> (or len (length string)) 0))
+     (+ (com.hackinghat.cl-mysql-system:string-to-date (subseq string 0 10))
+        (com.hackinghat.cl-mysql-system:string-to-seconds (subseq string 11))))))
+
+
+
 (defun split-plist (plist)
   "Split a PLIST into two lists, of keys and values."
   (loop for (key value) on plist by #'cddr
