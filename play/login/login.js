@@ -161,8 +161,10 @@ Tootsville.login.loadTootsList = function ()
 { Tootsville.trace("loadTootsList");
   Tootsville.login.serverQueryCharacters ().then
   ( list => { Tootsville.login.saveTootsList (list);
-              Tootsville.login.populateTootsList (); },
-   Tootsville.login.startCharacterCreation); };
+              Tootsville.login.populateTootsList ();
+              Tootsville.gossip.getICE ();},
+    () => { Tootsville.login.startCharacterCreation ();
+            Tootsville.gossip.getICE (); }); };
 
 Tootsville.login.dimUnpickedCharacters = function (picked)
 { var allItems = document.querySelectorAll ('#toots-list li');
@@ -211,7 +213,6 @@ Tootsville.login.loginDone = function (reply)
   Tootsville.ui.hud.closePanel ();
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
-  Tootsville.gossip.getICE ();
   Tootsville.tank.start3D (); };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
