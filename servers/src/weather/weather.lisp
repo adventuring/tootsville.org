@@ -111,33 +111,35 @@ affected at all by precipitation during the spring and autumn months.
 
 (defun tick-weather-minute ()
   (let ((lparallel:*kernel* (ensure-weather-kernel)))
-    (lparallel:pdotimes (x 800)
-                        (dotimes (y 600)
-                          (let* ((wind-x (wind-x (aref *wind-vector-field* x y)))
-                                 (wind-y (wind-y (aref *wind-vector-field* x y)))
-                                 (dest-x (+ x (* 2 wind-x)))
-                                 (dest-y (+ y (* 2 wind-y)))
-                                 (Δx (nth-value 1 (round dest-x)))
-                                 (Δy (nth-value 1 (round dest-y)))
-                                 (Δ (+ Δx Δy))
-                                 (take (min (aref *humidity-field* x y) Δ)))
-                            (decf (aref *humidity-field* x y) take)
-                            (when (and (< 0 dest-x 800)
-                                       (< 0 dest-y 600))
-                              (incf (aref *humidity-field* dest-x dest-y) take)))))))
+    (lparallel:pmap (lambda (x)
+                      (dotimes (y 600)
+                        (let* ((wind-x (wind-x (aref *wind-vector-field* x y)))
+                               (wind-y (wind-y (aref *wind-vector-field* x y)))
+                               (dest-x (+ x (* 2 wind-x)))
+                               (dest-y (+ y (* 2 wind-y)))
+                               (Δx (nth-value 1 (round dest-x)))
+                               (Δy (nth-value 1 (round dest-y)))
+                               (Δ (+ Δx Δy))
+                               (take (min (aref *humidity-field* x y) Δ)))
+                          (decf (aref *humidity-field* x y) take)
+                          (when (and (< 0 dest-x 800)
+                                     (< 0 dest-y 600))
+                            (incf (aref *humidity-field* dest-x dest-y) take)))))
+                    (loop for i from 0 below 800 collect i))))
 
 ;; #. (progn (ql:quickload :cl-jpeg) nil) ; FIXME
 (defun generate-skydome-cloud-layer ()
   (let ((lparallel:*kernel* (ensure-weather-kernel)))
     (let ((pixmap (make-array '(800 600) :element-type '(unsigned-byte 8) :initial-element 0)))
-      (lparallel:pdotimes (x 800)
-                          (dotimes (y 600)
-                            (setf (aref pixmap x y) 
-                                  (min #xff 
-                                       (max 0
-                                            (round
-                                             (* #x100
-                                                (aref *humidity-field* x y))))))))
+      (lparallel:pmap (lambda (x)
+                        (dotimes (y 600)
+                          (setf (aref pixmap x y) 
+                                (min #xff 
+                                     (max 0
+                                          (round
+                                           (* #x100
+                                              (aref *humidity-field* x y))))))))
+                      (loop for i from 0 below 800 collect i))
       ;; FIXME: and … crash.
       ;;(cl-jpeg:encode-image "/tmp/skydome.jpeg" pixmap nil 600 800 :q-tabs 1)
       )))
