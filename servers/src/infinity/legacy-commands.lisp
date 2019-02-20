@@ -199,9 +199,9 @@ This method exists solely for testing purposes.
 Sends response containing:
 
 @example
-ECHO => Can you hear me now?
-status => true
-You said: => (the ActionScript object passed in)
+⇒ { c: \"echo\", d: { foo: 42 } }
+
+{ from: \"echo\", status: true, \"You said\": { foo: 42 } }
 @end example
 
 Note that the field name is literally ``@samp{You said:}.''
@@ -247,7 +247,9 @@ status = one of \"cxl\" to cancel an event (in which case, score should be
 
 Reply format:
 
+@example
 { from: avatars, status: true, avatars: { 0: { USER-INFO … }, … }
+@end example
 
 
 User public information is in the format of AbstractUser.getPublicInfo()
