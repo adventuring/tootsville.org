@@ -58,7 +58,8 @@
 (defvar *ice-credentials* nil)
 
 (defun ice-credentials ()
-  (or *ice-credentials*
+  (or (unless (zerop (random 100))
+        *ice-credentials*)
       (setf *ice-credentials*
             (fetch-ice-credentials/xirsys))))
 
