@@ -95,6 +95,8 @@
 #+sbcl
 (setf sb-impl::*default-external-format* :utf-8)
 
+(when *load-truename* (compile-file *load-truename*))
+
 
 
 (format *trace-output* "~&Setup script completed; ready to load.~4%")
