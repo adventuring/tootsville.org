@@ -340,7 +340,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                            (format nil
                                    "Undocumented endpoint for ~a ~a → ~s"
                                    method uri content-type))
-                       (format nil "@subsection{Web Service Endpoint}
+                       (format nil "~2%@subsection{Web Service Endpoint}
 ~2%This is a web service ~
 endpoint accessed by the HTTP method ~a at the URI template ~a. ~
 ~:[The returned content-type is not specified.~;~
