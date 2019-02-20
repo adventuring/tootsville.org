@@ -113,7 +113,7 @@ Requires a body with fields to be changed, and their new values. TODO.
   (with-user ()
     (error 'unimplemented)))
 
-(defendpoint (get "/users/me/toots" "application/json")
+(defendpoint (get "/users/me/toots" "application/json" 1)
   "Enumerate all Toot characters available to you."
   (with-user ()
     (dolist (Toot (player-Toots))
@@ -134,7 +134,7 @@ Requires a body with fields to be changed, and their new values. TODO.
                                               (or (Toot-last-active Toot)
                                                   (universal-to-timestamp 0)))))))))
 
-(defendpoint (post "/users/me/toots/:toot-name" "application/json")
+(defendpoint (post "/users/me/toots/:toot-name" "application/json" 1)
   "Create a new Toot character named TOOT-NAME.
 
 Requires player authentication.
