@@ -56,7 +56,8 @@ Tootsville.gossip.createConnection = function ()
       offer => { return peer.connection.setLocalDescription(offer); }
   ).then (
       () => { Tootsville.trace ("Posting offer to servers");
-              Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) ); }); };
+              Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) );
+              Tootsville.trace ("Offer should be posting now"); }); };
 
 /**
  * Accept an inbound datagram.
