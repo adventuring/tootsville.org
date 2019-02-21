@@ -32,6 +32,9 @@
     (:use :cl :asdf)))
 (in-package :Tootsville-ASD)
 
+(unless *load-truename*
+  (error "LOAD the setup.lisp file"))
+
 (defvar *setup* nil)
 
 (format t "~3& Tootsville Ⅴ Setup~3&")
@@ -41,7 +44,6 @@
 ;;; Ensure Quicklisp is installed.
 
 #.(load (merge-pathnames "ensure-quicklisp.lisp" (or *load-truename*
-                                                     *compile-file-truename*
                                                      *default-pathname-defaults*)))
 
 
@@ -74,7 +76,6 @@
 (let* ((src-dir (make-pathname
                  :directory
                  (pathname-directory (or *load-pathname*
-                                         *compile-file-pathname*
                                          *default-pathname-defaults*))))
        (lib-dirs (merge-pathnames (make-pathname :directory '(:relative "lib")
                                                  :name :wild :type :wild)
@@ -94,8 +95,6 @@
 ;;; misc
 #+sbcl
 (setf sb-impl::*default-external-format* :utf-8)
-
-(when *load-truename* (compile-file *load-truename*))
 
 
 
