@@ -190,3 +190,16 @@
   (y number)
   (z number)
   (radius number))
+
+
+
+(defrecord lot (:friendly "lots")
+  (x1 number)
+  (x2 number)
+  (y1 number)
+  (y2 number)
+  (z1 number)
+  (z2 number)
+  (ownership keyword)
+  (owner-toot uuid ref Toot)
+  (world keyword))
