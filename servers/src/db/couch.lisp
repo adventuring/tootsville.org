@@ -33,26 +33,10 @@
   (setf clouchdb:*couchdb*
         (let ((conf (car (db-config :mixer))))
           (v:info :mixer "Connecting to Mixer at ~a" (extract conf :host))
-          (v:info :mixer "Connection tunnel: ~s"
-                  (list "ssh" "-f" (concatenate 'string "fedora@"
-                                                (extract conf :host))
-                        "-L"
-                        (format nil "27784:~a:~d"
-                                (extract conf :host)
-                                (or (extract conf :port) 5984))
-                        "cat"))
           (with-timeout (2)
-            (run-program (list "ssh" "-f" (concatenate 'string "fedora@"
-                                                       (extract conf :host))
-                               "-L"
-                               (format nil "27784:~a:~d"
-                                       (extract conf :host)
-                                       (or (extract conf :port) 5984))
-                               "cat")))
-          (v:info :mixer "Tunnel established; connect to service…")
-          (with-timeout (2)
-            (clouchdb:set-connection :host "localhost"
-                                     :port "27784"
+            (clouchdb:set-connection :host (extract conf :host)
+                                     :port (or (extract conf :port)
+                                               "5984")
                                      :user (extract conf :player :name)
                                      :password (extract conf :player :password)
                                      :protocol "http"
@@ -149,9 +133,20 @@ supply exactly one of OFFEROR, ANSWEROR, ANSWER"))
     (t (clouchdb:all-docs-by-seq))))
 
 
+(defun couch-get-document (uri)
+  (handler-case
+      (clouchdb:get-document uri)
+    (clouchdb:document-missing (c)
+      (declare (ignore c))
+      nil)))
+
+
 (defun find-active-Toot-for-user (&optional (user *user*))
   (when user
-    (error 'unimplemented)))
+    (when-let (uuid (couch-get-document
+                     (concatenate 'string "/player/link/toot/" 
+                                  (uuid:format-as-urn nil (person-uuid user)))))
+      (find-record 'toot :uuid uuid))))
 
 (defun link-active-Toot-to-user (Toot &optional (user *user*))
   (declare (ignore Toot user))
