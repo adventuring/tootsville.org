@@ -123,6 +123,7 @@ TODO: Use templates, filter backtrace like Rollbar, do better."
 (define-condition unidentified-player-error (http-client-error)
   ((http-status-code :initform 403))
   (:report (lambda (c s)
+             (declare (ignore c))
              (format s "Unidentified player"))))
 
 (define-condition unimplemented (http-client-error)

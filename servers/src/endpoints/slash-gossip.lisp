@@ -51,6 +51,7 @@
     (let* ((json$ (map 'string 'code-char (hunchentoot:raw-post-data)))
            (json (jonathan.decode:parse json$))
            (offers (make-offers-from-json json)))
+      (break)
       (list 202 (list :location "/gossip/offers")
             (list :|offers| (mapcar #'uuid-to-uri offers))))))
 

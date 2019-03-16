@@ -42,6 +42,9 @@ Tootsville.gossip.postDescription = function (peer, description)
                       { Tootsville.util.rest ('POST', "/gossip/offers", JSON.stringify ({ offers: [ description ] })).
                         then (success); }); };
 
+Tootsville.gossip.getOffers = function ()
+{ Tootsville.trace ("Should be fetching offers now"); };
+
 Tootsville.gossip.createConnection = function ()
 { var peer = {connection: new RTCPeerConnection({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 }) };
   Tootsville.trace ('Created local peer connection object peer.connection');
@@ -55,9 +58,11 @@ Tootsville.gossip.createConnection = function ()
   peer.connection.createOffer ().then (
       offer => { return peer.connection.setLocalDescription(offer); }
   ).then (
-      () => { Tootsville.trace ("Posting offer to servers");
-              Tootsville.utils.rest ('POST', 'gossip/offers', JSON.stringify ({ offers: peer.connection.localDescription }) );
-              Tootsville.trace ("Offer should be posting now"); }); };
+      () => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
+              Tootsville.utils.rest ('POST', 'gossip/offers',
+                                     JSON.stringify ({ offers: peer.connection.localDescription }) ).then (
+                                         Tootsville.gossip.getOffers);
+              Tootsville.trace ("Offer should be posting now. This is confirmation."); }); };
 
 /**
  * Accept an inbound datagram.

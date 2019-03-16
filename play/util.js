@@ -75,7 +75,8 @@ Tootsville.util.rest = function (method, uri, body, headers)
                   Tootsville.parrot.parrotErrorText(json),
                   [{ tag: 'retry', text: "Retry the network operation" }]).then
               (() =>
-               { return Tootsville.util.rest (method, uri, body, headers); }); }},
+               { console.log ("User-initiated retry for " + uri);
+                 return Tootsville.util.rest (method, uri, body, headers); }); }},
       error =>
           { Tootsville.warn("Fetch error " + error);
             Tootsville.parrot.ask (

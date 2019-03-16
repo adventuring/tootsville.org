@@ -190,13 +190,14 @@ or adding a room, @verb{| { index: roomIndex } |}
               (infinity-error 400 :index-not-valid))
             ;; TODO create room and affix to house 
             )))))))
+(definfinity dofff ((&rest d) user plane)
+  "Doff all clothing items.
 
-(definfinity doff ((&rest d) user plane)
-  "Doff an item
+Takes no parameters.
 
-TODO: document parameters
-
-TODO document Response with total avatar info from \"wardrobe\""
+Sends two  responses: a success  reply from \"doff\", then  total avatar
+  info from \"wardrobe\""
+  ;; TODO dofff
   )
 (definfinity don ((|slot| |color|) user plane)
   "Don an item
@@ -204,7 +205,7 @@ TODO document Response with total avatar info from \"wardrobe\""
 JSON object  has the  item slot  number to  be worn  (clothes, patterns,
 pivitz) and optionally set the color (for patterns)
 
-Response with total avatar info from "wardrobe"
+Response with total avatar info from \"wardrobe\"
 
 Parameters: jso -  { slot : ### }  or { slot: ###, color: CCC  } — valid
 formats defined in Colour.Colour(String)
@@ -225,6 +226,9 @@ meant  for pattern  changing  in  1.2, which  must  now be  accomplished
 in-game via Doodle.
 
 "
+  (unless (nullp |color|)
+    (infinity-error 400 :cannot-select-color))
+  ;; TODO don
   )
 (definfinity echo ((&rest d) user plane)
   "Echoes back the supplied JSON (or ActionScript) object to the client.
@@ -247,7 +251,8 @@ u - The user calling (to whom the response is sent)
 
 
 "
-  )
+  (list :|from| "echo" :|status| t :|You said| d))
+
 (definfinity endEvent ((|moniker| |eventID| |score| |status|) user plane)
   
   " This method  terminates an event (probably a  minigame, but possibly

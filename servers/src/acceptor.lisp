@@ -133,10 +133,14 @@
 
 (defun gracefully-report-http-client-error (c)
   (v:error :HTTP-client "Gracefully reporting error to HTTP client: ~a" c)
+  (v:error :http-error "Condition ~s,~%backtrace ~s"
+           c (ignore-errors (rollbar::find-appropriate-backtrace)))
+  (rollbar:error! "Sending HTTP response to condition" 
+                  :condition c)
   (if (wants-json-p)
       (encode-endpoint-reply
        (list (http-status-code c)
-             '(:content-type "application/json; charset=utf-8")
+             (list :content-type "application/json; charset=utf-8")
              (if hunchentoot:*show-lisp-backtraces-p*
                  (to-json
                   (list :|error| (http-status-code c)
@@ -147,7 +151,7 @@
                         :|errorMessage| (princ-to-string c))))))
       (encode-endpoint-reply
        (list (http-status-code c)
-             '(:content-type "text/html; charset=utf-8")
+             (list :content-type "text/html; charset=utf-8")
              (pretty-print-html-error c)))))
 
 (defmacro with-http-conditions (() &body body)
@@ -157,7 +161,7 @@
      (error (c)
        (gracefully-report-http-client-error c))))
 
-(defun handle-cors-request (uri-parts ua-accept)
+(defun handle-options-request (uri-parts ua-accept)
   (v:info :request "Method is OPTIONS")
   (let ((method (make-keyword (hunchentoot:header-in* :Access-Control-Request-Method))))
     (if-let (match (find-best-endpoint method uri-parts ua-accept))
@@ -209,21 +213,21 @@
   (declare (optimize (speed 3) (safety 1) (space 0) (debug 1)))
   (verbose:info :request "Dispatching request ~s via acceptor ~s"
                 request acceptor)
-  (let ((hunchentoot:*request* request)
-        (*user* (find-user-for-headers (hunchentoot:header-in
-                                        "X-Infinity-Auth" request)))
-        (*Toot* (find-active-Toot-for-user)))
-    (let ((method (hunchentoot:request-method*))
-          (uri-parts (split-sequence #\/
-                                     (namestring
-                                      (hunchentoot:request-pathname request))
-                                     :remove-empty-subseqs t))
-          (ua-accept (request-accept-types)))
-      (with-http-conditions ()
-        (set-http-default-headers)
-        (if (eql :options method)
-            (handle-cors-request uri-parts ua-accept)
-            (handle-normal-request method uri-parts ua-accept))))))
+  (let* ((hunchentoot:*request* request)
+         (*user* (find-user-for-headers (hunchentoot:header-in*
+                                         "X-Infinity-Auth")))
+         (*Toot* (find-active-Toot-for-user))
+         (method (hunchentoot:request-method*))
+         (uri-parts (split-sequence #\/
+                                    (namestring
+                                     (hunchentoot:request-pathname request))
+                                    :remove-empty-subseqs t))
+         (ua-accept (request-accept-types)))
+    (with-http-conditions ()
+      (set-http-default-headers)
+      (if (eql :options method)
+          (handle-options-request uri-parts ua-accept)
+          (handle-normal-request method uri-parts ua-accept)))))
 
 (defmethod hunchentoot:acceptor-status-message
     ((acceptor Tootsville-REST-Acceptor) HTTP-status-code

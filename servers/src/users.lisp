@@ -165,11 +165,11 @@ come from a trusted authentication provider like Google Firebase)."
   "Finds an email address for PERSON of type CONTACT."
   (when-let (mails (remove-if-not
                     (lambda (record)
-                      (string-begins "mailto:" (person-link-url record)))
+                      (eql :mailto (puri:uri-scheme (person-link-url record))))
                     (find-records 'person-link
                                   :person (person-uuid person)
                                   :rel :CONTACT)))
-    (subseq (random-elt mails) 7)))
+    (subseq (puri:render-uri (person-link-url (random-elt mails)) nil) 7)))
 
 (defun user-face (&optional (person *user*))
   "Finds a portrait URI for PERSON"
@@ -281,13 +281,14 @@ limitations under the License. |#
   ;; just me ☹
   (eql (uuid-to-uri (person-uuid person)) "SAsJFzx6TRO1W6pWEFxeAA=="))
 
-(defun get-rollbar-person (person)
-  (when *user*
+(defun get-rollbar-person (&optional (person *user*))
+  (when person
     (list :|person|
           (list :|uid| (princ-to-string (person-uuid person))
                 :|username| (format nil "~@[Toot: ~a, ~]Person: ~a"
-                                    (when *Toot* (Toot-name *Toot*))
-                                    (person-display-name *user*))
+                                    (when-let (Toot (person-Toot person))
+                                      (Toot-name Toot))
+                                    (person-display-name person))
                 :|email| (user-email)))))
 
 
@@ -296,3 +297,7 @@ limitations under the License. |#
   ;; TODO
   (v:info :alert "Player Alert for person ~a; message ~{~a~^ ~}"
           (person-display-name person) message))
+
+(defun person-Toot (person)
+                                        ; TODO: person-Toot 
+  nil)
