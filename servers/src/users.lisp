@@ -298,6 +298,6 @@ limitations under the License. |#
   (v:info :alert "Player Alert for person ~a; message ~{~a~^ ~}"
           (person-display-name person) message))
 
-(defun person-Toot (person)
+(defun person-Toot (&optional (person *user*))
                                         ; TODO: person-Toot 
   nil)
