@@ -24,7 +24,7 @@
 ;;; PO Box 23095
 ;;;; Oakland Park, FL 33307-3095
 ;;; USA
-sbc
+
 (in-package :Tootsville)
 
 (declaim (optimize (speed 3)))
