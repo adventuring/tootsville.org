@@ -50,7 +50,7 @@ Tootsville.util.assertValidHostName = function (hostName)
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
   if (!(hostName == "http" || hostName == 'https'))
-  { hostName = Tootsville.util.assertValidHostName(hostName);
+  { hostName = Tootsville.util.assertValidHostName (hostName);
     uri = hostName + '/' + uri; }
   Tootsville.trace ('REST: ' + method + ' ' + uri);
   if (!headers) { headers = {}; }
@@ -64,21 +64,21 @@ Tootsville.util.rest = function (method, uri, body, headers)
     opts.body = JSON.stringify(body); }
   opts.headers = headers;
   return fetch (uri, opts).then(
-      response =>
-          { if (response.ok)
-            { return response.json (); }
-            else
-            { var json = response.json ();
-              Tootsville.warn("Server error from " + uri + " " + JSON.stringify(json));
-              return Tootsville.parrot.ask (
-                  "Uh-oh! Server trouble!",
-                  Tootsville.parrot.parrotErrorText(json),
-                  [{ tag: 'retry', text: "Retry the network operation" }]).then
-              (() =>
-               { console.log ("User-initiated retry for " + uri);
-                 return Tootsville.util.rest (method, uri, body, headers); }); }},
+      function (response)
+      { if (response.ok)
+        { return response.json (); }
+        else
+        { var json = response.json ();
+          Tootsville.warn("Server error from " + uri, json);
+          return Tootsville.parrot.ask (
+              "Uh-oh! Server trouble!",
+              Tootsville.parrot.parrotErrorText(json),
+              [{ tag: 'retry', text: "Retry the network operation" }]).then
+          (() =>
+           { console.log ("User-initiated retry for " + uri);
+             return Tootsville.util.rest (method, uri, body, headers); }); }},
       error =>
-          { Tootsville.warn("Fetch error " + error);
+          { Tootsville.warn("Fetch error ", error);
             Tootsville.parrot.ask (
                 "Uh-oh! Network trouble!",
                 "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
