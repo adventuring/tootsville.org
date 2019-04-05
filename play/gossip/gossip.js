@@ -59,7 +59,7 @@ Tootsville.gossip.createConnection = function ()
       offer => { return peer.connection.setLocalDescription(offer); }
   ).then (
       () => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
-              Tootsville.utils.rest ('POST', 'gossip/offers',
+              Tootsville.util.rest ('POST', 'gossip/offers',
                                      JSON.stringify ({ offers: peer.connection.localDescription }) ).then (
                                          Tootsville.gossip.getOffers);
               Tootsville.trace ("Offer should be posting now. This is confirmation."); }); };
