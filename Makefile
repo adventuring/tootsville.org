@@ -57,7 +57,7 @@ clusterorg=$(CLUSTER).tootsville.org
 clusternet=$(CLUSTER).tootsville.net
 endif
 
-GAMEHOSTS=game1 game3
+GAMEHOSTS=game3
 BALANCERS=balancer1 balancer2
 
 LOCAL_USERNAME=$(shell whoami)
