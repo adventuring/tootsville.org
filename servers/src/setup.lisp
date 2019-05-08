@@ -27,6 +27,15 @@
 
 (cl:in-package :cl-user)
 (require :asdf)
+
+;; bug in recent ASDF or what? Don't know, don't care; this fixes it for now.
+#.(unless (find-package "ASDF/INTERFACE")
+    (defpackage asdf/interface))
+(unless (fboundp 'asdf/interface::operation-forced)
+  (defun ASDF/INTERFACE::OPERATION-FORCED (&rest _)
+    (declare (ignore _))))
+
+
 (unless (find-package :Tootsville-ASD)
   (defpackage Tootsville-ASD
     (:use :cl :asdf)))
