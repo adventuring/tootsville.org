@@ -379,17 +379,99 @@ strong.green-plus {
 
 #new-toot-base-color, #new-toot-pad-color, #new-toot-pattern-color, #new-toot-pattern, #new-toot-t-shirt-color {
     .color-picker;
+    position: absolute;
+}
+
+#new-toot-base-color {
+    top: 3rem;
+    left: 0;
+}
+
+#new-toot-pad-color {
+    top: 9rem;
+    left: 0;
+}
+
+#new-toot-pattern-color {
+    top: 3rem;
+    right: 1rem;
+}
+
+#new-toot-pattern {
+    top: 8rem;
+    right: 1rem;
+}
+
+#new-toot-t-shirt-color {
+    top: 5rem;
+    right: 6rem;
 }
 
 .color-picker-button {
-    .color-picker;
+    visibility: hidden;
+    position: absolute;
+}
+
+.color-picker-button + label {
+    margin: .25rem;
+    padding: .25rem;
+    border-radius: .25rem;
+}
+
+.color-picker-button + label:before {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 1rem;
+    margin: .5rem;
+    content: " ";
+    display:inline-block;
+    vertical-align: middle;
+    border: 3pt solid #777;
+}
+
+.color-picker-button:checked + label:before {
+    border: 3pt solid white;
 }
 
 .new-toot-color-picker {
-    background-color: white;
-    border: 1pt solid black;
+    background-color: black;
+    border: 1pt solid white;
     border-radius: 1rem;
     position: absolute;
     top: 0;
     right: 0;
+    color: white;
+    font-family: Cantarell;
+    font-weight: bold;
+    
+}
+
+#new-toot-name-block {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+#new-toot-name-howto {
+    margin-top: 2rem;
+}
+
+#new-toot-ready-box {
+    border-top: 1pt solid black;
+    margin-top: 2rem;
+    padding-top: 2rem;
+}
+
+#new-toot-ready {
+    float: right;
+    clear: both;
+}
+
+#new-toot-paperdoll {
+    background-color: @violet;
+    height: 9rem;
+    width: 9rem;
+    position: relative;
+    left: 6rem;
+    top: 1rem;
+    align-content: center;
 }
