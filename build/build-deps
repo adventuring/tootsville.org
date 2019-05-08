@@ -7,12 +7,12 @@ git
 gnupg
 gpg
 joe
-mariadb-devel
+mariadb-connector-c-devel
 nodejs-less
 nodejs-source-map
 npm
 openssl-devel
-python-sphinx
+python3-sphinx
 readline-devel
 rlwrap
 sbcl
