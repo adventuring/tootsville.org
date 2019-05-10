@@ -31,7 +31,7 @@
 
 (defun connect-mixer ()
   (setf clouchdb:*couchdb*
-        (let ((conf (car (db-config :mixer))))
+        (let ((conf (db-config :mixer)))
           (v:info :mixer "Connecting to Mixer at ~a" (extract conf :host))
           (with-timeout (2)
             (clouchdb:set-connection :host (extract conf :host)
