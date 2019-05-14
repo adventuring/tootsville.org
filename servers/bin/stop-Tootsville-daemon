@@ -1,3 +1,0 @@
-#!/bin/bash
-exec emacs -Q --batch --eval \
-     '(progn (load (expand-file-name "~/quicklisp/slime-helper.el")) (setq inferior-lisp-program "sbcl") (slime-connect "localhost" 46046) (slime-eval '"'"'(tootsville:stop)))'
