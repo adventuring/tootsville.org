@@ -4,7 +4,7 @@
  *
  * ./play/tootsville.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -29,7 +29,9 @@
  *
  * USA
  *
- */var Tootsville = {
+ */
+ 
+ var Tootsville = {
      /* Cluster name is hostname minus leading "play" */
      cluster: document.location.host.split('.').splice(1).join('.'),
      Worlds:
@@ -60,18 +62,14 @@ if (('test.tootsville.org' == Tootsville.cluster) ||
 { Tootsville.host =
   { www: 'https://www.' + Tootsville.cluster,
     play: 'https://play.' + Tootsville.cluster,
-    users: 'https://users.' + Tootsville.cluster.replace('.org','.net'),
-    gossip: 'https://gossip.' + Tootsville.cluster.replace('.org','.net'),
-    world: 'https://world.' + Tootsville.cluster.replace('.org','.net') };
+    game: 'https://game.' + Tootsville.cluster.replace('.org','.net') };
   document.domain = Tootsville.cluster; }
 else
 { Tootsville.cluster = 'local';
   Tootsville.host =
   { www: 'http://localhost:5001',
     play: 'http://localhost:5002',
-    users: 'http://localhost:5000',
-    gossip: 'http://localhost:5000',
-    world: 'http://localhost:5000' }; }
+    game: 'http://localhost:5000' }; }
 
 window.addEventListener('Tootsville/Login', function (ev)
                         { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,

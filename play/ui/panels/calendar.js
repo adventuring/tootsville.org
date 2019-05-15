@@ -4,7 +4,7 @@
  *
  * ./play/ui/panels/calendar.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -30,3 +30,17 @@
  * USA
  *
  */
+
+if (!('tootnix' in Tootsville))
+{ Tootsville.tootnix = {}; }
+
+Tootsville.tootnix.calendar_app_calendar_load = function ()
+{ var calDiv = document.getElementById("calendar-app-calendar");
+  if (!calDiv) { return; };
+  Tootsville.ui.hud.loadHTML ("http://localhost:5000/world/clock/calendar/now/fragment.html"). // FIXME
+  then ( htmlf => { calDiv.innerHTML = '';
+                    var cal = htmlf.getElementsByTagName ("TABLE")[0];
+                    console.log (cal);
+                    calDiv.appendChild (cal); } ); };
+
+Tootsville.tootnix.calendar_app_calendar_load();

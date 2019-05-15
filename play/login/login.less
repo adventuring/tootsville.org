@@ -4,7 +4,7 @@
  *
  * ./play/login/login.less is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -255,7 +255,7 @@ p {
 
 #toots-list {
     display: block;
-    background-color: #ba9dca;
+    background-color: @violet;
     border: 1pt solid black;
     border-radius: 1rem;
     min-height: 12rem;
@@ -264,7 +264,7 @@ p {
     overflow-y: auto;
 }
 
-#toots-list > li {
+#toots-list > li.toot {
     display: inline-block;
     width: 15rem;
     border: 1pt solid black;
@@ -275,6 +275,13 @@ p {
     vertical-align: top;
     cursor: pointer;
     transition: .25s;
+
+    &:hover {
+        box-shadow: 5pt 5pt 3pt @periwinkle,
+                    5pt -5pt 3pt @periwinkle,
+                    -5pt 5pt 3pt @periwinkle,
+                    -5pt -5pt 3pt @periwinkle;
+    }
 }
 
 #toot-name, .toot-name {
@@ -297,7 +304,7 @@ p {
     color: #333;
     font-size: .9em;
 }
-#toots-list > li#new-toot {
+#toots-list > li#add-toot {
     display: block;
     float: right;
     margin-top: 2rem;
@@ -358,24 +365,113 @@ strong.green-plus {
     margin-right: .5rem;
 }
 
-#login > .footer {
-    position: fixed;
-    bottom: 0;
-    font-family: Cantarell, serif;
-    font-size: .8rem;
-    color: #444;
-    border: 1px solid white;
-    background-color: white;
-    background-color: rgba(255,255,255,.8);
-    a:link, a:visited {
-        color: #444;
-    }
-
-}
-
-.toots-list-loading-spinner {
+#toots-list-loading-spinner {
     border: none;
     background: none;
     color: black;
     font-size: 3rem;
+}
+
+.color-picker {
+    width: 4rem;
+    height: 4rem;
+}
+
+#new-toot-base-color, #new-toot-pad-color, #new-toot-pattern-color, #new-toot-pattern, #new-toot-t-shirt-color {
+    .color-picker;
+    position: absolute;
+}
+
+#new-toot-base-color {
+    top: 3rem;
+    left: 0;
+}
+
+#new-toot-pad-color {
+    top: 9rem;
+    left: 0;
+}
+
+#new-toot-pattern-color {
+    top: 3rem;
+    right: 1rem;
+}
+
+#new-toot-pattern {
+    top: 8rem;
+    right: 1rem;
+}
+
+#new-toot-t-shirt-color {
+    top: 5rem;
+    right: 6rem;
+}
+
+.color-picker-button {
+    visibility: hidden;
+    position: absolute;
+}
+
+.color-picker-button + label {
+    margin: .25rem;
+    padding: .25rem;
+    border-radius: .25rem;
+}
+
+.color-picker-button + label:before {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 1rem;
+    margin: .5rem;
+    content: " ";
+    display:inline-block;
+    vertical-align: middle;
+    border: 3pt solid #777;
+}
+
+.color-picker-button:checked + label:before {
+    border: 3pt solid white;
+}
+
+.new-toot-color-picker {
+    background-color: black;
+    border: 1pt solid white;
+    border-radius: 1rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    font-family: Cantarell;
+    font-weight: bold;
+    
+}
+
+#new-toot-name-block {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+#new-toot-name-howto {
+    margin-top: 2rem;
+}
+
+#new-toot-ready-box {
+    border-top: 1pt solid black;
+    margin-top: 2rem;
+    padding-top: 2rem;
+}
+
+#new-toot-ready {
+    float: right;
+    clear: both;
+}
+
+#new-toot-paperdoll {
+    background-color: @violet;
+    height: 9rem;
+    width: 9rem;
+    position: relative;
+    left: 6rem;
+    top: 1rem;
+    align-content: center;
 }

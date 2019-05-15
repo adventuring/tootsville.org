@@ -4,7 +4,7 @@
  *
  * ./play/ui/hud.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -306,9 +306,24 @@ Tootsville.ui.hud.refreshWallet = function ()
 { // TODO
 };
 
-window.addEventListener (
-    'load',
-    () =>
-        { Tootsville.ui.hud.refreshEquipment ();
-          Tootsville.ui.hud.refreshTalkStatus ();
-          Tootsville.ui.hud.refreshWallet (); });
+Tootsville.ui.hud.refreshHUD = function ()
+{ Tootsville.ui.hud.refreshEquipment ();
+  Tootsville.ui.hud.refreshTalkStatus ();
+  Tootsville.ui.hud.refreshWallet (); };
+
+Tootsville.ui.hud.toggleTalkLoud = function ()
+{ };
+
+Tootsville.ui.hud.toggleTalkExpression = function ()
+{ };
+
+Tootsville.ui.hud.toggleTalkEmoji = function ()
+{ };
+
+Tootsville.ui.hud.connectTalkBox = function ()
+{ document.getElementById ("talk-loud-selector").addEventListener
+  ("click", Tootsville.ui.hud.toggleTalkLoud);};
+{ document.getElementById ("talk-expression").addEventListener
+  ("click", Tootsville.ui.hud.toggleTalkExpression);};
+{ document.getElementById ("talk-emoji").addEventListener
+  ("click", Tootsville.ui.hud.toggleTalkEmoji);};

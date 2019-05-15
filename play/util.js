@@ -4,7 +4,7 @@
  *
  * ./play/util.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -33,24 +33,18 @@
 if (!("util" in Tootsville)) { Tootsville.util = {}; }
 
 Tootsville.util.assertValidHostName = function (hostName)
-{ if ("users" == hostName || "toots" == hostName)
-  { return Tootsville.host["users"]; }
-  if ("gossip" == hostName || "meta-game" == hostName)
-  { return Tootsville.host["gossip"]; }
-  if ("world" == hostName)
-  { return Tootsville.host["world"]; }
+{ if ("http" == hostName || "https" == hostName)
+  { Tootsville.error ("Landed here with http/s as a hostName"); }
   if ("wiki" == hostName)
   { return "https://wiki.tootsville.org"; }
   if ("tootsbook" == hostName)
   { return "https://tootsbook.com"; }
-  Tootsville.error ("Unknown which host handles " + hostName);
-  return undefined;
-};
+  return Tootsville.host["game"]; };
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
-  if (!(hostName == "http"))
-  { hostName = Tootsville.util.assertValidHostName(hostName);
+  if (!(hostName == "http" || hostName == 'https'))
+  { hostName = Tootsville.util.assertValidHostName (hostName);
     uri = hostName + '/' + uri; }
   Tootsville.trace ('REST: ' + method + ' ' + uri);
   if (!headers) { headers = {}; }
@@ -61,22 +55,24 @@ Tootsville.util.rest = function (method, uri, body, headers)
   let opts = { method: method };
   if (body && (! ('Content-Type' in headers)))
   { headers['Content-Type'] = 'application/json';
-    opts.body = body; }
+    opts.body = JSON.stringify(body); }
   opts.headers = headers;
   return fetch (uri, opts).then(
-      response =>
-          { if (response.ok)
-            { return response.json (); }
-            else
-            { Tootsville.warn("Server error " + JSON.stringify(response.json ()));
-              Tootsville.parrot.ask (
-                  "Uh-oh! Server trouble!",
-                  Tootsville.parrot.parrotErrorText(response.json ()),
-                  [{ tag: 'retry', text: "Retry the network operation" }]).then
-              (() =>
-               { return Tootsville.util.rest (method, uri, body, headers); }); }},
+      function (response)
+      { if (response.ok)
+        { return response.json (); }
+        else
+        { var json = response.json ();
+          Tootsville.warn("Server error from " + uri, json);
+          return Tootsville.parrot.ask (
+              "Uh-oh! Server trouble!",
+              Tootsville.parrot.parrotErrorText(json),
+              [{ tag: 'retry', text: "Retry the network operation" }]).then
+          (() =>
+           { console.log ("User-initiated retry for " + uri);
+             return Tootsville.util.rest (method, uri, body, headers); }); }},
       error =>
-          { Tootsville.warn("Fetch error " + error);
+          { Tootsville.warn("Fetch error ", error);
             Tootsville.parrot.ask (
                 "Uh-oh! Network trouble!",
                 "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
@@ -100,4 +96,4 @@ Tootsville.util.ensureServersReachable = function ()
   ( (response) => { Tootsville.trace ("Ping replied", response); },
     (error) => { Tootsville.parrot.say (
         "Squawk! I don't see any servers!",
-        "I'm not able to reach any of the Tootsville game servers." ); } ); };
+        "I'm not able to reach any of the Tootsville game servers. This probably means you won't be able to sign in." ); } ); };

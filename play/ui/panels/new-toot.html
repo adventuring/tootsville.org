@@ -1,8 +1,8 @@
-<!DOCTYPE html> <!-- -*- web-mode -*- -->
+<!DOCTYPE html> <!-- -*- web -*- -->
 
 <!-- ./play/ui/panels/dummy.html is part of Tootsville
 
-   Copyright  ©  2016,2017  Bruce-Robert   Pocock;  ©  2018,2019  The
+   Copyright  © 2008-2017  Bruce-Robert   Pocock;  ©  2018,2019  The
    Corporation for Inter-World Tourism and Adventuring (ciwta.org).
 
    This  program is  Free Software:  you can  redistribute it  and/or
@@ -35,21 +35,30 @@
     <div id="new-toot">
       <h2> Create a New Toot </h2>
       <button id="new-toot-base-color"
+              title="Base Color"
               onclick="Tootsville.ui.newToot.changeColor('base',this)"></button>
       <button id="new-toot-pad-color"
+              title="Pad Color"
               onclick="Tootsville.ui.newToot.changeColor('pad',this)"></button>
       <button id="new-toot-pattern-color"
+              title="Pattern Color"
               onclick="Tootsville.ui.newToot.changeColor('pattern',this)"></button>
       <button id="new-toot-pattern"
+              title="Pattern"
               onclick="Tootsville.ui.newToot.changePattern(this)"></button>
       <button id="new-toot-t-shirt-color"
+              title="T-Shirt Color"
               onclick="Tootsville.ui.newToot.changeColor('t-shirt',this)"></button>
       <canvas id="new-toot-paperdoll"></canvas>
-      <frameset id="new-toot-name-block">
+      <fieldset id="new-toot-name-block">
         <legend><label for="new-toot-name">Name:</label></legend>
         <input type="text" name="new-toot-name" id="new-toot-name"
-               size="32">
-        <div id="new-toot-name-problem">
+               size="32"
+               onkeyup="Tootsville.ui.newToot.checkName()"
+               onchange="Tootsville.ui.newToot.checkName()"
+               placeholder="(Toot's name here)"
+               pattern="[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?">
+        <div id="new-toot-name-howto">
           <p> Choose a Toot name that: </p>
           <ul>
             <li id="new-toot-name-problem-begins-with-letter">
@@ -65,7 +74,13 @@
               Has no more than 2 of the same letter in a row </li>
           </ul>
         </div>
-        <button onclick="Tootsville.ui.hud.closePanel();">🤷</button>
+        </fieldset>
+        <div id="new-toot-ready-box">
+          <p>  Once  you're   happy  with  your  new   Toot's  name  and
+            appearance, click here: </p>
+          <button id="new-toot-ready"
+                  onclick="Tootsville.ui.newToot.ready()">Ready</button>
+        </div>
     </div>
   </body>
 </html>

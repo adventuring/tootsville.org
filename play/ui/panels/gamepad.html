@@ -1,8 +1,8 @@
-<!DOCTYPE html> <!-- -*- web-mode -*- -->
+<!DOCTYPE html> <!-- -*- web -*- -->
 
 <!-- ./play/ui/panels/gamepad.html is part of Tootsville
 
-   Copyright  ©  2016,2017  Bruce-Robert   Pocock;  ©  2018,2019  The
+   Copyright  © 2008-2017  Bruce-Robert   Pocock;  ©  2018,2019  The
    Corporation for Inter-World Tourism and Adventuring (ciwta.org).
 
    This  program is  Free Software:  you can  redistribute it  and/or
@@ -33,9 +33,7 @@
   <body>
     <b> This is a panel loaded by the UI. </b>
     <div id="gamepad">
-      <h3 id="gamepad-panel-title">
-        <i class="fas fa-gamepad"></i> Gamepad Controls
-      </h3>
+      <h3 id="gamepad-panel-title"> <i class="fas fa-gamepad"></i> Gamepad Controls </h3>
       <fieldset id="gamepads-list">
         <legend> Gamepads</legend>
         <input type="radio" id="gamepads-list-empty"
@@ -85,17 +83,17 @@
           <li><button id="assign-volume">Volume</button>
             <label for="assign-volume">Axis #4</label></li>
 
-          <li><button               id="assign-gamepad-settings">Gamepad
-              Settings</button>
+          <li><button id="assign-gamepad-settings">Gamepad Settings</button> 
             <label for="assign-gamepad-settings">Button #9</label></li>
 
           <li><button id="assign-fullscreen">Toggle Fullscreen</button>
             <label for="assign-fullscreen">Button #10</label></li>
 
-
-
         </ul>
       </fieldset>
+
+      <button onclick="Tootsville.ui.hud.closePanel();">✗ Close</button>
+
     </div>
   </body>
 </html>

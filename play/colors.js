@@ -4,7 +4,7 @@
  *
  * ./play/colors.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -39,9 +39,10 @@
         black: "#000",
 
         "deep-purple": "#b117ff",
-        yellow: "#ff216f",
+        yellow: "#fff216",
         pink: "#e73e97",
         turquoise: "#00a290",
+        cyan: "#00a290",
         periwinkle: "#96b4de",
 
         violet: "#9669ad",
@@ -54,6 +55,7 @@
         tan: "#ffd2a0",
         red: "#e51b24",
         "spring-green": "#c4d82d",
+        "spring green": "#c4d82d",
         indigo: "#0028ff",
 
         orange: "#ff7b26"
@@ -61,5 +63,5 @@
 
     window.interpretTootColor = function (name) {
         return tootColorMapping[name];
-    }
+    };
 })();

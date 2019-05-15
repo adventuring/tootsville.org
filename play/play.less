@@ -4,7 +4,7 @@
  *
  * ./play/play.less is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -29,11 +29,12 @@
  *
  */
 
-@import url(https://fonts.googleapis.com/css?family=Acme);
-@import url(https://fonts.googleapis.com/css?family=Cantarell);
+@import url('https://fonts.googleapis.com/css?family=Acme|B612:400,700|Cantarell:400,700');
 @import url(palette.less);
 @import url(ui/hud.less);
 @import url(ui/tootnix.less);
+@import url(ui/calendar.less);
+@import url(ui/book.less);
 @import url(scene/scene.less);
 @import url(login/login.less);
 @import url(mobile.less);
@@ -75,17 +76,45 @@ html {
   overflow: hidden;
 }
 
+@title-font: Acme, sans-serif;
+@ui-font: B612, Cantarell, Chicago, Charcoal, sans-serif;
+@talk-font: B612, Cantarell, "Comic Sans", sans-serif;
+@font: Cantarell, serif;
+
 body {
     overflow: hidden;
 }
-h1 { font-size: 3rem } 
-h2 { font-size: 2.5rem }
-h3 { font-size: 2rem }
-h4 { font-size: 1.5rem; font-family: Cantarell, sans-serif }
-h5 { font-size: 1rem; display: inline-block; margin-right: 2rem; }
-h6 { font-size: 1rem; display: inline-block; margin-right: 2rem; font-family: Cantarell, sans-serif }
+h1 { 
+    font-size: 3rem;
+    font-family: @title-font;
+} 
+h2 { 
+    font-size: 2.5rem;
+    font-family: @title-font;
+}
+h3 { 
+    font-size: 2rem;
+    font-family: @title-font;
+}
+h4 { 
+    font-size: 1.5rem; 
+    font-family: @font;
+}
+h5 { 
+    font-size: 1rem; 
+    display: inline-block; 
+    margin-right: 2rem; 
+}
+h6 { 
+    font-size: 1rem; 
+    display: inline-block; 
+    margin-right: 2rem; 
+    font-family: @font;
+}
 
-.mobile-only { display: none; }
+.mobile-only { 
+    display: none; 
+}
 
 button {
     background-color: white;
@@ -95,12 +124,50 @@ button {
     font-size: 1.25rem;
     vertical-align: middle;
     text-align: center;
-    margin: 1rem;
     padding: .25rem .5rem .25rem .5rem;
+    border-radius: 1rem;
+    border: 2pt solid black;
+    margin: 6pt;
+    box-shadow: 5pt 5pt 5pt black;
+    transition: .25s margin, .25s box-shadow, .25s background-color;
 }
 
 button:hover {
     background-color: #eee;
     color: #111;
+    box-shadow: 2pt 2pt 5pt black;
+    margin-top: 8pt;
+    margin-left: 8pt;
+    margin-right: 2pt;
+    margin-bottom: 2pt;
+}
+
+input[type="text"] {
+    border-top: 1pt solid @silver;
+    border-left: 1pt solid @silver;
+    border-right: 1pt solid @silver;
+    border-bottom: 2pt solid black;
+    font-family: @ui-font;
+    font-size: 1.25rem;
+}
+
+input[type="text"]:focus {
+    border-top: 1pt solid black;
+    border-left: 1pt solid black;
+    border-right: 1pt solid black;
+}
+
+#music-footer {
+    position: fixed;
+    bottom: 0;
+    font-family: Cantarell, serif;
+    font-size: .8rem;
+    color: #444;
+    border: 1px solid white;
+    background-color: white;
+    background-color: rgba(255,255,255,.8);
+    a:link, a:visited {
+        color: #444;
+    }
 }
 

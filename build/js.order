@@ -10,18 +10,23 @@ play/colors.js
 
 play/time.js
 
+dist/play/stun-list.js
 play/gossip/parrot.js
 play/gossip/gossip.js
 
 play/login/login.js
 
 play/game/wardrobe.js
+play/game/commands.js
+play/game/gatekeeper.js
 
 play/ui/connect.js
+play/ui/gamepad-layouts.js
 play/ui/gamepad.js
 play/ui/hud.js
 play/ui/fit-steps.js
 play/ui/ui.js
+play/ui/music.js
 play/ui/fullscreen-polyfill.js
 play/ui/audio-control.js
 play/ui/keys.js

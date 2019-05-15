@@ -4,7 +4,7 @@
  *
  * ./play/gossip/parrot.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -100,12 +100,12 @@ Tootsville.parrot.ynP = function (title, message)
 // 
 Tootsville.parrot.parrotErrorText = function (body)
 { let code = body.error;
-  let text = body.status;
+  let text = body.status || body.errorMessage;
   if (! text)
   { if (code)
     { text = "HTTP Error code " + code; }
     else
-    { text = "The server did not respond with a regonizeable error reply." } }
+    { text = "The server did not respond with a recognizeable error reply."; } }
   if (! code)
   { code = 500; }
   return "<P>The server reported an error.</P>" +

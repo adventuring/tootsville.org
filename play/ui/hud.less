@@ -4,7 +4,7 @@
  *
  * ./play/ui/hud.less is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  *  Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -57,11 +57,15 @@
     width: 2rem;
     border: 1pt solid black;
     color: black;
-    font-family: Acme;
+    font-family: @ui-font;
     font-size: 2rem;
     line-height: 2rem;
     vertical-align: middle;
     text-align: center;
+    cursor: pointer;
+    &:hover {
+        border: 1pt solid white;
+    }
 }
 
 .mini-round-button {
@@ -80,7 +84,7 @@
     border-radius: 1rem;
     border: 1pt solid black;
     background-color: white;
-    font-family: Acme;
+    font-family: @ui-font;
     text-align: left;
     box-shadow: 5px 5px 5px 0px #000000;
     padding: 1rem;
@@ -96,8 +100,6 @@
     .popup;
     z-index: 600;
 }
-
-
 
 #hud {
     position: fixed;
@@ -130,7 +132,7 @@
                 margin-left: 2rem;
                 padding: .25rem;
                 border-radius: .5rem;
-                font-family: Acme;
+                font-family: @ui-font;
                 text-align: center;
                 min-width: 5rem;
                 .cancel-button {
@@ -151,7 +153,7 @@
 }
 
 p {
-    font-family: Cantarell;
+    font-family: @font;
     text-indent: 1rem;
     line-height: 1.25rem;
     max-width: 40rem;
@@ -229,51 +231,13 @@ p {
     }
 }
 
-#talk-loud-selector {
-    display: inline-block;
-    border-radius: 2rem;
-    height: 2rem;
-    width: 2rem;
-    border: 1pt solid black;
-    background-color: #fff9;
-    color: black;
-    font-family: Acme;
-    font-size: 2rem;
-    line-height: 2rem;
-    vertical-align: middle;
-    text-align: center;
-
-    option[value=shout] {
-        background-color: @periwinkle;
-    }
-    option[value=talk] {
-        background-color: white;
-    }
-    option[value=whisper] {
-        background-color: @turquoise;
-    }
-
-    option[value=shout]:before {
-        font-family: 'FontAwesome';
-        content: '\f0a1'; /* bullhorn */
-    }
-    option[value=talk]:before {
-        font-family: 'FontAwesome';
-        content: '\f075'; /* comment */
-    }
-    option[value=whisper]:before {
-        font-family: 'FontAwesome';
-        content: '\f27a'; /* comment-alt */
-    }
-}
-
-#talk-expression, #talk-emoji {
+#talk-loud-selector, #talk-expression, #talk-emoji {
     .round-button;
     background-color: #fff9;
 }
 
 .with-caret-up {
-    &:after {
+    &:hover:after {
         position: absolute;
         margin-left: -.75rem;
         margin-top: -.5rem;
@@ -315,15 +279,20 @@ p {
     z-index: 300;
     &:hover {
         color: @spring-green;
+        text-shadow:
+            -1pt -1pt 1pt @white,
+            -1pt 1pt 1pt @white,
+            1pt -1pt 1pt @white,
+            1pt 1pt 1pt @white;
     }
 }
 
-select, #talk-expression, #talk-emoji {
+#talk-loud-selector, #talk-expression, #talk-emoji {
     .with-caret-up;
 }
 
 #talk-speak {
-    font-family: Cantarell;
+    font-family: @talk-font;
     font-size: 1.5rem;
     vertical-align: middle;
     text-align: left;
@@ -333,6 +302,10 @@ select, #talk-expression, #talk-emoji {
     border-radius: .25rem;
     border: 1pt solid black;
     background-color: #fff8;
+    cursor: pointer;
+    &:hover {
+        font-size: 1.6667rem;
+    }
 }
 
 #paperdoll-mini {
@@ -376,12 +349,6 @@ select, #talk-expression, #talk-emoji {
         color: @periwinkle;
         padding: .5rem;
     }
-}
-
-#gamepad-loading, #gamepad {
-    top: 10vh;
-    left: 25vw;
-    width: 50vw;
 }
 
 #control-panel-loading {
@@ -468,7 +435,7 @@ select, #talk-expression, #talk-emoji {
     border: 1pt solid black;
     border-radius: 2rem;
     background-color: white;
-    font-family: Cantarell;
+    font-family: @font;
     position: fixed;
     padding: 1rem;
     top: 1.5rem;
@@ -477,7 +444,7 @@ select, #talk-expression, #talk-emoji {
     bottom: 2rem;
     box-shadow: 5px 5px 5px 0px #000;
     > button {
-        font-family: Acme;
+        font-family: @ui-font;
         border: 2pt solid red;
         color: red;
         background-color: @silver;
@@ -509,7 +476,7 @@ select, #talk-expression, #talk-emoji {
     text-shadow: -1px -1px 0 #0009, 1px 1px 0 #0009;
     color: @white;
     opacity: .9;
-    font-family: Acme;
+    font-family: @ui-font;
 }
 
 #mobile, #mobile-loading {
@@ -612,7 +579,7 @@ h1.centered {
     line-height: 4rem;
     color: @white;
     z-index: 400;
-    font-family: Acme;
+    font-family: @title-font;
     a:link, a:visited {
         color: @white;
     }
@@ -632,7 +599,7 @@ h1.centered {
         position: fixed;
         top: 0;
         left: 0;
-        height: 100vh;
+        width: 25vw;
     }
     #parrot-speech {
         margin-top: 2rem;
@@ -640,7 +607,7 @@ h1.centered {
         border: 2pt solid black;
         background-color: white;
         color: black;
-        font-family: Cantarell;
+        font-family: @talk-font;
         font-size: 2rem;
         border-radius: 1rem;
         padding: .75rem;
@@ -652,7 +619,7 @@ h1.centered {
         border: 0;
         background-color: rgba(255,255,255,33%);
         color: black;
-        font-family: Cantarell;
+        font-family: @ui-font;
         font-size: 1.5rem;
         border-radius: 1rem;
         padding: .75rem 3rem;
@@ -666,7 +633,7 @@ h1.centered {
             text-align: right;
             padding: .5rem 2rem;
             button {
-                font-family: Acme;
+                font-family: @ui-font;
                 font-size: 1.5rem;
                 border: 2pt solid black;
                 border-radius: .5rem;
@@ -682,3 +649,140 @@ h1.centered {
     position: fixed;
     top: calc(33vh - 75px);
 }
+
+#talk-loud-menu {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem 1rem 1rem 0;
+    box-shadow: 5px 5px 5px 0px #000000;
+    bottom: 3rem;
+    position: fixed;
+    left: 13vw;
+    z-index: 100;
+    opacity: 0;
+    display: none;
+}
+
+#talk-expression-menu {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem 1rem 1rem 0;
+    box-shadow: 5px 5px 5px 0px #000000;
+    bottom: 3rem;
+    position: fixed;
+    left: 16vw;
+    z-index: 100;
+    width: 15rem;
+    opacity: 0;
+    display: none;
+}
+
+#talk-emoji-menu {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1rem 1rem 1rem 0;
+    box-shadow: 5px 5px 5px 0px #000000;
+    bottom: 3rem;
+    position: fixed;
+    left: 18vw;
+    z-index: 100;
+    padding: 1rem;
+    max-width: 50vw;
+    width: 50vw;
+    font-size: 2.5rem;
+    min-height: 15rem;
+    max-height: 90vh;
+    height: 75vh;
+    overflow-y: scroll;
+    opacity: 0;
+    display: none;
+}
+
+#talk-emoji-menu section {
+    padding-bottom: 3rem;
+}
+
+/*  Speech balloons and name tags */
+
+.speech {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 2rem;
+    box-shadow: 5px 5px 5px 0px #000000;
+    position: fixed;
+    z-index: 100;
+    min-width: 10rem;
+    max-width: 20rem;
+    font-family: @talk-font;
+    color: black;
+    font-size: 1.25rem;
+    padding: 1rem;
+}
+
+.speech::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 1em solid transparent;
+    border-top-color: white;
+    border-bottom: 0;
+    margin-top: -1pt;
+    margin-left: -1em;
+    margin-bottom: -1em;
+}
+
+.shout {
+    font-size: 1.6667rem;
+    font-weight: bold;
+    background-color: @yellow;
+    border: 5pt dotted @red;
+}
+
+.shout::after {
+    border-top-color: @yellow;
+}
+
+.whisper {
+    font-size: 1rem;
+    color: @charcoal;
+    font-family: @font;
+    background-color: @silver;
+    border: 2pt dashed @charcoal;
+}
+
+.whisper::after {
+    border-top-color: @silver;
+}
+
+.name-tag {
+    position: absolute;
+    font-family: @font;
+    color: white;
+    text-align: center;
+    background: #fff3;
+    padding: .25rem;
+    border: .5px solid #fff4;
+    border-radius: .5em;
+    text-shadow: 1px 1px 2px #0008,2px 2px 2px #0004;
+    font-size: 1rem;
+}
+
+/* Gamepads panel */
+
+#gamepad-loading, #gamepad {
+    top: 3rem;
+    height: calc(100vh - 3rem);
+    left: 20vw;
+    width: 60vw;
+    overflow-y: scroll;
+    #gamepads-assign {
+        button {
+            border-radius: 0;
+            padding: .5ex;             
+        }
+    }
+}
+

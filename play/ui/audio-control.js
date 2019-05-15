@@ -4,7 +4,7 @@
  *
  * ./play/ui/audio-control.js is part of Tootsville
  *
- * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -67,20 +67,21 @@ Tootsville.audio.updateVolumeMuteIcon = function()
 Tootsville.audio.context = new (window.AudioContext || window.webkitAudioContext)();
 Tootsville.audio.gainNode = Tootsville.audio.context.createGain();
 
-if (navigator.mediaDevices.getUserMedia) 
-{ navigator.mediaDevices.getUserMedia (
-    // constraints - only audio needed for this app
-    { audio: true },
-    // Success callback
-    stream =>
-        { var source = audioCtx.createMediaStreamSource(stream);
-          source.connect(Tootsville.audio.gainNode);
-          Tootsville.audio.gainNode.connect(Tootsville.audio.context.destination);},
-    // Error callback
-    err =>
-        { Tootsville.error('getUserMedia error occured: ' + err); }
-); } else 
-{ Tootsville.warn('getUserMedia not supported on your browser!');
-  // XXX hide volume controls
-}
+// if (navigator.mediaDevices.getUserMedia) 
+// { navigator.mediaDevices.getUserMedia (
+//     // constraints - only audio needed for this app
+//     { audio: true },
+//     // Success callback
+//     stream =>
+//         { // var source = audioCtx.createMediaStreamSource(stream);
+//           // source.connect(Tootsville.audio.gainNode);
+//           // Tootsville.audio.gainNode.connect(Tootsville.audio.context.destination);
+//         },
+//     // Error callback
+//     err =>
+//         { Tootsville.error('getUserMedia error occured: ' + err); }
+// ); } else 
+// { Tootsville.warn('getUserMedia not supported on your browser!');
+//   // XXX hide volume controls
+// }
 
