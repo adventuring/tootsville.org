@@ -1,0 +1,10 @@
+[Unit]
+Description=Tootsville REST Server Socket Activation
+
+[Socket]
+ListenStream=5000
+NoDelay=true
+DeferAcceptSec=30
+
+[Install]
+WantedBy=sockets.target

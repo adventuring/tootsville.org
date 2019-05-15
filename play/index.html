@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tootsville</title>
+    <script>
+      window.loadWatchdog2 = setTimeout( () => {
+      if (parseInt(window.location.port) > 5000)
+      { alert("Slow Loading watchdog fired"); }
+      else
+      { document.location =
+          'https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading'; }
+      },
+      60000);
+    </script>
+    <link rel="stylesheet" href="play.css">
+    <meta name="description"
+          content="Tootsville is  a 3D multiplayer game  that runs right
+          in your web browser, so there's nothing to download.">
+    <!-- BEGIN:icon-common -->
+
+    <!-- common code for tab/bookmark icons and other U-A tweaks -->
+    
+    <meta name="viewport" content="width:device-width;minimum-scale:1.0;maximum-scale:10.0">
+    <!-- Tab/Bookmark icons -->
+    <link rel="shortcut icon" href="https://jumbo.tootsville.org/Assets/Icons/favicon.ico">
+    <link rel="icon" type="image/gif" href="https://jumbo.tootsville.org/Assets/Icons/favicon.gif">
+    <link rel="icon" type="image/svg" href="https://jumbo.tootsville.org/Assets/Icons/favicon.svg">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-24x24.png" sizes="24x24">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-30x30.png" sizes="30x30">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-42x42.png" sizes="42x42">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-44x44.png" sizes="44x44">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-50x50.png" sizes="50x50">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-54x54.png" sizes="54x54">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-62x62.png" sizes="62x62">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-64x64.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-70x70.png" sizes="70x70">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-71x71.png" sizes="71x71">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-72x72.png" sizes="72x72">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-76x76.png" sizes="76x76">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-90x90.png" sizes="90x90">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-99x99.png" sizes="99x99">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-106x106.png" sizes="106x106">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-120x120.png" sizes="120x120">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-128x128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-144x144.png" sizes="144x144">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-150x150.png" sizes="150x150">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-152x152.png" sizes="152x152">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-256x256.png" sizes="256x256">
+    <link rel="icon" type="image/png" href="https://jumbo.tootsville.org/Assets/Icons/favicon-512x512.png" sizes="512x512">
+    <!-- Apple/iOS -->
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="https://jumbo.tootsville.org/Assets/Icons/favicon-180x180.png">
+    <link rel="apple-mobile-web-app-title" content="Tootsville">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- MS IE/Edge -->
+    <meta name="application-name" content="Tootsville">
+    <meta name="msapplication-TileColor" content="#0082c8">
+    <meta name="msapplication-TileImage" content="https://jumbo.tootsville.org/Assets/Icons/favicon-144x144.png">
+    <meta name="theme-color" content="#9669ad">
+    <meta name="msapplication-config" content="https://jumbo.tootsville.org/Assets/Icons/ms-browserconfig.xml">
+    <!-- Page owner verification --> <link href="https://plus.google.com/+TootsvilleOrg"
+    rel="publisher" /> <meta name="google-site-verification"
+    content="Q9nr-E4hxRzl72bOyVD8p2Ax_7287DTfR92clJKzqLU" /> <meta name="msvalidate.01"
+    content="58AB22CF287C381CB569FAC0DC9327F9" /> <!-- OAuth2 magic -->
+    <meta name="google-signin-scope" content="profile email openid">
+    <meta name="google-signin-client_id"
+          content="1052481910502-kb8u1evb6c82dl2o5km4vu6q5mmudkfo.apps.googleusercontent.com">
+
+    <!-- END:icon-common -->
+
+    <!-- libraries -->
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css"
+          rel="stylesheet">
+    <script src='https://s3.amazonaws.com/instabug-pro/sdk_releases/instabugsdk-1.2.1-beta.min.js'></script>
+  </head>
+  <body>
+    <noscript id="wtfbox">
+      <h1>Tootsville</h1>
+      <p>Tootsville is a  3D, multiplayer online game.  If you're seeing
+        this  message, your  device  cannot play  online (HTML5)  games.
+        You    should    probably   <a    href="https://getfirefox.com/"
+        ><i   class="fab  fa-firefox   fa-2x"></i>download  the   latest
+        Firefox</a>  (or  another modern  web  browser,  like Chrome  or
+        Opera).</p>
+    </noscript>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-80917352-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80917352-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-80917352-1');
+    </script>
+
+    <div id="hud">
+
+      <!-- Control Panel launcher icon -->
+
+      <img src="https://jumbo.tootsville.org/Assets/Icons/toots-t-logo-circled.svg"
+           alt="Ⓣ" id="control-panel-icon">
+
+      <!-- Equipment in use icons -->
+
+      <div id="equip">
+        <div id="active-item-box">
+          <img id="active-item-gauge-left">
+          <img id="active-item">
+          <img id="active-item-gauge-right">
+          <span id="active-item-qty"></span>
+          <span id="active-item-label" class="nametag">Active-Item</span>
+        </div>
+        <div id="inactive-item-box">
+          <img id="inactive-item-gauge-left">
+          <img id="inactive-item">
+          <img id="inactive-item-gauge-right">
+          <span id="inactive-item-qty"></span>
+          <span id="inactive-item-label" class="nametag">Inactive-Item</span>
+        </div>
+      </div>
+
+      <!-- Game tools icons -->
+
+      <div id="toolbox-mobile-phone">
+        <h3><i class="fa fa-mobile-alt fa-fw"></i></h3>
+        <div id="mobile-phone-info"
+             ><span    id="tootsville-time"><i     class="fas    fa-spin
+                                                   fa-spinner"></i>
+          </span><br>
+          <span id="tootsville-date"></span></div>
+        <div id="toolbox-contacts"
+             ><i class="fa fa-address-card fa-fw"></i>
+          Contacts
+        </div>
+      </div>
+
+      <div id="wallet-peanuts">
+        <span id="wallet-peanuts-icon">🥜</span> <!-- peanut emoji -->
+        <span id="wallet-peanuts-display"
+              ><i class="fas fa-spin fa-spinner"></i></span>
+      </div>
+      <div id="wallet-fairy-dust">
+        <span id="wallet-fairy-dust-icon">⁂</span>
+        <span id="wallet-fairy-dust-display"
+              ><i class="fas fa-spin fa-spinner"></i></span>
+      </div>
+
+      <!-- Talk Box -->
+
+      <div id="talk-box" class="talk-normal">
+        <select size="1" id="talk-loud-selector">
+          <option value="shout"><i class="fa fa-bullhorn"></i>
+            Shout</option>
+          <option value="talk"><i class="fa fa-comments"></i> Talk</option>
+          <option value="whisper"><i class="fa fa-comment"></i>
+            Whisper</option>
+        </select>
+        <span id="talk-expression">☺</span>
+        <span id="talk-emoji">
+          <!-- https://github.com/OneSignal/emoji-picker --> 🐘
+        </span>
+        <input id="talk-speak" autofocus autocapitalize="sentences">
+        <span id="talk-speak-button"
+              ><i class="fa fa-comment-alt"></i></span>
+      </div>
+
+      <!-- Mini paperdoll launches inventory window -->
+
+      <canvas id="paperdoll-mini"
+              height="128" width="128"></canvas>
+
+      <!-- Bug reports, troubleshooting -->
+      <div id="bugs">
+        <h1 class="centered hide-when-game-ready"
+            ><a 
+               href="https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading"
+               >Trouble Loading? Click here for Troubleshooting.</a></h1>
+        <div id="troubleshooting-icon">
+          <i class="fas fa-bug fa-4x"></i>
+          <i class="fas fa-bomb fa-4x"></i>
+        </div>
+
+      </div>
+
+      <!-- Gossip Parrots -->
+      <div id="parrot">
+        <img id="parrot-image" alt="parrot"
+             src="https://jumbo.tootsville.org/Assets/Avatars/Violet-Volts/Assets/MistParrot1080.png">
+        <div id="parrot-speech">
+          I'm a talking parrot. Human want a cracker?
+        </div>
+        <div id="parrot-reply">
+          <div class="button-box">
+            <button>OK</button>
+          </div>
+        </div>
+      </div>
+      
+    </div> <!-- end of HUD layer -->
+
+    <!-- Game canvas -->
+    <canvas id="tootsville3d" touch-action="none"></canvas>
+
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-auth.js"></script>
+    <script>
+      // Initialize Firebase
+      firebase.initializeApp(
+      { apiKey: "AIzaSyCtq66sgpIaJMOQnbLhsUwC85zAuz3spHs",
+        authDomain :"tootsville-v.firebaseapp.com",
+        databaseURL: "https://tootsville-v.firebaseio.com",
+        projectId: "tootsville-v",
+        storageBucket: "tootsville-v.appspot.com",
+        messagingSenderId: "416974352322" });
+    </script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+
+    <!-- our code -->
+    <script>
+      console.log("\n\n\nWelcome to Tootsville.\n\n\n");
+    </script>
+    <script src="play.js"></script>
+  </body>
+</html>

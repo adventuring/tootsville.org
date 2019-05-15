@@ -1,0 +1,158 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename Players-Guide.info
+@settitle Tootsville Players' Guide
+@c %**end of header
+@copying
+An introduction to Tootsville.
+
+Copyright @copyright{} 2018, the Corporation for Inter-World Tourism and
+Adventuring.
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled ``GNU
+Free Documentation License''.
+
+A copy of the license is also available from the Free Software
+Foundation Web site at @url{https://www.gnu.org/licenses/fdl.html}.
+
+@end quotation
+
+The document was typeset with
+@uref{http://www.texinfo.org/, GNU Texinfo}.
+
+@end copying
+
+@titlepage
+@title Tootsville Players' Guide
+@subtitle An introduction to Tootsville
+@author Bruce-Robert Pocock <brpocock@tootsville.org>
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@c Output the table of the contents at the beginning.
+@contents
+
+@ifnottex
+@node Top
+@top Tootsville Players' Guide
+
+@insertcopying
+@end ifnottex
+
+@c Generate the nodes for this menu with `C-c C-u C-m'.
+@menu
+@end menu
+
+@node
+@chapter* Introduction
+
+@section What is Tootsville?
+
+@node
+@section Getting Ready
+
+Requirements -- check the Wiki-Wiki
+
+@node
+@section Signing In
+
+You'll sign in to Tootsville using your Google account.
+
+If you're already logged in to Google when you visit the site, you'll just
+be asked to authorize Tootsville once.
+
+If you aren't yet signed in to your Google account, you'll have the
+opportunity to do so.
+
+Once you've signed in, you'll go directly to your Toot character.
+
+@c Update all node entries with `C-c C-u C-n'.
+@c Insert new nodes with `C-c C-c n'.
+@node 
+@chapter Managing Toots
+
+When you play in Tootsville, you'll take control of a Toot character
+yourself. When you first sign in, you'll be guided through creating your
+first Toot character.
+
+If you later decide you want to create another one, perhaps for a family
+member, you can also do so from the login screen.
+
+@node
+@section Creating a New Toot
+
+Toot characters start off with a name and an appearance. We'll also give you
+a few items with which to start your exploration.
+
+Toot names are just like human names, but they all have to be unique. You
+can join together word-parts with hyphens. Here are some Toot names:
+
+@itemize
+@item
+Flora
+@item
+NullPointerException
+@item
+Codfish-Howie
+@end itemize
+
+If you really want to include a number, it has to be the last part of a
+name. You can't name a Toot something like ``99luftballoons,'' but you could
+name them ``Luftballoons-99'' or so.
+
+Toot characters have some basic appearance settings, as well. You can choose
+the base color of your Toot's skin, the color of the pads of their feet (and
+``hands''), and the color of the pattern on their skin. You can also choose
+what pattern they will have.
+
+Once you've made these choices, you can immediately start playing as your
+Toot character.
+
+
+@node
+@section Toots for Children
+
+WRITEME
+
+@node
+@chapter Now That You're In Tootsville
+
+@section Wishing Wells
+
+@section Getting Around
+
+@section Building a House
+
+@section Shopping
+
+@section Useful Tools
+
+@section Troops and Operators
+
+
+
+@node Copying This Manual
+@appendix Copying This Manual
+
+@menu
+* GNU Free Documentation License::  License for copying this manual.
+@end menu
+
+@c Get fdl.texi from https://www.gnu.org/licenses/fdl.html
+@include fdl.texi
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye
+
+@c Players-Guide.texi ends here

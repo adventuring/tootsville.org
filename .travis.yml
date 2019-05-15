@@ -1,0 +1,26 @@
+language: lisp
+sudo: required
+
+git:
+  submodules: false
+  depth: 5
+  quiet: true
+
+env:
+  matrix:
+    - LISP=sbcl
+#    - LISP=ccl
+#    - LISP=clisp
+#    - LISP=ecl
+
+install:
+  - sudo apt-get update
+  - sudo apt install $LISP
+  - git submodule update --init
+  - make -C servers deps
+
+script:
+  - make test
+  
+addons:
+  srcclr: true

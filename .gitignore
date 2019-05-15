@@ -1,3 +1,4 @@
+# Lisp fast load files
 *.FASL
 *.fasl
 *.lisp-temp
@@ -15,3 +16,24 @@
 *.sx32fsl
 *.wx64fsl
 *.wx32fsl
+
+# Junk, temp, backup files
+*~
+*#
+.#*
+*.tmp
+*.orig
+tmp.*
+dumper*.lisp
+
+# Output files
+dist/
+doc/*
+htaccess.all
+www/.htaccess
+TODO.org
+TODO.scorecard
+
+# NPM mess
+node_modules
+TAGS

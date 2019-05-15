@@ -1,0 +1,3 @@
+AddHandler type-map .var
+AddHandler server-parsed .htmlf
+Options +MultiViews +Includes

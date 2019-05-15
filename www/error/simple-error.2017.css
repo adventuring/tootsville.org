@@ -1,0 +1,128 @@
+@import url(https://fonts.googleapis.com/css?family=Acme);
+@import url(https://fonts.googleapis.com/css?family=Cantarell);
+@import url(https://fonts.googleapis.com/css?family=Inconsolata);
+
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #ccf;
+    font-family: Acme, sans-serif;
+}
+body {
+    color: black;
+    background-color: white;
+    margin: 3rem 1rem 3rem 1rem;
+    padding: 1rem 2rem 1rem 2rem;
+    border: 0 solid white;
+    border-radius: 3rem;
+}
+
+#tootsville {
+    max-width: 100%;
+    max-height: 33%;
+    position: relative;
+    top: -4rem;
+}
+#featured {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+}
+#builder-toot {
+    max-width: 33%;
+    max-height: 100%;
+    float: right;
+}
+#logo {
+    max-width: 25%;
+    max-height: 50%;
+    float: left;
+}
+body>#redirect>ul { display: block;
+                    align-content: center;
+                    width: 33%;
+                    margin-left: 27.5%;
+                  }
+body>#redirect>ul>li {
+    display: block;
+    align-content: center;
+    text-align: center;
+}
+body>#redirect>ul>li>a {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    color: white;
+    border: .2rem solid black;
+    margin-top: 1rem;
+    margin-left: .5rem;
+    margin-right: .5rem;
+    margin-bottom: -1rem;
+    color: white;
+    font-weight: bold;
+    font-family: Acme, sans-serif;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+    font-size: 2rem;
+    letter-spacing: .2rem;
+    font-variant: small-caps;
+    padding: .5rem;
+}
+body>#redirect>ul>li>a:hover {
+    box-shadow:
+        -.2rem -.2rem 0 #ffc636,
+        .2rem -.2rem 0 #ffc636,
+        -.2rem .2rem 0 #ffc636,
+        .2rem .2rem 0 #ffc636;
+    color: #ffee6c;
+}
+#tootsvilleorg { background-color: #9669ad }
+#play-now { background-color: #9c0059 }
+#wiki-wiki { background-color: #7ac142 }
+#tootsbook { background-color: #0082c8 }
+#trailer {
+    clear: left;
+    margin: 5rem 2rem 2rem 2rem;
+    font-size: 1rem;
+    text-indent: 2rem;
+    text-align: justify;
+    font-size: 1.5rem;
+}
+#leader {
+    clear: left;
+    margin: 0 2rem 2rem 2rem;
+    font-size: 1rem;
+    text-indent: 2rem;
+    text-align: justify;
+    font-size: 1.5rem;
+}
+.post-footer {
+    position: fixed;
+    bottom: 0;
+    font-family: Cantarell, serif;
+    font-size: .8rem;
+    color: #444;
+}
+.post-footer a:link, .post-footer a:visited {
+    color: #444;
+}
+p {
+    font-family: Cantarell, serif;
+    margin-left: 3rem;
+    margin-right: 3rem;
+    max-width: 40rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.2rem;
+}
+p+p {
+    text-indent: 2rem;
+}
+tt,pre,code {
+    font-family: Inconsolata, fixed;
+}
+h2 { margin-left: 1rem; }

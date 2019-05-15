@@ -1,0 +1,169 @@
+@import url(https://fonts.googleapis.com/css?family=Acme);
+@import url(https://fonts.googleapis.com/css?family=Cantarell);
+
+* { transition: 2s ease-in-out }
+
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #ccf;
+    font-family: Acme, sans-serif;
+}
+body {
+    color: black;
+    background-color: white;
+    margin: 3rem 1rem 3rem 1rem;
+    padding: 1rem 2rem 1rem 2rem;
+    border: 0 solid white;
+    border-radius: 3rem;
+}
+
+#tootsville {
+    max-width: 100%;
+    max-height: 33%;
+    position: relative;
+    top: -4rem;
+}
+#featured {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25%;
+}
+#builder-toot {
+    max-width: 33%;
+    max-height: 100%;
+    float: right;
+}
+#logo {
+    max-width: 25%;
+    max-height: 50%;
+    float: left;
+}
+body>ul { display: block;
+          align-content: center;
+          width: 33%;
+          margin-left: 27.5%;
+        }
+body>ul>li { display: block;
+             align-content: center;
+           }
+body>ul>li>a {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    color: white;
+    border: .2rem solid black;
+    margin: .5rem;
+    color: white;
+    font-weight: bold;
+    font-family: Acme, sans-serif;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+    font-size: 2rem;
+    letter-spacing: .2rem;
+    font-variant: small-caps;
+    padding: .5rem;
+}
+body>ul>li>a:hover {
+    box-shadow:
+        -.2rem -.2rem 0 #ffc636,
+        .2rem -.2rem 0 #ffc636,
+        -.2rem .2rem 0 #ffc636,
+        .2rem .2rem 0 #ffc636;
+    color: #ffee6c;
+}
+#tootsvilleorg { background-color: #9669ad }
+#play-now { background-color: #9c0059 }
+#wiki-wiki { background-color: #7ac142 }
+#tootsbook { background-color: #0082c8 }
+#trailer {
+    clear: left;
+    margin: 5rem 2rem 2rem 2rem;
+    font-size: 1rem;
+    text-indent: 2rem;
+    text-align: justify;
+    font-size: 1.5rem;
+}
+#leader {
+    clear: left;
+    margin: 0 2rem 2rem 2rem;
+    font-size: 1rem;
+    text-indent: 2rem;
+    text-align: justify;
+    font-size: 1.5rem;
+}
+#tootsbook-feed {
+    display: block;
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.5rem;
+    font-family: Acme;
+    text-align: center;
+    border: 2px solid #888;
+    width: auto;
+}
+.post-footer {
+    position: fixed;
+    bottom: 0;
+    font-family: Cantarell, serif;
+    font-size: .8rem;
+    color: #444;
+    border: 1px solid white;
+    background-color: white;
+    background-color: rgba(255,255,255,.6);
+}
+.post-footer a:link, .post-footer a:visited {
+    color: #444;
+}
+
+@media screen and (max-width:60em) {
+    body { margin: 1.25rem 0 5rem 0; }
+    #builder-toot {
+        position: absolute;
+        top: 5rem;
+        left: 50vw;
+        width: 100%;
+        opacity: .20;
+    }
+    #logo {
+        float: left;
+        width: 4rem;
+        margin-top: 3rem;
+    }
+    body>ul {
+        margin-left: 3rem;
+        margin-right: 0;
+        max-width: 100%;
+        max-width: calc(100% - 4rem);
+        width: 20rem;
+    }
+    audio {
+        width: 100%;
+    }
+}
+
+@media screen and (max-height:30rem) {
+    body { margin: 0 0 0 0 }
+    .post-footer { position: relative; top: 0; left: 0 }
+    #tootsville { top: -1rem; width: 20rem }
+    #builder-toot { position: absolute;
+                    top: 0;
+                    right: 0;
+                    height: 100%;
+                    opacity: .20 }
+    #logo { display: inline-block; width: 4rem; margin: 1rex; }
+    body>ul {
+        display: block;
+        margin-left: 3rem;
+        margin-right: 0;
+        max-width: 100%;
+        max-width: calc(100% - 4rem);
+        width: 20rem;
+    }
+    body>ul>li { display: inline-block; width: auto; }
+}

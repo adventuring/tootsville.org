@@ -1,0 +1,25 @@
+#!/bin/bash
+
+wd=$1
+copydir=$2
+dest=$3
+
+if ! [ -d "$wd" ] || ! [ -d "$wd/$copydir" ];
+then
+    exit 9
+fi
+
+cat - \
+ <( cd "$wd/$copydir" && \
+     shar -C xz -g 9 -M -Q -q -x \
+          -n "$copydir at $(hostname) on $(date)" \
+          "$copydir"/ ) \
+ << PREAMBLE_END | ssh $dest
+rm -fr "$copydir".prior-deploy && \
+rm -fr "$copydir".before-deploy && \
+mv -u "$copydir".new "$copydir".prior-deploy 2>/dev/null ; \
+mkdir -p "$copydir" && \
+cp -a "$copydir" "$copydir".new && \
+cd "$copydir".new;
+PREAMBLE_END
+

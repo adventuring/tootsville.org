@@ -1,0 +1,10 @@
+<!--#include file="error-header.htmlf"--> 
+
+<h1> 505: HyperText Transfer Protocol Version Not Supported </h1> 
+
+<p> Your User-Agent (web browser) speaks version of the hypertext transfer
+protocol (HTTP) which I cannot understand. </p> 
+
+<a href="https://wiki.tootsville.org/wiki/Error_505">(Learn More…)</a> 
+
+<!--#include file="error-footer.htmlf"-->

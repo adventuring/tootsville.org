@@ -1,0 +1,132 @@
+(in-package :Tootsville)
+
+(defun user= (a b &rest rest)
+  (and (equal (user-id a) (user-id b))
+       (if rest (apply #'user= a rest)
+           t)))
+
+
+(defun sdp-to-key (sdp)
+  (concatenate 'string "sdp…#" (sha1-hex sdp)))
+
+(defun find-user-by-sdp (sdp)
+  (read-from-string (clouchdb:get-document (sdp-to-key sdp))))
+
+(defun request-param-value (param)
+  (hunchentoot:parameter param))
+
+(defun update-session-details ()
+  (let ((origin (concatenate 'string "http←" (hunchentoot:remote-addr*)))
+        (login (find-record 'db.login
+                            "player" (db.player-uuid)
+                            "credentials" *credentials*)))
+    (if login 
+        (unless (equal origin (db.login-origin login))
+          (setf (db.login-origin login) origin)))
+    (make-record 'db.login :player (db.player-uuid user) :origin origin
+                 :credentials *credentials*)
+    (setf (db.login-last-seen login) (now))
+    (save-record login)))
+
+(defun gossipnet-update-client ()
+  (update-session-details)
+  (when-let (sdp (hunchentoot:parameter "sdp"))
+    (unless (find-user-by-sdp sdp)
+      ())))
+
+(define-condition user-not-identified-error (error)
+  ((source :initarg :source :reader user-not-identified-source)
+   (value :initarg :value :reader user-not-identified-value))
+  (:documentation "I could not identify any user by the credentials provided.")
+  (:report (lambda (c s)
+             (format s
+                     "The credentials provided did not identify any user.~
+~[ ~:*The credential source was: ~:(~a~)~]~
+~[ ~:*The value provided was: ~:(~a~)~]"
+                     (user-not-identified-source c)
+                     (user-not-identified-value c)))))
+
+(defmethod respond-to-error ((error user-not-identified-error))
+  (setf (hunchentoot:return-code*) 401)
+  (hunchentoot:abort-request-handler))
+
+
+(defun active-sdp-offers (&optional (user *user*))
+  (mapcar (rcurry #'drakma:url-encode :utf-8)
+          (mapcar #'user-sdp-offer
+                  (remove-if #'user-sdp-answer
+                             (remove-if-not #'user-sdp-offer
+                                            (remove-if (curry #'user= user)
+                                                       *gossip-users*))))))
+
+(defun user-info (&optional (user *user*))
+  (gossipnet-update-client)
+  (let ((partial
+         (list :id (user-id user)
+               :toots (mapcar #'toot-info (player-toots))
+               :offers (mapcar #'stringify (active-sdp-offers user)))))
+    (if-let (answer (user-sdp-answer user))
+      (append (list :answer answer) partial)
+      partial)))
+
+(defmacro with-user (() &body body)
+  `(let ((*user* (find-user-from-session)))
+     (unless *user*
+       (return-from endpoint
+         (list 403 nil *403.JSON-BYTES*)))
+     ,@body))
+
+
+
+(defendpoint (:post "/gossip/answer" "application/json")
+  "Get an answer to a WebRTC initiation request.
+
+This  is a  COMET type  endpoint;  you may  have  to wait  a moment  for
+a reply.
+
+@subsection{Status: 200 OK}
+
+The response will contain the WebRTC session initiation data you need to
+join  the  Gossipnet. Attempt  to  connect;  if  it  fails, try  to  PUT
+a fresh request.
+
+@subsection{Status: 204 It's always dark in the beginning}
+
+This shouldn't be  returned; it means that there are  zero known players
+in the universe.
+
+@subsection{Status: 409 That won't work any more}
+
+You've already gotten a response to  your most recently PUT request; See
+PUT /gossip/request for details.
+
+@subsection{Status: 420 Cool your heels}
+
+You are submitting requests too often. Wait before retrying.
+"
+  (let ((answeror (find-user-from-session))
+        (offeror (find-user-by-sdp (hunchentoot:parameter "offeror"))))
+    (declare (ignore answeror)) ; for now TODO
+    (cond ((user-sdp-answer offeror)
+           (list 409 nil '(:offeror "not-available")))
+          (t
+           (setf (user-sdp-answer offeror) (hunchentoot:parameter "answer"))
+           (list 202 nil (list :did "202 (TODO)"))))))
+
+
+
+(defendpoint (put "/gossip/request" "application/json")
+  "Request a random player to join you with WebRTC.
+
+PUT a WebRTC session initiation request to this location. You'll receive
+back the location from which to await your answer.
+
+@subsection{Status: 202 Submitted request}
+
+The response will be a JSON object with one key, \"location\". The value
+will be an URI from which to request a response. Submit a GET request to
+that URI and await a reply (COMET style).
+"
+  (with-user ()
+    (list 201 '(:location "/gossip/answer")
+          (user-info *user*))))
