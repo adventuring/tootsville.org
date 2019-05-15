@@ -1,24 +1,4 @@
-[submodule "oliphaunt"]
-	path = servers/src/lib/oliphaunt
-	url = git@github.com:adventuring/oliphaunt
-        branch = .
-
 [submodule "jscl"]
 	path = jscl
 	url = git@github.com:adventuring/jscl
 	branch = .
-
-[submodule "rollbar"]
-	path = servers/src/lib/rollbar.lisp
-	url = git@github.com:adventuring/rollbar.lisp
-        branch = .
-
-[submodule "dreamhost"]
-	path = servers/src/lib/dreamhost.lisp
-	url = git@github.com:adventuring/dreamhost.lisp
-        branch = .
-
-[submodule "thread-pool"]
-	path = servers/src/lib/hunchentoot-thread-pool-taskmaster
-	url = git@github.com:adventuring/hunchentoot-thread-pool-taskmaster
-        branch = .
