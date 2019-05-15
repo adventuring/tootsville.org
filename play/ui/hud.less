@@ -1,3 +1,36 @@
+/* -*- css -*-*/
+
+/*!
+ *
+ * ./play/ui/hud.less is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ *  Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received  a copy  of the  GNU Affero  General Public
+ * License     along    with     this    program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
+
 .menu-like {
     display: block;
     width: 100%;
@@ -55,13 +88,13 @@
     line-height: 2rem;
     width: auto;
     height: auto;
-    z-index: 400;
+    z-index: 700;
     overflow: hidden;
 }
 
 .hud-panel {
     .popup;
-    z-index: 200;
+    z-index: 600;
 }
 
 
@@ -275,10 +308,10 @@ p {
     vertical-align: top;
     text-align: center;
     text-shadow:
-    -1pt -1pt 1pt @black,
-    -1pt 1pt 1pt @black,
-    1pt -1pt 1pt @black,
-    1pt 1pt 1pt @black;
+        -1pt -1pt 1pt @black,
+        -1pt 1pt 1pt @black,
+        1pt -1pt 1pt @black,
+        1pt 1pt 1pt @black;
     z-index: 300;
     &:hover {
         color: @spring-green;
@@ -315,10 +348,10 @@ select, #talk-expression, #talk-emoji {
 
     /* https://stackoverflow.com/questions/35361986/css-gradient-checkerboard-pattern */
     background-image:
-    linear-gradient(45deg, @pink 25%, transparent 25%),
-    linear-gradient(-45deg, @pink 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, @pink 75%),
-    linear-gradient(-45deg, transparent 75%, @pink 75%);
+        linear-gradient(45deg, @pink 25%, transparent 25%),
+        linear-gradient(-45deg, @pink 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, @pink 75%),
+        linear-gradient(-45deg, transparent 75%, @pink 75%);
     background-size: 1rem 1rem;
     background-position: 0 0, 0 .5rem, .5rem -.5rem, -.5rem 0px;
     z-index: 500;
@@ -341,7 +374,7 @@ select, #talk-expression, #talk-emoji {
     #paperdoll-toolbar {
         background-color: @charcoal;
         color: @periwinkle;
-        padding: .5rem; 
+        padding: .5rem;
     }
 }
 
@@ -548,7 +581,7 @@ select, #talk-expression, #talk-emoji {
     #troubleshooting-icon > i {
         background-color: transparent;
         text-shadow: -3px -3px 3px #000, 3px 3px 3px #000,
-        -3px 3px 3px #000, 3px -3px 3px #000;
+                     -3px 3px 3px #000, 3px -3px 3px #000;
         position: absolute;
         left: -2rem;
         top: 1rem;
@@ -558,7 +591,7 @@ select, #talk-expression, #talk-emoji {
     #troubleshooting-icon > i + i {
         background-color: transparent;
         text-shadow: -2px -2px 2px #000, 2px 2px 2px #000,
-        -2px 2px 2px #000, 2px -2px 2px #000;
+                     -2px 2px 2px #000, 2px -2px 2px #000;
         font-family: FontAwesome;
         position: absolute;
         left: 0;
@@ -599,7 +632,6 @@ h1.centered {
         position: fixed;
         top: 0;
         left: 0;
-        width: 33vw;
         height: 100vh;
     }
     #parrot-speech {
@@ -617,8 +649,8 @@ h1.centered {
     #parrot-reply {
         margin-top: 2rem;
         margin-left: 33vw;
-        border: 2pt solid black;
-        background-color: white;
+        border: 0;
+        background-color: rgba(255,255,255,33%);
         color: black;
         font-family: Cantarell;
         font-size: 1.5rem;
@@ -639,6 +671,8 @@ h1.centered {
                 border: 2pt solid black;
                 border-radius: .5rem;
                 padding: .5rem;
+                min-height: 2rem;
+                max-height: 25vh;
             }
         }
     }

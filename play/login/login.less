@@ -1,26 +1,60 @@
+/* -*- css -*-*/
 
+/*!
+ *
+ * ./play/login/login.less is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received  a copy  of the  GNU Affero  General Public
+ * License     along    with     this    program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
 
 * { transition: 2s ease-in-out }
 
-#login #login-loading {
+#login, #login-loading {
     color: black;
     background-color: white;
     margin: 3rem 1rem 3rem 1rem;
     padding: 1rem 2rem 1rem 2rem;
     border: 0 solid white;
     border-radius: 3rem;
-    overflow: auto;
+    overflow: show;
     width: calc(100vw - 7rem);
     height: calc(100vh - 7rem);
+    position: fixed;
+    top: 0;
+    left: 0;
 }
-
-
-#login>h1>img {
+#login > h1 > img {
     max-width: 100%;
     max-height: 4rem;
     min-height: 3rem;
-    margin-top: -3rem;
+    margin-bottom: 1rem;
 }
+#login > section { margin: 1rem }
+#login > section > h2 { margin-bottom: .5rem}
 #featured {
     position: absolute;
     top: 0;
@@ -37,17 +71,17 @@
     max-height: 50%;
     float: left;
 }
-#login>ul {
+#login > ul {
     display: block;
     align-content: center;
     width: 33%;
     margin-left: 27.5%;
 }
-#login>ul>li {
+#login > ul > li {
     display: block;
     align-content: center;
 }
-#login>ul>li>a {
+#login > ul > li > a {
     display: block;
     text-decoration: none;
     text-align: center;
@@ -67,7 +101,7 @@
     font-variant: small-caps;
     padding: .5rem;
 }
-#login>ul>li>a:hover {
+#login > ul > li > a:hover {
     box-shadow:
         -.2rem -.2rem 0 #ffc636,
         .2rem -.2rem 0 #ffc636,
@@ -148,7 +182,11 @@ p {
         display: block;
         position: relative;
         top: 0;
-        left: 0
+        left: 0;
+        margin: 0;
+    }
+    #login > section {
+        margin: 0;
     }
     #tootsville {
         display: inline
@@ -165,7 +203,7 @@ p {
         width: 4rem;
         margin-top: 3rem;
     }
-    #login>ul {
+    #login > ul {
         margin-left: 3rem;
         margin-right: 0;
         max-width: 100%;
@@ -201,7 +239,7 @@ p {
         width: 4rem;
         margin: .5rem;
     }
-    #login>ul {
+    #login > ul {
         display: block;
         margin-left: 3rem;
         margin-right: 0;
@@ -209,7 +247,7 @@ p {
         max-width: calc(100% - 4rem);
         width: 20rem;
     }
-    #login>ul>li {
+    #login > ul > li {
         display: inline-block;
         width: auto;
     }
@@ -221,9 +259,12 @@ p {
     border: 1pt solid black;
     border-radius: 1rem;
     min-height: 12rem;
+    max-height: 50vh;
+    overflow-x: show;
+    overflow-y: auto;
 }
 
-#toots-list>li {
+#toots-list > li {
     display: inline-block;
     width: 15rem;
     border: 1pt solid black;
@@ -236,38 +277,48 @@ p {
     transition: .25s;
 }
 
-.toot-name {
+#toot-name, .toot-name {
     font-family: Acme, sans-serif;
     padding: 1rem;
     font-size: 2rem;
 }
+
+#toot-name {
+    border-bottom: 1px solid black;
+}
+
+#toot-name:focus {
+    background-color: @periwinkle;
+}
+
 .note {
     display: block;
     font-family: Cantarell, sans-serif;
     color: #333;
     font-size: .9em;
 }
-#toots-list>li#new-toot {
+#toots-list > li#new-toot {
     display: block;
     float: right;
     margin-top: 2rem;
-    margin-bottom: -1rem;
-    margin-right: -1rem;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
     margin-left: auto;
-    border-radius: 3em;
+    border-radius: 5rem;
     background-color: #6f6;
     color: black;
     text-align: center;
     vertical-align: middle;
     font-weight: 900;
-    line-height: 2em;
+    font-size: 2rem;
+    line-height: 4rem;
     padding: 0;
-    height: 3em;
-    width: 3em;
+    height: 5rem;
+    width: 5rem;
     cursor: pointer;
 }
 
-#toots-list>li>canvas {
+#toots-list > li > canvas {
     margin-right: 1rem;
     height: 4rem;
     width: 3rem;
@@ -276,8 +327,8 @@ p {
 
 strong.green-plus {
     display: inline-block;
-    margin: 0
-                width: 1.5em;
+    margin: 0;
+    width: 1.5em;
     height: 1.5em;
     border-radius: .75em;
     background-color: #6f6;
@@ -298,22 +349,6 @@ strong.green-plus {
     padding: 2rem;
 }
 
-button {
-    background-color: white;
-    border: 1pt solid black;
-    border-radius: 1em;
-    font-family: Acme;
-    font-size: 1.25rem;
-    vertical-align: middle;
-    text-align: center;
-    margin: 1rem;
-}
-
-button:hover {
-    background-color: white;
-    color: black;
-}
-
 #google-user-face {
     height: 3rem;
     width: 3rem;
@@ -321,4 +356,26 @@ button:hover {
     vertical-align: middle;
     margin-left: .5rem;
     margin-right: .5rem;
+}
+
+#login > .footer {
+    position: fixed;
+    bottom: 0;
+    font-family: Cantarell, serif;
+    font-size: .8rem;
+    color: #444;
+    border: 1px solid white;
+    background-color: white;
+    background-color: rgba(255,255,255,.8);
+    a:link, a:visited {
+        color: #444;
+    }
+
+}
+
+.toots-list-loading-spinner {
+    border: none;
+    background: none;
+    color: black;
+    font-size: 3rem;
 }

@@ -1,3 +1,30 @@
+# This is the Makefile for Tootsville
+#
+# Copyright © 2016,2017 Bruce-Robert Pocock; © 2018,2019 The Corporation
+# for Inter-World Tourism and Adventuring (ciwta.org).
+#
+# This program is  Free Software: you can redistribute  it and/or modify
+# it  under the  terms  of  the GNU  Affero  General  Public License  as
+# published by  the Free  Software Foundation; either  version 3  of the
+# License, or (at your option) any later version.
+#
+# This program  is distributed in the  hope that it will  be useful, but
+# WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
+# MERCHANTABILITY  or FITNESS  FOR  A PARTICULAR  PURPOSE.  See the  GNU
+# Affero General Public License for more details.
+#
+# You  should have  received a  copy of  the GNU  Affero General  Public
+# License     along    with     this     program.     If    not,     see
+# <https://www.gnu.org/licenses/>.
+#
+# You can reach CIWTA at https://ciwta.org/, or write to us at:
+#
+# PO Box 23095
+#
+# Oakland Park, FL 33307-3095
+#
+# USA
+
 all: .deps~ htaccess play worker servers TODO.org TODO.scorecard
 
 test: all servers-test
@@ -29,6 +56,9 @@ else
 clusterorg=$(CLUSTER).tootsville.org
 clusternet=$(CLUSTER).tootsville.net
 endif
+
+GAMEHOSTS=game1 game3
+BALANCERS=balancer1 balancer2
 
 LOCAL_USERNAME=$(shell whoami)
 REVISION=$(shell git log -n 1 --pretty=format:"%H")
@@ -208,11 +238,11 @@ dist/play/play.map:	dist/play/play.js
 
 #################### dist/play/play.css
 
-LESSFILES=$(shell find play -name \*.less -and -not -name .\*)
+PLAYLESSDEPS=$(wildcard play/*.less play/**/*.less)
 
-dist/play/play.css:	$(LESSFILES)
+dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --strict-math=on --source-map play/play.less dist/play/play.css
+	lessc --strict-math=yes --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
@@ -226,29 +256,37 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	echo '** FIXME Actual bugs!' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn FIXME: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn FIXME servers mesh play www build README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** TODO To be done ASAP' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn TODO: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn TODO servers mesh play www build README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** XXX Might Be Nice to do someday' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn XXX: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn XXX servers mesh play www build README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** ☠☠☠ Bruce-Robert should examine this' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn ☠☠☠: */ README.org | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
+	git grep -Hn ☠☠☠: servers mesh play www build README.org \
+	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
 TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
 	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
 	-o -name \*.shtml \) -and -not -name .\*) \
 	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
-	git grep FIXME: */ README.org | wc -l >> TODO.scorecard
+	git grep FIXME servers mesh play www build README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
-	git grep TODO: */ README.org | wc -l >> TODO.scorecard
+	git grep TODO servers mesh play www build README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_XXX=' >> TODO.scorecard
-	git grep XXX: */ README.org | wc -l >> TODO.scorecard
+	git grep XXX servers mesh play www build README.org \
+	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
-	git grep ☠☠☠: */ README.org | wc -l >> TODO.scorecard
+	git grep ☠☠☠ servers mesh play www build README.org \
+	 | wc -l >> TODO.scorecard
 
 #################### bin/jscl
 
@@ -259,8 +297,8 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 
 #################### www
 
-dist/www/2019.css:	$(shell echo www/*.less)
-	lessc --strict-math=on --source-map www/2019.less dist/www/2019.css
+dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
+	lessc --strict-math=yes --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
 
@@ -269,19 +307,44 @@ devel-test:	devel-serve devel-play
 devel-serve:	servers/Tootsville
 	servers/Tootsville server < /dev/null
 
+devel-play-watch:	devel-play
+	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done
+
 devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
 devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
-	-notify-send -i document-new "Build Complete" "Finished building devel-play"
+	-notify-send -i document-new "Build Complete: play" "Finished building devel-play"
 
-dist/play/httpd.pid:	dist/play/dev-play.httpd.conf
-	if [ -f dist/play/httpd.pid ]; then kill -SIGHUP $$(< dist/play/httpd.pid ); else \
+devel-wwwtest:	devel-www
+	firefox --devtools --new-tab "http://localhost:5001/" </dev/null &>/dev/null &
+
+devel-www:	dist/www.$(clusterorg) dist/www/httpd.pid
+	-notify-send -i document-new "Build Complete: www" "Finished building devel-www"
+
+dist/www/httpd.pid:	dist/www/dev-www.httpd.conf
+	mkdir -p dist/www
+	if [ -f dist/www/httpd.pid ]; then \
+		kill -HUP $$(< dist/www/httpd.pid ) || \
+		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
+	else \
+		httpd -f $(shell pwd)/dist/www/dev-www.httpd.conf ;\
+	fi
+
+dist/play/httpd.pid:	dist/play/dev-play.httpd.conf dist/play/play.js
+	mkdir -p dist/play
+	if [ -f dist/play/httpd.pid ]; then \
+		kill -HUP $$(< dist/play/httpd.pid ) || \
+		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
+	else \
 		httpd -f $(shell pwd)/dist/play/dev-play.httpd.conf ;\
 	fi
 
 dist/play/dev-play.httpd.conf:	bin/dev-play-httpd-conf
 	bin/dev-play-httpd-conf $(clusterorg)
+
+dist/www/dev-www.httpd.conf:	bin/dev-www-httpd-conf
+	bin/dev-www-httpd-conf $(clusterorg)
 
 dist/play.$(clusterorg)/.well-known/assetlinks.json: play/.well-known/assetlinks.json
 	mkdir -p dist/play.$(clusterorg)/.well-known
@@ -319,11 +382,7 @@ dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.css.map dist/play.$(clusterorg)/play/
-	for file in $(LESSFILES) ; \
-	do \
-	    mkdir -p dist/play.$(clusterorg)/$$(dirname $$file) ; \
-	    cp $$file dist/play.$(clusterorg)/$$file ; \
-	done
+	for file in $(PLAYLESSDEPS) ; do cp $$file dist/play.$(clusterorg)/$$file ; done
 
 dist/play.$(clusterorg)/worker.js:	dist/worker.js
 	mkdir -p dist/play.$(clusterorg)/
@@ -337,7 +396,7 @@ dist/play.$(clusterorg)/favicon.%:	www/favicon.%
 	mkdir -p dist/play.$(clusterorg)/
 	cp $< $@
 
-errordocs=$(shell echo www/error/*.{var,shtml,json,htmlf} )
+errordocs=$(wildcard www/error/*.var www/error/*.shtml www/error/*.json www/error/*.htmlf www/error/.htaccess)
 
 dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 	mkdir -p dist/play.$(clusterorg)/error/
@@ -379,10 +438,11 @@ deploy-play:	predeploy-play
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)
 
-deploy-servers:	predeploy
-	for host in game1 game2; \
+deploy-servers:	predeploy-servers
+	for host in $(GAMEHOSTS) ; \
 	do \
 		echo " » Deploy $$host.$(clusternet)" ;\
+                    scp ~/.config/Tootsville/Tootsville.config.lisp $$host.$(clusternet):.config/Tootsville ;\
 		ssh $$host.$(clusternet) make -C tootsville.org/servers install ;\
 		VERSION=$(shell servers/Tootsville version-info version) ;\
 		curl https://api.rollbar.com/api/1/deploy/ \
@@ -396,7 +456,7 @@ deploy-servers:	predeploy
 		     -F local_username=$(LOCAL_USERNAME) ;\
 	done
 
-deploy-www:	predeploy
+deploy-www:	predeploy-www
 	echo " » Deploy www.$(clusterorg)"
 	ssh www.$(clusterorg) "mv www.$(clusterorg) www.$(clusterorg).before-deploy && mv www.$(clusterorg).new www.$(clusterorg)"
 	curl https://api.rollbar.com/api/1/deploy/ \
@@ -414,8 +474,9 @@ connectivity:
 	echo " » Test connectivity"
 	ssh play.$(clusterorg) ls -1d play.$(clusterorg)/ | grep play.$(clusterorg)
 	ssh www.$(clusterorg) ls -1d www.$(clusterorg)/ | grep $(clusterorg)
-	ssh game1.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
-	ssh game2.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'
+	for host in $(GAMEHOSTS); do \
+	   ssh $$host.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'; \
+	done
 
 
 no-fixmes:	TODO.scorecard
@@ -458,8 +519,11 @@ predeploy-play:	dist/play.$(clusterorg)
 	echo " » Pre-deploy play.$(clusterorg)"
 	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
 
-predeploy-www:	htaccess dist/www/2019.css
+predeploy-www:	dist/www.$(clusterorg)
 	echo " » Pre-deploy www.$(clusterorg)"
+	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
+
+dist/www.$(clusterorg):	htaccess dist/www/2019.css
 	mkdir -p dist/www.$(clusterorg)
 	rsync --exclude='*~' --exclude='*#' -ar \
 	      www/* dist/www.$(clusterorg)/
@@ -472,10 +536,9 @@ predeploy-www:	htaccess dist/www/2019.css
 	then \
 		cp www/index.qa.html dist/www.$(clusterorg)/index.html ;\
 	fi
-	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
 
 predeploy-servers:	servers quicklisp-update-servers
-	for host in game1 game2 ;\
+	for host in $(GAMEHOSTS) ;\
 	do \
 		echo " » Pre-deploy $$host.$(clusternet)" ;\
 		rsync -essh --delete -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
@@ -485,7 +548,7 @@ predeploy-servers:	servers quicklisp-update-servers
 	done
 
 quicklisp-update-servers:
-	for host in game1 game2; \
+	for host in $(GAMEHOSTS) ; \
 	do \
 		echo " » Ensure latest Quicklisp on $$host.$(clusternet)" ;\
 	    ssh $$host.$(clusternet) \

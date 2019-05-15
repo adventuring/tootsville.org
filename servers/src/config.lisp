@@ -1,3 +1,30 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/config.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
 (defparameter *application-root*
@@ -26,6 +53,7 @@
 (defmethod apply-config progn ()
   "Set up Hunchentoot and the taskmaster from configuration"
   (setf thread-pool-taskmaster:*developmentp* (config :taskmaster :devel)
+        hunchentoot:*catch-errors-p* (config :hunchentoot :catch-errors)
         hunchentoot:*log-lisp-warnings-p* (config :hunchentoot :log-warnings)
         hunchentoot:*log-lisp-errors-p* (config :hunchentoot :log-errors)
         hunchentoot:*log-lisp-backtraces-p* (config :hunchentoot :log-backtraces)
@@ -35,12 +63,15 @@
 (defmethod apply-config progn ()
   "Apply configuration to Rollbar"
   (apply #'rollbar:configure (config :rollbar))
+  (setf rollbar:*person-hook* #'get-rollbar-person)
   (rollbar:configure :environment (cluster-net-name)
                      :code-version #.(run-program "git rev-parse HEAD" :output :string)
                      :framework (romance-ii-program-name/version)))
 
 (defmethod apply-config progn ()
-  "Set site name from configuration")
+  "Set site name from configuration"
+  ;; TODO: Set site name from configuration
+  )
 
 (defun load-config (&optional (config-file (default-config-file)))
   "Load the configuration from CONFIG-FILE."
@@ -48,10 +79,16 @@
   (apply-config)
   (setf *config-file* (list :path config-file
                             :truename (truename config-file)
-                            :read (get-universal-time)
+                            :read (now)
                             :host (machine-instance)
-                            :file-write-date (file-write-date config-file)
-                            :author (file-author config-file))))
+                            :file-write-date (universal-to-timestamp
+                                              (file-write-date config-file))
+                            :author (file-author config-file)))
+  (v:info :config "Loaded config from (~{~:(~a~): ~s~^, ~}" *config-file*)
+  (v:info :config "Cluster is the ~:(~a~) cluster ~a" (cluster) (cluster-name))
+  (values *config-file*
+          (cluster)
+          (cluster-name)))
 
 
 
@@ -80,6 +117,8 @@ qa.tootsville.org
 @item
 tootsville.org
 @end itemize
+
+The local hostname is used in development (loopback) mode.
 "
   (case (cluster)
     (:test (format nil "~@[~a.~]test.tootsville.org" prefix))

@@ -1,132 +1,61 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/endpoints/slash-gossip.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
-(defun user= (a b &rest rest)
-  (and (equal (user-id a) (user-id b))
-       (if rest (apply #'user= a rest)
-           t)))
-
-
-(defun sdp-to-key (sdp)
-  (concatenate 'string "sdp…#" (sha1-hex sdp)))
-
-(defun find-user-by-sdp (sdp)
-  (read-from-string (clouchdb:get-document (sdp-to-key sdp))))
-
-(defun request-param-value (param)
-  (hunchentoot:parameter param))
-
-(defun update-session-details ()
-  (let ((origin (concatenate 'string "http←" (hunchentoot:remote-addr*)))
-        (login (find-record 'db.login
-                            "player" (db.player-uuid)
-                            "credentials" *credentials*)))
-    (if login 
-        (unless (equal origin (db.login-origin login))
-          (setf (db.login-origin login) origin)))
-    (make-record 'db.login :player (db.player-uuid user) :origin origin
-                 :credentials *credentials*)
-    (setf (db.login-last-seen login) (now))
-    (save-record login)))
-
-(defun gossipnet-update-client ()
-  (update-session-details)
-  (when-let (sdp (hunchentoot:parameter "sdp"))
-    (unless (find-user-by-sdp sdp)
-      ())))
-
-(define-condition user-not-identified-error (error)
-  ((source :initarg :source :reader user-not-identified-source)
-   (value :initarg :value :reader user-not-identified-value))
-  (:documentation "I could not identify any user by the credentials provided.")
-  (:report (lambda (c s)
-             (format s
-                     "The credentials provided did not identify any user.~
-~[ ~:*The credential source was: ~:(~a~)~]~
-~[ ~:*The value provided was: ~:(~a~)~]"
-                     (user-not-identified-source c)
-                     (user-not-identified-value c)))))
-
-(defmethod respond-to-error ((error user-not-identified-error))
-  (setf (hunchentoot:return-code*) 401)
-  (hunchentoot:abort-request-handler))
-
-
-(defun active-sdp-offers (&optional (user *user*))
-  (mapcar (rcurry #'drakma:url-encode :utf-8)
-          (mapcar #'user-sdp-offer
-                  (remove-if #'user-sdp-answer
-                             (remove-if-not #'user-sdp-offer
-                                            (remove-if (curry #'user= user)
-                                                       *gossip-users*))))))
-
-(defun user-info (&optional (user *user*))
-  (gossipnet-update-client)
-  (let ((partial
-         (list :id (user-id user)
-               :toots (mapcar #'toot-info (player-toots))
-               :offers (mapcar #'stringify (active-sdp-offers user)))))
-    (if-let (answer (user-sdp-answer user))
-      (append (list :answer answer) partial)
-      partial)))
-
-(defmacro with-user (() &body body)
-  `(let ((*user* (find-user-from-session)))
-     (unless *user*
-       (return-from endpoint
-         (list 403 nil *403.JSON-BYTES*)))
-     ,@body))
-
-
-
-(defendpoint (:post "/gossip/answer" "application/json")
-  "Get an answer to a WebRTC initiation request.
-
-This  is a  COMET type  endpoint;  you may  have  to wait  a moment  for
-a reply.
-
-@subsection{Status: 200 OK}
-
-The response will contain the WebRTC session initiation data you need to
-join  the  Gossipnet. Attempt  to  connect;  if  it  fails, try  to  PUT
-a fresh request.
-
-@subsection{Status: 204 It's always dark in the beginning}
-
-This shouldn't be  returned; it means that there are  zero known players
-in the universe.
-
-@subsection{Status: 409 That won't work any more}
-
-You've already gotten a response to  your most recently PUT request; See
-PUT /gossip/request for details.
-
-@subsection{Status: 420 Cool your heels}
-
-You are submitting requests too often. Wait before retrying.
-"
-  (let ((answeror (find-user-from-session))
-        (offeror (find-user-by-sdp (hunchentoot:parameter "offeror"))))
-    (declare (ignore answeror)) ; for now TODO
-    (cond ((user-sdp-answer offeror)
-           (list 409 nil '(:offeror "not-available")))
-          (t
-           (setf (user-sdp-answer offeror) (hunchentoot:parameter "answer"))
-           (list 202 nil (list :did "202 (TODO)"))))))
-
-
-
-(defendpoint (put "/gossip/request" "application/json")
-  "Request a random player to join you with WebRTC.
-
-PUT a WebRTC session initiation request to this location. You'll receive
-back the location from which to await your answer.
-
-@subsection{Status: 202 Submitted request}
-
-The response will be a JSON object with one key, \"location\". The value
-will be an URI from which to request a response. Submit a GET request to
-that URI and await a reply (COMET style).
-"
+(defendpoint (post "/gossip/offers" "application/json")
+  "Provide a new offer. Body is an SDP offer. Reply will be an offer URI."
   (with-user ()
-    (list 201 '(:location "/gossip/answer")
-          (user-info *user*))))
+    (let ((json (jonathan:parse (hunchentoot:raw-post-data)))
+          offers)
+      (dolist (offer (getf json :|offers|))
+        (let* ((uuid (uuid:make-v4-uuid)) 
+               (offer-object (make-record 'gossip-initiation
+                                          :offeror *user*
+                                          :offer offer
+                                          :uuid uuid)))
+          (save-record offer-object)
+          (v:info '(:gossip :gossip-new) "New SDP offer ~a" uuid)
+          (push uuid offers)))
+      (list 202 (list :location "/gossip/offers")
+            (list :|offers| (mapcar #'uuid-to-uri offers))))))
+
+(defendpoint (get "/gossip/offers/any" "application/sdp")
+  "Ask for any, arbitrary offer to potentially accept."
+  (let ((offer (gossip-pop-offer)))
+    (if offer
+        (list 200
+              (list :location (format nil "/gossip/offers/~a"
+                                      (uuid-to-uri (gossip-initiation-uuid offer))))
+              (getf offer :sdp))
+        (error 'not-found :the "Gossipnet initiation offer"))))
+
+(defendpoint (put "/gossip/offers/:uuid64" "application/sdp")
+  "Answer a particular offer with ID UUID64"
+  (let ((offer (find-record 'gossip-initiation :uuid (uri-to-uuid uuid64)))
+        (body (hunchentoot:raw-post-data)))
+    (gossip-answer-offer offer body)))

@@ -1,5 +1,31 @@
-(in-package :Tootsville)
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/web.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
 
+(in-package :Tootsville)
 
 
 (defun accepts-content-type-p (content-type)
@@ -18,20 +44,13 @@
 Looks for  the canonical  \"Accept: application/json\", and  also checks
 the request URI for \".js\" (which  is, of course, a subseq of \".json\"
 as well.)"
-  (let ((accept (hunchentoot:header-in* :accept)))
-    (or (when (search "application/json" accept)
-          (verbose:info :json "Client Accepts application/json explicitly")
-          t)
-        (when (search ".js" (hunchentoot:request-uri*))
-          (verbose:info :json "Client request URI contains .js")
-          t)
-        (progn
-          (verbose:info :json "Client does not want JSON")
-          nil))))
+  (or (search "application/json" (hunchentoot:header-in* :accept))
+      (search ".js" (hunchentoot:request-uri*))))
 
 
 
 (defun contents-to-bytes (contents)
+  "Convert CONTENTS to a sequence of 8-bit bytes"
   (etypecase contents
     (string (flexi-streams:string-to-octets contents :external-format :utf-8))
     (vector contents)
@@ -39,6 +58,7 @@ as well.)"
                                           :external-format :utf-8))))
 
 (defun encode-endpoint-reply (reply)
+  "Handle the reply from an endpoint function gracefully."
   (let ((content-bytes #()))
     (cond
       ((stringp reply)
@@ -75,6 +95,7 @@ as well.)"
 (eval-when (:compile-toplevel :load-toplevel :execute)
 
   (defun apply-extension-to-template (template extension)
+    "Create a clone of TEMPLATE with EXTENSION."
     (if template
         (let ((temp (append template (list extension))))
           (if (first temp)
@@ -83,38 +104,46 @@ as well.)"
         (list "index" extension)))
 
   (defun without-sem (string)
+    "The subset of STRING up to the first semicolon, if any."
     (if-let (sem (position #\; string))
       (subseq string 0 sem)
       string))
 
   (defun first-line (string)
+    "The first line, or, lacking a shorter break, first 100 characters of STRING."
     (let ((newline (or (position #\newline string) 100)))
       (subseq string 0 (min newline 100 (length string)))))
 
   (defun defendpoint/make-endpoint-function (&key fname content-type
                                                   λ-list docstring body)
-    `(defun ,fname (,@λ-list) ,docstring
-            (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
-                    ,(concatenate 'string "{~a} Starting: " (first-line docstring))
-                    (thread-name (current-thread)))
-            (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
-            (unwind-protect
-                 (let ((reply
-                        (catch 'endpoint
-                          (block endpoint
-                            (block ,fname
-                              ,@body)))))
-                   (let ((bytes (encode-endpoint-reply reply)))
-                     (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
-                             "{~a} Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
-                             (thread-name (current-thread))
-                             (hunchentoot:return-code*)
-                             (length (hunchentoot:headers-out*))
-                             (length bytes))
-                     bytes))
-              (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
-                      ,(concatenate 'string "{~a} Finished: " (first-line docstring))
-                      (thread-name (current-thread))))))
+    (let (($begin (gensym "BEGIN-"))
+          ($elapsed (gensym "ELAPSED-")))
+      `(defun ,fname (,@λ-list) ,docstring
+              (let ((,$begin (get-internal-real-time)))
+                (v:info '(,(make-keyword fname) :endpoint :endpoint-start)
+                        ,(concatenate 'string "Starting: " (first-line docstring)))
+                (setf (hunchentoot:content-type*) ,(add-charset (string-downcase content-type)))
+                (unwind-protect
+                     (let ((reply
+                            (catch 'endpoint
+                              (block endpoint
+                                (block ,fname
+                                  ,@body)))))
+                       (let ((bytes (encode-endpoint-reply reply)))
+                         (v:info '(,(make-keyword fname) :endpoint :endpoint-output)
+                                 "Status: ~d; ~[~:;~:*~d header~:p; ~]~d octets"
+
+                                 (hunchentoot:return-code*)
+                                 (length (the list (hunchentoot:headers-out*)))
+                                 (length (the vector bytes)))
+                         bytes))
+                  (let ((,$elapsed (* 1000.0 (/ (- (get-internal-real-time) ,$begin) internal-time-units-per-second))))
+                    (v:info '(,(make-keyword fname) :endpoint :endpoint-finish)
+                            ,(concatenate 'string "Finished: " (first-line docstring) " in ~:dms")
+                            ,$elapsed)
+                    (when (< 30 ,$elapsed)
+                      (v:error '(,(make-keyword fname) :endpoint :slow-query)
+                               "Slow query"))))))))
 
   (defun after-slash (s)
     "Splits a string S at a slash. Useful for getting the end of a content-type."
@@ -266,6 +295,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                  "image/png"))
 
   (defun constituentp (ch)
+    "Is character CH a constituent character of a Lisp name {without escaping it}?"
     (let ((cc (char-code (char-upcase ch))))
       (or (< #xa0 cc)
           (<= (char-code #\A) cc (char-code #\Z))
@@ -273,6 +303,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
           (find ch "-/!?." :test #'char=))))
 
   (defun make-endpoint-function-name (method uri accept-type)
+    "Create the name of the endpoint function for METHOD, URI, and ACCEPT-TYPE."
     (intern (format nil "ENDPOINT-~a-~a→~a"
                     method
                     (remove-if-not #'constituentp uri)
@@ -282,6 +313,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
                       (symbol (name-for-content-type (string accept-type)))))))
 
   (defun lambda-list-as-variables (λ-list)
+    "Convert Λ-LIST into variables for an endpoint function."
     (if λ-list
         (cons 'list (mapcar (lambda (var)
                               (list 'quote var))
@@ -290,6 +322,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
   (defmacro defendpoint ((method uri &optional content-type)
                          &body body)
+    "Define an HTTP endpoint accessing URI via METHOD and accepting CONTENT-TYPE."
     (let* ((method (make-keyword (string-upcase method)))
            (content-type (make-keyword (string-upcase content-type)))
            (fname (make-endpoint-function-name method uri content-type))
@@ -323,15 +356,21 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 (defendpoint (get "/" text/html)
   "GET on the root redirects to the main web page for the cluster (eg, @url{https://Tootsville.org/})"
-  (list 307 (list :location (format nil "https://www.~a.org/" (cluster-name))) ""))
+  (list 307 (list :location (format nil "https://www.~a.org/" (let ((cluster (cluster-name)))
+                                                                (if (search "tootsville" cluster)
+                                                                    cluster
+                                                                    "test.tootsville.org")))) ""))
 
 (defendpoint (get "/favicon" image/png)
+  "Get the Tootsville logo as a PNG"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.png") ""))
 
 (defendpoint (get "/favicon/ico")
+  "Get the Tootsville logo in Windows Icon format"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.ico") ""))
 
 (defendpoint (get "/favicon" image/gif)
+  "Get the Tootsville logo as a GIF"
   (list 307 '(:location "https://Jumbo.Tootsville.org/Assets/Icons/favicon.gif") ""))
 
 
@@ -340,6 +379,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 (defmethod print-object ((request hunchentoot:request) stream)
+  "Print a Hunchentoot Request object nicely"
   (print-unreadable-object (request stream :type t)
     (princ (hunchentoot:request-method request) stream)
     (write-char #\Space stream)
@@ -347,12 +387,10 @@ This is basically just CHECK-TYPE for arguments passed by the user."
 
 
 
-(defmethod jonathan::%to-json ((symbol symbol))
-  (jonathan.encode::string-to-json (string (symbol-munger:lisp->camel-case symbol))))
-
-
-
 (defun query-string->plist (query-string)
+  "Split an HTTP QUERY-STRING into a  PList.
+
+Probably a duplicate of something done in Hunchentoot or Drakma?"
   (mapcan (lambda (pair)
             (destructuring-bind (key value)
                 (split-sequence #\= pair)
@@ -363,6 +401,7 @@ This is basically just CHECK-TYPE for arguments passed by the user."
           (split-sequence #\& query-string)))
 
 (defun query-params ()
+  "Get parameters from the query string of the current Hunchentoot request."
   (let ((uri (hunchentoot:request-uri*)))
     (when-let (qq (position #\? uri))
       (let* ((query-string (subseq uri qq)))

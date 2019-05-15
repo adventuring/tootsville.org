@@ -1,3 +1,30 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/users.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
 
@@ -5,22 +32,154 @@
 (defvar *user* nil
   "The currently-signed-in user, if any")
 
+(defun email-lhs (address)
+  (when address
+    (subseq address 0 (position #\@ address))))
+
+(defmacro ignore-duplicates (&body body)
+  `(restart-case
+       (handler-bind
+           ((dbi.error:<dbi-database-error>
+             (lambda (c)
+               (when (= 1062 (slot-value c 'DBI.ERROR::ERROR-CODE))
+                 (invoke-restart 'continue)))))
+         ,@body)
+     (continue () nil)))
+
+(defun associate-credentials (person credentials)
+  (loop for (provider ids) on credentials by #'cddr
+     do (dolist (id ids)
+          (ensure-record 'credential
+                         :person (person-uuid person)
+                         :id-token id
+                         :uid id
+                         :provider provider))))
+
+(defun find-person-by-url (url &optional more)
+  (when-let (link (handler-case
+                      (find-record 'person-link
+                                   :url (reduce (curry #'concatenate 'string)
+                                                (list url more)))
+                    (not-found (c)
+                      (declare (ignore c))
+                      nil)))
+    (find-record 'person :uuid (person-link-person link))))
+
+(defun person-links-to-email (email)
+  (find-records 'person-link
+                :url
+                (concatenate 'string
+                             "mailto:" email)))
+
+(defun all-links-to-same-person-p (links)
+  (let ((first (person-link-person (first links))))
+    (every (lambda (link)
+             (uuid:uuid= (person-link-person link) first))
+           (rest links))))
+
+(defun ensure-user-for-plist (plist)
+  "Find or create the user described by PLIST and return them.
+
+PLIST  can  have  keys  that  align to  a  DB.PERSON  or  their  contact
+infos (eg,  email) and is expected  to have been validated  already (eg,
+come from a trusted authentication provider like Google Firebase)."
+  (let ((person
+         (or (when-let (email (and (getf plist :email-verified-p)
+                                   (getf plist :email)))
+               (when-let (links (person-links-to-email email))
+                 (when-let (link (when (all-links-to-same-person-p links)
+                                   (first links)))
+                   (find-reference link :person))))
+             (make-record
+              'person
+              :display-name (or (getf plist :name)
+                                (email-lhs (getf plist :email)))
+              :given-name (or (getf plist :given-name)
+                              (getf plist :name)
+                              (email-lhs (getf plist :email)))
+              :surname (or (getf plist :surname) "")
+              :gender :X
+              :lang "en_US"))))
+    (ensure-record 'person-link
+                   :person (person-uuid person)
+                   :rel :contact
+                   :url (concatenate 'string "mailto:"
+                                     (getf plist :email))
+                   :label "email"
+                   :provenance "Provided by Firebase login")
+    (associate-credentials person (getf plist :credentials))
+    (when-let (picture (getf plist :picture))
+      (ensure-record 'person-link
+                     :person (person-uuid person)
+                     :rel :photo
+                     :url picture
+                     :label "portrait"
+                     :provenance "Provided by Firebase login"))
+    (when-let (email (and (getf plist :email-verified-p)
+                          (getf plist :email)))
+      (update-gravatar person email))
+    person))
+
+(defun update-gravatar (person email)
+  (if-let ((gravatar (ignore-not-found
+                       (find-record 'person-link
+                                    :person (person-uuid person)
+                                    :rel :photo
+                                    :provenance "Provided by Gravatar"))))
+    (setf (person-link-url gravatar)
+          (gravatar-image-url email
+                              :size 256
+                              :rating :pg
+                              :default :identicon))
+    (make-record 'person-link
+                 :person (person-uuid person)
+                 :rel :photo
+                 :label "Gravatar"
+                 :provenance "Provided by Gravatar"
+                 :url (gravatar-image-url email
+                                          :size 256
+                                          :rating :pg
+                                          :default :identicon))))
+
+
+
+(defmacro with-user (() &body body)
+  `(progn (unless *user*
+            (error 'unidentified-player-error))
+          ,@body))
+
+
+
+;;; User details
+
 (defun user-display-name (&optional (person *user*))
-  (db.person-display-name (ensure-person person)))
+  (person-display-name person))
 
 (defun user-given-name (&optional (person *user*))
-  (db.person-given-name (ensure-person person)))
+  (person-given-name person))
 
 (defun user-surname (&optional (person *user*))
-  (db.person-surname (ensure-person person)))
+  (person-surname person))
+
+(defun user-email (&optional (person *user*))
+  "Finds an email address for PERSON of type CONTACT."
+  (when-let (mails (remove-if-not
+                    (lambda (record)
+                      (string-begins "mailto:" (person-link-url record)))
+                    (find-records 'person-link
+                                  :person (person-uuid person)
+                                  :rel :CONTACT)))
+    (subseq (random-elt mails) 7)))
 
 (defun user-face (&optional (person *user*))
-  (let* ((uuid (db.person-uuid (ensure-person person)))
-         (portraits (find-records 'db.person-link "rel" :portrait)))
-    (when portraits (first portrait))))
+  "Finds a portrait URI for PERSON"
+  (when-let (portraits (find-records 'person-link
+                                     :person (person-uuid person)
+                                     :rel :photo))
+    (random-elt portraits)))
 
 (defun user-id (&optional (person *user*))
-  (db.person-uuid (ensure-person person)))
+  (person-uuid person))
 
 (defun user->alist (user)
   (list (cons :|displayName| (user-display-name user))
@@ -29,191 +188,111 @@
         (cons :|face|        (user-face user))
         (cons :|uuid|        (user-id user))))
 
-(defclass credentials ()
-  ((user :type db.person
-         :initarg :user
-         :reader credentials-user)))
-
-(defclass openid-credentials (credentials)
-  ((issuer :type string
-           :initarg :issuer
-           :initarg :iss
-           :reader credentials-issuer
-           :reader openid-iss)
-   (subject :type string
-            :initarg :subject
-            :initarg :sub
-            :reader credentials-subject-code
-            :reader openid-sub)
-   (authorized-party :type string
-                     :initarg :authorized-party
-                     :initarg :azp
-                     :reader openid-authorized-party
-                     :reader openid-azp)
-   (audience :type string
-             :initarg :audience
-             :initarg :aud
-             :reader openid-audience
-             :reader openid-aud)
-   (issued-at :type timestamp
-              :initarg :issued-at
-              :initarg :iat
-              :reader openid-issued-at
-              :reader openid-iat)
-   (expires :type timestamp
-            :initarg :expires
-            :initarg :exp
-            :reader openid-expires
-            :reader openid-exp)
-   (user-id :type uuid
-            :initarg :user
-            :reader credentials-user)))
-
-(defclass openid-token ()
-  ((access-token :type string
-                 :initarg :access-token
-                 :accessor openid-access-token)
-   (token-type :type string
-               :initarg :token-type
-               :initform "Bearer"
-               :accessor openid-token-type)
-   (refresh-token :type string
-                  :initarg :token-type
-                  :accessor openid-refresh-token)
-   (token-expires :type timestamp
-                  :initarg :token-expires
-                  :accessor openid-token-expires)
-   (id-token :type string
-             :initarg :id-token
-             :accessor openid-id-token)))
-
 
-
-;;; Toot character data.
-
-(defun find-toot-by-name (toot-name)
-  (check-type toot-name toot-name)
-  (find-record 'db.toot "name" toot-name))
-
-(defun player-childp (&optional (player *user))
-  (< (or (legal-age (db.person-date-of-birth player))
-         (db.person-age player))
+(defun player-childp (&optional (player *user*))
+  (< (or (when-let (dob (person-date-of-birth player)) (legal-age dob))
+         (person-age player)
+         (person-child-code player)
+         1)
      13))
 
-(defun player-adultp (&optional (player *user))
-  (>= (or (legal-age (db.person-date-of-birth player))
-	(db.person-age player))
+(defun player-adultp (&optional (player *user*))
+  (>= (or (legal-age (person-date-of-birth player))
+          (person-age player))
       18))
 
-(defun toot-childp (toot)
-  (player-childp (find-reference toot :player)))
-
-(defun toot-info (toot)
-  (list :name (db.toot-name toot)
-        :note "" ; TODO Toot notes by player/parent
-        :avatar (db.avatar-name (find-reference toot :avatar))
-        :base-color (color24-name (db.toot-base-color toot))
-        :pattern (string-downcase (db.toot-pattern toot))
-        :pattern-color (color24-name (db.toot-pattern-color toot))
-        :pads-color (color24-name (db.toot-pads-color toot))
-        :child-p (toot-childp toot)
-        :sensitive-p (or (toot-childp toot)
-		     (db.person-sensitivep (find-reference toot :player)))
-        :last-seen (db.toot-last-active toot)))
-
-(defun player-toots (&optional (player *user*))
-  (find-records 'db.toot "player" (db.person-uuid player)))
-
-(defun player-fake-toots (&optional (player *user*))
-  (declare (ignore player))
-  (list
-   (list :name "Zap"
-         :note "These are still fake Toots for testing"
-         :avatar "UltraToot"
-         :base-color "violet"
-         :pattern "lightning"
-         :pattern-color "yellow"
-         :highlight-color "yellow"
-         :child-p nil
-         :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil (3-days-ago)))
-   (list :name "Flora"
-         :note "This an an example of a child's Toot
-appearing on a parent's account."
-         :avatar "UltraToot"
-         :base-color "pink"
-         :pattern "flowers"
-         :pattern-color "white"
-         :highlight-color "yellow"
-         :child-p t
-         :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil (2-days-ago)))
-   (list :name "Moo"
-         :note ""
-         :avatar "UltraToot"
-         :base-color "white"
-         :pattern "moo"
-         :pattern-color "black"
-         :highlight-color "black"
-         :child-p nil
-         :sensitive-p nil
-         :last-seen (local-time:format-timestring
-                     nil
-                     (yesterday)))))
+(defun player-Toots (&optional (player *user*))
+  (find-records 'Toot :player (person-uuid player)))
 
 
-
-
 
 (defun find-player-or-die ()
   "Ensure that a recognized player is connected."
-  (find-user-from-session :if-not-exists :error))
+  (unless *user* (error 'unidentified-player-error)))
 
 (defvar *403.json-bytes*
   (flexi-streams:string-to-octets "{\"error\":\"player-not-found\",
 \"note\":\"You are not signed in to the web services\",
 \"login\":\"https://play.Tootsville.org/login/\"}"))
 
-(defmacro with-player (() &body body)
-  "Ensure that a recognized player is connected
-using `FIND-PLAYER-OR-DIE' and bind *USER*"
-  `(multiple-value-bind  (foundp *user*) (find-player-or-die)
-     (cond (foundp
-            ,@body)
-           (t (throw 'endpoint (list 403 nil *403.json-bytes*))))))
-
 
 
-(defun assert-my-character (toot-name &optional (user *user*))
+(defun assert-my-character (Toot-name &optional (user *user*))
   "Signal a security error if TOOT-NAME is not owned by USER"
-  (check-type toot-name toot-name)
-  (unless (find toot-name
-                (mapcar (rcurry #'getf :name) (player-toots user))
-                :test #'string-equal)
-    (error 'not-your-toot-error :name toot-name)))
+  (check-type Toot-name Toot-name)
+  (unless (find-record 'toot
+                       :player (person-uuid user)
+                       :name Toot-name)
+    (error 'not-your-Toot-error :name Toot-name)))
 
 
 
-;;; TODO ensure that these time functions exist somewhere more
-;;; appropriate and remove then
+;;; Copied from CL-Gravatar, but fixed for my version of Drakma (newer?)
 
-(defun days-ago (days)
-  (local-time:timestamp- (local-time:now) days :day))
+;;; TODO: post patch upstream
 
-(defun yesterday ()
-  (days-ago 1))
+#| CL-Gravatar
 
-(defun 2-days-ago ()
-  (days-ago 2))
+Copyright 2011 Greg Pfeil <greg@technomadic.org>
 
-(defun 3-days-ago ()
-  (days-ago 3))
+Licensed under the Apache License,  Version 2.0 (the "License"); you may
+not use this file except in  compliance with the License. You may obtain
+a copy of the License at
 
-(defun header-time (&optional (time (get-universal-time)))
-  (local-time:format-rfc1123-timestring
-   nil
-   (etypecase time
-     (number (local-time:universal-to-timestamp time))
-     (local-time:timestamp time))))
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless  required by  applicable law  or agreed  to in  writing, software
+distributed  under the  License  is  distributed on  an  "AS IS"  BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See  the License  for the  specific language  governing permissions  and
+limitations under the License. |#
+
+(define-constant +gravatar-base-uri+ (puri:uri "https://secure.gravatar.com/")
+  :test #'puri:uri=
+  :documentation "Why would we ever _not_ use SSL?")
+
+(defun gravatar-hash (email)
+  (string-downcase (format nil "~{~2,'0x~}"
+                           (coerce (md5:md5sum-sequence
+                                    (string-downcase (string-trim '(#\space)
+                                                                  email)))
+                                   'list))))
+
+(defun gravatar-image-url (email &key size default force-default-p rating)
+  "DEFAULT may be either a URL to your own image, or one of :404, :mm,
+:identicon, :monsterid, :wavatar, or :retro. RATING may be one of :g, :pg,
+:r, or :x."
+  (let ((parameters ()))
+    (when size (push `("s" . ,(format nil "~d" size)) parameters))
+    (typecase default
+      (keyword (push `("d" . ,(string-downcase default)) parameters))
+      (string (push `("d" . ,default) parameters)))
+    (when force-default-p (push '("f" . "y") parameters))
+    (when rating (push `("r" . ,(string-downcase rating)) parameters))
+    (puri:merge-uris (format nil "avatar/~a~@[?~a~]"
+                             (gravatar-hash email)
+                             (drakma::alist-to-url-encoded-string
+                              parameters
+                              :utf-8 #'drakma:url-encode))
+                     +gravatar-base-uri+)))
+
+
+(defun person-is-patron-p (person)
+  ;; just me ☹
+  (eql (uuid-to-uri (person-uuid person)) "SAsJFzx6TRO1W6pWEFxeAA=="))
+
+(defun get-rollbar-person (person)
+  (when *user*
+    (list :|person|
+          (list :|uid| (princ-to-string (person-uuid person))
+                :|username| (format nil "~@[Toot: ~a, ~]Person: ~a"
+                                    (when *Toot* (Toot-name *Toot*))
+                                    (person-display-name *user*))
+                :|email| (user-email)))))
+
+
+
+(defun player-alert (person &rest message)
+  ;; TODO
+  (v:info :alert "Player Alert for person ~a; message ~{~a~^ ~}"
+          (person-display-name person) message))

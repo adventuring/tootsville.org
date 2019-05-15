@@ -1,8 +1,33 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/main.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
 
 
-
-
 
 (defvar *acceptors* nil)
 
@@ -17,54 +42,47 @@
       (return-from find-acceptor acceptor))))
 
 (defvar *async-tasks* nil)
-
-(defconstant +async-worker-threads+ 2)
+(defvar *async-channel* nil)
 
 (defun (setf thread-name) (name thread)
   #+sbcl (setf (sb-thread:thread-name thread) name))
-
-(defun name-all-async-threads-idle ()
-  (let ((length (length (slot-value *async-tasks*
-                                    'cl-threadpool::threads))))
-    (loop for thread in (slot-value *async-tasks*
-                                    'cl-threadpool::threads)
-       for i fixnum from 1
-       do (setf (thread-name thread)
-                (format nil "Idle Asyncronous Worker (#~d of ~d)" i length)))))
 
 (defun swank-connected-p ()
   (when (swank:connection-info) t))
 
 (defun init-async ()
   (setf *async-tasks*
-        (cl-threadpool:make-threadpool
-         +async-worker-threads+
-         :max-queue-size 1024
-         :name "Asynchronous Workers"
-         :resignal-job-conditions (not (swank-connected-p))))
-  (cl-threadpool:start *async-tasks*)
-  (name-all-async-threads-idle))
+        (lparallel:make-kernel (min 1 (round (/ (processor-count) 2)))
+                               :name "Asynchronous workers"))
+  (let ((lparallel:*kernel* *async-tasks*))
+    (setf *async-channel* (lparallel:make-channel))))
 
-(defun run-async (function)
+(defun run-async (function &key name)
   (unless *async-tasks*
     (init-async))
-  (cl-threadpool:add-job
-   *async-tasks*
-   (lambda ()
-     (let ((idle-name (thread-name (current-thread))))
-       (setf (thread-name (current-thread)) (format nil "Async: run ~s" function))
-       (unwind-protect
-            (thread-pool-taskmaster:with-pool-thread-restarts
-                ((thread-name (current-thread)))
-              (verbose:info '(:threadpool-worker :async-worker :worker-start)
-                            "{~a}: working" (thread-name (current-thread)))
-              (funcall function))
-         (verbose:info '(:threadpool-worker :async-worker :worker-finish)
-                       "{~a}: done" (thread-name (current-thread)))
-         (setf (sb-thread:thread-name (current-thread)) idle-name))))))
+  (let ((lparallel:*kernel* *async-tasks*))
+    (lparallel:submit-task
+     *async-channel*
+     (lambda ()
+       (let ((idle-name (thread-name (current-thread))))
+         (setf (thread-name (current-thread)) (or name
+                                                  (format nil "Async: run ~s" function)))
+         (unwind-protect
+              (thread-pool-taskmaster:with-pool-thread-restarts
+                  ((thread-name (current-thread)))
+                (verbose:info '(:threadpool-worker :async-worker :worker-start)
+                              "{~a}: working" (thread-name (current-thread)))
+                (funcall function))
+           (verbose:info '(:threadpool-worker :async-worker :worker-finish)
+                         "{~a}: done" (thread-name (current-thread)))
+           (setf (sb-thread:thread-name (current-thread)) idle-name)))))))
 
+(defun background-gc ()
+  "Start a garbage collection in a different thread."
+  (run-async (lambda () (sb-ext:gc))
+               :name "Garbage Collection"))
 
-(defun start (&key (host "localhost") (port 5000))
+(defun start (&key (host "localhost") (port 5000) (fullp t))
   "Start a local Hunchentoot server.
 
 HOST is an address of a live interface; PORT may be a port number.
@@ -72,6 +90,11 @@ HOST is an address of a live interface; PORT may be a port number.
 The server will  be started running on port  5000 on local-loopback-only
 addresses  (127.0.0.1  and  ::1).  If an  existing  server  is  running,
 a restart will be presented to allow you to kill it (RESTART-SERVER)."
+  (when fullp
+    (load-config)
+    (connect-databases)
+    (power-on-self-test)
+    (background-gc))
   (when-let ((previous (find-acceptor host port)))
     (restart-case (error "Server is already running on ~a port ~a" host port)
       (stop-previous ()
@@ -100,7 +123,8 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
                                        :port port)))))
               (setf (hunchentoot:acceptor-name acceptor)
                     (format nil "Tootsville ~:[Non-TLS ~;~](~a port ~d)"
-                            (config :ssl) host port)))
+                            (config :ssl) host port))
+              acceptor)
             *acceptors*)
     (change-port (port*)
       :report "Use a different port"
@@ -109,7 +133,6 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
       :report "Shoot the other node in the head (kill listening process)"
       (stonith :host host :port port)
       (start :host host :port port))))
-
 
 
 
@@ -121,10 +144,7 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
   (when acceptor
     (ignore-errors
       (hunchentoot:stop acceptor :soft t))
-    ;; TODO: wait for process to really be done
-    (setf *acceptors* (delete-if (curry #'eql acceptor)
-                                 *acceptors*))))
-
+    (removef *acceptors* acceptor)))
 
 
 ;;; build date/timestamp
@@ -154,7 +174,6 @@ a restart will be presented to allow you to kill it (RESTART-SERVER)."
     (let ((*package* (find-package :Oliphaunt-User)))
       (funcall (intern "REPL" (find-package :prepl))))))
 
-
 ;;; Swank
 
 (defun start-swank (&optional (port (+ 46046 (* 2 (random 500)))))
@@ -170,15 +189,57 @@ process's PID."
                                   (swank/backend:getpid))))
   port)
 
+
+
+(defmethod v:format-message ((stream stream) (message v:message))
+  (format stream "~&~a	{~a}	[~a: ~{~a~^, ~}]~%⯮	~a~%"
+          (format-timestring nil (v:timestamp message)
+                             :format
+                             '((:year 4) #\- (:month 2) #\- (:day 2)
+                               #\Space
+                               (:hour 2) #\: (:min 2) #\: (:sec 2)
+                               #\Space
+                               :nsec))
+          (thread-name (v:thread message))
+          (v:level message)
+          (mapcar #'symbol-munger:lisp->english (v:categories message))
+          (v:content message)))
+
+
 
 ;;; Web servers
 
-(defun start-hunchentoot (&key host port)
+(defun start-hunchentoot (&key (host "localhost") (port 5000))
   "Start a Hunchentoot  server via `START' and fall through  into a REPL
 to keep the process running."
   (start :host host :port port)
-  (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, or exit the REPL.")
+  (print "Hunchentoot server running. Evaluate (TOOTSVILLE:STOP) to stop, ~
+or exit the REPL.")
   (start-repl))
+
+(defun debugger ()
+  (swank:set-default-directory (asdf:component-relative-pathname
+                                (asdf:find-system  :Tootsville)))
+  (swank:set-package :Tootsville)
+  (start))
+
+(defun destroy-all-listeners ()
+  (map nil #'destroy-thread
+       (remove-if-not (lambda (th) (search "Hunchentoot Listening on Address"
+                                           (thread-name th)))
+                      (all-threads))))
+
+(defun destroy-all-idle-workers ()
+  (let ((workers (remove-if-not (lambda (th) (search "Idle Web Worker"
+                                                     (thread-name th)))
+                                (all-threads))))
+    (map nil #'destroy-thread workers)
+    workers))
+
+(defun destroy-all-web-tasks ()
+  (destroy-all-listeners)
+  (while (destroy-all-idle-workers)
+    (sleep 1)))
 
 (defparameter *trace-output-heartbeat-time* 90)
 
@@ -186,7 +247,9 @@ to keep the process running."
   "Start a Hunchentoot  server via `START' and daemonize with Swank"
   (disable-sbcl-ldb)
   (set-up-for-daemon/start-logging)
+  (v:info :starting "Starting on host interface ~a port ~a" host port)
   (start :host host :port port)
+  (v:info :starting "Starting Swank")
   (start-swank)
   (loop
      (trace-output-heartbeat)
@@ -217,30 +280,6 @@ Hopefully you've already tested the changes?"
 
 (defun connect-databases ()
   (dolist (thread (mapcar (lambda (n)
-                            (make-thread n :name (string-capitalize n)))
-                          '(connect-mixer connect-directory #+ (or) connect-cache)))
-    (join-thread thread)))
-
-(defun connect-mixer ()
-  (setf clouchdb:*couchdb*
-        (clouchdb:make-db :host (or (config :mixer :host))
-                          :port (or (config :mixer :port) "5984")
-                          :user (config :mixer :admin :name)
-                          :password (config :mixer :admin :password)
-                          :name "tootsville/5"))
-  (v:info :mixer "MOTD from Mixer: ~a" (cdr (assoc :|motd| (clouchdb:get-document "motd")))))
-
-(defun connect-directory ())
-#+ (or)
-(defun connect-cache ()
-  (setf cl-memcached:*memcache*
-        (cl-memcached:make-memcache :ip (config :cache :host)
-                                    :port (or (config :cache :port) 11211)
-                                    :name (cluster-name)))
-  (let ((n (princ-to-string (random (expt 2 63))))
-        (key (format nil "~a.~a" (machine-instance) (cluster-name))))
-    (cl-memcached:mc-set key n)
-    (let ((m (cl-memcached:mc-get key)))
-      (assert (= n m) ()
-              "MemCacheD did not return the random number (~x) for key ~a"
-              n key))))
+                            (make-thread n :name (symbol-munger:lisp->english n)))
+                          '(connect-mixer connect-cache connect-maria)))
+    (assert (join-thread thread))))

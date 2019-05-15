@@ -1,0 +1,109 @@
+/* -*- css -*-*/
+
+/*!
+ *
+ * ./play/play.less is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ *  it  under the  terms  of the  GNU Affero  General  Public License  as
+*   published by  the Free Software  Foundation; either version 3  of the
+*   License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+*WITHOUT   ANY  WARRANTY;   without   even  the   implied  warranty   of
+*MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+*General  Public License  for  more details.  You  should have  received
+*a  copy of  the  GNU  Affero General  Public  License  along with  this
+*program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
+
+#mobile {
+    >  .home-screen {
+        .app-icon {
+            display: inline-block;
+            button {
+                // position: relative; top: -3rem;
+                height: 3rem;
+                width: 3rem;
+                min-height: 1cm;
+                min-width: 1cm;
+                border: 1px solid;
+                border-radius: 1.5rem;
+                border-top-color: #ccc;
+                border-left-color: #ccc;
+                border-right-color: #666;
+                border-bottom-color: #666;
+                box-shadow: 1px 1px 3px #999;
+                background-color: @gold;
+                font-size: 1.9rem;
+                color: white;
+                text-shadow: 1px 1px 3px #333;
+                cursor: pointer;
+                &:hover {
+                    box-shadow: 1px 1px 5px #000;
+                }
+            }
+            #tootnix-calendar {
+                background-color: @pink;
+            }
+            #tootnix-camera {
+                background-color: @periwinkle;
+            }
+            #tootnix-contacts {
+                background-color: @blue;
+            }
+            #tootnix-map {
+                background-color: @burgundy;
+            }
+            #tootnix-messages {
+                background-color: @violet;
+            }
+            #tootnix-wallet {
+                background-color: @spring-green;
+            }
+            label {
+                cursor: pointer;
+                font-family: Cantarell;
+                font-size: .75rem;
+                width: 5rem;
+                text-overflow: ellipsis;
+                text-align: center;
+                border: 0;
+                border-radius: 0;
+                position: relative;
+                left: -5rem;
+                top: 2.5rem;
+            }
+        }
+    }
+    > button {
+        border-radius: 0;
+        border: .5px solid;
+        border-top-color: #ccc;
+        border-left-color: #ccc;
+        border-right-color: #333;
+        border-bottom-color: #333;
+        box-shadow: 1px 1px 1px #999;
+        min-height: 1cm;
+        min-width: 4cm;
+        font-family: Cantarell;
+        font-weight: bold;
+        background-color: @gold;
+        :hover {
+            background-color: #eee;
+            color: #111;
+        }
+    }
+}

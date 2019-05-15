@@ -1,0 +1,12 @@
+{"_id": "_design/gossip-exchange",
+ "_rev": "1545065155",
+ "language": "javascript",
+ "views":
+ { "unanswered":
+   { "map": "function (doc) { if (doc.answeror == null) { emit (doc._id, doc._rev);  } }" },
+   "pending":
+   { "map": "function (doc) { if (doc.answeror != null && doc.answer == null) { emit (doc._id, doc._rev); } }" },
+   "answered":
+   { "map": "function (doc) { if (doc.answer != null) { emit (doc._id, doc._rev); } }" } },
+ 
+}

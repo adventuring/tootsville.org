@@ -1,4 +1,35 @@
 /* -*- js2 -*- */
+
+/*@license
+ *
+ * ./play/login/login.js is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received  a copy  of the  GNU Affero  General Public
+ * License     along    with     this    program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
 if (!("Tootsville" in window)) { Tootsville = {}; }
 if (! ("login" in Tootsville)) { Tootsville.login = {}; }
 
@@ -7,12 +38,13 @@ Tootsville.login.overlay = function ()
 
 Tootsville.login.start = function ()
 { if (document.getElementById ("login") && document.getElementById ("login").style.display == "block")
-  { Tootsville.trace ("Not restarting login; panel already visible");
+  { Tootsville.trace ("Restarting login…");
+    Tootsville.login.startSignIn();
     return; }
   Tootsville.trace ("Start login");
   Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.firebaseLogin); };
 
-Tootsville.login.drawAvatarOnCanvas = function (avatar,canvas)
+Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
 { /* TODO: Replace super-lame placeholder with paperdolls in Tootsville.login.drawAvatarOnCanvas */
     canvas.height = 128;
     canvas.width = 128;
@@ -25,71 +57,89 @@ Tootsville.login.drawAvatarOnCanvas = function (avatar,canvas)
     context.fillText (avatar.pattern, 0, 64); };
 
 Tootsville.login.clearTootsList = function ()
-{ var toots = document.querySelectorAll ('.toot');
+{ var spin = document.querySelector ('.toots-list-loading-spinner');
+  if (spin)
+  { spin.parentNode.removeChild (spin); }
+  var toots = document.querySelectorAll ('.toot');
   for (var i = 0; i < toots.length; ++i)
   { toots[i].parentNode.removeChild (toots[i]); } };
 
 Tootsville.login.serverQueryCharacters = function ()
-{ return new Promise (
+{ Tootsville.trace ("serverQueryCharacters");
+  return new Promise (
     (finish, reject) =>
-        { Tootsville.util.rest (
-            '/users/me/toots',
-            { want: [ 'avatar', 'name', 'note', 'child-p', 'sensitive-p' ],
-              order: 'last-seen' }).
+        { Tootsville.util.rest ('GET', 'users/me/toots').
           then (
               response =>
-                  { if (response.toots.length == 0)
+                  { Tootsville.trace ("response from serverQueryCharacters", response);
+                    if (response.toots.length == 0)
                     { reject (); } else
                     { finish (response.toots); } },
               error =>
-                  { Tootsville.parrot.say ("Can't get Toots list",
-                                           "I can't get a list of your Toots. Are you connected to the Internet?");
-                    Tootsville.error ("Can't retrieve Toots list", error); } ); }); };
+                  { Tootsville.parrot.ask ("Can't get Toots list",
+                                           "I can't get a list of your Toots. Maybe there are network problems?",
+                                           [{ tag: "retry",
+                                              text: "Try Again" }]).
+                    then (
+                        () => { Tootsville.trace("serverQueryCharacters retry");
+                                Tootsville.login.serverQueryCharacters ().then (finish, reject); });
+                    Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
-Tootsville.login.createTootListItem = function (toot)
+Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
+  li.innerHTML = '<span class="toot-name">' +
+  tootName + '</span><i class="fas fa-spin fa-spinner"></i>';
   li.className = 'toot';
-  li['data-toot'] = toot;
+  li['data-toot'] = { name: tootName };
   li.onclick = function () { Tootsville.login.pickCharacter (li); };
-  var canvas = document.createElement ('CANVAS');
-  li.appendChild (canvas);
-  li.innerHTML += '<span class="toot-name">' +
-  toot.name + '</span><span class="note">' + toot.note + '</span>';
-  Tootsville.login.addChildOrSensitiveFlag (li);
+  Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).then(
+      toot => { li['data-toot'] = toot;
+                var canvas = document.createElement ('CANVAS');
+                Tootsville.login.drawAvatarOnCanvas (toot, canvas);
+                li.innerHTML = '';
+                li.appendChild (canvas);
+                li.innerHTML += '<span class="toot-name">' +
+                toot.name + '</span><span class="note">' + toot.note + '</span>';
+                Tootsville.login.addChildOrSensitiveFlag (li); });
   return li; };
 
 Tootsville.login.populateTootsList = function (list)
-{ Tootsville.login.clearTootsList ();
+{ Tootsville.trace("populateTootsList");
+  Tootsville.login.clearTootsList ();
+  Tootsville.trace("cleared list; adding back Toots");
   for (var i = 0; i < list.length; ++i)
   { var toot = list[i];
+    Tootsville.trace("adding " + toot);
     var li = Tootsville.login.createTootListItem (toot);
-    document.getElementById ('toots-list').appendChild (li);
-    var canvas = li.querySelector ('canvas');
-    Tootsville.login.drawAvatarOnCanvas (toot, canvas); } };
+    document.getElementById ('toots-list').appendChild (li); } };
 
 Tootsville.login.generateNewToot = function ()
 { /* TODO let server generate new Toots with unique names */
     var toot =
-      { name: "Needs-Naming",
-        baseColor: "indigo",
-        patternColor: "yellow",
-        pattern: "lightning",
-        padColor: "spring-green",
-        childP: false,
-        sensitiveP: false };
+        { name: "Needs-Naming",
+          baseColor: "indigo",
+          patternColor: "yellow",
+          pattern: "lightning",
+          padColor: "spring-green",
+          childP: false,
+          sensitiveP: false };
     Tootsville.login.createTootListItem (toot);
     Tootsville.login.editToot (toot); };
+
+Tootsville.login.editToot = function (toot)
+{ Tootsville.ui.hud.showHUDPanel('new-toot'); };
 
 Tootsville.login.startCharacterCreation = function ()
 { Tootsville.parrot.say ("Let's get started!",
                          "<p>Let's create your Toot character.</p>" +
-                         "<p>You'll be able to get started about a minute. I'll create a new " +
+                         "<p>This takes about a minute. I'll create a new " +
                          "Toot character for you. You can change the name, colors, or " +
                          "pattern to be what you like. </p>").
   then(Tootsville.login.generateNewToot); };
 
 Tootsville.login.loadTootsList = function ()
-{ Tootsville.login.serverQueryCharacters ().then
+{ Tootsville.trace("loadTootsList");
+  Tootsville.login.serverQueryCharacters ().then
   (Tootsville.login.populateTootsList,
    Tootsville.login.startCharacterCreation); };
 
@@ -128,8 +178,28 @@ Tootsville.login.startSignIn = function ()
   document.getElementById ('login-warm-up').style.display = 'none';
   document.getElementById ('pick-toot').style.display = 'none'; };
 
+Tootsville.login.endLoginMusic = function ()
+{ return; // TODO
+  var loginMusic = querySelector("#login audio");
+  if (loginMusic) // should always be found
+  {  setTimeout ( () => { loginMusic.volume = .5; }, 333 );
+     setTimeout ( () => { loginMusic.volume = .25; }, 666 );
+     setTimeout ( () => { loginMusic.volume = 0; }, 1000 );
+     setTimeout ( () => { loginMusic.parentNode.removeChild (loginMusic); }, 1050 ); } };
+
+Tootsville.login.loginDone = function (reply)
+{ Tootsville.trace ("loginDone", reply);
+  Tootsville.login.endLoginMusic ();
+  Tootsville.ui.hud.closePanel ();
+  Tootsville.character = reply.toot;
+  Tootsville.player = reply.player;
+  Tootsville.gossip.ensureConnected ();
+  Tootsville.tank.start3D (); };
+
 Tootsville.login.serverLinkTokenToCharacter = function (character)
-{ return Tootsville.util.rest ('users', 'play-with', { character: character }); };
+{ return Tootsville.util.rest ('POST', 'users/me/play-with/' + character).then(
+   Tootsville.login.loginDone,
+    error => { alert (character + " can't play right now. " + error); }); };
 
 Tootsville.login.removeChildOrSensitive = function (li)
 { var child = li.querySelector ('.child');
@@ -146,9 +216,9 @@ Tootsville.login.appendChildMode = function (li, tag, label, checkedP)
 Tootsville.login.appendChildSensitiveRadioSet = function (li)
 { li.innerHTML += '<br clear="left"><hr>';
   Tootsville.login.appendChildMode (li, 'adult', '<i class="fas fa-graduation-cap fa-fw"></i> Adult account',
-                                   ! (li['data-toot'].childP || li['data-toot'].sensitiveP));
+                                    ! (li['data-toot'].childP || li['data-toot'].sensitiveP));
   appendChildMode (li, 'child', '<i class="fas fa-child fa-fw"></i> Child account',
-                  li['data-toot'].childP);
+                   li['data-toot'].childP);
   appendChildMode (li, 'sensitive', '<i class="fas fa-chess-queen fa-fw"></i> Sensitive Player account',
                    li['data-toot'].sensitiveP); };
 
@@ -173,23 +243,23 @@ Tootsville.login.findSelectedChildMode = function (li)
   return 'adult'; };
 
 Tootsville.login.enableChildMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/child-p', { set: true });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: true });
   li['data-toot'].childP = true;
   li['data-toot'].sensitiveP = false;
   li.querySelector ('.define-child-code').style.display = 'block'; };
 
 Tootsville.login.disableChildMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/child-p', { set: false });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: false });
   li['data-toot'].childP = false;
   li.querySelector ('.define-child-code').style.display = 'none'; };
 
 Tootsville.login.enableSensitiveMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/sensitive-p', { set: true });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/sensitive-p', { set: true });
   li['data-toot'].childP = false;
   li['data-toot'].sensitiveP = true; };
 
 Tootsville.login.disableSensitiveMode = function (li, name)
-{ Tootsville.util.rest ('users', 'toots/' + name + '/sensitive-p', { set: false });
+{ Tootsville.util.rest ('POST', 'toots/' + name + '/sensitive-p', { set: false });
   li['data-toot'].sensitiveP = false; };
 
 Tootsville.login.updateChildMode = function (name)
@@ -258,20 +328,11 @@ Tootsville.login.doneEditingSettings = function ()
   document.querySelector ('#new-toot-hint').style.display = 'block';
   document.querySelector ('#edit-toot-settings-done').style.display = 'none'; };
 
-Tootsville.login.copyGoogleUserInfo = function ()
-{ Tootsville.login.googleIDToken = Tootsville.login.googleUser.getAuthResponse ().id_token;
-  Tootsville.login.storeGoogleCredentials ();
-  var profile = Tootsville.login.googleUser.getBasicProfile ();
-  if (! Tootsville.login.player) { Tootsville.login.player = {} ; }
-  Tootsville.login.player.name = profile.getName ();
-  Tootsville.login.player.email = profile.getEmail ();
-  Tootsville.login.player.face = profile.getImageUrl (); };
-
 Tootsville.login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
   Tootsville.trace ("Starting Firebase login");
   ui.start(
-      '#firebaseui-auth-container', 
+      '#firebaseui-auth-container',
       { callbacks:
         { signInSuccessWithAuthResult: Tootsville.login.acceptSignedIn,
           uiShown: function()
@@ -281,7 +342,7 @@ Tootsville.login.firebaseLogin = function (loginPanel)
         signInFlow: 'popup',
         tosUrl: 'https://wiki.tootsville.org/wiki/Core:ToS',
         privacyPolicyUrl: 'https://wiki.tootsville.org/wiki/Core:Privacy',
-        signInOptions: 
+        signInOptions:
         [ { provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             scopes:
             [ 'https://www.googleapis.com/auth/plus.login' ],
@@ -299,22 +360,30 @@ Tootsville.login.firebaseLogin = function (loginPanel)
 Tootsville.login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in", result);
   Tootsville.login.storeCredentialInfo (result);
-  Tootsville.login.switchTootsView();
   return false; };
 
 Tootsville.login.storeCredentialInfo = function (result)
-{   var cred = result.credential;
-    /* .accessToken,  idToken, providerId, signInMethod */
-    var addl = result.additionalUserInfo;
-    /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
-     * gender:  "male",  given_name,   hd:  "star-hope.org",  id,  link:
-     * google+ URI, locale: "en-GB", name, picture: URL, verified_email:
-     * true} */
+{ var cred = result.credential;
+  /* .accessToken,  idToken, providerId, signInMethod */
+  var addl = result.additionalUserInfo;
+  /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
+   * gender:  "male",  given_name,   hd:  "star-hope.org",  id,  link:
+   * google+ URI, locale: "en-GB", name, picture: URL, verified_email:
+   * true} */
   var user = result.user;
-    /* o: "[DEFAULT]", refreshToken,  displayName, email, emailVerified,
-     * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
-     * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
-     * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
+  /* o: "[DEFAULT]", refreshToken,  displayName, email, emailVerified,
+   * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
+   * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
+   * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
+
+  firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
+  then (function (idToken)
+        { Tootsville.login.firebaseAuth = idToken;
+          Tootsville.login.switchTootsView(); }).
+  catch(function(error) {
+      // Handle error TODO
+  });
+
   Tootsville.login.accessToken = cred.accessToken;
   Tootsville.login.idToken = cred.idToken;
   Tootsville.login.idProvider = cred.providerId;
@@ -327,8 +396,14 @@ Tootsville.login.storeCredentialInfo = function (result)
                                   user.providerData[0].photoURL ||
                                   addl.picture);
   Tootsville.login.player.gender = addl.gender;
-  Tootsville.login.player.locale = addl.locale; };
+  Tootsville.login.player.locale = addl.locale;
 
+};
 
-
-
+Tootsville.login.quit = function ()
+{ Tootsville.player = null;
+  Tootsville.character = null;
+  Tootsville.login.accessToken = null;
+  Tootsville.login.idToken = null;
+  Tootsville.login.idProvider = null;
+  firebase.auth().signOut().then(Tootsville.login.start); };

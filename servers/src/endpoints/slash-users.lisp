@@ -1,4 +1,33 @@
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/endpoints/slash-users.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
+
 (in-package :Tootsville)
+
+(declaim (optimize (speed 3)))
 
 (defendpoint (get "/users/me" "application/json")
   "Provides information about your user account.
@@ -36,19 +65,21 @@ Child accounts will have some tokens here that help us … TODO
 @subsection{Status: 403 Authorization Failed}
 
 "
-  (with-player ()
+  (with-user ()
     (list 200 nil
           (list :hello "Hello, new user"
                 :fake "This is a totes fake response"
                 :toots "/users/me/toots.json"))))
 
 (defendpoint (put "/users/me" "application/json")
-  "Registers a new user account.
+  "Makes changes to an user account.
 
 Requires the user  to pass some external,  trusted authentication source
 information, like an OAuth2 login.
 
 @subsection{Status: 201 Created}
+
+XXX is there a better status for updates?
 
 @subsection{Status: 401 Authorization Required}
 
@@ -57,7 +88,7 @@ information, like an OAuth2 login.
 @subsection{Status: 405 Not Allowed}
 
 "
-  (with-player ()
+  (with-user ()
     (list 200 nil
           (list :hello "Hello, new user"
                 :fake "This is a totes fake response"
@@ -79,17 +110,31 @@ Requires a body with fields to be changed, and their new values. TODO.
 @subsection{Status: 405 Not Allowed}
 
 "
-  (with-player ()
+  (with-user ()
     (error 'unimplemented)))
 
-
 (defendpoint (get "/users/me/toots" "application/json")
-  "Enumerates all Toot characters available to you."
-  (with-player ()
-    (list 200 (list :last-modified (header-time (yesterday)))
-          (list :toots (player-toots)))))
+  "Enumerate all Toot characters available to you."
+  (with-user ()
+    (dolist (Toot (player-Toots))
+      (v:info :Toots "Player ~a has Toot ~a" (person-display-name *user*)
+              (Toot-name Toot)))
+    (list 200
+          (list :Last-Modified (header-time
+                                (universal-to-timestamp
+                                 (loop for Toot in (player-Toots)
+                                    maximizing
+                                      (the fixnum
+                                           (timestamp-to-universal
+                                            (or (Toot-last-active Toot) (now))))))))
+          (list :|toots| (mapcar #'Toot-name
+                                 (sort (player-Toots)
+                                       #'timestamp<
+                                       :key (lambda (Toot)
+                                              (or (Toot-last-active Toot)
+                                                  (universal-to-timestamp 0)))))))))
 
-(defendpoint (put "/users/me/toots/:toot-name" "application/json")
+(defendpoint (post "/users/me/toots/:toot-name" "application/json")
   "Create a new Toot character named TOOT-NAME.
 
 Requires player authentication.
@@ -99,11 +144,42 @@ Returns the Toot's information upon success.
 
 See GET /users/me/toots/:toot-name for the format.
 
+@subsection{Status: 200 OK}
+
+Toot already existed, no changes will be made.
+
 @subsection{Status: 307 Redirect}
 If the Toot had been previously created, returns a redirect (307)."
-  (with-player ()
-    (assert-my-character toot-name)
-    (list 201 nil (toot-info (find-toot-by-name toot-name)))))
+  (with-user ()
+    (if-let (pre-x (ignore-errors (find-record 'Toot :name Toot-name)))
+      (progn (assert-my-character pre-x)
+             (list 200 nil (Toot-info pre-x)))
+      (let* ((pattern (hunchentoot:parameter "pattern"))
+             (pattern-color (hunchentoot:parameter "pattern-color"))
+             (base-color (hunchentoot:parameter "base-color"))
+             (pad-color (hunchentoot:parameter "pad-color")))
+        ;; TODO: assert that player doesn't have too many Toots
+        (check-type pattern Toot-pattern-name)
+        (check-type pattern-color Toot-pattern-color-name)
+        (check-type base-color Toot-base-color-name)
+        (check-type pad-color Toot-pad-color-name)
+        (check-pattern-on-base-color pattern-color base-color)
+        (let ((new-Toot
+               (make-record
+                'Toot
+                :name Toot-name
+                :avatar 1 ; UltraToot
+                :pattern pattern
+                :base-color base-color
+                :pattern-color pattern-color
+                :pad-color pad-color
+                :player (person-uuid *user*)
+                :last-active (now)
+                :note (or (hunchentoot:parameter "note") "")
+                :avatar-scale-x 1.0
+                :avatar-scale-y 1.0
+                :avatar-scale-z 1.0)))
+          (list 201 nil (Toot-info new-Toot)))))))
 
 (defendpoint (get "/users/me/toots/:toot-name" "application/json")
   "Gives detailed information about your Toot character TOOT-NAME.
@@ -125,9 +201,12 @@ The user credentials presented were not recognized.
 @subsection{Status: 404 Not Found}
 
 "
-  (with-player ()
-    (assert-my-character toot-name)
-    (error 'unimplemented)))
+  (with-user ()
+    (assert-my-character Toot-name)
+    (let ((Toot (find-record 'Toot :name Toot-name)))
+      (list 200
+            () ;; (list :Last-Modified (Toot-last-active Toot))
+            (Toot-info Toot)))))
 
 (defendpoint (delete "/users/me/toots/:toot-name" "application/json")
   "Permanently destroys the Toot character TOOT-NAME.
@@ -154,9 +233,11 @@ The Toot has  been deleted. Repeated calls will return  the same status,
 for the duration of the name lock on the Toot.
 
 @subsection{Status: 401 Authorization Required}
+
 No user credentials were passed.
 
 @subsection{Status: 403 Authorization Failed}
+
 The user credentials presented were not recognized.
 
 @subsection{Status: 404 Not Found}
@@ -169,6 +250,43 @@ The Toot named is  one that you have permission to use,  but are not the
 main owner of. This is usually a child account.
 
 "
-  (with-player ()
+  (with-user ()
     (assert-my-character toot-name)
     (error 'unimplemented)))
+
+(defendpoint (post "/users/me/play-with/:toot-name" "application/json")
+  "Begin playing with the Toot named TOOT-NAME.
+
+@table
+@item Toot-Name
+The name of the Toot character to play with.
+@end table
+
+@subsection{Status: 200 OK}
+
+You are now in control of this Toot. The Toot's info will be returned.
+
+@subsection{Status: 401 Authorization Required}
+
+No user credentials were passed.
+
+@subsection{Status: 403 Authorization Failed}
+
+The user credentials presented were not recognized.
+
+@subsection{Status: 404 Not Found}
+
+The Toot named does not exist.
+
+@subsection{Status: 405 Not Allowed}
+
+The Toot named is  one that you have permission to use,  but are not the
+main owner of. This is usually a child account.
+
+"
+  (with-user ()
+    (assert-my-character Toot-name)
+    (list 200
+          ()
+          (list :|toot| (Toot-info (find-record 'Toot :name Toot-name))
+                :|player| *user*))))

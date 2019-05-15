@@ -28,7 +28,7 @@
         :if-exists :append
         :if-does-not-exist :create))
 
-
+
 
 (defun greeting/daemon/error-output ()
   (format *error-output*
@@ -60,7 +60,7 @@
   (v:output-here (open-log-file (verbose-log-file log-dir)))
   (greeting/daemon/log-output))
 
-
+
 
 (defun set-up-for-daemon/error-output (log-dir)
   (setf *error-output* (open-log-file (error-log-file log-dir)))

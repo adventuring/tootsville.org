@@ -1,8 +1,35 @@
-(in-package :Tootsville)
+;;;; -*- lisp -*-
+;;;
+;;;; ./servers/src/db/friendly.lisp is part of Tootsville
+;;;
+;;;; Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+;;;
+;;;; This  program is  Free  Software: you  can  redistribute it  and/or
+;;;; modify it under the terms of  the GNU Affero General Public License
+;;;; as published by  the Free Software Foundation; either  version 3 of
+;;;; the License, or (at your option) any later version.
+;;;
+;;; This program is distributed in the  hope that it will be useful, but
+;;; WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+;;; MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+;;; Affero General Public License for more details.
+;;;
+;;; You should  have received a  copy of  the GNU Affero  General Public
+;;; License    along     with    this     program.    If     not,    see
+;;; <https://www.gnu.org/licenses/>.
+;;;
+;;; You can reach CIWTA at https://ciwta.org/, or write to us at:
+;;;
+;;; PO Box 23095
+;;;; Oakland Park, FL 33307-3095
+;;; USA
 
-(defrecord db.person (:friendly "people")
+(in-package :Tootsville)
+
+(defrecord person (:friendly "people")
   (uuid uuid)
-  (display-name string) 
+  (display-name string)
   (given-name string)
   (surname string)
   (date-of-birth timestamp)
@@ -10,31 +37,15 @@
   (sensitivep yornp)
   (child-code string)
   (gender keyword)
-  (lang string))
+  (lang keyword))
 
-(defgeneric as-person (person-or-uuid-or-uid)
-  (:method ((person db.person))
-    person)
-  (:method ((person uuid:uuid))
-    (find-record 'db.person "uuid" person))
-  (:method ((person real))
-    (check-type person (real (0) (#.(expt 2 128)))) 
-    (find-record 'db.person "uuid" person))
-  (:method ((person cons))
-    (assert (= 2 (length person)))
-    (check-type (car person) string)
-    (check-type (cdr person) string)
-    (db-select-single-column "credentials" "person"
-                             "uid" (car person)
-                             "provider" (cdr person))))
+(defrecord parent-child (:friendly "parent_child")
+  (parent uuid ref person)
+  (child uuid ref person))
 
-(defrecord db.parent-child (:friendly "parent_child")
-  (parent uuid ref db.person)
-  (child uuid ref db.person))
-
-(defrecord db.credential (:friendly "credentials")
+(defrecord credential (:friendly "credentials")
   (uuid uuid)
-  (person uuid ref db.person)
+  (person uuid ref person)
   (uid string)
   (provider string)
   (id-token string)
@@ -42,38 +53,69 @@
   (refresh-token string)
   (json-info json))
 
-(defrecord db.person-link (:friendly "person_links")
+(defrecord person-link (:friendly "person_links")
   (uuid uuid)
-  (person uuid ref db.person)
+  (person uuid ref person)
   (rel keyword)
   (url uri)
-  (label string))
+  (label string)
+  (provenance string))
 
-(defrecord db.login (:friendly "logins")
+(defrecord login (:friendly "logins")
   (uuid uuid)
-  (person uuid ref db.person)
-  (credential uuid ref db.credential)
+  (person uuid ref person)
+  (credential uuid ref credential)
   (start timestamp)
   (renewed timestamp)
   (last-seen timestamp)
   (origin string))
 
-(defrecord db.avatar (:friendly "avatars")
+(defrecord contact (:friendly "contacts")
+  (uuid uuid)
+  (owner uuid ref person)
+  (contact uuid ref person)
+  (starredp yornp)
+  (added timestamp)
+  (last-used timestamp))
+
+(defrecord sms (:friendly "sms")
+  (uuid uuid)
+  (sender uuid ref Toot)
+  (destination uuid ref Toot)
+  (message string)
+  (mmsp yornp))
+
+
+(defrecord avatar (:friendly "avatars" :pull t)
+  (id number)
+  (moniker string)
+  (avatar-scale-x number)
+  (avatar-scale-y number)
+  (avatar-scale-z number))
+
+(defrecord pattern (:friendly "patterns" :pull t)
   (id number)
   (name string))
-
-(defrecord db.toots (:friendly "toots")
+
+(defrecord Toot (:friendly "toots")
   (uuid uuid)
-  (name string) 
-  (pattern keyword)
+  (name string)
+  (pattern number ref pattern)
   (base-color color24)
   (pattern-color color24)
   (pad-color color24)
-  (avatar number ref db.avatar)
-  (player uuid ref db.person)
-  (last-active timestamp))
+  (avatar number ref avatar)
+  (player uuid ref person)
+  (last-active timestamp)
+  (note string)
+  (avatar-scale-x number)
+  (avatar-scale-y number)
+  (avatar-scale-z number))
 
-(defrecord db.wear-slot (:friendly "wear-slots")
+(defmethod save-record :before ((Toot Toot))
+  (setf (Toot-last-active Toot) (now)))
+
+(defrecord wear-slot (:friendly "wear-slots")
   (id number)
   (name string)
   (alternate number)
@@ -83,31 +125,68 @@
   (obstruct-min number)
   (obstruct-max number))
 
-(defrecord db.avatar-slot (:friendly "avatar_slots")
+(defrecord avatar-slot (:friendly "avatar_slots")
   (id number)
-  (avatar number ref db.avatar)
+  (avatar number ref avatar)
   (slot keyword)
   (valence number))
-
-(defrecord db.item-template (:friendly "item_templates")
+
+(defrecord item-template (:friendly "item_templates" :pull t)
   (id number)
   (name string)
   (default-base-color color24)
-  (avatar number ref db.avatar)
+  (default-alt-color color24)
+  (avatar string)
   (energy-kind keyword)
   (energy-max number)
   (on-zero keyword)
-  (wear-slot number ref db.wear-slot) 
-  (weight number))
+  (wear-slot number ref wear-slot)
+  (weight number)
+  (avatar-scale-x number)
+  (avatar-scale-y number)
+  (avatar-scale-z number))
 
-(defrecord db.item (:friendly "items")
+(defrecord item (:friendly "items")
   (uuid uuid)
   (base-color color24)
-  (template number ref db.item-template)
-  (energy number))
+  (alt-color color24)
+  (template number ref item-template)
+  (energy number)
+  (avatar-scale-x number)
+  (avatar-scale-y number)
+  (avatar-scale-z number)
+  (x number)
+  (y number)
+  (z number)
+  (latitude number)
+  (longitude number)
+  (altitude number)
+  (world keyword))
 
-(defrecord db.inventory-item (:friendly "inventory")
-  (person uuid ref db.person)
-  (toot uuid ref db.toot)
-  (item uuid ref db.item)
-  (equipped keyword)) 
+(defrecord inventory-item (:friendly "inventory" :id-column item)
+  (item uuid ref item)
+  (person uuid ref person)
+  (Toot uuid ref Toot)
+  (equipped keyword))
+
+
+(defrecord music (:friendly "music" :pull t)
+  (id number)
+  (title string)
+  (artist string)
+  (genre string)
+  (license string)
+  (moniker string))
+
+(defrecord character-music (:friendly "character_music"
+                                      :pull t)
+  (music number ref music)
+  (Toot uuid ref Toot))
+
+(defrecord locale-music (:friendly "locale_music"
+                                   :pull t)
+  (music number ref music)
+  (x number)
+  (y number)
+  (z number)
+  (radius number))

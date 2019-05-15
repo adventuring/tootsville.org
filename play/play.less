@@ -1,9 +1,42 @@
+/* -*- css -*-*/
+
+/*!
+ *
+ * ./play/play.less is part of Tootsville
+ *
+ * Copyright   ©  2016,2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ *  it  under the  terms  of the  GNU Affero  General  Public License  as
+*   published by  the Free Software  Foundation; either version 3  of the
+*   License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+*WITHOUT   ANY  WARRANTY;   without   even  the   implied  warranty   of
+*MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+*General  Public License  for  more details.  You  should have  received
+*a  copy of  the  GNU  Affero General  Public  License  along with  this
+*program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
+
 @import url(https://fonts.googleapis.com/css?family=Acme);
 @import url(https://fonts.googleapis.com/css?family=Cantarell);
 @import url(palette.less);
 @import url(ui/hud.less);
+@import url(ui/tootnix.less);
 @import url(scene/scene.less);
 @import url(login/login.less);
+@import url(mobile.less);
 
 /* pathological edge case */
 
@@ -45,9 +78,29 @@ html {
 body {
     overflow: hidden;
 }
-h1 { font-size: 3rem }
+h1 { font-size: 3rem } 
 h2 { font-size: 2.5rem }
 h3 { font-size: 2rem }
 h4 { font-size: 1.5rem; font-family: Cantarell, sans-serif }
 h5 { font-size: 1rem; display: inline-block; margin-right: 2rem; }
 h6 { font-size: 1rem; display: inline-block; margin-right: 2rem; font-family: Cantarell, sans-serif }
+
+.mobile-only { display: none; }
+
+button {
+    background-color: white;
+    border: 1pt solid black;
+    border-radius: 1em;
+    font-family: Acme;
+    font-size: 1.25rem;
+    vertical-align: middle;
+    text-align: center;
+    margin: 1rem;
+    padding: .25rem .5rem .25rem .5rem;
+}
+
+button:hover {
+    background-color: #eee;
+    color: #111;
+}
+

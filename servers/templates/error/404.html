@@ -1,16 +1,45 @@
-<!--#include file="error-header.htmlf"-->
+<!DOCTYPE html> <!-- -*- web-mode -*- -->
 
-<div id="bella-flight">
-  <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella.png"
-       id="bella">
-  <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella-Shadow.png"
-       id="bella-shadow">
-</div>
+<!-- ./servers/templates/error/404.html is part of Tootsville
 
-<h1> 404: Not Found </h1>
+     Copyright  ©   2016,2017  Bruce-Robert  Pocock;  ©   2018,2019  The
+     Corporation for Inter-World Tourism and Adventuring (ciwta.org).
 
-<!--#if expr="-z v('REDIRECT_URL')"-->
-<p> There is no resource at the location you requested. </p>
+     This  program is  Free  Software: you  can  redistribute it  and/or
+     modify it under the terms of  the GNU Affero General Public License
+     as published by  the Free Software Foundation; either  version 3 of
+     the License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful, but
+     WITHOUT  ANY  WARRANTY;  without   even  the  implied  warranty  of
+     MERCHANTABILITY or  FITNESS FOR A  PARTICULAR PURPOSE. See  the GNU
+     Affero General Public License for more details.
+
+     You should  have received a copy  of the GNU Affero  General Public
+     License    along     with    this    program.    If     not,    see
+     <https://www.gnu.org/licenses/>.
+
+     You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+     PO Box 23095
+
+     Oakland Park, FL 33307-3095
+
+     USA
+
+     --><!--#include file="error-header.htmlf"-->
+
+     <div id="bella-flight">
+       <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella.png"
+            id="bella">
+       <img src="https://jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/Bella-Shadow.png"
+            id="bella-shadow">
+     </div>
+
+     <h1> 404: Not Found </h1>
+
+     <!--#if expr="-z v('REDIRECT_URL')"-->
+<p>  There  is   no  resource  at  the  location   you  requested.  </p>
 <!--#else-->
 <p> There is no resource at “<!--#echo var="REDIRECT_URL"-->” </p>
 <!--#endif-->
@@ -18,49 +47,31 @@
 <ul>
   <li> If you typed the URL, check your spelling. </li>
   <li> If you  followed a link to get here,  please notify the webmaster
-    of the site that sent you here.
-    <!--#if expr="-z v('HTTP_REFERER')"-->
-    <!--#else-->
-    You seem to have been sent here by <tt><!--#echo
-                                               var="HTTP_REFERER"--></tt>.
-    <!--#endif-->
+    of    the   site    that   sent    you   here.    <!--#if   expr="-z
+                                                          v('HTTP_REFERER')"--> <!--#else-->  You seem to have  been sent here
+    by <tt><!--#echo var="HTTP_REFERER"--></tt>. <!--#endif-->
   </li>
 </ul>
 
-<a href="https://wiki.tootsville.org/wiki/Error_404">(Learn
-  More…)</a>
+<a href="https://wiki.tootsville.org/wiki/Error_404">(Learn More…)</a>
 
 <style type="text/css">
-  #builder-toot { opacity: 0 !important }
-  #bella-flight {
-      position:absolute;
-      top: 10rem;
-      left: -3rem;
-      width:10%;
-      animation: bella-across 6s linear forwards;
-      align: center;
-  }
-  @keyframes bella-across {
-      to { transform: translatex(75vw);}
-  }
-  #bella {
-      position: relative;
-      animation: bella-bob 1s alternate infinite ease-in-out;
-      height: 15vh;
-  }
-  #bella-shadow {
-      height: 3vh:
-          top: 18vh;
-  }
-  @keyframes bella-bob {
-      to { transform: translatey(3vh);}
-  }
+  #builder-toot    {    opacity:    0   !important    }    #bella-flight
+  { position:absolute;  top: 10rem;  left: -3rem;  width:10%; animation:
+                                                                  bella-across  6s   linear  forwards;   align:  center;   }  @keyframes
+                                                                                                                              bella-across { to { transform: translatex(75vw);} } #bella { position:
+                                                                                                                                                                                               relative;  animation:  bella-bob  1s alternate  infinite  ease-in-out;
+                                                                                                                                                                                           height: 15vh; }  #bella-shadow { height: 3vh: top:  18vh; } @keyframes
+                                                                                                                                                                                                                                                       bella-bob { to { transform: translatey(3vh);} }
 </style>
 
 <audio onloadeddata="var fiddlesticks = this; setTimeout(function() { fiddlesticks.play(); }, 6000)">
-  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.mp3" />
-  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.ogg" />
-  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.wav" />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.mp3"
+          />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.ogg"
+          />
+  <source src="https://jumbo.tootsville.org/Assets/Voices/Bella-Fiddlesticks.wav"
+          />
 </audio>
 
 <!--#include file="error-footer.htmlf"-->
