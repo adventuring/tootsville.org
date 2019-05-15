@@ -68,17 +68,17 @@ RedirectMatch ^/Assets/(.*)$ //jumbo.tootsville.org/Assets/$1
 RedirectMatch ^/ciwta/(.*)$ https://www.ciwta.org/about/$1
 #RedirectMatch ^/development/(.*)$ https://www.tootsville.org/development/$1
 RedirectMatch ^/devel/docs/(.*)$ https://goethe.tootsville.org/devel/docs/$1
-RedirectMatch ^/directory/(.*)$ https://gossip.@@CLUSTER@@.net/directory/$1
+RedirectMatch ^/directory/(.*)$ https://game.@@CLUSTER@@.net/directory/$1
 #RedirectMatch ^/for/([^\.]*)$ https://www.tootsville.org/for/$1.html
 #RedirectMatch ^/for/?$ https://www.tootsville.org/
 RedirectMatch ^/(form.*)$ https://tootsville.adventuring.click/$1
-RedirectMatch ^/gossip/(.*)$ https://gossip.@@CLUSTER@@.net/gossip/$1
+RedirectMatch ^/gossip/(.*)$ https://game.@@CLUSTER@@.net/gossip/$1
 RedirectMatch ^/help/(.*)$ https://wiki.tootsville.org/wiki/Help_$1
-RedirectMatch ^/indira/(.*)$ https://world.@@CLUSTER@@.net/world/$1
+RedirectMatch ^/indira/(.*)$ https://game.@@CLUSTER@@.net/world/$1
 RedirectMatch ^/login/(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/members/(.*)$ https://members.tootsbook.com/members/$1
-RedirectMatch ^/meta/(.*)$ https://gossip.@@CLUSTER@@.net/meta-game/$1
-RedirectMatch ^/meta-game/(.*)$ https://gossip.@@CLUSTER@@.net/meta-game/$1
+RedirectMatch ^/meta/(.*)$ https://game.@@CLUSTER@@.net/meta-game/$1
+RedirectMatch ^/meta-game/(.*)$ https://game.@@CLUSTER@@.net/meta-game/$1
 RedirectMatch ^/play/(.*)$ https://play.@@CLUSTER@@.org/play/$1
 RedirectMatch ^/play_now(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/play-now(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
@@ -92,13 +92,16 @@ RedirectMatch ^/Playnow(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/Play_Now(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/Play-Now(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/PlayNow(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
+RedirectMatch ^/PLAY_NOW(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
+RedirectMatch ^/PLAY-NOW(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
+RedirectMatch ^/PLAYNOW(.*)$ https://play.@@CLUSTER@@.org/play/?login/$1
 RedirectMatch ^/(quiz.*)$ https://tootsville.adventuring.click/$1
 RedirectMatch ^/tootsbook/(.*)$ https://www.tootsbook.com/tootsbook/$1
-RedirectMatch ^/toots/(.*)$ https://users.@@CLUSTER@@.net/toots/$1
-RedirectMatch ^/users/(.*)$ https://users.@@CLUSTER@@.net/users/$1
+RedirectMatch ^/toots/(.*)$ https://game.@@CLUSTER@@.net/toots/$1
+RedirectMatch ^/users/(.*)$ https://game.@@CLUSTER@@.net/users/$1
 RedirectMatch ^/wiki/(.*)$ https://wiki.tootsville.org/wiki/$1
 RedirectMatch ^/wikiwiki/(.*)$ https://wiki.tootsville.org/wiki/$1
-RedirectMatch ^/world/(.*)$ https://world.@@CLUSTER@@.net/world/$1
+RedirectMatch ^/world/(.*)$ https://game.@@CLUSTER@@.net/world/$1
 
 # Error Documents for all defined error codes.
 ErrorDocument 400 /error/400

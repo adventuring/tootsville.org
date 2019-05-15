@@ -33,19 +33,13 @@
 if (!("util" in Tootsville)) { Tootsville.util = {}; }
 
 Tootsville.util.assertValidHostName = function (hostName)
-{ if ("users" == hostName || "toots" == hostName)
-  { return Tootsville.host["users"]; }
-  if ("gossip" == hostName || "meta-game" == hostName)
-  { return Tootsville.host["gossip"]; }
-  if ("world" == hostName)
-  { return Tootsville.host["world"]; }
+{ if ("http" == hostName || "https" == hostName)
+  { Tootsville.error ("Landed here with http/s as a hostName"); }
   if ("wiki" == hostName)
   { return "https://wiki.tootsville.org"; }
   if ("tootsbook" == hostName)
   { return "https://tootsbook.com"; }
-  Tootsville.error ("Unknown which host handles " + hostName);
-  return undefined;
-};
+  return Tootsville.host["game"]; };
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
