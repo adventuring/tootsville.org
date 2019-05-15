@@ -40,8 +40,8 @@ deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 
 ####################
 
-servers-test:	servers/Tootsville
-	servers/Tootsville check
+servers-test:	../tootsville.net/Tootsville
+	../tootsville.net/Tootsville check
 
 #################### vars
 
@@ -51,14 +51,9 @@ servers-test:	servers/Tootsville
 CLUSTER:=test
 ifeq ($(CLUSTER),.)
 clusterorg=tootsville.org
-clusternet=tootsville.net
 else
 clusterorg=$(CLUSTER).tootsville.org
-clusternet=$(CLUSTER).tootsville.net
 endif
-
-GAMEHOSTS=game3
-BALANCERS=balancer1 balancer2
 
 LOCAL_USERNAME=$(shell whoami)
 REVISION=$(shell git log -n 1 --pretty=format:"%H")
@@ -82,84 +77,22 @@ ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 #################### clean
 
 clean:
-	$(MAKE) -C servers clean
 	find . -name \*~ -exec rm {} \;
 	rm -rf dist/ ; mkdir -p dist/
 	rm -f TODO.org TODO.scorecard	
 
 #################### servers
 
-servers:	servers/Tootsville
+servers:	../tootsville.net/Tootsville
 
-servers/Tootsville:	$(shell find servers \( -name \*.lisp -o -name \*.asd \) -and -not -name .\*)
-	$(MAKE) -C servers Tootsville test
+../tootsville.net/Tootsville:
+	$(MAKE) -C ../tootsville.net CLUSTER=$(CLUSTER) Tootsville test
 
 #################### doc
 
-doc:	server-doc js-doc
-
-server-doc: \
-	doc/Tootsville.txt \
-	doc/Tootsville.pdf \
-	doc/Tootsville.html.tar.gz \
-	doc/Tootsville.info
-
-doc-install-info:	doc/Tootsville.info
-	install-info doc/Tootsville.info /usr/local/share/info/dir
-
-doc/Tootsville.texi:	servers/doc/Tootsville.texi
-	cp servers/doc/Tootsville.texi doc/
-
-servers/doc/Tootsville.texi: servers/Tootsville
-	$(MAKE) -C servers doc/Tootsville.texi
-
-doc/Tootsville.html.tar.gz:	doc/Tootsville.html.tar
-	gzip -9 -c < $< > $@
-
-doc/Tootsville.html.tar.Z:	doc/Tootsville.html.tar
-	compress -9 -c < $< > $@
-
-doc/Tootsville.html.tar.bz2:	doc/Tootsville.html.tar
-	bzip2 -9 -c < $< > $@
-
-doc/Tootsville.html.tar.xz:	doc/Tootsville.html.tar
-	xz -9 -c < $< > $@
-
-doc/Tootsville.html.tar:	doc/Tootsville.html.d/index.html
-	cd doc; tar cf Tootsville.html.tar Tootsville.html.d
-
-doc/Tootsville.html.zip:	doc/Tootsville.html.d/index.html
-	cd doc; zip -9 Tootsville.html.zip Tootsville.html.d
-
-doc/Tootsville.html.d/index.html:	doc/Tootsville.texi doc/doc.css
-	cd doc; makeinfo -o Tootsville.html.d/ \
-		--html --css-include=doc.css \
-		--split=node Tootsville.texi
-
-doc/Tootsville.ps:	doc/Tootsville.pdf
-	cd doc; pdf2ps Tootsville.pdf
-
-doc/Tootsville.pdf:	doc/Tootsville.texi
-	cd doc; PDFLATEX=xelatex texi2pdf Tootsville.texi 
-
-doc/Tootsville.txt:	doc/Tootsville.texi
-	cd doc; makeinfo --plaintext -o Tootsville.txt Tootsville.texi
-
-doc/Tootsville.info:	doc/Tootsville.texi
-	cd doc; makeinfo -o Tootsville.info Tootsville.texi
+doc:	js-doc
 
 doc/doc.css:	www/doc.less
-
-all-docs: \
-	doc/Tootsville.html.tar.gz	\
-	doc/Tootsville.html.tar.Z	\
-	doc/Tootsville.html.tar.bz2	\
-	doc/Tootsville.html.tar.xz	\
-	doc/Tootsville.html.zip	\
-	doc/Tootsville.ps	\
-	doc/Tootsville.pdf	\
-	doc/Tootsville.txt 	\
-	doc/Tootsville.info
 
 js-doc:	doc/texi/tootsville-js.texi
 
@@ -167,8 +100,8 @@ doc/texi/tootsville-js.texi:	doc/texi/TootsvilleJS.texi
 	perl -ne 'print if /@c END_PREAMBLE/..0' \
 		< doc/texi/TootsvilleJS.texi > doc/texi/tootsville-js.texi
 
-doc/conf.py:	build/doc.conf.py servers/tootsville.asd
-	sed -e "s/@@VERSION@@/$$(grep :version servers/tootsville.asd | cut -d \" -f 2)/g" \
+doc/conf.py:	build/doc.conf.py ./build/version
+	sed -e "s/@@VERSION@@/$$(< build/version)/g" \
 		build/doc.conf.py > doc/conf.py
 
 doc/texi/TootsvilleJS.texi: doc/rst/index.rst doc/conf.py
@@ -268,36 +201,36 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	echo '' >> TODO.org
 	echo '** FIXME Actual bugs!' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn FIXME servers mesh play www build README.org \
+	git grep -Hn FIXME mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** TODO To be done ASAP' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn TODO servers mesh play www build README.org \
+	git grep -Hn TODO mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** XXX Might Be Nice to do someday' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn XXX servers mesh play www build README.org \
+	git grep -Hn XXX mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 	echo '** ☠☠☠ Bruce-Robert should examine this' >> TODO.org
 	echo '' >> TODO.org
-	git grep -Hn ☠☠☠: servers mesh play www build README.org \
+	git grep -Hn ☠☠☠ mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
-TODO.scorecard:	$(shell find servers \( -name \*.lisp -o -name \*.asd \
+TODO.scorecard:	$(shell find \( -name \*.lisp -o -name \*.asd \
 	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
 	-o -name \*.shtml \) -and -not -name .\*) \
 	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
-	git grep FIXME servers mesh play www build README.org \
+	git grep FIXME mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_TODO=' >> TODO.scorecard
-	git grep TODO servers mesh play www build README.org \
+	git grep TODO mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_XXX=' >> TODO.scorecard
-	git grep XXX servers mesh play www build README.org \
+	git grep XXX mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 	echo -n 'TOOTS_BRP=' >> TODO.scorecard
-	git grep ☠☠☠ servers mesh play www build README.org \
+	git grep ☠☠☠ mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
 
 #################### bin/jscl
@@ -316,8 +249,8 @@ dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 
 devel-test:	devel-serve devel-play
 
-devel-serve:	servers/Tootsville
-	servers/Tootsville server < /dev/null
+devel-serve:	../tootsville.net/Tootsville
+	../tootsville.net/Tootsville server < /dev/null
 
 devel-play-watch:	devel-play
 	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done
@@ -450,23 +383,8 @@ deploy-play:	predeploy-play
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)
 
-deploy-servers:	predeploy-servers
-	for host in $(GAMEHOSTS) ; \
-	do \
-		echo " » Deploy $$host.$(clusternet)" ;\
-                    scp ~/.config/Tootsville/Tootsville.config.lisp $$host.$(clusternet):.config/Tootsville ;\
-		ssh $$host.$(clusternet) make -C tootsville.org/servers install ;\
-		VERSION=$(shell servers/Tootsville version-info version) ;\
-		curl https://api.rollbar.com/api/1/deploy/ \
-		     -F access_token=$(ACCESS_TOKEN) \
-		     -F environment=$$host.$(clusternet) \
-		     -F framework=gmake \
-		     -F notifier.name=gmake \
-		     -F revision=$(REVISION) \
-		     -F comment="v $(VERSION)" \
-		     -F uuid=$(uuidgen) \
-		     -F local_username=$(LOCAL_USERNAME) ;\
-	done
+deploy-servers:	../tootsville.net/Tootsville
+	$(MAKE) -C ../tootsville.net CLUSTER=$(CLUSTER) deploy
 
 deploy-www:	predeploy-www
 	echo " » Deploy www.$(clusterorg)"
@@ -486,10 +404,6 @@ connectivity:
 	echo " » Test connectivity"
 	ssh play.$(clusterorg) ls -1d play.$(clusterorg)/ | grep play.$(clusterorg)
 	ssh www.$(clusterorg) ls -1d www.$(clusterorg)/ | grep $(clusterorg)
-	for host in $(GAMEHOSTS); do \
-	   ssh $$host.$(clusternet) sbcl --no-userinit --quit | grep 'This is SBCL'; \
-	done
-
 
 no-fixmes:	TODO.scorecard
 	TOOT_TODO=$$(grep TODO TODO.scorecard | wc -l) ;\
@@ -549,28 +463,8 @@ dist/www.$(clusterorg):	htaccess dist/www/2019.css
 		cp www/index.qa.html dist/www.$(clusterorg)/index.html ;\
 	fi
 
-predeploy-servers:	servers quicklisp-update-servers
-	for host in $(GAMEHOSTS) ;\
-	do \
-		echo " » Pre-deploy $$host.$(clusternet)" ;\
-		rsync -essh --delete -zar * .??* $$host.$(clusternet):tootsville.org/ ;\
-		ssh $$host.$(clusternet) make -C tootsville.org/servers clean || exit 6 ;\
-		ssh $$host.$(clusternet) make -C tootsville.org/servers Tootsville || exit 6 ;\
-		ssh $$host.$(clusternet) make -C tootsville.org/servers test || exit 6 ;\
-	done
-
-quicklisp-update-servers:
-	for host in $(GAMEHOSTS) ; \
-	do \
-		echo " » Ensure latest Quicklisp on $$host.$(clusternet)" ;\
-	    ssh $$host.$(clusternet) \
-	        sbcl --non-interactive \
-	        --no-inform \
-	        --eval "'(ql:update-client)'" \
-	        --eval "'(ql:update-all-dists)'" \
-	        --quit ;\
-	done
-
+predeploy-servers:
+	$(MAKE) -C ../tootsville.net CLUSTOR=$(CLUSTER) predeploy
 
 remotes:
 	if ! git remote -v | grep github &>/dev/null ;\
@@ -587,9 +481,9 @@ remotes:
 	fi
 
 bump-next-version:
-	git status | grep modified: | grep servers/tootsville.asd && exit 9 || :
-	perl -pne 's/:version "(\d+\.\d+)\.(\d+)"/ ":version \"$$1." . (1+ $$2) . "\"" /e' -i servers/tootsville.asd
-	git add servers/tootsville.asd
+	git status | grep modified: && exit 9 || :
+	perl -pne 's/(\d+\.\d+)\.(\d+)/"$$1." . (1+ $$2) /e' -i build/version
+	git add build/version
 	git commit -m "bump version number for next build"
 
 git-tag-deployment:
@@ -630,12 +524,9 @@ git-tag-deployment:
 #################### deploy-docs
 
 deploy-docs:
-	make -C servers doc-publish
+	make -C ../tootsville.net doc-publish
 	scp dist/htaccess.all/goethe.tootsville.net.htaccess goethe.tootsville.org:goethe.tootsville.org/.htaccess
 	scp www/favicon.??? goethe.tootsville.org:goethe.tootsville.org/
 	rsync -essh -zar www/error goethe.tootsville.org:goethe.tootsville.org/
 
-####################
 
-TAGS:	$(shell find . -type f -name *.lisp)
-	etags --declarations $(shell find . -type f -name *.lisp) Makefile
