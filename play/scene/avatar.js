@@ -37,7 +37,7 @@ if (!('UltraTootBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.UltraTootB
 Tootsville.Avatars.getAvatar = function (character)
 { if (!character) { return new Promise ( () => {} ); }
   var xhr = new XMLHttpRequest;
-  xhr.open ('GET', Tootsville.host.users + '/toots/' + character + "/avatar");
+  xhr.open ('GET', Tootsville.host.game + '/toots/' + character + "/avatar");
   return new Promise (
       (finish) =>
           { xhr.onload =
