@@ -43,7 +43,9 @@ Tootsville.util.assertValidHostName = function (hostName)
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
-  if (!(hostName == "http" || hostName == 'https'))
+  if (hostName == "http" || hostName == 'https')
+  { /* do not alter */ }
+  else
   { hostName = Tootsville.util.assertValidHostName (hostName);
     uri = hostName + '/' + uri; }
   Tootsville.trace ('REST: ' + method + ' ' + uri);
