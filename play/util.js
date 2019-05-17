@@ -43,6 +43,7 @@ Tootsville.util.assertValidHostName = function (hostName)
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
+  let origURI = uri;
   if (hostName == "http" || hostName == 'https')
   { /* do not alter */ }
   else
@@ -71,8 +72,8 @@ Tootsville.util.rest = function (method, uri, body, headers)
               Tootsville.parrot.parrotErrorText(json),
               [{ tag: 'retry', text: "Retry the network operation" }]).then
           (() =>
-           { console.log ("User-initiated retry for " + uri);
-             return Tootsville.util.rest (method, uri, body, headers); }); }},
+           { console.log ("User-initiated retry for " + origURI);
+             return Tootsville.util.rest (method, origURI, body, headers); }); }},
       error =>
           { Tootsville.warn("Fetch error ", error);
             Tootsville.parrot.ask (
