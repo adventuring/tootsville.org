@@ -2,3 +2,6 @@
 	path = jscl
 	url = git@github.com:adventuring/jscl
 	branch = .
+[submodule "ansi-test"]
+	path = jscl/ansi-test
+	url = https://gitlab.common-lisp.net/ansi-test/ansi-test.git
