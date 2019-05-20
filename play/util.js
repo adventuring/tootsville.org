@@ -83,7 +83,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
                     "</TT></SMALL></P><P>Did we get disconnected?</P>",
                 [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
-             { return Tootsville.util.rest (method, uri, body, headers); });} ); };
+             { return Tootsville.util.rest (method, origURI, body, headers); });} ); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
