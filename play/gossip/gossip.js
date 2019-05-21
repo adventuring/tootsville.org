@@ -37,15 +37,13 @@ if (!Tootsville.gossip.peers) { Tootsville.gossip.peers = [];}
 
 if (!Tootsville.gossip.iceServers) { Tootsville.gossip.iceServers = {}; };
 
-Tootsville.gossip.postDescription = function (peer, description)
-{ return new Promise (success =>
-                      { Tootsville.util.rest ('POST', "/gossip/offers", JSON.stringify ({ offers: [ description ] })).
-                        then (success); }); };
+Tootsville.gossip.getOffer = function ()
+{ Tootsville.trace ("Fetching offer now");
+  Tootsville.util.rest ('GET', 'gossip/offers').then
+  ( response => { console.log ("got offer", response ); } );
+};
 
-Tootsville.gossip.getOffers = function ()
-{ Tootsville.trace ("Should be fetching offers now"); };
-
-Tootsville.gossip.createConnection = function ()
+Tootsville.gossip.createConnection = function (count)
 { var peer = {connection: new RTCPeerConnection({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 }) };
   Tootsville.trace ('Created local peer connection object peer.connection');
   peer.infinityChannel = peer.connection.createDataChannel('∞ Mode ℵ₀',
@@ -60,9 +58,13 @@ Tootsville.gossip.createConnection = function ()
   ).then (
       () => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
               Tootsville.util.rest ('POST', 'gossip/offers',
-                                     JSON.stringify ({ offers: peer.connection.localDescription }) ).then (
-                                         Tootsville.gossip.getOffers);
-              Tootsville.trace ("Offer should be posting now. This is confirmation."); }); };
+                                     JSON.stringify ({ offer: peer.connection.localDescription }) ).then (
+                                         function ()
+                                         {  if (--count > 0)
+                                            { Tootsville.gossip.createConnection (count); }
+                                            else
+                                            { Tootsville.gossip.getOffer (); } }); });
+              Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**
  * Accept an inbound datagram.
@@ -95,7 +97,7 @@ Tootsville.gossip.openInfinityMode = function (peer, event)
   Tootsville.gossip.ensureConnected (); };
 
 Tootsville.gossip.connect = function ()
-{ Tootsville.gossip.createConnection (); };
+{ Tootsville.gossip.createConnection (5); };
 
 Tootsville.gossip.connectedP = function ()
 { return Tootsville.gossip.peers.length > 0; };
