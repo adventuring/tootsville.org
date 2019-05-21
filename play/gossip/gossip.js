@@ -37,12 +37,17 @@ if (!Tootsville.gossip.peers) { Tootsville.gossip.peers = [];}
 
 if (!Tootsville.gossip.iceServers) { Tootsville.gossip.iceServers = {}; };
 
+/**
+ * Accept an offer from the central switchboard
+ */
 Tootsville.gossip.getOffer = function ()
 { Tootsville.trace ("Fetching offer now");
   Tootsville.util.rest ('GET', 'gossip/offers').then
-  ( response => { console.log ("got offer", response ); } );
-};
+  ( response => { console.log ("got offer", response ); } ); };
 
+/**
+ * Create and advertise an offer for connection.
+ */
 Tootsville.gossip.createConnection = function (count)
 { var peer = {connection: new RTCPeerConnection({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 }) };
   Tootsville.trace ('Created local peer connection object peer.connection');
@@ -57,8 +62,7 @@ Tootsville.gossip.createConnection = function (count)
       offer => { return peer.connection.setLocalDescription(offer); }
   ).then (
       () => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
-              Tootsville.util.rest ('POST', 'gossip/offers',
-                                     JSON.stringify ({ offer: peer.connection.localDescription }) ).then (
+              Tootsville.util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
                                          function ()
                                          {  if (--count > 0)
                                             { Tootsville.gossip.createConnection (count); }
