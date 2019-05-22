@@ -65,7 +65,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
       { if (response.ok)
         { return response.json (); }
         else
-        { var json = response.json ();
+        { let json = response.json ();
           Tootsville.warn("Server error from " + uri, json);
           return Tootsville.parrot.ask (
               "Uh-oh! Server trouble!",
@@ -80,14 +80,16 @@ Tootsville.util.rest = function (method, uri, body, headers)
                 "Uh-oh! Network trouble!",
                 "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
                     uri.replace('/', '/&shy;') +
-                    "</TT></SMALL></P><P>Did we get disconnected?</P>",
+                    "</TT></SMALL></P><P>Did we get disconnected?</P><BR>" +
+                    "<SMALL><A HREF=\"https://wiki.Tootsville.org/wiki/Network_Troubleshooting\">" +
+                    "Network Troubleshooting</A></SMALL>",
                 [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
              { return Tootsville.util.rest (method, origURI, body, headers); });} ); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
-                      { var el = document.createElement('SCRIPT');
+                      { let el = document.createElement('SCRIPT');
                         el.onload = finish;
                         el.src = src;
                         document.body.appendChild(el); });};
