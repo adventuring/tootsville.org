@@ -37,19 +37,48 @@ if (!Tootsville.gossip.peers) { Tootsville.gossip.peers = [];}
 
 if (!Tootsville.gossip.iceServers) { Tootsville.gossip.iceServers = {}; };
 
+Tootsville.gossip.acceptOffer = function (offer)
+{ if ( 0 == offer.length )
+  { Tootsville.trace ("No offer to accept");
+    return; }
+  let peer = {};
+  peer.connection = new RTCPeerConnection ();
+  peer.connection.ondatachannel = event =>
+  { peer.receiveChannel = event.channel;
+    peer.receiveChannel.onmessage = message => { Tootsville.gossip.gatekeeperAccept (peer, message); };
+    // peer.receiveChannel.onopen , .onclose
+  };
+  Tootsville.trace ("Accepting offer", offer);
+  peer.connection.setRemoteDescription (offer.offer);
+  peer.connection.createAnswer ().then
+  ( answer => { peer.connection.setLocalDescription (answer); } ).then
+  ( () => {   Tootsville.trace ("Answering received offer", offer.offer, "with answer", answer);
+              Tootsville.util.rest ('POST', 'gossip/answers/' + offer.uuid, peer.connection.localDescription,
+                                    { "Content-Type": "application/sdp" }); } ); };
+
 /**
  * Accept an offer from the central switchboard
  */
 Tootsville.gossip.getOffer = function ()
 { Tootsville.trace ("Fetching offer now");
-  Tootsville.util.rest ('GET', 'gossip/offers').then
-  ( response => { console.log ("got offer", response ); } ); };
+  Tootsville.util.rest ('GET', 'gossip/offers').then (Tootsville.gossip.acceptOffer); };
+
+Tootsville.gossip.waitForAnswer = function (peer, offer, retries, next)
+{ Tootsville.trace ("Waiting for peer answer at " + next);
+  Tootsville.util.rest ('GET', next, null, { "Accept": "application/sdp" }).then (
+      answer => { peer.connection.setRemoteDescription (answer);
+                  if (--count > 0)
+                  { Tootsville.gossip.createConnection (count);}},
+      error =>
+          { Tootsville.trace ("No answer yet at " + next +
+                              ( retries-- > 0 ? " Done waiting." : " Waiting for " + retries + " retries" ));
+            return Tootsville.gossip.waitForAnswer (peer, offer, retries, next); });};
 
 /**
  * Create and advertise an offer for connection.
  */
 Tootsville.gossip.createConnection = function (count)
-{ var peer = {connection: new RTCPeerConnection({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 }) };
+{ let peer = {connection: new RTCPeerConnection({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 }) };
   Tootsville.trace ('Created local peer connection object peer.connection');
   peer.infinityChannel = peer.connection.createDataChannel('∞ Mode ℵ₀',
                                                            { ordered: false,
@@ -63,12 +92,8 @@ Tootsville.gossip.createConnection = function (count)
   ).then (
       () => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
               Tootsville.util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
-                                         function ()
-                                         {  if (--count > 0)
-                                            { Tootsville.gossip.createConnection (count); }
-                                            else
-                                            { Tootsville.gossip.getOffer (); } }); });
-              Tootsville.trace ("Offer should be posting now. This is confirmation."); };
+                  next => { Tootsville.gossip.waitForAnswer (peer, offer, 30, next.location); }); });
+  Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**
  * Accept an inbound datagram.
@@ -77,7 +102,7 @@ Tootsville.gossip.createConnection = function (count)
  * Infinity Mode protocols.
  */
 Tootsville.gossip.gatekeeperAccept = function (peer, event)
-{ var gram = event.data;
+{ let gram = event.data;
   if (gram.c && Tootsville.game.commands [ gram.c ])
   { Tootsville.game.commands [ gram.c ] (gram.d, gram.u, gram.r); }
   else if (gram.from && Tootsville.game.gatekeeper [ gram.from ])
@@ -101,13 +126,14 @@ Tootsville.gossip.openInfinityMode = function (peer, event)
   Tootsville.gossip.ensureConnected (); };
 
 Tootsville.gossip.connect = function ()
-{ Tootsville.gossip.createConnection (5); };
+{ Tootsville.gossip.getOffer();
+ Tootsville.gossip.createConnection (5); };
 
 Tootsville.gossip.connectedP = function ()
 { return Tootsville.gossip.peers.length > 0; };
 
 Tootsville.gossip.ensureConnected = function ()
-{ var length = Tootsville.gossip.peers.length;
+{ let length = Tootsville.gossip.peers.length;
   if (length > 4)
   { Tootsville.warn ("Gossipnet already connected at " + length + " points");
     success (); } else
