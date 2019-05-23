@@ -41,6 +41,7 @@ Tootsville.gossip.acceptOffer = function (offer)
 { if ( 0 == offer.length )
   { Tootsville.trace ("No offer to accept");
     return; }
+  Tootsville.trace ("Accepting offer", offer);
   let peer = {};
   peer.connection = new RTCPeerConnection ({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 });
   peer.connection.ondatachannel = event =>
@@ -48,7 +49,6 @@ Tootsville.gossip.acceptOffer = function (offer)
     peer.receiveChannel.onmessage = message => { Tootsville.gossip.gatekeeperAccept (peer, message); };
     // peer.receiveChannel.onopen , .onclose
   };
-  Tootsville.trace ("Accepting offer", offer);
   peer.connection.setRemoteDescription (offer.offer);
   peer.connection.createAnswer ().then
   ( answer => { peer.connection.setLocalDescription (answer); } ).then
