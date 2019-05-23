@@ -63,7 +63,7 @@ Tootsville.gossip.getOffer = function ()
 { Tootsville.trace ("Fetching offer now");
   Tootsville.util.rest ('GET', 'gossip/offers').then (Tootsville.gossip.acceptOffer); };
 
-Tootsville.gossip.waitForAnswer = function (peer, offer, retries, next)
+Tootsville.gossip.waitForAnswer = function (peer, offer, retries, next, count)
 { Tootsville.trace ("Waiting for peer answer at " + next);
   Tootsville.util.rest ('GET', next, null, { "Accept": "application/sdp" }).then (
       answer => { peer.connection.setRemoteDescription (answer);
@@ -90,9 +90,9 @@ Tootsville.gossip.createConnection = function (count)
   peer.connection.createOffer ().then (
       offer => { return peer.connection.setLocalDescription(offer); }
   ).then (
-      () => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
-              Tootsville.util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
-                  next => { Tootsville.gossip.waitForAnswer (peer, offer, 30, next.location); }); });
+      offer => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.", peer.connection.localDescription);
+                 Tootsville.util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
+                     next => { Tootsville.gossip.waitForAnswer (peer, offer, 30, next.location, count); }); });
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**
