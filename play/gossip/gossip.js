@@ -51,10 +51,12 @@ Tootsville.gossip.acceptOffer = function (offer)
   };
   peer.connection.setRemoteDescription (offer.offer);
   peer.connection.createAnswer ().then
-  ( answer => { peer.connection.setLocalDescription (answer); } ).then
-  ( () => {   Tootsville.trace ("Answering received offer", offer.offer, "with answer", answer);
-              Tootsville.util.rest ('POST', 'gossip/answers/' + offer.uuid, peer.connection.localDescription,
-                                    { "Content-Type": "application/sdp" }); } ); };
+  ( answer => { Tootsville.trace ("Created answer ", answer);
+                peer.connection.setLocalDescription (answer);
+                return answer; } ).then
+  ( answer => { Tootsville.trace ("Answering received offer", offer.offer,
+                                  "with answer", answer);
+                Tootsville.util.rest ('POST', 'gossip/answers/' + offer.uuid, answer); } ); };
 
 /**
  * Accept an offer from the central switchboard
