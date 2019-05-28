@@ -41,7 +41,7 @@ Tootsville.login.start = function ()
   { Tootsville.trace ("Restarting login…");
     Tootsville.login.startSignIn();
     return; }
-  Tootsville.trace ("Start login");
+  Tootsville.inform ("Start login");
   Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.firebaseLogin); };
 
 Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
@@ -385,7 +385,12 @@ Tootsville.login.firebaseLogin = function (loginPanel)
           // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
           firebase.auth.TwitterAuthProvider.PROVIDER_ID
           /* Twitter does not support scopes. */,
-          firebase.auth.YahooAuthProvider.PROVIDER_ID ]}); };
+          /* Yahoo! is a generic OAuth source and should work like this … */
+          { provider: "yahoo.com",
+            providerName: "Yahoo!",
+            buttonColor: "#1111dd",
+            iconUrl: "https://user-images.githubusercontent.com/49992195/56804289-28d68b00-681d-11e9-8341-e53b89061745.png",
+            loginHintKey: "login_hint" }]}); };
 
 Tootsville.login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in", result);
