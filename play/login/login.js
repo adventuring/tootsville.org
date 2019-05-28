@@ -384,7 +384,8 @@ Tootsville.login.firebaseLogin = function (loginPanel)
           //   [ 'public_profile', 'email', 'user_likes' ] },
           // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
           firebase.auth.TwitterAuthProvider.PROVIDER_ID
-          /* Twitter does not support scopes. */ ]}); };
+          /* Twitter does not support scopes. */,
+          firebase.auth.YahooAuthProvider.PROVIDER_ID ]}); };
 
 Tootsville.login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in", result);
