@@ -3,9 +3,7 @@ play/tootsville.js
 play/analytics.js
 
 play/rollbar.js
-play/instabug.js
 
-play/util.js
 play/colors.js
 
 play/time.js

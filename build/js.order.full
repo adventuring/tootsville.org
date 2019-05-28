@@ -14,7 +14,6 @@ play/game/stop-watchdogs.js
 play/game/wardrobe.js
 play/register-worker.js
 play/analytics.js
-play/instabug.js
 play/yolo.js
 play/ui/connect.js
 play/ui/gamepad.js
