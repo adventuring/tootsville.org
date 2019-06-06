@@ -135,7 +135,7 @@ Tootsville.game.gatekeeper.getMailMessage = function (gram)
 { var successP = gram.status;
   if (! successP ) { return; }
   var message = gram.message;
-  Tootsville.warn ("unhandled datagram", gram);}
+  Tootsville.warn ("unhandled datagram", gram); };
 
 Tootsville.game.gatekeeper.sendMailMessage = function (gram)
 { var successP = gram.status;
