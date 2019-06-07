@@ -1,5 +1,7 @@
 play/tootsville.js
 
+play/util.js
+
 play/analytics.js
 
 play/rollbar.js

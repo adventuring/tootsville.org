@@ -80,7 +80,7 @@ Tootsville.login.serverQueryCharacters = function ()
           then (
               response =>
                   { Tootsville.trace ("response from serverQueryCharacters", response);
-                    if (0 == response.toots.length)
+                    if (undefined == response || !('toots' in response) || 0 == response.toots.length)
                     { reject (); } else
                     { finish (response.toots); } },
               error =>
