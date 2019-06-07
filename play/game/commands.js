@@ -1,26 +1,63 @@
 /* -*- js2 -*- */
+/* @license 
+ * play/game/commands.js is part of Tootsville
+ *
+ * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018, 2019,
+ * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software: you can redistribute it and/or modify
+ * it  under the  terms of  the GNU  Affero General  Public License  as
+ * published by the  Free Software Foundation; either version  3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the  hope that it will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without  even  the   implied  warranty  of
+ * MERCHANTABILITY or  FITNESS FOR  A PARTICULAR  PURPOSE. See  the GNU
+ * Affero General Public License for more details.
+ *
+ * You should  have received a  copy of  the GNU Affero  General Public
+ * License    along     with    this     program.    If     not,    see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ */
 
-if (!('Tootsville' in window)) { Tootsville = { game: { commands: {}}}};
-if (!('game' in Tootsville)) { Tootsville.game = { commands: {}}};
-if (!('commands' in Tootsville.game)) { Tootsville.game.commands = {}};
+/*
+ * Legacy ∞ mode options
+ *
+ * These options were in existence for Romance 1.1 and/or 1.2. Some are
+ * deprecated;   others   are  now   useless   and   report  as   much.
+ * Removed options will return an HTTP  410 ``Gone'' message over REST or
+ * the analogous reply over a stream connection.
+ *
+ * TODO a manual section explaining the differences under DEFINFINITY
+ *
+ * r = recipient/s
+ *
+ * u is a user UUID
+ *
+ * d is the d: element of the command 
+*/
 
-
+if (!('Tootsville' in window)) { Tootsville = { game: { commands: {}}}; };
+if (!('game' in Tootsville)) { Tootsville.game = { commands: {}}; };
+if (!('commands' in Tootsville.game)) { Tootsville.game.commands = {}; };
 
 /**
  * Alias for `setFurniture', q.v.
  */
 Tootsville.game.commands.addFurniture = function (d, u, r)
-{ setFurniture (d, u, r); };
+{ Tootsville.game.commands.setFurniture (d, u, r); };
 
 
 /**
- * add  a user  to a  buddy list  or ignore  list using  the traditional
- * (online-only, no  notification engine)  mechanism (using out  of band
- * methods). Compare vs. requestBuddy
- *
- *@subsection{410 Gone}
- *
- *This was a legacy feature removed in Romance 1.2.
+* No longer used
  */
 Tootsville.game.commands.addToList = function (d, u, r)
 {
@@ -749,9 +786,9 @@ Tootsville.game.commands.ping = function (d, u, r)
  *
  *  $TITLE = dialog title
  *
- *  Only one of either  â€œattachUserâ€ or â€œattachItemâ€ will be
+ *  Only one of either  “attachUser” or “attachItem” will be
  *  included. $AVATAR_LABEL is the full avatar label of the user/avatar to
- *  which  the prompt  should  be attached  â€”  including â€œ$â€  and
+ *  which  the prompt  should  be attached  â€”  including “$”  and
  *  instance ID, if necessary â€” where $ITEM_ID is the room variable item
  *  ID for a placed item in the room.
  *
@@ -884,9 +921,9 @@ Tootsville.game.commands.removeFromList = function (d, u, r)
     /* TODO */ };
 
 
-/** *  This method allows  the client  to â€œphone homeâ€  to report
+/** *  This method allows  the client  to “phone home”  to report
 a bug.  The bug  report itself is  just a giant  string embedded  in the
-â€œbugâ€ element,  but a â€œcauseâ€  element will be  treated as
+“bug” element,  but a “cause”  element will be  treated as
 the subject. Note that  the bug report â€” like all  JSON input â€” will
 be cut off at a certain limit  (typically 4KiB), so it's most helpful to
 keep it short & sweet: Typically, this should be something like a single
@@ -894,10 +931,10 @@ stack  backtrace  (with  as  much   detail  as  possible),  rather  than
 a complete log trace or something.
  *
  *  The  suggested  usage   is  to  include  the   exception  itself  as
- *  â€œcause,â€  the  backtrace up  to  a  maximum  of 1KiB,  a  log
- *  backtrace  up  to  its  last  1KiB  as  â€œbug,â€  and  as  much
+ *  “cause,”  the  backtrace up  to  a  maximum  of 1KiB,  a  log
+ *  backtrace  up  to  its  last  1KiB  as  “bug,”  and  as  much
  *  machine-formatted   system   information    as   possible   in   the
- *  â€œinfoâ€ object. Fields of â€œinfoâ€
+ *  “info” object. Fields of “info”
  *
  *  As many fields as possible, limit the contents to a reasonable length thoughâ€¦
  *
@@ -1090,9 +1127,9 @@ a complete log trace or something.
  *       }
  *@end example
  *
- *jso - Must contain a  single string attribute named â€œbug.â€ Should
- *contain  an  attribute  named   â€œinfoâ€  with  system  information
- *key-value pairs (see  above). May also have a  subject of â€œcauseâ€
+ *jso - Must contain a  single string attribute named “bug.” Should
+ *contain  an  attribute  named   “info”  with  system  information
+ *key-value pairs (see  above). May also have a  subject of “cause”
  *as a string.
  *
  *       u - The user reporting the bug.
@@ -1143,7 +1180,7 @@ Tootsville.game.commands.requestBuddy = function (d, u, r)
  *       Adds "roomTitle"  to body if  body contains "room"  and title
  *       can be determined
  *
- *       Add  â€œ"sendRoomList":  "true"â€  to give  the  user  an
+ *       Add  “"sendRoomList":  "true"”  to give  the  user  an
  *       updated  room list  as well.  (Necessary for  invitations to  new
  *       rooms.) Inviting to houses â€¦
  *
@@ -1189,32 +1226,18 @@ Tootsville.game.commands.sendOutOfBandMessage = function (d, u, r)
 
 
 /**
- * Accept  the client's  notification of  a server-time  adjustment.
+ *       This is used to synchronize universal time.
  *
- *       This is used to compute the client's round-trip lag time.
- *
- *       jso - { serverTime: LONG milliseconds since epoch }
+ *       jso - { serverTime: LONG milliseconds since epoch 1900 }
  *
  */
 Tootsville.game.commands.serverTime = function (d, u, r)
-{
+{ let serverTime = d.serverTime;
     /* TODO */ };
 
 
 /**
- * Set the avatar base and extra colours for the given user.
- *
- *       Colour numbers are given in X'RRGGBB' form as an integer â€” to compute one from byte (0..255) RGB values, do ( red << 16 & green << 8 & blue )
- *
- *       Parameters:
- *       jso - { "base": (colour number), "extra": (colour number) }
- *       u - The user whose avatar colours are being set
- *       room - The room in which the user is standing
- *       Throws:
- *       org.json.JSONException - Thrown if the data cannot be interpreted from the JSON objects passed in, or conversely, if we can't encode a response into a JSON form
- *       SQLException - if the palettes can't be loaded
- *
- *
+ * No longer used
  */
 Tootsville.game.commands.setAvatarColor = function (d, u, r)
 {
@@ -1222,19 +1245,7 @@ Tootsville.game.commands.setAvatarColor = function (d, u, r)
 
 
 /**
- * spawnZone
- *
- *       Spawn an additional zone.
- *
- *       Parameters:
- *       jso - JSON object, containing an associative array whose values are zones to be spawned
- *       u - The caller responsible
- *       room - Where is the caller?
- *       Throws:
- *       org.json.JSONException - if something goes awry
- *       PrivilegeRequiredException - if the user isn't a Developer
- *
- *
+ * No longer used
  */
 Tootsville.game.commands.spawnZone = function (d, u, r)
 {
@@ -1244,7 +1255,7 @@ Tootsville.game.commands.spawnZone = function (d, u, r)
 /**
  * speak
  *
- *       Handle speech by the user. XXX This should be calling User.speak(Room, String) to do the dirty work: but, in fact, the reverse is currently true.
+ *       Handle speech by the user. 
  *
  *       Speech is public to all users in a room.
  *
@@ -1300,7 +1311,7 @@ Tootsville.game.commands.spawnZone = function (d, u, r)
  *
  */
 Tootsville.game.commands.speak = function (d, u, r)
-{
+{ let speech = d.speech;
     /* TODO */ };
 
 
@@ -1309,7 +1320,7 @@ Tootsville.game.commands.speak = function (d, u, r)
  *
  *       Attempt to begin an event. Might return an error. Uses Quaestor for the heavy lifting.
  *
- *       Note that for all fountains, use the magic moniker â€œfountainâ€
+ *       Note that for all fountains, use the magic moniker “fountain”
  *
  *       Calls back the user with either of:
  *
@@ -1371,3 +1382,19 @@ Tootsville.game.commands.endEvent = function (d, u, r)
 Tootsville.game.commands.useEquipment = function (d, u, r)
 {
     /* TODO */ };
+
+/**
+ * Begin walking along a straight path. Path specification:
+ *
+ * o — object (person) walking UUID
+ * sT — start time (Universal)
+ * eT — end time (Universal)
+ * sX, sY, sZ — start x, y, z
+ * eX, eY, eZ — end x, y, z
+ *
+ * Replaces the “d” notation from Romance 1.1
+*
+* Since: Romance 1.2
+ */
+Tootsville.game.commands.walk = function (d, u, r)
+{ /* TODO */ };

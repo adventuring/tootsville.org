@@ -31,11 +31,10 @@
  *
  */
 
-if (!Tootsville.gossip) { Tootsville.gossip = {}; }
-
-if (!Tootsville.gossip.peers) { Tootsville.gossip.peers = [];}
-
-if (!Tootsville.gossip.iceServers) { Tootsville.gossip.iceServers = {}; };
+if (!('Tootsville' in window)) { Tootsville = {game: {gatekeeper: {}}}; }
+if (!('gossip' in Tootsville)) { Tootsville.gossip = {}; }
+if (!('peers' in Tootsville.gossip)) { Tootsville.gossip.peers = [];}
+if (!('iceServers' in Tootsville.gossip)) { Tootsville.gossip.iceServers = {}; };
 
 /**
  * Accept an offer which was exchanged
@@ -181,18 +180,19 @@ Tootsville.gossip.signPacket = function (c, d, r)
 
 /**
  * Create and sign a packet; mandatory:  C command and D data; optional:
- * R recipient (defaulth "$World"), A author (default self), V via (self
- * will be appended).
+ * R recipient (defaulth "$World")
  */
-Tootsville.gossip.createPacket = function (c, d, r, a, v)
-{ let packet = { d: d, r: r || '$World',
-                     a: a || Tootsville.characterUUID,
-                     s: Tootsville.gossip.signPacket (c, d, r),
-                 v: ( v || [] ).append (Tootsville.characterUUID) };
+Tootsville.gossip.createPacket = function (c, d, r)
+{ let packet = (( c == 'logOK' ) || ( c.substring (0, 1) == ':' ))
+      ? d : { d: d };
+  packet.r = r || '$World';
+  packet.a = Tootsville.characterUUID;
+  packet.u = Tootsville.characterUUID;
+  packet.s = Tootsville.gossip.signPacket (c, d, r);
   packet [ ((c == 'logOK') ? '_cmd'
             : (c.substring (0,1) == ':') ? 'from'
             : 'c') ] = (c.substring (0,1) == ':') ? c.substring(1) : c;
-  JSON.stringify (packet); };
+  return JSON.stringify (packet); };
 
 /**
  * Connect to the global gossip network.
