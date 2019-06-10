@@ -63,7 +63,10 @@ Tootsville.util.rest = function (method, uri, body, headers)
   return fetch (uri, opts).then(
       function (response)
       { if (response.ok)
-        { return response.json (); }
+        { if (200 == response.status)
+          { return response.json (); }
+          else if (204 == response.status)
+          { return null; } }
         else
         { let json = response.json ();
           Tootsville.warn("Server error from " + uri, json);
