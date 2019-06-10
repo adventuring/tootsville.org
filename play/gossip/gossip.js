@@ -198,8 +198,7 @@ Tootsville.gossip.createPacket = function (c, d, r)
  */
 Tootsville.gossip.connect = function ()
 { Tootsville.gossip.ensureKeyPair ();
-  Tootsville.gossip.getOffer ();
-  Tootsville.gossip.ensureConnected (); };
+  Tootsville.gossip.getOffer (); };
 
 /**
  * Are we connected to the global gossip network?
