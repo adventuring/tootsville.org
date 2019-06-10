@@ -31,8 +31,8 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = {game: {gatekeeper: {}}}; }
-if (!('gossip' in Tootsville)) { Tootsville.gossip = {}; }
+if (!('Tootsville' in window)) { Tootsville = {gossip: { peers: [], iceServers: {} } }; }
+if (!('gossip' in Tootsville)) { Tootsville.gossip = { peers: [], iceServers: {} }; }
 if (!('peers' in Tootsville.gossip)) { Tootsville.gossip.peers = [];}
 if (!('iceServers' in Tootsville.gossip)) { Tootsville.gossip.iceServers = {}; };
 
