@@ -166,17 +166,16 @@ Tootsville.gossip.send = function (c, d, r, a, v)
  */
 Tootsville.gossip.ensureKeyPair = function ()
 { if (! (Tootsville.gossip.keyPair) )
-  { Tootsville.gossip.keyPair = ed25519.generateKeyPair (); } };
+  { Tootsville.gossip.keyPair = forge.rsa.generateKeyPair (); } };
 
 /**
  * Sign a packet with our private key
  */
 Tootsville.gossip.signPacket = function (c, d, r)
-{ let payload = "→" + r + "⫽" + c + "⫽" + d;
-  let signature = ED25519.sign (
-      { message: payload,
-        encoding: 'utf8',
-        privateKey: Tootsville.gossip.keyPair.privateKey }); };
+{ let payload = JSON.stringify ({ c: c, d: d, r: r });
+  let signature = forge.rsa.encrypt (
+      forge.sha256.create ().start ().update (payload).digest ().data,
+       Tootsville.gossip.keyPair.privateKey ); };
 
 /**
  * Create and sign a packet; mandatory:  C command and D data; optional:
