@@ -211,6 +211,7 @@ Tootsville.login.loginDone = function (reply)
 { Tootsville.trace ("loginDone", reply);
   Tootsville.login.endLoginMusic ();
   Tootsville.ui.hud.closePanel ();
+  Tootsville.characterUUID = reply.toot.uuid;
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
   Tootsville.tank.start3D (); };
