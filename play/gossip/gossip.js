@@ -40,7 +40,7 @@ if (!('iceServers' in Tootsville.gossip)) { Tootsville.gossip.iceServers = {}; }
  * Accept an offer which was exchanged
  */
 Tootsville.gossip.acceptOffer = function (offer)
-{ if ( 0 == offer.length )
+{ if ( (!(offer)) || (0 == offer.length) )
   { Tootsville.trace ("No offer to accept");
     return; }
   Tootsville.trace ("Accepting offer", offer);
