@@ -31,7 +31,8 @@
  *
  */
 
-if (!('Avatars' in Tootsville)) { Tootsville.Avatars = {}; }
+if (!('Tootsville' in window)) { Tootsville = { Avatars: { UltraTootBuilder: {} } }; }
+if (!('Avatars' in Tootsville)) { Tootsville.Avatars = { UltraTootBuilder: {} }; }
 if (!('UltraTootBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.UltraTootBuilder = {}; }
 
 Tootsville.Avatars.getAvatar = function (character)
@@ -57,21 +58,25 @@ Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot)
                                                       { segments: 12, diameter: 1 },
                                                       Tootsville.tank.scene);
     proxyHead.position.z = 1.5;
+    proxyHead.material = new BABYLON.StandardMaterial ('head', Tootsville.tank.scene);
+    proxyHead.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('violet'));
     proxyBody.position.z = .5;
-    proxyHead.setParent (modelRoot);
+    proxyBody.material = new BABYLON.StandardMaterial ('body', Tootsville.tank.scene);
+    proxyBody.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('violet'));
     proxyBody.setParent (modelRoot); };
-Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes) 
+Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, modelRoot) 
 { try 
   { if (meshes.length == 0) 
     { Tootsville.warn ("Empty container returned for UltraToot");
-      addProxyToot (modelRoot); } else 
+      Tootsville.Avatars.UltraTootBuilder.addProxyToot (modelRoot); } else 
     { /* Expecting 13 meshes for current UltraToot */
         if (13 != meshes.length) 
         { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 13"); }
         for (var i = 0; i < meshes.length; ++i) 
-        { meshes[i].setParent (modelRoot); } } } catch (e) 
+        { meshes[i].setParent (modelRoot); } } }
+  catch (e) 
   { Tootsville.warn ("Error adding meshes to model root for  UltraToot", e);
-    addProxyToot (modelRoot); }
+    Tootsville.Avatars.UltraTootBuilder.addProxyToot (modelRoot); }
   modelRoot.position.y = -Infinity;
   Tootsville.tank.scene.addTransformNode (modelRoot); // TODO: is this necessary?
   Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
@@ -118,7 +123,7 @@ Tootsville.Avatars.UltraTootBuilder.addClothes = function (node, avatar)
 { // TODO
 };
 Tootsville.Avatars.UltraTootBuilder.addBillboards = function (node, avatar) 
-{ // TODO: add speech bubble/emote placeholder (s)
+{ // TODO: add speech bubble/emote placeholder(s)
     // TODO: add player name box
     // TODO: add child/sensitive player diamond
 };
