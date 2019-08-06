@@ -10,7 +10,6 @@ play/colors.js
 
 play/time.js
 
-dist/play/stun-list.js
 play/gossip/parrot.js
 play/gossip/gossip.js
 
