@@ -10,22 +10,41 @@ Tootsville.ui.newToot.colors =
       "t-shirt": [ "Cyan", "Indigo", "Pink", "Red", "Spring Green", "Violet", "White", "Yellow" ] };
 
 Tootsville.ui.newToot.patterns =
-    [ "Flowers", "Horseshoes", "Lightning", "Patches", "Polka Dots", "Notes", "Sparkles", "Spots", "Stars", "Swirls" ];
+    [ "Flowers", "Horseshoes", "Lightning", "Patches", "Polka-Dots", "Notes", "Sparkles", "Spots", "Stars", "Swirls" ];
+
+Tootsville.ui.newToot.changePattern = function (button)
+{ var picker = document.getElementById ("new-toot-pattern-picker");
+  if (picker) { picker.opacity = 0;
+                setTimeout ( function () { picker.display = 'none';
+                                           picker.parentElement.removeChild (picker); }, 100 ); }
+  else { Tootsville.ui.newToot.createPatternPicker (name, button); } };
 
 Tootsville.ui.newToot.changeColor = function (name, button)
 { var picker = document.getElementById ("new-toot-color-picker-" + name);
   if (picker) { picker.opacity = 0;
                 setTimeout ( function () { picker.display = 'none';
-                                           picker.parent.removeChild (picker); }, 100 ); }
+                                           picker.parentElement.removeChild (picker); }, 100 ); }
   else { Tootsville.ui.newToot.createColorPicker (name, button); } };
 
 Tootsville.ui.newToot.pickedColor = function (event)
 { var button = event.target;
-  var picker = button.parent;
+  var picker = button.parentElement;
   var targetColor = picker.getAttribute ("data-target-color");
   var widget = document.getElementById ("new-toot-" + targetColor + "-color");
-  widget.style.backgroundColor = button.value;
+  if ("Rainbow" == button.value)
+  { widget.style.backgroundImage = "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%);"; }
+  else
+  { widget.style.backgroundColor = interpretTootColor (button.value); }
+  widget.setAttribute ('data-color', button.value);
   Tootsville.ui.newToot.changeColor (targetColor, picker.style.backgroundColor); };
+
+Tootsville.ui.newToot.pickedPattern = function (event)
+{ var button = event.target;
+  var picker = button.parentElement;
+  var widget = document.getElementById ("new-toot-pattern");
+  widget.style.backgroundImage = "url(https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + button.value + ".png)";
+  widget.setAttribute ('data-pattern', button.value);
+  Tootsville.ui.newToot.changePattern (button.value); };
 
 Tootsville.ui.newToot.notReady = function (reasons)
 { alert ("You're not quite ready yet." + reasons); }; // FIXME soft dialog
@@ -40,7 +59,9 @@ Tootsville.ui.newToot.ready = function ()
   var notReady = "";
   if (! ( (/^[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?$/.test (name)) &&
           (name.length >= 3) && (name.length <= 32)))
-  { notReady += ("\n\nYou must give your Toot a name."); };
+  { notReady += ("\n\nYou must give your Toot a name.");
+    if (name.length > 0)
+    { notReady += "\n(The name you have entered is not valid. Check the rules.)"; } };
   if (! baseColor)
   { notReady += ("\n\nPick a base color for your Toot. (Click on the box at the top-left to see available colors.)"); }
   if (! padColor)
@@ -65,16 +86,44 @@ Tootsville.ui.newToot.checkName = function ()
   document.getElementById("new-toot-name-problem-mostly-letters").style.color =
   ( /^[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?$/.test (name) ? "black" : "red" );
   document.getElementById("new-toot-name-problem-offensive").style.color =
-  ( /(fuck|shit|sucker|nigger|nigga|\bfag\b|faggot|bitch|cunt|cunny|penis|vagina|scrotum|testes|testicle|my-?nut|my-?dick|(suck|lick|eat)-?my|\bcock\b|stupid|dyke|faggy)/.test (name.toLowerCase()) ? "red" : "black" );
-  /* TODO test for triple letters */ };
+  ( /(fuck|shit|sucker|nigger|nigga|\bfag\b|faggot|bitch|cunt|cunny|retard|penis|vagina|scrotum|testes|testicle|my-?balls|my-?nut|my-?dick|(suck|lick|eat)-?my|\bcock\b|stupid|dyke|faggy)/.test (name.toLowerCase()) ? "red" : "black" );
+  document.getElementById("new-toot-name-problem-repeat").style.color =
+  ( /[a-z]\1\1/.test (name.toLowerCase ()) ? "red" : "black" ); };
+
+Tootsville.ui.newToot.createPatternPicker = function (button)
+{ var picker = document.createElement ("DIV");
+  picker.setAttribute ("ID", "new-toot-pattern-picker");
+  picker.className = 'new-toot-pattern-picker';
+  for (var n = 0; n < Tootsville.ui.newToot.patterns.length; ++n)
+  { var pattern = Tootsville.ui.newToot.patterns[ n ];
+    var patternButton = document.createElement ("INPUT");
+    patternButton.setAttribute ("TYPE", "RADIO");
+    patternButton.setAttribute ("VALUE", pattern);
+    patternButton.setAttribute ("NAME", "new-toot-pattern-picker");
+    patternButton.setAttribute ("ID", "new-toot-pattern-picker-" + pattern);
+    patternButton.onchange = Tootsville.ui.newToot.pickedPattern;
+    patternButton.className = "pattern-picker-button";
+    var label = document.createElement ("LABEL");
+    var image = document.createElement ("IMG");
+    image.src = "https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + pattern + ".png";
+    label.appendChild (image);
+    label.htmlFor = "new-toot-pattern-picker-" + pattern;
+    picker.appendChild (patternButton);
+    picker.appendChild (label); }
+  var buttonBox = document.createElement ("DIV");
+  var okButton = document.createElement ("BUTTON");
+  okButton.innerText = "OK";
+  okButton.onclick = function ()
+  { picker.opacity = 0;
+    picker.display = 'none';
+    picker.parentElement.removeChild (picker); };
+  buttonBox.appendChild (okButton);
+  picker.appendChild (buttonBox);
+  document.getElementById ('hud').appendChild (picker); };
 
 Tootsville.ui.newToot.createColorPicker = function (name, button)
 { var picker = document.createElement ("DIV");
   picker.setAttribute ("ID", "new-toot-color-picker-" + name);
-  picker.style.position = 'absolute';
-  picker.style.right = 0;
-  picker.style.top = 0;
-  picker.style.zIndex = 5000;
   picker.className = 'new-toot-color-picker';
   picker.setAttribute ("data-target-color", name);
   for (var n = 0; n < Tootsville.ui.newToot.colors[ name ].length; ++n)
@@ -93,7 +142,7 @@ Tootsville.ui.newToot.createColorPicker = function (name, button)
         label.style.color = "black";
     }
     if ("Rainbow" == color) {
-        label.style.background = "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%);";
+        label.style.backgroundImage = "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%);";
     } else {
         label.style.backgroundColor = interpretTootColor (color.toLowerCase ());
     }
@@ -102,10 +151,10 @@ Tootsville.ui.newToot.createColorPicker = function (name, button)
   var buttonBox = document.createElement ("DIV");
   var okButton = document.createElement ("BUTTON");
   okButton.innerText = "OK";
-  okButton.onClick = function ()
+  okButton.onclick = function ()
   { picker.opacity = 0;
-    setTimeout ( function () { picker.display = 'none';
-                               picker.parent.removeChild (picker); }, 100 ); };
+    picker.display = 'none';
+    picker.parentElement.removeChild (picker); };
   buttonBox.appendChild (okButton);
   picker.appendChild (buttonBox);
   document.getElementById ('hud').appendChild (picker); };
