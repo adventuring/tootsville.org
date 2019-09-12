@@ -312,7 +312,7 @@ p {
     margin-right: 1rem;
     margin-left: auto;
     border-radius: 5rem;
-    background-color: #6f6;
+    background-color: @turquoise;
     color: black;
     text-align: center;
     vertical-align: middle;
@@ -323,6 +323,11 @@ p {
     height: 5rem;
     width: 5rem;
     cursor: pointer;
+    position: fixed;
+    right: 7rem;
+    + :hover {
+        background-color: @spring-green;
+    }
 }
 
 #toots-list > li > canvas {
