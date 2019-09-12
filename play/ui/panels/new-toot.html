@@ -77,9 +77,11 @@
         </fieldset>
         <div id="new-toot-ready-box">
           <p>  Once  you're   happy  with  your  new   Toot's  name  and
-            appearance, click here: </p>
+            appearance, click <b onclick="Tootsville.ui.newToot.ready()">Ready</b>: </p>
+            <button id="new-toot-cancel"
+                    onclick="Tootsville.ui.hud.closePanel ()">Cancel</button>
           <button id="new-toot-ready"
-                  onclick="Tootsville.ui.newToot.ready()">Ready</button>
+                  onclick="Tootsville.ui.newToot.ready ()">Ready</button>
         </div>
     </div>
   </body>
