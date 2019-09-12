@@ -26,15 +26,20 @@ Tootsville.ui.newToot.changeColor = function (name, button)
                                            picker.parentElement.removeChild (picker); }, 100 ); }
   else { Tootsville.ui.newToot.createColorPicker (name, button); } };
 
+Tootsville.ui.newToot.rainbowGradient =
+    "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
+
 Tootsville.ui.newToot.pickedColor = function (event)
 { var button = event.target;
   var picker = button.parentElement;
   var targetColor = picker.getAttribute ("data-target-color");
   var widget = document.getElementById ("new-toot-" + targetColor + "-color");
   if ("Rainbow" == button.value)
-  { widget.style.backgroundImage = "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%);"; }
+  { widget.style.backgroundImage = Tootsville.ui.newToot.rainbowGradient;
+    widget.style.backgroundColor = ""; }
   else
-  { widget.style.backgroundColor = interpretTootColor (button.value); }
+  { widget.style.backgroundImage = "";
+    widget.style.backgroundColor = interpretTootColor (button.value); }
   widget.setAttribute ('data-color', button.value);
   Tootsville.ui.newToot.changeColor (targetColor, picker.style.backgroundColor); };
 
@@ -62,6 +67,10 @@ Tootsville.ui.newToot.ready = function ()
   { notReady += ("\n\nYou must give your Toot a name.");
     if (name.length > 0)
     { notReady += "\n(The name you have entered is not valid. Check the rules.)"; } };
+  if (baseColor && baseColor == padColor)
+  { notReady += ("\n\nYour base color and pad color should be different."); }
+  if (baseColor && baseColor == patternColor)
+  { notReady += ("\n\nYour base color and pattern color should be different."); }
   if (! baseColor)
   { notReady += ("\n\nPick a base color for your Toot. (Click on the box at the top-left to see available colors.)"); }
   if (! padColor)
@@ -74,8 +83,7 @@ Tootsville.ui.newToot.ready = function ()
   { notReady += ("\n\nPick a pattern for your Toot. (Click on the box at the bottom-right to see available patterns.)"); }
   if ("" != notReady)
   { return Tootsville.ui.newToot.notReady (notReady); }
-  Tootsville.util.rest (FIXME);
-};
+  Tootsville.util.rest (FIXME); };
 
 Tootsville.ui.newToot.checkName = function ()
 { var name = document.getElementById ("new-toot-name").value;
@@ -142,7 +150,7 @@ Tootsville.ui.newToot.createColorPicker = function (name, button)
         label.style.color = "black";
     }
     if ("Rainbow" == color) {
-        label.style.backgroundImage = "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%);";
+        label.style.backgroundImage = Tootsville.ui.newToot.rainbowGradient;
     } else {
         label.style.backgroundColor = interpretTootColor (color.toLowerCase ());
     }
