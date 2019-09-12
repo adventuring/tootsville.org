@@ -40,7 +40,7 @@
     padding: 1rem 2rem 1rem 2rem;
     border: 0 solid white;
     border-radius: 3rem;
-    overflow: show;
+    overflow-y: auto;
     width: calc(100vw - 7rem);
     height: calc(100vh - 7rem);
     position: fixed;
@@ -323,7 +323,7 @@ p {
     height: 5rem;
     width: 5rem;
     cursor: pointer;
-    position: fixed;
+    position: absolute;
     right: 7rem;
     + :hover {
         background-color: @spring-green;
@@ -423,20 +423,22 @@ strong.green-plus {
     border-radius: .25rem;
 }
 
-.color-picker-button + label:before {
-    height: 1rem;
-    width: 1rem;
-    border-radius: 1rem;
-    margin: .5rem;
-    content: " ";
-    display:inline-block;
-    vertical-align: middle;
-    border: 3pt solid #777;
-}
-
-.color-picker-button:checked + label:before {
-    border: 3pt solid white;
-}
+/*
+ * .color-picker-button + label:before {
+ *     height: 1rem;
+ *     width: 1rem;
+ *     border-radius: 1rem;
+ *     margin: .5rem;
+ *     content: " ";
+ *     display:inline-block;
+ *     vertical-align: middle;
+ *     border: 3pt solid #777;
+ * }
+ * 
+ * .color-picker-button:checked + label:before {
+ *     border: 3pt solid white;
+ * }
+ */
 
 .new-toot-color-picker {
     background-color: black;
