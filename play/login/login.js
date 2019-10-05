@@ -134,19 +134,6 @@ Tootsville.login.populateTootsList = function ()
     document.getElementById ('toots-list').appendChild (li); } };
 
 Tootsville.login.generateNewToot = function ()
-{ /* TODO let server generate new Toots with unique names */
-    var toot =
-        { name: "Needs-Naming",
-          baseColor: "indigo",
-          patternColor: "yellow",
-          pattern: "lightning",
-          padColor: "spring-green",
-          childP: false,
-          sensitiveP: false };
-    Tootsville.login.createTootListItem (toot);
-    Tootsville.login.editToot (toot); };
-
-Tootsville.login.editToot = function (toot)
 { Tootsville.ui.hud.showHUDPanel('new-toot'); };
 
 Tootsville.login.startCharacterCreation = function ()

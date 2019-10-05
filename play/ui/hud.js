@@ -60,6 +60,8 @@ Tootsville.ui.hud.closePanel = function ()
                    1000 );
       panelPopup = null; }
     foundAny = true; }
+  if (! Tootsville.gossip.connectedP)
+  { Tootsville.login.start (); }
   return foundAny; };
 
 Tootsville.ui.hud.loadScriptIntoDiv = function (src, div)

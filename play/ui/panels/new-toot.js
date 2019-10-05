@@ -63,7 +63,8 @@ Tootsville.ui.newToot.ready = function ()
   var pattern = document.getElementById ("new-toot-pattern").getAttribute ("data-pattern");
   var notReady = "";
   if (! ( (/^[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?$/.test (name)) &&
-          (name.length >= 3) && (name.length <= 32)))
+          (name.length >= 3) && (name.length <= 32) &&
+          ! (/[a-z]\1\1/.test (name.toLowerCase ())) ))
   { notReady += ("\n\nYou must give your Toot a name.");
     if (name.length > 0)
     { notReady += "\n(The name you have entered is not valid. Check the rules.)"; } };
@@ -83,7 +84,14 @@ Tootsville.ui.newToot.ready = function ()
   { notReady += ("\n\nPick a pattern for your Toot. (Click on the box at the bottom-right to see available patterns.)"); }
   if ("" != notReady)
   { return Tootsville.ui.newToot.notReady (notReady); }
-  Tootsville.util.rest (FIXME); };
+  Tootsville.util.rest ('POST', 'toots',
+                        { name: name,
+                          baseColor: baseColor,
+                          padColor: padColor,
+                          pattern: pattern,
+                          patternColor: patternColor,
+                          tShirtColor: tShirtColor });
+  return true;};
 
 Tootsville.ui.newToot.checkName = function ()
 { var name = document.getElementById ("new-toot-name").value;
