@@ -229,6 +229,8 @@ TODO.scorecard:	$(shell find \( -name \*.lisp -o -name \*.asd \
 
 jscl:	bin/jscl
 
+jscl/jscl.min.js:	jscl
+
 bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
 	cd jscl; ./make.sh
 
