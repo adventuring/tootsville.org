@@ -44,23 +44,21 @@ Tootsville.login.start = function ()
   Tootsville.inform ("Start login");
   Tootsville.ui.hud.loadHUDPanel ("login", Tootsville.login.firebaseLogin); };
 
-Tootsville.login.drawAvatarOnCanvas = function (avatar, canvas)
-{ /* TODO: Replace super-lame placeholder with paperdolls in Tootsville.login.drawAvatarOnCanvas */
-    console.log ("Avatar on canvas", avatar, canvas );
-    canvas.height = 128;
-    canvas.width = 128;
-    canvas.className = 'toot-paperdoll';
-    var context = canvas.getContext ('2d');
-    context.fillStyle = interpretTootColor (avatar.baseColor);
-    context.fillRect (0, 0, 128, 128);
-    context.font = '64px Acme';
-    context.fillStyle = interpretTootColor (avatar.patternColor);
-    var patternFor = { lightning: '🗲', dots: '•', moo: 'Moo',
-                       flowers: '⚘', horseshoes: '∪', stars: '★',
-                       blank: '', sparkles: '⁂', notes: '♪'};
-    context.fillText (patternFor[avatar.pattern] || avatar.pattern, 0, 64);
-    context.fillStyle = interpretTootColor (avatar.padColor);
-    context.fillRect (0, 120, 128, 128); };
+Tootsville.login.colorizeAvatar = function (avatar, img)
+{ var svg = img.getDocument ();
+  if (! svg)
+  { console.warn ("Didn't get document from ", img);
+    return; };
+  var skin = svg.getElementById ("skin");
+  skin.setAttribute ("style",
+                     "fill:" +
+                     interpretTootColor (avatar.baseColor) +
+                     ";fill-opacity:1;fill-rule:evenodd;stroke:#030303;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1");
+  var hand = svg.getElementById ("hand-pad");
+  skin.setAttribute ("style",
+                     "fill:" +
+                     interpretTootColor (avatar.padColor) +
+                     ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"); };
 
 Tootsville.login.clearTootsList = function ()
 { var spin = document.querySelector ('.toots-list-loading-spinner');
@@ -96,14 +94,19 @@ Tootsville.login.serverQueryCharacters = function ()
 Tootsville.login.toots = {};
 
 Tootsville.login.createTootListItem2 = function (li, toot)
-{ li['data-toot'] = toot;
-  var canvas = document.createElement ('CANVAS');
-  li.innerHTML = '';
-  li.appendChild (canvas);
+{ li.innerHTML = '';
+  li['data-toot'] = toot;
+  var img = document.createElement ('OBJECT');
+  img.setAttribute ("HEIGHT", '128');
+  img.setAttribute ("WIDTH", '128');
+  img.setAttribute ('CLASS', 'toot-item');
+  img.setAttribute ('TYPE', "image/svg+xml");
+  img.setAttribute ("DATA", 'https://jumbo.tootsville.org/Assets/Avatars/5/UltraToot 2D.svg');
+  li.appendChild (img);
   li.innerHTML += '<SPAN CLASS="toot-name">' +
   toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
   Tootsville.login.addChildOrSensitiveFlag (li);
-  Tootsville.login.drawAvatarOnCanvas (toot, canvas); };
+  Tootsville.login.colorizeAvatar (toot, img); };
 
 Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
@@ -112,9 +115,9 @@ Tootsville.login.createTootListItem = function (tootName)
   if (Tootsville.login.toots[tootName])
   { Tootsville.login.createTootListItem2 (li, Tootsville.login.toots[tootName]); }
   else
-  { li.innerHTML = '<SPAN CLASS="toot-name">' +
-  tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
-  li.className = 'toot';
+  { li.innerHTML = '<OBJECT HEIGHT=128 WIDTH=128 TYPE="image/svg+xml" DATA="https://jumbo.tootsville.org/Assets/Avatars/5/UltraToot 2D.svg"></OBJECT><SPAN CLASS="toot-name">' +
+    tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
+    li.className = 'toot';
     li['data-toot'] = { name: tootName };
     Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).
     then (toot => { Tootsville.login.toots [tootName] = toot;
