@@ -24,6 +24,9 @@ Tootsville.ui.setBackgroundMusic = function (song)
                  var source = document.createElement ("SOURCE");
                  source.setAttribute ("SRC", "https://jumbo.tootsville.org/Assets/Music/5/" + song + ".mp3");
                  audio.appendChild (source);
+                 var source2 = document.createElement ("SOURCE");
+                 source2.setAttribute ("SRC", "https://jumbo.tootsville.org/Assets/Music/5/" + song + ".webm");
+                 audio.appendChild (source2);
                  document.getElementById ("hud").appendChild (audio);
                  console.log (audio);
                  var musicFooter = document.createElement ("P");
