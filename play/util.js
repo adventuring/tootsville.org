@@ -49,7 +49,6 @@ Tootsville.util.rest = function (method, uri, body, headers)
   else
   { hostName = Tootsville.util.assertValidHostName (hostName);
     uri = hostName + '/' + uri; }
-  Tootsville.trace ('REST: ' + method + ' ' + uri);
   if (!headers) { headers = {}; }
   if (! ('Accept' in headers))
   { headers['Accept'] = 'application/json;encoding=utf-8'; }
@@ -57,9 +56,10 @@ Tootsville.util.rest = function (method, uri, body, headers)
   { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth; }
   let opts = { method: method };
   if (body && (! ('Content-Type' in headers)))
-  { headers['Content-Type'] = 'application/json';
+  { headers['Content-Type'] = 'application/json;charset=utf-8';
     opts.body = JSON.stringify(body); }
   opts.headers = headers;
+  Tootsville.trace ('REST: ' + method + ' ' + uri, opts);
   return fetch (uri, opts).then(
       function (response)
       { if (response.ok)
