@@ -10,7 +10,7 @@ Tootsville.ui.newToot.colors =
       "t-shirt": [ "Cyan", "Indigo", "Pink", "Red", "Spring Green", "Violet", "White", "Yellow" ] };
 
 Tootsville.ui.newToot.patterns =
-    [ "Flowers", "Horseshoes", "Lightning", "Patches", "Polka-Dots", "Notes", "Sparkles", "Spots", "Stars", "Swirls" ];
+    [ "Flowers", "Horseshoes", "Hearts", "Lightning", "Patches", "Polka-Dots", "Notes", "Sparkles", "Spots", "Stars", "Swirls" ];
 
 Tootsville.ui.newToot.changePattern = function (button)
 { var picker = document.getElementById ("new-toot-pattern-picker");
