@@ -63,6 +63,8 @@
     };
 
     window.interpretTootColor = function (name) {
+        if (null == name || undefined == name)
+        { return '#000'; }
         return tootColorMapping[name.toLowerCase()];
     };
 })();
