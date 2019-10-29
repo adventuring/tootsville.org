@@ -26,6 +26,14 @@ Tootsville.ui.newToot.changeColor = function (name, button)
                                            picker.parentElement.removeChild (picker); }, 100 ); }
   else { Tootsville.ui.newToot.createColorPicker (name, button); } };
 
+Tootsville.ui.newToot.updateAvatar = function (swatch, color)
+{ if ("base" == swatch)
+  { document.getElementById('skin').style =
+    'fill:' + interpretTootColor (color); }
+  else if ('pad' == swatch)
+  { document.getElementById('hand-pad').style =
+    'fill:' + interpretTootColor (color); } };
+
 Tootsville.ui.newToot.rainbowGradient =
     "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
 
@@ -33,6 +41,7 @@ Tootsville.ui.newToot.pickedColor = function (event)
 { var button = event.target;
   var picker = button.parentElement;
   var targetColor = picker.getAttribute ("data-target-color");
+  Tootsville.ui.newToot.updateAvatar (targetColor, button.value);
   var widget = document.getElementById ("new-toot-" + targetColor + "-color");
   if ("Rainbow" == button.value)
   { widget.style.backgroundImage = Tootsville.ui.newToot.rainbowGradient;
