@@ -31,12 +31,20 @@ Tootsville.ui.newToot.updateAvatar = function (swatch, color)
   { document.getElementById('skin').style =
    "fill:" +
    interpretTootColor (color) +
-   ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"}
+    ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill";
+    Tootsville.ui.newToot.applyPatternColor (); }
   else if ('pad' == swatch)
   { document.getElementById('hand-pad').style =
    "fill:" +
    interpretTootColor (color) +
-   ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"; } };
+    ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"; }
+  else if ('t-shirt' == swatch)
+  { document.getElementById('t-shirt').style =
+    "fill:" +
+    interpretTootColor (color) +
+    ";fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"; }
+  else if ('pattern' == swatch)
+  { Tootsville.ui.newToot.applyPatternColor (); } };
 
 Tootsville.ui.newToot.rainbowGradient =
     "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
@@ -45,7 +53,6 @@ Tootsville.ui.newToot.pickedColor = function (event)
 { var button = event.target;
   var picker = button.parentElement;
   var targetColor = picker.getAttribute ("data-target-color");
-  Tootsville.ui.newToot.updateAvatar (targetColor, button.value);
   var widget = document.getElementById ("new-toot-" + targetColor + "-color");
   if ("Rainbow" == button.value)
   { widget.style.backgroundImage = Tootsville.ui.newToot.rainbowGradient;
@@ -54,13 +61,41 @@ Tootsville.ui.newToot.pickedColor = function (event)
   { widget.style.backgroundImage = "";
     widget.style.backgroundColor = interpretTootColor (button.value); }
   widget.setAttribute ('data-color', button.value);
+  Tootsville.ui.newToot.updateAvatar (targetColor, button.value);
   Tootsville.ui.newToot.changeColor (targetColor, picker.style.backgroundColor); };
+
+Tootsville.ui.newToot.randomPatternColor = function ()
+{ var patternColors = Tootsville.ui.newToot.colors.pattern;
+  var color = 'Rainbow';
+  color = patternColors[ Math.floor (Math.random () * patternColors.length) ];
+  if ( ('Rainbow' == color) ||
+       (color == document.getElementById ("new-toot-base-color").getAttribute ("data-color")) )
+  { return Tootsville.ui.newToot.randomPatternColor (); };
+  return interpretTootColor (color);};
+
+Tootsville.ui.newToot.applyPatternColor = function ()
+{ var patternWidget = document.getElementById ("new-toot-pattern");
+  var patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
+  patternWidget.style.backgroundColor = interpretTootColor (document.getElementById ("new-toot-base-color").getAttribute ("data-color"));
+  if (0 == patternWidget.children.length) { return; }
+  for (var i = 0; i < 3; ++i)
+  { patternWidget.children[0].children[3].children[i].style = "fill:" +
+    (  ('Rainbow' == patternColor) ? Tootsville.ui.newToot.randomPatternColor () : interpretTootColor (patternColor)  )+
+    ";fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"; }};
 
 Tootsville.ui.newToot.pickedPattern = function (event)
 { var button = event.target;
   var picker = button.parentElement;
   var widget = document.getElementById ("new-toot-pattern");
-  widget.style.backgroundImage = "url(https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + button.value + ".png)";
+  fetch("https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + button.value + ".svg").then (
+      (response) =>
+          { response.text ().then (
+              (text) =>
+                  { widget.innerHTML = text;
+                    widget.children[0].setAttribute ('width', widget.clientWidth);
+                    widget.children[0].setAttribute ('height', widget.clientHeight);
+                    Tootsville.ui.newToot.applyPatternColor ();
+                  } ); } );
   widget.setAttribute ('data-pattern', button.value);
   Tootsville.ui.newToot.changePattern (button.value); };
 
@@ -134,7 +169,9 @@ Tootsville.ui.newToot.createPatternPicker = function (button)
     patternButton.className = "pattern-picker-button";
     var label = document.createElement ("LABEL");
     var image = document.createElement ("IMG");
-    image.src = "https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + pattern + ".png";
+    image.src = "https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + pattern + ".svg";
+    image.style.height = '1in';
+    image.style.width = '1in';
     label.appendChild (image);
     label.htmlFor = "new-toot-pattern-picker-" + pattern;
     picker.appendChild (patternButton);
