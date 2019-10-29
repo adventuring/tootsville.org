@@ -29,10 +29,14 @@ Tootsville.ui.newToot.changeColor = function (name, button)
 Tootsville.ui.newToot.updateAvatar = function (swatch, color)
 { if ("base" == swatch)
   { document.getElementById('skin').style =
-    'fill:' + interpretTootColor (color); }
+   "fill:" +
+   interpretTootColor (color) +
+   ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"}
   else if ('pad' == swatch)
   { document.getElementById('hand-pad').style =
-    'fill:' + interpretTootColor (color); } };
+   "fill:" +
+   interpretTootColor (color) +
+   ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"; } };
 
 Tootsville.ui.newToot.rainbowGradient =
     "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
