@@ -1,130 +1,220 @@
 /* -*- js2 -*- */
 
+/*@license
+ *
+ * ./play/game/gatekeeper.js is part of Tootsville
+ *
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ *
+ * This program is Free Software:  you can redistribute it and/or modify
+ * it  under the  terms  of the  GNU Affero  General  Public License  as
+ * published by  the Free Software  Foundation; either version 3  of the
+ * License, or (at your option) any later version.
+ *
+ * This program is  distributed in the hope that it  will be useful, but
+ * WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+ * MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
+ * Affero General Public License for more details.
+ *
+ * You  should have  received a  copy of  the GNU  Affero General  Public
+ * License     along    with     this     program.     If    not,     see
+ * <https://www.gnu.org/licenses/>.
+ *
+ * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ *
+ * PO Box 23095
+ *
+ * Oakland Park, FL 33307-3095
+ *
+ * USA
+ *
+ */
+
 if (!('Tootsville' in window)) { Tootsville = {game: {gatekeeper: {}}}; }
 if (!('game' in Tootsville)) { Tootsville.game = {gatekeeper: {}}; }
 if (!('gatekeeper' in Tootsville.game)) { Tootsville.game.gatekeeper = {}; }
 
-Tootsville.game.dispatchDatagram = function (datagram)
-{ var from = datagram.from;
-  var handler;
-  if ((handler = Tootsville.game.gatekeeper[ from ]))
-  { handler (datagram); }
-  else
-  { Tootsville.warn ("Unhandled datagram from: " + from, datagram); } };
-
-
+/**
+ * Acknowledge  a new  player's login  and intreduce  yourself as  a new
+ * next-hop neighbor.
+ *
+ * neighbor: next-hop neighbor's UUID
+ *
+ * Note that this message (only) uses “_cmd” as its attribute rather than
+ * “c” or “from” for historical reasons.
+ *
+ * This message is usually unicast.
+ */
 Tootsville.game.gatekeeper.logOK = function (gram)
-{ Tootsville.warn ("unhandled datagram", gram); };
+{ let neigbor = gram.neighbor;
+  Tootsville.warn ("unhandled datagram", gram); };
 
+/**
+ * Receive a  list of avatar  info that describes  an area of  the world.
+ * This is one observer's set of nearby avatars or objects.
+ */
 Tootsville.game.gatekeeper.avatars = function (gram)
-{ var world = gram.inRoom;
-  var avatars = gram.avatars;
+{ let world = gram.inRoom;
+  let avatars = gram.avatars;
   Tootsville.warn ("unhandled datagram", gram); };
 
+/**
+ * No longer used.
+ */
 Tootsville.game.gatekeeper.bots = function (gram)
-{ var bots = gram.bots;
-  Tootsville.warn ("unhandled datagram", gram); };
+{ let bots = gram.bots;
+  Tootsville.warn ("ancient datagram now ignored", gram); };
 
+/**
+ * No longer used.
+ */
 Tootsville.game.gatekeeper.passport = function (gram)
-{ var passport = gram.passport;
-  Tootsville.warn ("unhandled datagram", gram); };
+{ let passport = gram.passport;
+  Tootsville.warn ("ancient datagram now ignored", gram); };
 
+/**
+ * Mostly just for fountains, now
+ */
 Tootsville.game.gatekeeper.startEvent = function (gram)
-{ var eventMoniker = gram.moniker;
-  var eventID = gram.eventID;
-  var scriptLanguage = gram.script || 'ActionScript';
-  var scriptVersion = gram.asVersion;
-  var vitOnlyP = gram.vitOnly;
-  var successP = gram.status;
+{ let eventMoniker = gram.moniker;
+  let eventID = gram.eventID;
+  let scriptLanguage = gram.script || 'ActionScript';
+  let scriptVersion = gram.asVersion;
+  let vitOnlyP = gram.vitOnly;
+  let successP = gram.status;
   Tootsville.warn ("unhandled datagram", gram); };
 
+/** 
+ * Used to be used for minigame scores; no longer needed.
+ */
 Tootsville.game.gatekeeper.scoreUpdate = function (gram)
-{ var successP = gram.status;
+{ let successP = gram.status;
   if (! successP ) { return; }
-  var rank = gram.place;
-  var score = gram.score;
-  Tootsville.warn ("unhandled datagram", gram);};
+  let rank = gram.place;
+  let score = gram.score;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * End   an    event   begun    by   startEvent.   Earn    peanuts   for
+ * event participation.
+ */
 Tootsville.game.gatekeeper.endEvent = function (gram)
-{ var successP = gram.status;
+{ let successP = gram.status;
   if (! successP ) { return; }
-  var eventID = gram.eventID;
-  var peanuts = gram.peanuts;
-  var totalPeanuts = gram.totalPeanuts;
-  var canceledP = gram.canceled;
+  let eventID = gram.eventID;
+  let peanuts = gram.peanuts;
+  let totalPeanuts = gram.totalPeanuts;
+  let canceledP = gram.canceled;
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * No longer in use.
+ */
 Tootsville.game.gatekeeper.gameAction = function (gram)
-{ var data = gram.data;
-  Tootsville.warn ("unhandled datagram", gram);};
+{ let data = gram.data;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * The player  has been teleported  to the given coördinates  and should
+ * now explore  the surroundings (discover  what objects are  nearby, et
+ * al.).
+ *
+ * The author must have the privilege to beam this player, or the signal
+ * should be discarded.
+ */
 Tootsville.game.gatekeeper.beam = function (gram)
-{     var world = gram.room;
-      var x = gram.x;
-      var y = gram.y;
-      var z = gram.z;
+{ let world = gram.room;
+      let x = gram.x;
+      let y = gram.y;
+      let z = gram.z;
       Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * Player has received money (peanuts) or fairy dust.
+ */
 Tootsville.game.gatekeeper.earning = function (gram)
 {     
     Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * No longer used.
+ */
 Tootsville.game.gatekeeper.getAwardRankings = function (gram)
-{ var ranks = gram.ranks;
-  Tootsville.warn ("unhandled datagram", gram);};
+{ let ranks = gram.ranks;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * No longer used.
+ */
 Tootsville.game.gatekeeper.getStoreItems = function (gram)
-{ var totalPeanuts = gram.totalPeanuts;
-  var stores = gram.stores;
-  Tootsville.warn ("unhandled datagram", gram);};
+{ let totalPeanuts = gram.totalPeanuts;
+  let stores = gram.stores;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * No longer used.
+ */
 Tootsville.game.gatekeeper.purchase = function (gram)
-{ var totalPeanuts = gram.totalPeanuts;
-  var successP = gram.status;
+{ let totalPeanuts = gram.totalPeanuts;
+  let successP = gram.status;
   if (! successP ) { return; }
-  var bought = gram.bought;
-  Tootsville.warn ("unhandled datagram", gram);};
+  let bought = gram.bought;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * No longer handled by ∞ mode protocols; now, fetched directly from the
+ * game server over REST API.
+ */
 Tootsville.game.gatekeeper.inventory = function (gram)
-{ var inv = gram.inv;
-  var type = gram.type;
-  Tootsville.warn ("unhandled datagram", gram);};
+{ let inv = gram.inv;
+  let type = gram.type;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * No longer used.
+ */
 Tootsville.game.gatekeeper.getColorPalettes = function (gram)
-{ var baseColors = gram.baseColors;
-  var padColors = gram.extraColors;
-  var patternColors = gram.patternColors;
-  Tootsville.warn ("unhandled datagram", gram);};
+{ let baseColors = gram.baseColors;
+  let padColors = gram.extraColors;
+  let patternColors = gram.patternColors;
+  Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * Obtains  visible information  about one  avatar at  a time;  not only
+ * clothing, but any equipped object.
+ */
 Tootsville.game.gatekeeper.wardrobe = function (gram)
-{ var avatar = gram.avatar;
-  var userName = gram.avatar.userName;
+{ let avatar = gram.avatar;
+  let userName = gram.avatar.userName;
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * Add a room (including a first room) to a user's house/lot.
+ */
 Tootsville.game.gatekeeper.initUserRoom = function (gram)
-{ var successP = gram.status;
+{ let successP = gram.status;
   if (successP)
-  { var world = gram.moniker;
+  { let world = gram.moniker;
     Tootsville.warn ("unhandled datagram", gram); }
   else
-  { var err = gram.err;
+  { let err = gram.err;
     if ("showFirstRun" == err)
-    {
-        Tootsville.warn ("unhandled datagram", gram); }
+    { Tootsville.warn ("ancient datagram now ignored", gram); }
     else if ("exists" == err)
-    { var world = gram.moniker;
+    { let world = gram.moniker;
       Tootsville.warn ("unhandled datagram", gram); }}};
 
 Tootsville.game.gatekeeper.getAvailableHouses = function (gram)
-{ var successP = gram.status;
+{ let successP = gram.status;
   if (! successP ) { return; }
-  var lots = gram.lots;
-  var houses = gram.houses;
+  let lots = gram.lots;
+  let houses = gram.houses;
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.getMainInBox = function (gram)
-{ var successP = gram.status;
-  var mail;
+{ let successP = gram.status;
+  let mail;
   if (successP)
   { mail = gram.mail; }
   else
@@ -132,69 +222,69 @@ Tootsville.game.gatekeeper.getMainInBox = function (gram)
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.getMailMessage = function (gram)
-{ var successP = gram.status;
+{ let successP = gram.status;
   if (! successP ) { return; }
-  var message = gram.message;
-  Tootsville.warn ("unhandled datagram", gram);}
+  let message = gram.message;
+  Tootsville.warn ("unhandled datagram", gram); };
 
 Tootsville.game.gatekeeper.sendMailMessage = function (gram)
-{ var successP = gram.status;
+{ let successP = gram.status;
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.postman = function (gram)
-{ var newMailP = gram.newMail;
+{ let newMailP = gram.newMail;
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.getUserLists = function (gram)
-{ var buddies = gram.buddyList || [];
-  var starred = gram.starred || [];
-  var ignored = gram.ignoreList || [];
+{ let buddies = gram.buddyList || [];
+  let starred = gram.starred || [];
+  let ignored = gram.ignoreList || [];
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.buddyList = function (gram)
-{ var notice = gram.notice;
+{ let notice = gram.notice;
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.buddyRequest = function (gram)
-{ var sender = gram.sender;
-  var signature = gram.sign;
+{ let sender = gram.sender;
+  let signature = gram.sign;
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.game.gatekeeper.outOfBand = function (gram)
-{ var type = gram.type;
+{ let type = gram.type;
   if ("invite" == type)
-  { var body = gram.body;
+  { let body = gram.body;
     Tootsville.warn ("unhandled datagram", gram);  }
   else if ("response" == type)
-  { var body = gram.body;
+  { let body = gram.body;
     Tootsville.warn ("unhandled datagram", gram);  }
   else if (true === gram.body.toRoom)
-  { var vars = gram.body.vars;
+  { let vars = gram.body.vars;
     Tootsville.warn ("unhandled datagram", gram);  }
   else
   { Tootsville.warn("Unhandled out-of-band message type " + type); } };
 
 Tootsville.game.gatekeeper.admin = function (gram)
-{ var title = gram.title;
-  var message = gram.message;
-  var label = gram.label;
+{ let title = gram.title;
+  let message = gram.message;
+  let label = gram.label;
   // FIXME call to parrot ⋯
   Tootsville.gossip.parrot.say (title, message, label); };
 
 Tootsville.game.gatekeeper.serverTime = function (gram)
-{ var successP = gram.status;
-  var serverTime = gram.serverTime;
-  var gameTime = gram.gameTime;
+{ let successP = gram.status;
+  let serverTime = gram.serverTime;
+  let gameTime = gram.gameTime;
   Tootsville.warn ("unhandled datagram", gram); };
 
 Tootsville.game.gatekeeper.badgeUpdate = function (gram)
-{ var badges = gram.badges;
-  Tootsville.warn ("unhandled datagram", gram); };
+{ let badges = gram.badges;
+  Tootsville.warn ("ancient datagram now ignored", gram); };
 
 Tootsville.game.gatekeeper.forceMove = function (gram)
-{ var x = gram.x;
-  var y = gram.y;
-  var z = gram.z;
+{ let x = gram.x;
+  let y = gram.y;
+  let z = gram.z;
   Tootsville.warn ("unhandled datagram", gram); };
 
 Tootsville.game.gatekeeper.reportBug = function (gram)

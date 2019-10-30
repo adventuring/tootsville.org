@@ -43,10 +43,12 @@ Tootsville.util.assertValidHostName = function (hostName)
 
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
-  if (!(hostName == "http" || hostName == 'https'))
+  let origURI = uri;
+  if (hostName == "http" || hostName == 'https')
+  { /* do not alter */ }
+  else
   { hostName = Tootsville.util.assertValidHostName (hostName);
     uri = hostName + '/' + uri; }
-  Tootsville.trace ('REST: ' + method + ' ' + uri);
   if (!headers) { headers = {}; }
   if (! ('Accept' in headers))
   { headers['Accept'] = 'application/json;encoding=utf-8'; }
@@ -54,37 +56,43 @@ Tootsville.util.rest = function (method, uri, body, headers)
   { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth; }
   let opts = { method: method };
   if (body && (! ('Content-Type' in headers)))
-  { headers['Content-Type'] = 'application/json';
+  { headers['Content-Type'] = 'application/json;charset=utf-8';
     opts.body = JSON.stringify(body); }
   opts.headers = headers;
+  Tootsville.trace ('REST: ' + method + ' ' + uri, opts);
   return fetch (uri, opts).then(
       function (response)
       { if (response.ok)
-        { return response.json (); }
+        { if (200 == response.status)
+          { return response.json (); }
+          else if (204 == response.status)
+          { return null; } }
         else
-        { var json = response.json ();
+        { let json = response.json ();
           Tootsville.warn("Server error from " + uri, json);
           return Tootsville.parrot.ask (
               "Uh-oh! Server trouble!",
               Tootsville.parrot.parrotErrorText(json),
               [{ tag: 'retry', text: "Retry the network operation" }]).then
           (() =>
-           { console.log ("User-initiated retry for " + uri);
-             return Tootsville.util.rest (method, uri, body, headers); }); }},
+           { console.log ("User-initiated retry for " + origURI);
+             return Tootsville.util.rest (method, origURI, body, headers); }); }},
       error =>
           { Tootsville.warn("Fetch error ", error);
             Tootsville.parrot.ask (
                 "Uh-oh! Network trouble!",
                 "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
                     uri.replace('/', '/&shy;') +
-                    "</TT></SMALL></P><P>Did we get disconnected?</P>",
+                    "</TT></SMALL></P><P>Did we get disconnected?</P><BR>" +
+                    "<SMALL><A HREF=\"https://wiki.Tootsville.org/wiki/Network_Troubleshooting\">" +
+                    "Network Troubleshooting</A></SMALL>",
                 [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
-             { return Tootsville.util.rest (method, uri, body, headers); });} ); };
+             { return Tootsville.util.rest (method, origURI, body, headers); });} ); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
-                      { var el = document.createElement('SCRIPT');
+                      { let el = document.createElement('SCRIPT');
                         el.onload = finish;
                         el.src = src;
                         document.body.appendChild(el); });};
@@ -96,4 +104,5 @@ Tootsville.util.ensureServersReachable = function ()
   ( (response) => { Tootsville.trace ("Ping replied", response); },
     (error) => { Tootsville.parrot.say (
         "Squawk! I don't see any servers!",
-        "I'm not able to reach any of the Tootsville game servers. This probably means you won't be able to sign in." ); } ); };
+        "I'm not able to reach any of the Tootsville game servers. "+
+            "This probably means you won't be able to sign in." ); } ); };

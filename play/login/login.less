@@ -40,7 +40,7 @@
     padding: 1rem 2rem 1rem 2rem;
     border: 0 solid white;
     border-radius: 3rem;
-    overflow: show;
+    overflow-y: auto;
     width: calc(100vw - 7rem);
     height: calc(100vh - 7rem);
     position: fixed;
@@ -312,7 +312,7 @@ p {
     margin-right: 1rem;
     margin-left: auto;
     border-radius: 5rem;
-    background-color: #6f6;
+    background-color: @turquoise;
     color: black;
     text-align: center;
     vertical-align: middle;
@@ -323,9 +323,14 @@ p {
     height: 5rem;
     width: 5rem;
     cursor: pointer;
+    position: absolute;
+    right: 7rem;
+    :hover {
+        background-color: @spring-green;
+    }
 }
 
-#toots-list > li > canvas {
+#toots-list > li > span > svg {
     margin-right: 1rem;
     height: 4rem;
     width: 3rem;
@@ -418,20 +423,22 @@ strong.green-plus {
     border-radius: .25rem;
 }
 
-.color-picker-button + label:before {
-    height: 1rem;
-    width: 1rem;
-    border-radius: 1rem;
-    margin: .5rem;
-    content: " ";
-    display:inline-block;
-    vertical-align: middle;
-    border: 3pt solid #777;
-}
-
-.color-picker-button:checked + label:before {
-    border: 3pt solid white;
-}
+/*
+ * .color-picker-button + label:before {
+ *     height: 1rem;
+ *     width: 1rem;
+ *     border-radius: 1rem;
+ *     margin: .5rem;
+ *     content: " ";
+ *     display:inline-block;
+ *     vertical-align: middle;
+ *     border: 3pt solid #777;
+ * }
+ * 
+ * .color-picker-button:checked + label:before {
+ *     border: 3pt solid white;
+ * }
+ */
 
 .new-toot-color-picker {
     background-color: black;
@@ -439,11 +446,48 @@ strong.green-plus {
     border-radius: 1rem;
     position: absolute;
     top: 0;
-    right: 0;
+    left: auto;
+    right: auto;
+    z-index: 5000;
+    max-width: 75%;
     color: white;
     font-family: Cantarell;
     font-weight: bold;
-    
+}
+
+.new-toot-pattern-picker {
+    background-color: black;
+    border: 1pt solid white;
+    border-radius: 1rem;
+    position: absolute;
+    top: 0;
+    left: auto;
+    right: auto;
+    z-index: 5000;
+    max-width: 75%;
+    color: white;
+    font-family: Cantarell;
+    font-weight: bold;
+    input[type="radio"] {
+        display: none;
+    }
+    input:checked > label {
+        background-color: black;
+        color: white;
+    }
+    label {
+        background-color: white;
+        border-radius: 1rem;
+        min-width: 1cm;
+        min-height: 1cm;
+        width: 1.5cm;
+        height: calc(1.5cm + 1.5rem);
+        color: black;
+        image {
+            width: 1.5cm;
+            height: 1.5cm;
+        }
+    }
 }
 
 #new-toot-name-block {

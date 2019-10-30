@@ -1,0 +1,10 @@
+Gossipnet protocol API
+
+Every packet begins with a command key,  which is one of =_cmd=, =c=, or
+=from=.  =_cmd=  is  used  exclusively  for  the  =logOK=  message,  for
+historical reasons. To  choose between the =c= and  =from= command keys,
+in  the JavaScript  API, prefix  =from= commands  with a  =:= character.
+For example, =:command= will be sent as =from: "command"= , but =command=
+will be sent as =c: "command"=.
+
+Infinity mode protocol is defined on the server side better.

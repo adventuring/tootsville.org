@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Tootsville.org:
+    <title>Status report for Tootsville.org:
       A fun virtual world where everyone can play,
       build, and explore together
     </title>
@@ -23,6 +23,7 @@
           content="Q9nr-E4hxRzl72bOyVD8p2Ax_7287DTfR92clJKzqLU" />
     <meta name="msvalidate.01"
           content="58AB22CF287C381CB569FAC0DC9327F9" />
+    <script src="status-check.js"></script>
   </head>
   <body>
     <script>
@@ -50,27 +51,40 @@
         or a tablet with a real (hardware) keyboard attached. </p>
     </noscript>
 
-    <img src="//jumbo.tootsville.org/Assets/Icons/toots-t-logo-circled.svg" id="logo">
+    <p> Game Servers Status Check </p>
+    
     <ul>
-      <audio controls autoplay width="100%">
-        <source
-          src="//jumbo.tootsville.org/Assets/Voices/mp3s/LetsMakeSomeNoise.mp3"
-          />
-      </audio>
-      <li> <a id="play-now"
-              href="//play.tootsville.org/play/">Play Now? …
-          <small>Coming Soon</small>
-      </a> </li>
-      <li> <a id="tootsbook" href="//tootsbook.com/tootsbook/">News &amp; Blogs</a> </li>
-      <li>  <a  id="wiki-wiki"  href="//wiki.tootsville.org/wiki/">Learn
-          More</a> </li>
+      <li> Web Servers
+        <ul>
+          <li> www.tootsville.org <script>checkServer('www.tootsville.org')</script></li>
+          <li> www.tootsville.com <script>checkServer('www.tootsville.com')</script> </li>
+          <li> shop.tootsville.com  <script>checkServer('shop.tootsville.com')</script></li>
+          <li> jumbo.tootsville.org  <script>checkServer('jumbo.tootsville.org/Assets')</script></li>
+          <li> play.tootsville.org  <script>checkServer('play.tootsville.org/play')</script></li>
+          <li> play.test.tootsville.org  <script>checkServer('play.test.tootsville.org/play')</script></li>
+        </ul>
+      </li>
+      <li> Live Game Servers
+        <ul>
+          <li> balancer1.tootsville.net  <script>checkServer('balancer1.tootsville.net')</script></li>
+          <li> balancer2.tootsville.net <script>checkServer('balancer2.tootsville.net')</script> </li>
+          <li> game1.tootsville.net <script>checkServer('game1.tootsville.net/version/about.txt')</script> </li>
+          <li> game2.tootsville.net <script>checkServer('game2.tootsville.net/version/about.txt')</script> </li>
+          <li> game3.tootsville.net <script>checkServer('game3.tootsville.net/version/about.txt')</script> </li>
+          <li> game4.tootsville.net <script>checkServer('game4.tootsville.net/version/about.txt')</script> </li>
+        </ul>
+      </li>
+      <li> Play Test Servers
+        <ul>
+          <li> balancer1.test.tootsville.net  <script>checkServer('balancer1.test.tootsville.net')</script></li>
+          <li> balancer2.test.tootsville.net <script>checkServer('balancer2.test.tootsville.net')</script> </li>
+          <li> game1.test.tootsville.net <script>checkServer('game1.test.tootsville.net/version/about.txt')</script> </li>
+          <li> game2.test.tootsville.net <script>checkServer('game2.test.tootsville.net/version/about.txt')</script> </li>
+          <li> game3.test.tootsville.net <script>checkServer('game3.test.tootsville.net/version/about.txt')</script> </li>
+          <li> game4.test.tootsville.net <script>checkServer('game4.test.tootsville.net/version/about.txt')</script> </li>
+        </ul>
+      </li>
     </ul>
-    <p id="trailer">
-      You don't need to buy or download anything. <br>
-      <small>Currently in <a
-                            href="//wiki.tootsville.org/wiki/Pre-Release_Warning">pre-release</a>
-        (not quite done yet)!</small>
-    </p>
     <script type="application/ld+json">
       {
           "@context": "http://schema.org",
@@ -127,9 +141,6 @@
       <script src="/tk/time.js"></script>
       <script>setInterval(function(){Tootsville.updateClock();},250);</script>
     </div>
-
-    <div id="tootsbook-feed"><a href="https://www.tootsbook.com/tootsbook/">Tootsbook has the latest news…</a></div>
-    <script src="tootsbook-read.js"></script>
 
     <p class="post-footer">
       © 2008-2017 Bruce-Robert Pocock.  © 2018,2019 <a

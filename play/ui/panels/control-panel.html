@@ -45,11 +45,11 @@
         <i id="mute-icon" class="fas fa-fw fa-volume-off"
            onclick="Tootsville.audio.volumeMute()"></i>
         &nbsp;
-        <i class="fas fa-volume-down fa-fw" onclick="volumeDown()"></i>
+        <i class="fas fa-volume-down fa-fw" onclick="Tootsville.audio.volumeDown()"></i>
         <input type="range" id="volume-slider" min="0" max="100"
                value="50" disabled
                step="10" onchange="Tootsville.audio.setVolume(this.value)">
-        <i class="fas fa-volume-up fa-fw" onclick="volumeUp()"></i>
+        <i class="fas fa-volume-up fa-fw" onclick="Tootsville.audio.volumeUp()"></i>
       </div>
 
       <hr>

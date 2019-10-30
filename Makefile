@@ -179,7 +179,7 @@ PLAYLESSDEPS=$(wildcard play/*.less play/**/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --strict-math=yes --source-map play/play.less dist/play/play.css
+	lessc --math=strict --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
@@ -229,13 +229,15 @@ TODO.scorecard:	$(shell find \( -name \*.lisp -o -name \*.asd \
 
 jscl:	bin/jscl
 
+jscl/jscl.min.js:	jscl
+
 bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
 	cd jscl; ./make.sh
 
 #################### www
 
 dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
-	lessc --strict-math=yes --source-map www/2019.less dist/www/2019.css
+	lessc --math=strict --source-map www/2019.less dist/www/2019.css
 
 #################### dev-test
 

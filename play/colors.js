@@ -39,6 +39,7 @@
         black: "#000",
 
         "deep-purple": "#b117ff",
+        "deep purple": "#b117ff", 
         yellow: "#fff216",
         pink: "#e73e97",
         turquoise: "#00a290",
@@ -62,6 +63,8 @@
     };
 
     window.interpretTootColor = function (name) {
-        return tootColorMapping[name];
+        if (null == name || undefined == name)
+        { return '#000'; }
+        return tootColorMapping[name.toLowerCase()];
     };
 })();

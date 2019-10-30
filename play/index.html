@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <!-- -*- web -*- -->
+<html>
+  <head>
+    <meta charset="utf-8">
 
 <!-- ./play/index.html is part of Tootsville
 
@@ -28,9 +31,6 @@
      USA
 
 -->
-<html>
-  <head>
-    <meta charset="utf-8">
     <title>Tootsville</title>
     <script>
      window.loadWatchdog2 = setTimeout( () => {
@@ -114,15 +114,16 @@
     <!-- libraries -->
     <link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
             rel="stylesheet">
-    <script src='https://s3.amazonaws.com/instabug-pro/sdk_releases/instabugsdk-1.2.1-beta.min.js'></script>
   </head>
   <body>
     <noscript id="wtfbox">
       <h1>Tootsville</h1>
-      <p>Tootsville is  a 3D, multiplayer  online game. If  you're seeing this message,  your device cannot  play online
-        (HTML5) games. You should probably   <a    href="https://getfirefox.com/"
-                                    ><i   class="fab  fa-firefox   fa-2x"></i>download  the   latest
-        Firefox</a>  (or  another modern  web  browser,  like Chrome  or
+      <p>Tootsville is a  3D, multiplayer online game.  If you're seeing
+        this  message, your  device  cannot play  online (HTML5)  games.
+        You    should    probably   <a    href="https://getfirefox.com/"
+        ><i   class="fab  fa-firefox   fa-2x"></i>download  the   latest
+        Firefox</a> for  your device,  or use  a different  device. (You
+        could  also  use another  modern  web  browser, like  Chrome  or
         Opera).</p>
     </noscript>
     <script>
@@ -317,8 +318,8 @@
     <canvas id="tootsville3d" touch-action="none"></canvas>
 
     <!-- Firebase App is always required and must be first -->
-    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.9/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-auth.js"></script>
     <script>
      firebase.initializeApp(
              { apiKey: "AIzaSyCtq66sgpIaJMOQnbLhsUwC85zAuz3spHs",
@@ -326,7 +327,8 @@
                databaseURL: "https://tootsville-v.firebaseio.com",
                projectId: "tootsville-v",
                storageBucket: "tootsville-v.appspot.com",
-               messagingSenderId: "416974352322" });
+               messagingSenderId: "416974352322",
+               appId: "1:416974352322:web:66f57d8748849198" });
     </script>
     <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
     <link type="text/css" rel="stylesheet"
@@ -340,5 +342,6 @@
 
   </body>
   <!-- load soon, but don't delay page render for it -->
+  <script src="https://unpkg.com/node-forge@0.7.0/dist/forge.min.js"></script>
   <script src="//cdn.jsdelivr.net/pouchdb/latest/pouchdb.min.js"></script>
 </html>

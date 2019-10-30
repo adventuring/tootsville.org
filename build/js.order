@@ -1,16 +1,17 @@
+jscl/jscl.min.js
+
 play/tootsville.js
+
+play/util.js
 
 play/analytics.js
 
 play/rollbar.js
-play/instabug.js
 
-play/util.js
 play/colors.js
 
 play/time.js
 
-dist/play/stun-list.js
 play/gossip/parrot.js
 play/gossip/gossip.js
 

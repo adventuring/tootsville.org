@@ -123,7 +123,6 @@ ErrorDocument 414 /error/414
 ErrorDocument 415 /error/415
 ErrorDocument 416 /error/416
 ErrorDocument 417 /error/417
-ErrorDocument 420 /error/420
 ErrorDocument 421 /error/421
 ErrorDocument 422 /error/422
 ErrorDocument 423 /error/423
