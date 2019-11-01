@@ -68,15 +68,18 @@ Tootsville.util.rest = function (method, uri, body, headers)
           else if (204 == response.status)
           { return null; } }
         else
-        { let json = response.json ();
-          Tootsville.warn("Server error from " + uri, json);
+        { Tootsville.warn("Server error from " + uri, response);
+          if (response.status >= 400 && response.status <= 499)
+          { return { error: response.status, response: response }; }
+          let json = response.json ();
           return Tootsville.parrot.ask (
               "Uh-oh! Server trouble!",
               Tootsville.parrot.parrotErrorText(json),
               [{ tag: 'retry', text: "Retry the network operation" }]).then
           (() =>
            { console.log ("User-initiated retry for " + origURI);
-             return Tootsville.util.rest (method, origURI, body, headers); }); }},
+             return Tootsville.util.rest (method, origURI, body, headers); }); }
+          return null; },
       error =>
           { Tootsville.warn("Fetch error ", error);
             Tootsville.parrot.ask (
@@ -88,7 +91,8 @@ Tootsville.util.rest = function (method, uri, body, headers)
                     "Network Troubleshooting</A></SMALL>",
                 [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
-             { return Tootsville.util.rest (method, origURI, body, headers); });} ); };
+             { console.log ("User-initiated retry after error for " + origURI);
+             return Tootsville.util.rest (method, origURI, body, headers); });} ); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
