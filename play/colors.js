@@ -43,7 +43,7 @@
         yellow: "#fff216",
         pink: "#e73e97",
         turquoise: "#00a290",
-        cyan: "#00a290",
+        cyan: "#ccffff",
         periwinkle: "#96b4de",
 
         violet: "#9669ad",
