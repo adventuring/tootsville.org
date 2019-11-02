@@ -46,6 +46,15 @@ Tootsville.ui.newToot.updateAvatar = function (swatch, color)
   else if ('pattern' == swatch)
   { Tootsville.ui.newToot.applyPatternColor (); } };
 
+Tootsville.ui.newToot.randomize = function ()
+{ Tootsville.ui.newToot.setColor ('base',
+                                  Tootsville.ui.newToot.colors.base[ Math.floor (Math.random () * Tootsville.ui.newToot.colors.base.length) ]);
+  Tootsville.ui.newToot.setColor ('pad', Tootsville.ui.newToot.randomPadColor ());
+  Tootsville.ui.newToot.setColor ('pattern', Tootsville.ui.newToot.randomPatternColor ());
+  Tootsville.ui.newToot.setColor ('t-shirt',
+                                  Tootsville.ui.newToot.colors["t-shirt"][ Math.floor (Math.random () * Tootsville.ui.newToot.colors["t-shirt"].length) ]);
+  Tootsville.ui.newToot.setPattern (Tootsville.ui.newToot.patterns[ Math.floor (Math.random () * Tootsville.ui.newToot.patterns.length) ]);};
+
 Tootsville.ui.newToot.rainbowGradient =
     "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
 
@@ -53,16 +62,20 @@ Tootsville.ui.newToot.pickedColor = function (event)
 { var button = event.target;
   var picker = button.parentElement;
   var targetColor = picker.getAttribute ("data-target-color");
-  var widget = document.getElementById ("new-toot-" + targetColor + "-color");
-  if ("Rainbow" == button.value)
+  Tootsville.ui.newToot.setColor (targetColor, button.value);
+  picker.style.display = 'none'; };
+
+Tootsville.ui.newToot.setColor = function (targetColor, value)
+{ var widget = document.getElementById ("new-toot-" + targetColor + "-color");
+  if ("Rainbow" == value)
   { widget.style.backgroundImage = Tootsville.ui.newToot.rainbowGradient;
     widget.style.backgroundColor = ""; }
   else
   { widget.style.backgroundImage = "";
-    widget.style.backgroundColor = interpretTootColor (button.value); }
-  widget.setAttribute ('data-color', button.value);
-  Tootsville.ui.newToot.updateAvatar (targetColor, button.value);
-  Tootsville.ui.newToot.changeColor (targetColor, picker.style.backgroundColor); };
+    widget.style.backgroundColor = interpretTootColor (value); }
+  widget.setAttribute ('data-color', value);
+  Tootsville.ui.newToot.updateAvatar (targetColor, value);
+  Tootsville.ui.newToot.changeColor (targetColor, value); };
 
 Tootsville.ui.newToot.randomPatternColor = function ()
 { var patternColors = Tootsville.ui.newToot.colors.pattern;
@@ -71,6 +84,13 @@ Tootsville.ui.newToot.randomPatternColor = function ()
   if ( ('Rainbow' == color) ||
        (color == document.getElementById ("new-toot-base-color").getAttribute ("data-color")) )
   { return Tootsville.ui.newToot.randomPatternColor (); };
+  return interpretTootColor (color);};
+
+Tootsville.ui.newToot.randomPadColor = function ()
+{ var padColors = Tootsville.ui.newToot.colors.pad;
+  var color = padColors[ Math.floor (Math.random () * padColors.length) ];
+  if (color == document.getElementById ("new-toot-base-color").getAttribute ("data-color"))
+  { return Tootsville.ui.newToot.randomPadColor (); };
   return interpretTootColor (color);};
 
 Tootsville.ui.newToot.applyPatternColor = function ()
@@ -85,9 +105,11 @@ Tootsville.ui.newToot.applyPatternColor = function ()
 
 Tootsville.ui.newToot.pickedPattern = function (event)
 { var button = event.target;
-  var picker = button.parentElement;
-  var widget = document.getElementById ("new-toot-pattern");
-  fetch("https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + button.value + ".svg").then (
+  Tootsville.ui.newToot.setPattern (button.value); };
+
+Tootsville.ui.newToot.setPattern = function (value)
+{ var widget = document.getElementById ("new-toot-pattern");
+  fetch("https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + value + ".svg").then (
       (response) =>
           { response.text ().then (
               (text) =>
@@ -96,8 +118,8 @@ Tootsville.ui.newToot.pickedPattern = function (event)
                     widget.children[0].setAttribute ('height', widget.clientHeight);
                     Tootsville.ui.newToot.applyPatternColor ();
                   } ); } );
-  widget.setAttribute ('data-pattern', button.value);
-  Tootsville.ui.newToot.changePattern (button.value); };
+  widget.setAttribute ('data-pattern', value);
+  Tootsville.ui.newToot.changePattern (value); };
 
 Tootsville.ui.newToot.notReady = function (reasons)
 { alert ("You're not quite ready yet." + reasons); }; // FIXME soft dialog
