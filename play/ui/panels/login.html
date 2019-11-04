@@ -119,19 +119,23 @@
         </div>
         <hr>
         <div id="edit-toot-settings">
-          <h3> Edit Toot Settings </h3>
-          <p> You can enable Child accounts that your children can play.  You can also enable
-            Sensitive Player mode for your own characters. (TODO: link help) </p>
+          <h3> Edit Child Settings </h3>
+          <p>  You can  enable  Child accounts  that  your children  can
+          play. </p>
           <button onclick="Tootsville.login.childSettings()">
-            <i class="fas fa-wrench"></i> Settings
+            <i class="fas fa-wrench"></i> Child Settings
           </button>
           <hr>
         </div>
         <div id="switch-google-account">
+          <h3> Your Account </h3>
           <p> Signed in as <img id="google-user-face" ><span id="google-user-name"><i class="fas
                                                                                              fa-spin fa-fw fa-spinner" ></i></span>
             <tt>&lt;</tt ><tt id="google-user-email" ><i class="fas fa-spin fa-spinnerfa-fw"
                                                          ></i></tt><tt>&gt;</tt>. </p>
+          <p>  <label><input  type="checkbox"  name="sensitive-player-p"
+                              value="t"> ◆ Sensitive Player
+          </label> (<a href="https://wiki.tootsville.org/wiki/Sensitive_Player_Mode">What's this?</a>) </p>
           <button  onclick="Tootsville.ui.signOut()">   Quit  or  Change
             Players </button>
         </div>
