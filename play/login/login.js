@@ -92,7 +92,8 @@ Tootsville.login.toots = {};
 
 Tootsville.login.createTootListItem2 = function (li, toot)
 { li.innerHTML = '';
-  li['data-toot'] = toot;
+  li ['data-toot'] = toot;
+  li.className = 'toot';
   if ('UltraToot' == toot.avatar)
   { var img = document.createElement ('SPAN');
     img.innerHTML = Tootsville.login.avatarSVG;
@@ -106,29 +107,35 @@ Tootsville.login.createTootListItem = function (tootName)
 { var li = document.createElement ('LI');
   if (! Tootsville.login.settingsP)
   { li.onclick = function () { Tootsville.login.pickCharacter (li); }; }
-  if (Tootsville.login.toots[tootName])
+  if (Tootsville.login.toots [tootName])
   { Tootsville.login.createTootListItem2 (li, Tootsville.login.toots[tootName]); }
   else
   { li.innerHTML = '<SPAN CLASS="toot-name">' +
     tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
     li.className = 'toot';
-    li['data-toot'] = { name: tootName };
-    Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).
-    then (toot => { Tootsville.login.toots [tootName] = toot;
-                    Tootsville.login.createTootListItem2 (li, toot); }); }
+    li ['data-toot'] = { name: tootName, childP: false, readyP: false }; }
   return li; };
 
 Tootsville.login.tootsList = null;
 
 Tootsville.login.saveTootsList = function (list)
-{ Tootsville.login.tootsList = list; };
+{ Tootsville.login.tootsList = list;
+  for (let i = 0; i < list.length; ++i)
+  { let tootName = list [i];
+    Tootsville.util.rest ('GET', 'users/me/toots/' + tootName).
+    then (toot => { Tootsville.login.toots [tootName] = toot;
+                    Tootsville.login.populateTootsList ();}); } };
 
 Tootsville.login.populateTootsList = function ()
 { Tootsville.login.clearTootsList ();
   for (var i = 0; i < Tootsville.login.tootsList.length; ++i)
-  { var toot = Tootsville.login.tootsList[i];
+  { var toot = Tootsville.login.tootsList [i];
     var li = Tootsville.login.createTootListItem (toot);
-    document.getElementById ('toots-list').appendChild (li); } };
+    document.getElementById ('toots-list').appendChild (li); };
+  if (Tootsville.login.settingsP)
+  { Tootsville.login.childSettings (); }
+  else
+  { Tootsville.login.doneEditingSettings (); } };
 
 Tootsville.login.generateNewToot = function ()
 { Tootsville.ui.hud.showHUDPanel('new-toot'); };
@@ -157,9 +164,21 @@ Tootsville.login.dimUnpickedCharacters = function (picked)
     { allItems[i].style.opacity = .25;
       allItems[i].style.filter = 'grayscale (100%)'; } } };
 
-Tootsville.login.playWithCharacter = function (name)
+Tootsville.login.doRealLogin = function (name)
 { Tootsville.login.serverLinkTokenToCharacter (name).
   then (Tootsville.tank.startSimulation); };
+
+Tootsville.login.playWithCharacter = function (name)
+{ let li = this.findLIForToot (name);
+  if (li ['data-toot'].childP)
+  { Tootsville.parrot.ask ("That's a Child Toot",
+                                             "Are you sure you want to sign in with a Child account?",
+                           [{ tag: "yes", text: "Sign In" },
+                            { tag: "no", text: "Cancel" }]).
+    then (answer => { if ('yes' == answer)
+                      { this.doRealLogin (name); } }); }
+  else
+  { this.doRealLogin (name); } };
 
 Tootsville.login.pickCharacter = function (picked)
 { Tootsville.login.dimUnpickedCharacters (picked);
@@ -169,7 +188,7 @@ Tootsville.login.pickCharacter = function (picked)
   document.querySelector ('#new-toot-hint').disabled = true;
   document.querySelector ('#switch-google-account').style.opacity = .25;
   document.querySelector ('#switch-google-account').disabled = true;
-  Tootsville.login.playWithCharacter (picked['data-toot'].name); };
+  Tootsville.login.playWithCharacter (picked ['data-toot'].name); };
 
 Tootsville.login.fillGoogleUserInfo = function ()
 { document.getElementById ('google-user-name').innerHTML = Tootsville.login.player.name;
@@ -209,116 +228,64 @@ Tootsville.login.removeChildFlag = function (li)
 { var child = li.querySelector ('.child');
   if (child) { li.removeChild (child); } };
 
-Tootsville.login.appendChildMode = function (li, tag, label, checkedP)
-{ var name = '"' + li['data-toot'].name + '/child-mode"';
-  li.innerHTML += '<LABEL><INPUT TYPE="RADIO" onchange="Tootsville.login.updateChildMode (\'' + li['data-toot'].name +
-  '\')" NAME=' + name +
-  (checkedP ? 'CHECKED ' : '') + ' VALUE="' + tag + '"> ' + label + ' </LABEL> <BR>'; };
-
-Tootsville.login.appendChildRadioSet = function (li)
-{ li.innerHTML += '<BR CLEAR="LEFT"><HR>';
-  Tootsville.login.appendChildMode (li, 'adult', '<I CLASS="fas fa-graduation-cap fa-fw"></I> Adult account',
-                                    ! (li['data-toot'].childP));
-  Tootsville.login.appendChildMode (li, 'child', '<I CLASS="fas fa-child fa-fw"></I> Child account',
-                                    li['data-toot'].childP); };
-
-Tootsville.login.appendChildCodeEntry = function (li)
-{ li.innerHTML += '<DIV CLASS="define-child-code"' +
-  (li['data-toot'].childP ? '' : ' style="display: none"' )+
-  '>TODO: Child Code entry </DIV>'; };
-
 Tootsville.login.findLIForToot = function (name)
 { var toots = document.querySelectorAll ('#toots-list>.toot');
   for (var i = 0; i < toots.length; ++i)
-  { if (toots[i]['data-toot'].name == name)
+  { if (toots [i]['data-toot'].name == name)
     { return toots[i]; } }
   throw new Error ("Altered a non-existent Toot"); };
 
-Tootsville.login.findSelectedChildMode = function (li)
-{ var buttons = li.querySelectorAll ('input[type="radio"]');
-  for (var i = 0; i < buttons.length; i++)
-  { if (buttons[i].checked)
-    { return buttons[i].value; } }
-  console.warn ("No radio button checked");
-  return 'adult'; };
+Tootsville.login.validChildCode = function (string)
+{ return (string.match (/^[a-z]{4,6}$/)) ? string : false; };
 
-Tootsville.login.enableChildMode = function (li, name)
-{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: true });
-  li['data-toot'].childP = true;
-  li.querySelector ('.define-child-code').style.display = 'block'; };
+Tootsville.login.enableChildMode = function (name)
+{ let li = this.findLIForToot (name);
+  li ['data-toot'].childP = true;
+  let code = li.querySelector ('INPUT.child-code');
+  if (code) { li ['data-toot'].childCode = code.value; }  
+  Tootsville.login.populateTootsList ();
+  let childCode = code && this.validChildCode (code.value);
+  if (childCode)
+  { Tootsville.util.rest ('POST', 'toots/' + name,
+                          { key: 'childCode', newValue: childCode }); } };
 
-Tootsville.login.disableChildMode = function (li, name)
-{ Tootsville.util.rest ('POST', 'toots/' + name + '/child-p', { set: false });
-  li['data-toot'].childP = false;
-  li.querySelector ('.define-child-code').style.display = 'none'; };
+Tootsville.login.disableChildMode = function (name)
+{ let li = this.findLIForToot (name);
+  Tootsville.util.rest ('POST', 'toots/' + name,
+                        { key: 'childCode',
+                          newValue: null });
+  li ['data-toot'].childP = false;
+  Tootsville.login.populateTootsList (); };
 
 Tootsville.login.onSensitiveModeToggled = function (event)
 { let checked = event.target.checked;
   Tootsville.util.rest ('POST', 'users/me', { key: "sensitiveP", newValue: checked }); };
 
-Tootsville.login.updateChildMode = function (name)
-{ var li = Tootsville.login.findLIForToot (name);
-  var mode = Tootsville.login.findSelectedChildMode (li);
-  if (mode == 'child')
-  { Tootsville.login.enableChildMode (li, name);
-    return; }
-  Tootsville.login.disableChildMode (li, name); };
-
-Tootsville.login.ensureChildSettings = function (li)
-{ if (li.querySelector ('INPUT[TYPE="RADIO"]')) { return; }
-  li.onclick = undefined;
-  li.style.cursor = 'default';
-  Tootsville.login.removeChildFlag (li);
-  Tootsville.login.appendChildRadioSet (li);
-  Tootsville.login.appendChildCodeEntry (li); };
-
 Tootsville.login.childSettings = function ()
-{ Tootsville.login.settingsP = true;
-  Tootsville.login.populateTootsList (Tootsville.login.tootsList);
-  if (0 == Tootsville.login.tootsList.length) {
-      return; // XXX
-  }
-  /// FIXME   Tootsville.login.appendChildMode (li, 'sensitive', '<I CLASS="fas fa-chess-queen fa-fw"></I> Sensitive Player account', li['data-toot'].sensitiveP);
-  var toots = document.querySelectorAll ('#toots-list>.toot');
-  for (var i = 0; i < toots.length; ++i)
-  { Tootsville.login.ensureChildSettings (toots[i]); }
-  document.querySelector ('#toots-list').style.backgroundColor = '#c4d82d';
+{ document.querySelector ('#toots-list').style.backgroundColor = '#c4d82d';
   document.querySelector ('#toots-list>#add-toot').style.display = 'none';
   document.querySelector ('#pick-toot>h2').innerHTML = 'Edit Toot Characters';
-  document.querySelector ('#pick-toot>p').innerHTML = 'Set up Child options here. Child accounts have a sign-in code. (TODO: link to help)';
+  document.querySelector ('#pick-toot>p').innerHTML = 'Set up Child options here. Set a 4-to-6-letter code for child logins (like a password). It must be all lower-case letters. <A TARGET="_blank" HREF="https://wiki.tootsville.org/wiki/Child_Sign-in_Code">More info…</A>';
   document.querySelector ('#edit-toot-settings').style.display = 'none';
   document.querySelector ('#new-toot-hint').style.display = 'none';
   document.querySelector ('#edit-toot-settings-done').style.display = 'block'; };
 
-Tootsville.login.stripChildSettings = function (li)
-{ var buttons = li.querySelectorAll ('LABEL');
-  for (var i = 0; i < buttons.length; ++i)
-  { li.removeChild (buttons[i]); }
-  var breaks = li.querySelectorAll ('BR');
-  for (var i = 0; i < breaks.length; ++i)
-  { li.removeChild (breaks[i]); }
-  li.removeChild (li.querySelector ('HR'));
-  li.removeChild (li.querySelector ('.define-child-code'));
-
-  li.onclick = function () { Tootsville.login.pickCharacter (li); };
-  Tootsville.login.addChildFlag (li); };
-
 Tootsville.login.addChildFlag = function (li)
-{ var toot = li['data-toot'];
+{ var toot = li ['data-toot'];
   if (Tootsville.login.settingsP)
-  { Tootsville.login.removeChildFlag (li);
-    Tootsville.login.appendChildRadioSet (li);
-    Tootsville.login.appendChildCodeEntry (li);  }
+  { if (toot.childP)
+    { li.innerHTML += '<BR><LABEL><INPUT TYPE="checkbox" CHECKED onchange="Tootsville.login.disableChildMode(' + "'" + toot.name + "'" + ')"><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL><BR>Child sign-in code: <INPUT PATTERN="^[a-z]{4,6}$" TYPE="text" SIZE=6 VALUE="' + (toot.childCode || '') + '" CLASS="child-code" onchange="Tootsville.login.enableChildMode(' + "'" + toot.name + "'" + ')">'; }
+    else
+      { li.innerHTML += '<BR><LABEL><INPUT TYPE="checkbox" onchange="Tootsville.login.enableChildMode(' + "'" + toot.name + "'" + ')"><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL>'; } }
   else
   { if (toot.childP)
     { li.innerHTML += '<BR><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN>'; } }};
 
 Tootsville.login.doneEditingSettings = function ()
 { var toots = document.querySelectorAll ('#toots-list>.toot');
-  Tootsville.login.settingsP = false;
-  Tootsville.login.populateTootsList ();
   document.querySelector ('#toots-list').style.backgroundColor = '#ba9dca';
-  document.querySelector ('#toots-list>#add-toot').style.display = 'block';
+  document.querySelector ('#toots-list>#add-toot').style.display =
+  ( ((toots.length < 5) || Tootsville.enableMoreTootsP) ? 'block' : 'none');
   document.querySelector ('#pick-toot>h2').innerHTML = 'Pick a Toot Character';
   document.querySelector ('#pick-toot>p').innerHTML = 'Click or tap a character to play now.';
   document.querySelector ('#edit-toot-settings').style.display = 'block';
@@ -383,7 +350,7 @@ Tootsville.login.storeCredentialInfo = function (result)
   then (function (idToken)
         { Tootsville.login.firebaseAuth = idToken;
           Tootsville.login.switchTootsView(); }).
-  catch(function(error) {
+  catch (function(error) {
       // Handle error TODO
   });
 

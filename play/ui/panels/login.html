@@ -67,7 +67,7 @@
           <div id="login-kid-enter-login">
             <h4>Sign in with your Toot character</h4>
             <p>Your parents must create your Toot character first.
-              <a href="https://wiki.tootsville.org/wiki/Getting_a_child_account">Find out how.</a> </p>
+              <a target="_blank" href="https://wiki.tootsville.org/wiki/Getting_a_child_account">Find out how.</a> </p>
             <div>
               <h5><label for="toot-name" id="toot-name-label"> My Toot's name is
                 </label></h5>
@@ -111,7 +111,7 @@
               ><abbr for="Create a new character"><i class="fas fa-user-plus fa-2x"></i></abbr></li>
         </ul>
         <div id="edit-toot-settings-done" style="display:none">
-          <button onclick="Tootsville.login.doneEditingSettings()"> <i class="fas fa-wrench"></i> Done Editing</button>
+          <button onclick="Tootsville.login.settingsP=false;Tootsville.login.populateTootsList();"> <i class="fas fa-wrench"></i> Done Editing</button>
         </div>
         <div id="new-toot-hint">
           To create a new Toot character, click <i onclick="Tootsville.login.startCharacterCreation()" class="fas
@@ -122,7 +122,7 @@
           <h3> Edit Child Settings </h3>
           <p>  You can  enable  Child accounts  that  your children  can
           play. </p>
-          <button onclick="Tootsville.login.childSettings()">
+          <button onclick="Tootsville.login.settingsP=true;Tootsville.login.populateTootsList();">
             <i class="fas fa-wrench"></i> Child Settings
           </button>
           <hr>
@@ -135,7 +135,7 @@
                                                          ></i></tt><tt>&gt;</tt>. </p>
           <p>  <label><input  type="checkbox"  name="sensitive-player-p"
                               value="t"> ◆ Sensitive Player
-          </label> (<a href="https://wiki.tootsville.org/wiki/Sensitive_Player_Mode">What's this?</a>) </p>
+          </label> (<a target="_blank" href="https://wiki.tootsville.org/wiki/Sensitive_Player_Mode">What's this?</a>) </p>
           <button  onclick="Tootsville.ui.signOut()">   Quit  or  Change
             Players </button>
         </div>
