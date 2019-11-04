@@ -47,7 +47,7 @@ Tootsville.gossip.acceptOffer = function (offer)
   let peer = {};
   peer.connection = new RTCPeerConnection ({ iceServers: Tootsville.gossip.iceServers,
                                              iceCandidatePoolSize: 10,
-                                             type: 'offer' });
+                                             type: 'answer'});
   peer.connection.ondatachannel = event =>
   { peer.receiveChannel = event.channel;
     peer.receiveChannel.onmessage = message => { Tootsville.gossip.gatekeeperAccept (peer, message); };
@@ -200,6 +200,7 @@ Tootsville.gossip.createPacket = function (c, d, r)
  */
 Tootsville.gossip.connect = function (success)
 { Tootsville.gossip.ensureKeyPair ();
+  Tootsville.gossip.createConnection ();
   Tootsville.gossip.getOffer (success); };
 
 /**

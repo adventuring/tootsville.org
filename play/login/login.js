@@ -220,11 +220,9 @@ Tootsville.login.appendChildMode = function (li, tag, label, checkedP)
 Tootsville.login.appendChildSensitiveRadioSet = function (li)
 { li.innerHTML += '<BR CLEAR="LEFT"><HR>';
   Tootsville.login.appendChildMode (li, 'adult', '<I CLASS="fas fa-graduation-cap fa-fw"></I> Adult account',
-                                    ! (li['data-toot'].childP || li['data-toot'].sensitiveP));
+                                    ! (li['data-toot'].childP));
   Tootsville.login.appendChildMode (li, 'child', '<I CLASS="fas fa-child fa-fw"></I> Child account',
-                                    li['data-toot'].childP);
-  Tootsville.login.appendChildMode (li, 'sensitive', '<I CLASS="fas fa-chess-queen fa-fw"></I> Sensitive Player account',
-                                    li['data-toot'].sensitiveP); };
+                                    li['data-toot'].childP); };
 
 Tootsville.login.appendChildCodeEntry = function (li)
 { li.innerHTML += '<DIV CLASS="define-child-code"' +
@@ -273,10 +271,6 @@ Tootsville.login.updateChildMode = function (name)
   { Tootsville.login.enableChildMode (li, name);
     Tootsville.login.disableSensitiveMode (li, name);
     return; }
-  if (mode == 'sensitive')
-  { Tootsville.login.disableChildMode (li, name);
-    Tootsville.login.enableSensitiveMode (li, name);
-    return; }
   Tootsville.login.disableChildMode (li, name);
   Tootsville.login.disableSensitiveMode (li, name); };
 
@@ -294,6 +288,7 @@ Tootsville.login.childSettings = function ()
   if (0 == Tootsville.login.tootsList.length) {
       return; // XXX
   }
+  /// FIXME   Tootsville.login.appendChildMode (li, 'sensitive', '<I CLASS="fas fa-chess-queen fa-fw"></I> Sensitive Player account', li['data-toot'].sensitiveP);
   var toots = document.querySelectorAll ('#toots-list>.toot');
   for (var i = 0; i < toots.length; ++i)
   { Tootsville.login.ensureChildSettings (toots[i]); }
