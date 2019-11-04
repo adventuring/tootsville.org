@@ -45,7 +45,9 @@ Tootsville.gossip.acceptOffer = function (offer)
     return; }
   Tootsville.trace ("Accepting offer", offer);
   let peer = {};
-  peer.connection = new RTCPeerConnection ({ iceServers: Tootsville.gossip.iceServers, iceCandidatePoolSize: 10 });
+  peer.connection = new RTCPeerConnection ({ iceServers: Tootsville.gossip.iceServers,
+                                             iceCandidatePoolSize: 10,
+                                             type: 'offer' });
   peer.connection.ondatachannel = event =>
   { peer.receiveChannel = event.channel;
     peer.receiveChannel.onmessage = message => { Tootsville.gossip.gatekeeperAccept (peer, message); };
@@ -63,9 +65,9 @@ Tootsville.gossip.acceptOffer = function (offer)
 /**
  * Accept an offer from the central switchboard
  */
-Tootsville.gossip.getOffer = function ()
+Tootsville.gossip.getOffer = function (success)
 { Tootsville.trace ("Fetching offer now");
-  Tootsville.util.rest ('GET', 'gossip/offers').then (Tootsville.gossip.acceptOffer); };
+  Tootsville.util.rest ('GET', 'gossip/offers').then ((offer) => { Tootsville.gossip.acceptOffer (offer); success (); }); };
 
 /**
  * Wait for an answer to an offer which was posted. Comet-type long poll.
@@ -196,9 +198,9 @@ Tootsville.gossip.createPacket = function (c, d, r)
 /**
  * Connect to the global gossip network.
  */
-Tootsville.gossip.connect = function ()
+Tootsville.gossip.connect = function (success)
 { Tootsville.gossip.ensureKeyPair ();
-  Tootsville.gossip.getOffer (); };
+  Tootsville.gossip.getOffer (success); };
 
 /**
  * Are we connected to the global gossip network?
@@ -209,13 +211,13 @@ Tootsville.gossip.connectedP = function ()
 /**
  * Ensure that we have at least 5 gossip network connections.
  */
-Tootsville.gossip.ensureConnected = function ()
+Tootsville.gossip.ensureConnected = function (success)
 { let length = Tootsville.gossip.peers.length;
   if (length > 4)
   { Tootsville.warn ("Gossipnet already connected at " + length + " points");
     success (); } else
   { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
-    Tootsville.gossip.connect (); } };
+    Tootsville.gossip.connect (success); } };
 
 /**
  * Obtain ICE server info from the game server.

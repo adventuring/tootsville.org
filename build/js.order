@@ -17,6 +17,8 @@ play/gossip/gossip.js
 
 play/login/login.js
 
+play/lib/adapter.js/adapter.js
+
 play/game/wardrobe.js
 play/game/commands.js
 play/game/gatekeeper.js
