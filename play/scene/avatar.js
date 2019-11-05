@@ -76,12 +76,13 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, mod
   finish (Tootsville.Avatars.UltraTootBuilder.model);
   return; };
 
-Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, foo, bar) 
+Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, particles, skeletons) 
 { // XXX: private
     try 
     { Tootsville.trace ("Got UltraToot meshes", meshes);
       var modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
       Tootsville.Avatars.addMeshesToModelRoot (meshes, modelRoot);
+      /* XXX: do something with particles and skeletons? */
       modelRoot.position.y = -Infinity;
       Tootsville.tank.scene.addTransformNode (modelRoot); // TODO: is this necessary?
       Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
@@ -97,11 +98,11 @@ Tootsville.Avatars.UltraTootBuilder.getBaseModel = function ()
           { finish (Tootsville.Avatars.UltraTootBuilder.model);
             return; }
           else 
-          { BABYLON.SceneLoader.ImportMesh ("UltraToot.mesh",
+          { BABYLON.SceneLoader.ImportMesh ("", /* import all meshes */
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             "UltraToot.babylon",
                                             Tootsville.tank.scene,
-                                            (meshes, foo, bar) => { Tootsville.Avatars.importUltraToot (finish, meshes, foo, bar); },
+                                            (meshes, particles, skeletons) => { Tootsville.Avatars.importUltraToot (finish, meshes, particles, skeletons); },
                                             null, /* onprogress */
                                             (scene, errorMessage) => 
                                             { console.log (errorMessage); });
