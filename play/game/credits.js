@@ -29,3 +29,14 @@
  */
 if (!('Tootsville' in window)) { Tootsville = {  }; }
 
+Tootsville.credits = function ()
+{ console.log ("Tootsville V was brought to you by:\n\n" +
+               "Chief Engineer: Bruce-Robert Pocock\n\n" +
+               "Additional support:\n" +
+               "Chris Brunner\n" +
+               "Ali Dolan\n" +
+               "Mariaelisa Greenwood\n" +
+               "Levi Mc Call\n" +
+               "Gian Ratnapala\n" +
+               "\nAnd all our Tootsville supporters!\n\n"); };
+
