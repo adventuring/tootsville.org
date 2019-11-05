@@ -37,18 +37,10 @@ if (!('UltraTootBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.UltraTootB
 
 Tootsville.Avatars.getAvatar = function (character)
 { if (!character) { return new Promise ( () => {} ); }
-  var xhr = new XMLHttpRequest;
-  xhr.open ('GET', Tootsville.host.game + '/toots/' + character + "/avatar");
-  return new Promise (
-      (finish) =>
-          { xhr.onload =
-            () =>
-            { var avatar = JSON.parse (xhr.response).avatar;
-              finish (avatar);
-              return; };
-            xhr.send (); }); };
+  return Tootsville.util.rest ('GET', 'toots/' + character); };
 
 Tootsville.Avatars.UltraTootBuilder.model = null;
+
 Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot) 
 { // XXX: private
     var proxyHead = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.head',
@@ -64,6 +56,7 @@ Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot)
     proxyBody.material = new BABYLON.StandardMaterial ('body', Tootsville.tank.scene);
     proxyBody.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('violet'));
     proxyBody.setParent (modelRoot); };
+
 Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, modelRoot) 
 { try 
   { if (meshes.length == 0) 
@@ -82,6 +75,7 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, mod
   Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
   finish (Tootsville.Avatars.UltraTootBuilder.model);
   return; };
+
 Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, foo, bar) 
 { // XXX: private
     try 
@@ -95,6 +89,7 @@ Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, 
       return; }
     catch (e) 
     { Tootsville.error ("Error in importUltraToot: ", e); } };
+
 Tootsville.Avatars.UltraTootBuilder.getBaseModel = function () 
 { return new Promise (
     (finish) => 
@@ -111,6 +106,7 @@ Tootsville.Avatars.UltraTootBuilder.getBaseModel = function ()
                                             (scene, errorMessage) => 
                                             { console.log (errorMessage); });
             return; } }); };
+
 Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar) 
 { var skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
                                                    Tootsville.tank.scene);
@@ -119,23 +115,27 @@ Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar)
   // TODO: filter out better
   for (var i = 0; i < meshes.length; ++i) 
   { meshes[i].material = skinMaterial; } };
+
 Tootsville.Avatars.UltraTootBuilder.addClothes = function (node, avatar) 
 { // TODO
 };
+
 Tootsville.Avatars.UltraTootBuilder.addBillboards = function (node, avatar) 
 { // TODO: add speech bubble/emote placeholder(s)
     // TODO: add player name box
     // TODO: add child/sensitive player diamond
 };
+
 Tootsville.Avatars.UltraTootBuilder.enablePhysics = function (node, avatar) 
 { // TODO — BABYLON.PhysicsJoint.BallAndSocketJoint;
     node.physicsImpostor = new BABYLON.PhysicsImpostor (node,
                                                         BABYLON.PhysicsImpostor.SphereImpostor,
                                                         { mass: 1, restitution: 0.9 },
                                                         Tootsville.tank.scene); };
+
 Tootsville.Avatars.UltraTootBuilder.makeToot = function (avatar) 
 { return new Promise ( (finish) => 
-                       { if (avatar == 'UltraToot') 
+                       { if (avatar.avatar == 'UltraToot') 
                          { Tootsville.Avatars.UltraTootBuilder.getBaseModel ().then ( (model) => 
                                                                                       { var toot = model.clone ();
                                                                                         toot.name = 'avatar/' + avatar.name;
