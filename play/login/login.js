@@ -256,20 +256,15 @@ Tootsville.login.enableChildMode = function (name)
   Tootsville.login.populateTootsList ();
   let childCode = code && this.validChildCode (code.value);
   if (childCode)
-  { Tootsville.util.rest ('POST', 'toots/' + name,
+  { Tootsville.util.rest ('PUT', 'toots/' + name,
                           { key: 'childCode', newValue: childCode }); } };
 
 Tootsville.login.disableChildMode = function (name)
 { let li = this.findLIForToot (name);
-  Tootsville.util.rest ('POST', 'toots/' + name,
-                        { key: 'childCode',
-                          newValue: null });
+  Tootsville.util.rest ('PUT', 'toots/' + name,
+                        { key: 'childCode', newValue: null });
   li ['data-toot'].childP = false;
   Tootsville.login.populateTootsList (); };
-
-Tootsville.login.onSensitiveModeToggled = function (event)
-{ let checked = event.target.checked;
-  Tootsville.util.rest ('POST', 'users/me', { key: "sensitiveP", newValue: checked }); };
 
 Tootsville.login.childSettings = function ()
 { document.querySelector ('#toots-list').style.backgroundColor = '#c4d82d';
