@@ -181,7 +181,16 @@ Tootsville.login.playWithCharacter = function (name)
                            [{ tag: "yes", text: "Sign In" },
                             { tag: "no", text: "Cancel" }]).
     then (answer => { if ('yes' == answer)
-                      { this.doRealLogin (name); } }); }
+                      { this.doRealLogin (name); }
+                      else
+                      { this.populateTootsList ();
+                        document.querySelector ('#edit-toot-settings').style.opacity = 1;
+  document.querySelector ('#edit-toot-settings').disabled = false;
+  document.querySelector ('#new-toot-hint').style.opacity = 1;
+  document.querySelector ('#new-toot-hint').disabled = false;
+  document.querySelector ('#switch-google-account').style.opacity = 1;
+  document.querySelector ('#switch-google-account').disabled = false;
+} } ); }
   else
   { this.doRealLogin (name); } };
 
@@ -262,7 +271,7 @@ Tootsville.login.enableChildMode = function (name)
 Tootsville.login.disableChildMode = function (name)
 { let li = this.findLIForToot (name);
   Tootsville.util.rest ('PUT', 'toots/' + name,
-                        { key: 'childCode', newValue: null });
+                        { key: 'childCode', newValue: "" });
   li ['data-toot'].childP = false;
   Tootsville.login.populateTootsList (); };
 
