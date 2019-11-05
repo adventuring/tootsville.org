@@ -129,6 +129,7 @@ Tootsville.gossip.gatekeeperAccept = function (peer, event)
  */
 Tootsville.gossip.closeInfinityMode = function (peer, event)
 { Tootsville.warn ("Dropped peer connection", peer, event);
+  Tootsville.ui.hud.refreshHUD ();
   Tootsville.gossip.peers = Tootsville.gossip.peers.filter ( el => { return el != peer; } ); };
 /**
  * Initiate Infinity mode communications; send a login packet out to $Eden
@@ -226,7 +227,9 @@ Tootsville.gossip.ensureConnected = function (success)
 Tootsville.gossip.getICE = function ()
 { Tootsville.util.rest ('GET', 'gossip/ice-servers').then
   ( response => { Tootsville.gossip.iceServers = response;
-                  Tootsville.gossip.ensureConnected (); },
+                  Tootsville.gossip.ensureConnected ().then
+                  ( Tootsville.ui.hud.refreshHUD ); },
     error => { Tootsville.parrot.say (
         "Squawk! Trouble getting connection servers",
-        "I'm not able to get connection servers needed to join the game. Are you online?" ); } ); };
+        "I'm not able to get connection servers needed to join the game. Are you online?" );
+               Tootsville.ui.hud.refreshHUD (); } ); };
