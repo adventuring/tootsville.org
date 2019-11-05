@@ -126,8 +126,13 @@ Tootsville.login.saveTootsList = function (list)
     then (toot => { Tootsville.login.toots [tootName] = toot;
                     Tootsville.login.populateTootsList ();}); } };
 
+Tootsville.login.setSensitiveP = function ()
+{ document.getElementById('sensitive-player-p').checked =
+  (Tootsville.player && Tootsville.player.sensitiveP); };
+
 Tootsville.login.populateTootsList = function ()
 { Tootsville.login.clearTootsList ();
+  Tootsville.login.setSensitiveP ();
   for (var i = 0; i < Tootsville.login.tootsList.length; ++i)
   { var toot = Tootsville.login.tootsList [i];
     var li = Tootsville.login.createTootListItem (toot);
