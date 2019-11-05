@@ -51,7 +51,7 @@ window.addEventListener ('load', () => {
     Tootsville.ui.hud.refreshHUD ();
     Tootsville.ui.hud.connectTalkBox ();
 
-    document.addEventListener('keypress', Tootsville.ui.keys.onKeypress);
+    document.addEventListener('keydown', Tootsville.ui.keys.onKeypress);
 
     Tootsville.tank.prepareFor3D ();
     
