@@ -236,7 +236,8 @@ Tootsville.login.loginDone = function (reply)
   Tootsville.characterUUID = reply.toot.uuid;
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
-  Tootsville.tank.start3D (); };
+  Tootsville.tank.start3D ();
+  Tootsville.ui.hud.refreshHUD (); };
 
 Tootsville.login.serverLinkTokenToCharacter = function (character)
 { return Tootsville.util.rest ('POST', 'users/me/play-with/' + character).then(
