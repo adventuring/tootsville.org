@@ -29,10 +29,12 @@
  *
  * USA
  *
- */if (!("Tootsville" in window))
-{ window.Tootsville = {}; }
+ */
+
+if (!("Tootsville" in window)) { window.Tootsville = {}; }
 
 Tootsville.universalTimeOffset = ((((new Date()).valueOf()/1000) + 2208988800) - (performance.now()/1000));
+
 Tootsville.decodeTime = function ()
 { var universalTime = performance.now()/1000 + Tootsville.universalTimeOffset;
   var year = Math.floor(universalTime/23328000)-10;
@@ -48,7 +50,8 @@ Tootsville.decodeTime = function ()
   return { year: year, month: month, day: day, hour: hour, min: min, sec: sec,
            julian: julian, weekday: weekday, otherMonthDay: otherMonthDay,
            pinkMonthDay: pinkMonthDay };
-}
+};
+
 Tootsville.updateClock = function ()
 { var now = Tootsville.decodeTime();
   document.querySelectorAll('.tootsville-time').forEach(
@@ -72,4 +75,4 @@ Tootsville.updateClock = function ()
           "Hydrodamalis", "Senecalensis", "Pygmaeus", "Luxodonta",
           "Elephas", "Procavia", "Dendrohyrax", "Tethytheria"])[now.month] +
         ', ' + now.year;
-      }); }
+      }); };
