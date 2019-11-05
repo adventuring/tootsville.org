@@ -388,6 +388,6 @@ Tootsville.login.avatarSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="15m
 Tootsville.login.changeSensitivePlayer = function (button)
 { let status = button.checked;
   Tootsville.util.rest ('PUT', 'users/me', { key: 'sensitiveP', newValue: status ? 'true' : 'false' }).then
-  ( reply => { Tootsville.player = reply.json ();
-               this.populateTootsList (); } ); };
+  ( personInfo => { Tootsville.player = personInfo;
+                    this.populateTootsList (); } ); };
 
