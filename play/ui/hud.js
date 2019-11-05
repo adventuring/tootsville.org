@@ -299,7 +299,8 @@ Tootsville.ui.hud.switchActiveItem = function ()
 };
 Tootsville.ui.hud.refreshTalkStatus = function ()
 { if (Tootsville.gossip.connectedP ())
-  { Tootsville.trace ("TODO: Activate Talk Box"); }
+  { document.getElementById ('talk-box').className = 'talk-connected';
+    document.getElementById ('talk-speak').placeholder = "Let's make some noise!"; }
   else
   { document.getElementById ('talk-box').className = 'talk-disconnected';
     document.getElementById ('talk-speak').placeholder = 'disconnected'; }};
