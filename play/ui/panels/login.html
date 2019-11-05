@@ -3,20 +3,21 @@
 
 <!-- ./play/ui/panels/login.html is part of Tootsville
 
-   Copyright © 2008-2017 Bruce-Robert Pocock; © 2018,2019 The Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+   Copyright   ©  2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+   Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ 
+   This program is Free Software:  you can redistribute it and/or modify
+   it  under the  terms  of the  GNU Affero  General  Public License  as
+   published by  the Free Software  Foundation; either version 3  of the
+   License, or (at your option) any later version.
 
-   This  program is  Free Software:  you can  redistribute it  and/or
-   modify it under the terms of the GNU Affero General Public License
-   as published by the Free  Software Foundation; either version 3 of
-   the License, or (at your option) any later version.
-
-   This program  is distributed in the  hope that it will  be useful,
-   but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
-   MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
+   This program is  distributed in the hope that it  will be useful, but
+   WITHOUT  ANY   WARRANTY;  without   even  the  implied   warranty  of
+   MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.  See the  GNU
    Affero General Public License for more details.
 
-   You should have  received a copy of the GNU  Affero General Public
-   License    along    with    this     program.    If    not,    see
+   You should  have received  a copy  of the  GNU Affero  General Public
+   License     along    with     this    program.     If    not,     see
    <https://www.gnu.org/licenses/>.
 
    You can reach CIWTA at https://ciwta.org/, or write to us at:
@@ -114,8 +115,8 @@
           <button onclick="Tootsville.login.settingsP=false;Tootsville.login.populateTootsList();"> <i class="fas fa-wrench"></i> Done Editing</button>
         </div>
         <div id="new-toot-hint">
-          To create a new Toot character, click <i onclick="Tootsville.login.startCharacterCreation()" class="fas
-                                                                                                              fa-user-plus"></i>.
+          To create a new Toot character, click <i onclick="Tootsville.login.startCharacterCreation()"
+                                                        class="fas fa-user-plus"></i>.
         </div>
         <hr>
         <div id="edit-toot-settings">
@@ -133,7 +134,10 @@
                                                                                              fa-spin fa-fw fa-spinner" ></i></span>
             <tt>&lt;</tt ><tt id="google-user-email" ><i class="fas fa-spin fa-spinnerfa-fw"
                                                          ></i></tt><tt>&gt;</tt>. </p>
-          <p>  <label><input  type="checkbox"  name="sensitive-player-p"
+          <p>  <label><input type="checkbox"
+                             name="sensitive-player-p"
+                             id="sensitive-player-p"
+                              onchange="Tootsville.login.changeSensitivePlayer(this);"
                               value="t"> ◆ Sensitive Player
           </label> (<a target="_blank" href="https://wiki.tootsville.org/wiki/Sensitive_Player_Mode">What's this?</a>) </p>
           <button  onclick="Tootsville.ui.signOut()">   Quit  or  Change
