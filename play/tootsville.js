@@ -40,6 +40,7 @@
        TheOtherMoon: { Gravity: 0.12 },
        ThePinkMoon: { Gravity: 0.08 } },
      character: null,
+     player: null,
      characterUUID: null,
      privateKey: null,
      audio: { volume: 80,
