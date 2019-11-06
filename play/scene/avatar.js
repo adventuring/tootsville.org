@@ -43,10 +43,10 @@ Tootsville.Avatars.UltraTootBuilder.model = null;
 
 Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot) 
 { // XXX: private
-    var proxyHead = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.head',
+    let proxyHead = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.head',
                                                       { segments: 12, diameter: 1 },
                                                       Tootsville.tank.scene);
-    var proxyBody = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.body',
+    let proxyBody = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.body',
                                                       { segments: 12, diameter: 1 },
                                                       Tootsville.tank.scene);
     proxyHead.position.z = 1.5;
@@ -63,9 +63,9 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, mod
     { Tootsville.warn ("Empty container returned for UltraToot");
       Tootsville.Avatars.UltraTootBuilder.addProxyToot (modelRoot); } else 
     { /* Expecting 13 meshes for current UltraToot */
-        if (13 != meshes.length) 
-        { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 13"); }
-        for (var i = 0; i < meshes.length; ++i) 
+        if (10 != meshes.length) 
+        { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 10"); }
+        for (let i = 0; i < meshes.length; ++i) 
         { meshes[i].setParent (modelRoot); } } }
   catch (e) 
   { Tootsville.warn ("Error adding meshes to model root for  UltraToot", e);
@@ -80,7 +80,7 @@ Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, 
 { // XXX: private
     try 
     { Tootsville.trace ("Got UltraToot meshes", meshes);
-      var modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
+      let modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
       Tootsville.Avatars.addMeshesToModelRoot (meshes, modelRoot);
       /* XXX: do something with particles and skeletons? */
       modelRoot.position.y = -Infinity;
@@ -109,12 +109,15 @@ Tootsville.Avatars.UltraTootBuilder.getBaseModel = function ()
             return; } }); };
 
 Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar) 
-{ var skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
+{ let skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
                                                    Tootsville.tank.scene);
   skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
-  var meshes = node.getChildMeshes ();
+  let padMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
+                                                   Tootsville.tank.scene);
+  padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
+  let meshes = node.getChildMeshes ();
   // TODO: filter out better
-  for (var i = 0; i < meshes.length; ++i) 
+  for (let i = 0; i < meshes.length; ++i) 
   { meshes[i].material = skinMaterial; } };
 
 Tootsville.Avatars.UltraTootBuilder.addClothes = function (node, avatar) 

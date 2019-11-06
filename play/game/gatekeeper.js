@@ -36,7 +36,7 @@ if (!('game' in Tootsville)) { Tootsville.game = {gatekeeper: {}}; }
 if (!('gatekeeper' in Tootsville.game)) { Tootsville.game.gatekeeper = {}; }
 
 /**
- * Acknowledge  a new  player's login  and intreduce  yourself as  a new
+ * Acknowledge  a new  player's login  and introduce  yourself as  a new
  * next-hop neighbor.
  *
  * neighbor: next-hop neighbor's UUID
@@ -47,7 +47,7 @@ if (!('gatekeeper' in Tootsville.game)) { Tootsville.game.gatekeeper = {}; }
  * This message is usually unicast.
  */
 Tootsville.game.gatekeeper.logOK = function (gram)
-{ let neigbor = gram.neighbor;
+{ let neighbor = gram.neighbor;
   Tootsville.warn ("unhandled datagram", gram); };
 
 /**
@@ -57,7 +57,9 @@ Tootsville.game.gatekeeper.logOK = function (gram)
 Tootsville.game.gatekeeper.avatars = function (gram)
 { let world = gram.inRoom;
   let avatars = gram.avatars;
-  Tootsville.warn ("unhandled datagram", gram); };
+  if (world == Tootsville.activity.world)
+  { for (let i = 0; i < avatars.length; ++i)
+    { Tootsville.game.updateAvatar (avatars [i].userName, avatars [i].avatar); } } };
 
 /**
  * No longer used.
