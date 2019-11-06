@@ -36,7 +36,7 @@ if (!('game' in Tootsville)) { Tootsville.game = {gatekeeper: {}}; }
 if (!('gatekeeper' in Tootsville.game)) { Tootsville.game.gatekeeper = {}; }
 
 /**
- * Acknowledge  a new  player's login  and intreduce  yourself as  a new
+ * Acknowledge  a new  player's login  and introduce  yourself as  a new
  * next-hop neighbor.
  *
  * neighbor: next-hop neighbor's UUID
