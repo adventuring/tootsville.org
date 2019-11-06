@@ -297,6 +297,7 @@ Tootsville.ui.hud.switchActiveItem = function ()
   Tootsville.trace ("TODO: cool rotate-and-swap animation between the two item boxes");
   Tootsville.ui.hud.refreshEquipment ();
 };
+
 Tootsville.ui.hud.refreshTalkStatus = function ()
 { if (Tootsville.gossip.connectedP ())
   { document.getElementById ('talk-box').className = 'talk-connected';
@@ -306,8 +307,37 @@ Tootsville.ui.hud.refreshTalkStatus = function ()
     document.getElementById ('talk-speak').placeholder = 'disconnected'; }};
 
 Tootsville.ui.hud.refreshWallet = function ()
-{ // TODO
-};
+{ if (! Tootsville.character)
+  { Tootsville.character = { peanuts: -1, fairyDust: -1 }; }
+  const walletAppPeanuts = document.getElementById ('wallet-show-peanuts');
+  const walletAppPeanutCount = document.getElementById ('wallet-show-peanuts-count');
+  if (0 < Tootsville.character.peanuts)
+  { document.getElementById ('wallet-peanuts-display').innerHTML = Tootsville.character.peanuts;
+    document.getElementById ('wallet-peanuts-icon').style.opacity = 1;
+    if (walletAppPeanuts) {
+        walletAppPeanuts.style.opacity = 1;
+        walletAppPeanutCount.innerHTML = Tootsville.character.peanuts; } }
+  else
+  { document.getElementById ('wallet-peanuts-display').innerHTML = '';
+    document.getElementById ('wallet-peanuts-icon').style.opacity = 0;
+    if (walletAppPeanuts) {
+        walletAppPeanuts.style.opacity = 0;
+        walletAppPeanutCount.innerHTML = ''; } }
+  const walletAppFairyDust = document.getElementById ('wallet-show-fairy-dust');
+  const walletAppFairyDustCount = document.getElementById ('wallet-show-fairy-dust-count');
+  if (0 < Tootsville.character.fairyDust)
+  { document.getElementById ('wallet-fairy-dust-display').innerHTML = Tootsville.character.fairyDust;
+    document.getElementById ('wallet-fairy-dust-icon').style.opacity = 1;
+    if (walletAppFairyDust) {
+        walletAppFairyDust.style.opacity = 1;
+        walletAppFairyDustCount.innerHTML = Tootsville.character.peanuts; } }
+  else
+  { document.getElementById ('wallet-fairy-dust-display').innerHTML = '';
+    document.getElementById ('wallet-fairy-dust-icon').style.opacity = 0;
+    if (walletAppFairyDust) {
+        walletAppFairyDust.style.opacity = 0;
+        walletAppFairyDustCount.innerHTML = ''; } }
+  return true; };
 
 Tootsville.ui.hud.refreshHUD = function ()
 { Tootsville.ui.hud.refreshEquipment ();
