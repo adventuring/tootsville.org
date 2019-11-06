@@ -47,7 +47,7 @@ if (!('gatekeeper' in Tootsville.game)) { Tootsville.game.gatekeeper = {}; }
  * This message is usually unicast.
  */
 Tootsville.game.gatekeeper.logOK = function (gram)
-{ let neigbor = gram.neighbor;
+{ let neighbor = gram.neighbor;
   Tootsville.warn ("unhandled datagram", gram); };
 
 /**
