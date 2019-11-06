@@ -195,6 +195,9 @@ Tootsville.gossip.createPacket = function (c, d, r)
             : 'c') ] = (c.substring (0,1) == ':') ? c.substring(1) : c;
   return JSON.stringify (packet); };
 
+Tootsville.gossip.sendLogOK = function ()
+{ Tootsville.gossip.sendPacket ('logOK', { neighbor: Tootsville.characterUUID }); };
+
 /**
  * Connect to the global gossip network.
  */
@@ -227,7 +230,7 @@ Tootsville.gossip.getICE = function ()
 { Tootsville.util.rest ('GET', 'gossip/ice-servers').then
   ( response => { Tootsville.gossip.iceServers = response;
                   Tootsville.gossip.ensureConnected ().then
-                  ( Tootsville.ui.hud.refreshHUD ); },
+                  ( Tootsville.gossip.sendLogOK ); },
     error => { Tootsville.parrot.say (
         "Squawk! Trouble getting connection servers",
         "I'm not able to get connection servers needed to join the game. Are you online?" );
