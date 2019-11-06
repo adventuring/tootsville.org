@@ -43,10 +43,10 @@ Tootsville.Avatars.UltraTootBuilder.model = null;
 
 Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot) 
 { // XXX: private
-    var proxyHead = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.head',
+    let proxyHead = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.head',
                                                       { segments: 12, diameter: 1 },
                                                       Tootsville.tank.scene);
-    var proxyBody = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.body',
+    let proxyBody = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.body',
                                                       { segments: 12, diameter: 1 },
                                                       Tootsville.tank.scene);
     proxyHead.position.z = 1.5;
