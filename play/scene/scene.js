@@ -45,11 +45,13 @@ Tootsville.tank.acceptClick = function (event, pickedP, distance,
                                target: pickedMesh,
                                point: pickedPoint }); } };
 
+Tootsville.tank.attachmentOverlaysNeedUpdateP = false;
+
 Tootsville.tank.initOTSCamera = function ()
 { var camera = new BABYLON.FollowCamera (
     'otsCamera',
     new BABYLON.Vector3 (0, 10, -100),
-    Tootsville.tank.scene);
+    this.scene);
   camera.radius = 5; /* how closely to follow our Toot */
   camera.heightOffset = 4.5;
   camera.rotationOffset = 0;
@@ -57,8 +59,14 @@ Tootsville.tank.initOTSCamera = function ()
   camera.maxCameraSpeed = 10;
   // camera.ellipsoid = new BABYLON.Vector3 (.5,1,.5);
   // camera.checkCollisions = true;
-  Tootsville.tank.camera = camera;
+  this.camera = camera;
   console.log ("Created camera", camera);
+  this.camera.onProjectionMatrixChangedObservable.add (
+      () =>
+          { this.attachmentOverlaysNeedUpdateP = true; } );
+  this.camera.onViewMatrixChangedObservable.add (
+      () =>
+          { this.onViewMatrixChangedObservable = true; } );
   return camera; };
 
 Tootsville.tank.initPhysics = function (world)
@@ -66,52 +74,86 @@ Tootsville.tank.initPhysics = function (world)
       new BABYLON.Vector3 (0,
                            -Tootsville.Worlds[world].Gravity,
                            0);
-  Tootsville.tank.scene.enablePhysics (gravityVector,
-                                       Tootsville.tank.physics);
+  this.scene.enablePhysics (gravityVector,
+                            this.physics);
   console.log ("Physics enabled for world", world);};
 
 Tootsville.tank.getCanvas = function ()
-{ if (! Tootsville.tank.canvas)
-  { Tootsville.tank.canvas =
+{ if (! this.canvas)
+  { this.canvas =
     document.getElementById ('tootsville3d'); }
-  if (! Tootsville.tank.canvas)
+  if (! this.canvas)
   { var canvas = document.createElement ('CANVAS');
     canvas.id = 'tootsville3d';
     canvas.touchAction = 'none';
     document.getElementsByTagName ('BODY')[0].appendChild (canvas);
-    Tootsville.tank.canvas = canvas; }
-  return Tootsville.tank.canvas; };
+    this.canvas = canvas; }
+  return this.canvas; };
 
 Tootsville.tank.convertCanvasEventTo3D = function (event)
-{ var picked = Tootsville.tank.scene.pick (
-    Tootsville.tank.scene.pointerX,
-    Tootsville.tank.scene.pointerY);
-  Tootsville.tank.acceptClick (event, picked.hit,
+{ var picked = this.scene.pick (
+    this.scene.pointerX,
+    this.scene.pointerY);
+  this.acceptClick (event, picked.hit,
                                picked.distance,
                                picked.pickedMesh,
                                picked.pickedPoint); };
 
+Tootsville.tank.initScene = function ()
+{ console.log ("Initializing the Babylon Scene");
+  this.scene = new BABYLON.Scene (this.engine);
+  this.scene.registerAfterRender (this.afterRender);
+  return this.scene; };
+
+Tootsville.tank.updateAttachment = function (model, attachment)
+{ const center = BABYLON.Vector3.Project (
+    model.getAbsolutePosition (),
+    BABYLON.Matrix.IdentityReadOnly,
+    this.scene.getTransformMatrix (),
+    this.camera.viewport.toGlobal (
+        this.engine.getRenderWidth (),
+        this.engine.getRenderHeight ()));
+  attachment.style.left = center.x;
+  /* FIXME: use bounding box height */
+  if ('bottom' == attachment.slot)
+  { attachment.style.top = center.y + 100; }
+  else
+  { attachment.style.top = center.y - 100; } };
+
+Tootsville.tank.updateAttachmentsForAvatar = function (avatar)
+{ if (avatar.label)
+  { this.updateAttachment (avatar.model, avatar.label); }
+  if (avatar.speech)
+  { this.updateAttachment (avatar.model, avatar.speech); } };
+
+Tootsville.tank.updateAttachmentOverlays = function ()
+{ for (let i = 0; i < Tootsville.game.avatars.length; ++i)
+  { this.updateAttachmentsForAvatar (Tootsville.game.avatars [i]); } };
+
+Tootsville.tank.afterRender = function ()
+{ if (true || this.attachmentOverlaysNeedUpdateP)
+  { this.updateAttachmentOverlays ();
+    this.attachmentOverlaysNeedUpdateP = false; } };
+
 Tootsville.tank.init3DEngine = function ()
 { return new Promise (
     (finish) =>
-        { Tootsville.tank.getCanvas ();
-          if (! Tootsville.tank.engine)
+        { this.getCanvas ();
+          if (! this.engine)
           { console.log ("Initializing Babylon3D as graphics engine for tank");
-            Tootsville.tank.engine =
-            new BABYLON.Engine (Tootsville.tank.canvas,
+            this.engine =
+            new BABYLON.Engine (this.canvas,
                                 true); }
-          if (! Tootsville.tank.physics)
+          if (! this.physics)
           { console.log ("Enabling CannonJS physics engine for tank");
-            Tootsville.tank.physics = new BABYLON.CannonJSPlugin (); }
-          if (! Tootsville.tank.scene)
-          { console.log ("Initializing the Babylon Scene");
-            Tootsville.tank.scene =
-            new BABYLON.Scene (Tootsville.tank.engine); }
+            this.physics = new BABYLON.CannonJSPlugin (); }
+          if (! this.scene)
+          { this.initScene (); }
           // TODO confirm if this is engine or scene:
-          Tootsville.tank.engine.workerCollisions = true;
-          Tootsville.tank.canvas.addEventListener (
+          this.engine.workerCollisions = true;
+          this.canvas.addEventListener (
               'click',
-              Tootsville.tank.convertCanvasEventTo3D);
+              this.convertCanvasEventTo3D);
           console.log ("init3DEngine: ready");
           finish (); }); };
 
@@ -119,7 +161,7 @@ Tootsville.tank.initCrappyDefaultLight = function ()
 { var light = new BABYLON.HemisphericLight (
     'uplight',
     new BABYLON.Vector3 (0,1,0),
-    Tootsville.tank.scene); };
+    this.scene); };
 
 Tootsville.tank.initPlayerToot = function ()
 { if ( (! (Tootsville.character))
@@ -134,7 +176,7 @@ Tootsville.tank.initPlayerToot = function ()
           ).then (
               (ultraToot) =>
                   { console.log ('loaded a Toot');
-                    Tootsville.tank.camera.lockedTarget =
+                    this.camera.lockedTarget =
                     ultraToot; }); }); };
 
 Tootsville.tank.initGroundPlane = function ()
@@ -142,10 +184,10 @@ Tootsville.tank.initGroundPlane = function ()
       BABYLON.Mesh.CreateGround ('ground',
                                  { height: 100, width: 100,
                                    subdivisions: 10 },
-                                 Tootsville.tank.scene);
+                                 this.scene);
   ground.material =
   new BABYLON.StandardMaterial ('ground',
-                                Tootsville.tank.scene);
+                                this.scene);
   ground.material.diffuseColor =
   new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
   ground.physicsImpostor =
@@ -159,21 +201,21 @@ Tootsville.tank.initGroundPlane = function ()
 
 Tootsville.tank.createTestScene = function ()
 { console.log ("Creating a test scene with an over-the-shoulder camera, ground plane, light, and Toot.");
-  console.log ("Babylon scene object is ", Tootsville.tank.scene);
-  Tootsville.tank.initOTSCamera ();
-  Tootsville.tank.initPhysics ('Tootanga');
-  Tootsville.tank.initCrappyDefaultLight ();
-  Tootsville.tank.initPlayerToot ();
-  Tootsville.tank.initGroundPlane ();
-  console.log ("Initialized scene is now", Tootsville.tank.scene);
-  return Tootsville.tank.scene; };
+  console.log ("Babylon scene object is ", this.scene);
+  this.initOTSCamera ();
+  this.initPhysics ('Tootanga');
+  this.initCrappyDefaultLight ();
+  this.initPlayerToot ();
+  this.initGroundPlane ();
+  console.log ("Initialized scene is now", this.scene);
+  return this.scene; };
 
 Tootsville.tank.startRenderLoop = function ()
-{ console.log ("Starting render loop for scene ", Tootsville.tank.scene,
-               " with render function " , Tootsville.tank.scene.render);
-  Tootsville.tank.engine.runRenderLoop (
+{ console.log ("Starting render loop for scene ", this.scene,
+               " with render function " , this.scene.render);
+  this.engine.runRenderLoop (
       function ()
-      { Tootsville.tank.scene.render (); } ); };
+      { this.scene.render (); } ); };
 
 Tootsville.tank.prepareFor3D = function ()
 { return new Promise (
@@ -183,10 +225,10 @@ Tootsville.tank.prepareFor3D = function ()
           { finish (); }
           else if ("BABYLON" in window)
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/cannon.js').then (
-              Tootsville.tank.prepareFor3D); }
+              this.prepareFor3D); }
           else
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.js').then (
-              Tootsville.tank.prepareFor3D); }}); };
+              this.prepareFor3D); }}); };
 
 Tootsville.tank.loadUISounds = function ()
 { var squawk = new BABYLON.Sound (
@@ -197,21 +239,21 @@ Tootsville.tank.loadUISounds = function ()
     { Tootsville.parrot.squawk = squawk; }); };
 
 Tootsville.tank.start3D = function ()
-{ Tootsville.tank.prepareFor3D ().then (Tootsville.tank.start3DIfReady);
-  Tootsville.tank.loadUISounds (); };
+{ this.prepareFor3D ().then (this.start3DIfReady);
+  this.loadUISounds (); };
 
 Tootsville.tank.start3DIfReady = function ()
 { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
-  { return Tootsville.tank.prepareFor3D.then (Tootsville.tank.start3DifReady); }
+  { return this.prepareFor3D.then (this.start3DifReady); }
   BABYLON.SceneLoader.ShowLoadingScreen = false;
 
-  Tootsville.tank.init3DEngine ().then (
+  this.init3DEngine ().then (
       () =>
           { console.log ("3D libraries loaded");
             console.log ("Creating test scene");
-            Tootsville.tank.createTestScene ();
+            this.createTestScene ();
             console.log ("Starting render loop");
-            Tootsville.tank.startRenderLoop ();
+            this.startRenderLoop ();
             console.log ("Setting tank resize event handler");
             window.addEventListener ('resize',
-                                     Tootsville.tank.engine.resize); }); };
+                                     this.engine.resize); }); };

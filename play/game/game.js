@@ -34,6 +34,13 @@
 if (!('Tootsville' in window)) { Tootsville = {game: {}}; }
 if (!('game' in Tootsville)) { Tootsville.game = {}; }
 
+Tootsville.game.interestingPoint = function (point)
+{ return ( (Math.abs (Tootsville.activity.x - point.x) < 1000)
+           &&
+           (Math.abs (Tootsville.activity.y - point.y) < 1000)
+           &&
+           (Math.abs (Tootsville.activity.z - point.z) < 1000) ); }
+
 /*
  * Structure of avatar data:
  *
@@ -51,7 +58,7 @@ if (!('game' in Tootsville)) { Tootsville.game = {}; }
  * angularVelocity,    quaternion,   material,    type,   linearDamping,
  * angularDamping,    allowSleep,    sleepSpeedLimit,    sleepTimeLimit,
  * fixedRotation, linearFactor, angularFactor
- * 
+ *
  */
 
 Tootsville.game.updateAvatar = function (userName, avatar)
@@ -69,15 +76,10 @@ Tootsville.game.updateAvatar = function (userName, avatar)
 
 Tootsville.game.refreshAvatar = function (uuid)
 { const avatar = Tootsville.avatars [uuid];
-  const model = avatar.model;
   const name = avatar.name;
-  const attachments = avatar.attachments;
   if (name && !avatar.label)
   { this.attachLabelToAvatar (name, uuid); }
-  if (avatar.label)
-  { this.updateAttachment (model, avatar.label); }
-  for (let i = 0; i < attachments.length; i++)
-  { this.updateAttachment (model, attachment); }
+  Tootsville.tank.updateAttachmentsForAvatar (avatar);
   /* TODO: update physics, position, facing, animation */ };
 
 Tootsville.game.attachLabelToAvatar = function (name, uuid)
@@ -86,21 +88,28 @@ Tootsville.game.attachLabelToAvatar = function (name, uuid)
   { label.innerHTML = '◆' + name; }
   else
   { label.innerHTML = name; }
-  label.className = 'avatar-label';
-  label.style.position = 'fixed';
-  label.style.top = '-1000cm';
-  label.style.left = '-1000cm';
+  label.className = 'name-tag';
   label.slot = 'bottom';
+  const hud = document.getElementById ('hud');
+  hud.appendChild (balloon);
   Tootsville.avatars [uuid].label = label;
   return label; };
 
-Tootsville.game.updateAttachment = function (model, attachment)
-{ const center = model.boundingBox.left +
-        (model.boundingBox.right - model.boundingBox.left)/2;
-  attachment.style.left = center - attachment.offsetWidth/2;
-  if ('bottom' == attachment.slot)
-  { attachment.style.top = model.boundingBox.bottom; }
-  else if ('top' == attachment.slot)
-  { attachment.style.top = model.boundingBox.top - attachment.offsetHeight; }
-  return attachment; }
-  
+Tootsville.game.attachSpeechToAvatar = function (html, style, uuid)
+{ const balloon = document.createElement ('DIV');
+  balloon.innerHTML = html;
+  balloon.className = style;
+  balloon.slot = 'top';
+  const hud = document.getElementById ('hud');
+  hud.appendChild (balloon);
+  setTimeout ( () =>
+               { if (balloon.innerHTML == html)
+                 { balloon.opacity = 0;
+                   setTimeout ( () =>
+                                { Tootsville.avatars [uuid].speech = null;
+                                  hud.removeChild (balloon); },
+                                1000);} },
+               30000 );
+  Tootsville.avatars [uuid].speech = balloon;
+  return balloon; };
+
