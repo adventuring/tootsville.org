@@ -129,7 +129,6 @@ Tootsville.gossip.gatekeeperAccept = function (peer, event)
  */
 Tootsville.gossip.closeInfinityMode = function (peer, event)
 { Tootsville.warn ("Dropped peer connection", peer, event);
-  Tootsville.ui.hud.refreshHUD ();
   Tootsville.gossip.peers = Tootsville.gossip.peers.filter ( el => { return el != peer; } ); };
 /**
  * Initiate Infinity mode communications; send a login packet out to $Eden
@@ -182,7 +181,7 @@ Tootsville.gossip.signPacket = function (c, d, r)
 
 /**
  * Create and sign a packet; mandatory:  C command and D data; optional:
- * R recipient (defaulth "$World")
+ * R recipient (default "$World")
  */
 Tootsville.gossip.createPacket = function (c, d, r)
 { let packet = (( c == 'logOK' ) || ( c.substring (0, 1) == ':' ))
