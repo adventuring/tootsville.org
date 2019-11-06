@@ -166,4 +166,3 @@ Tootsville.ui.keys.onKeypress = function (ev)
   { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings["afterControl" + Tootsville.ui.keys.prefixed][coda], ev); }
   else
   { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings[coda], ev); } };
-
