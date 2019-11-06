@@ -48,7 +48,7 @@ Tootsville.tank.acceptClick = function (event, pickedP, distance,
 Tootsville.tank.attachmentOverlaysNeedUpdateP = false;
 
 Tootsville.tank.initOTSCamera = function ()
-{ var camera = new BABYLON.FollowCamera (
+{ const camera = new BABYLON.FollowCamera (
     'otsCamera',
     new BABYLON.Vector3 (0, 10, -100),
     Tootsville.tank.scene);
@@ -70,7 +70,7 @@ Tootsville.tank.initOTSCamera = function ()
   return camera; };
 
 Tootsville.tank.initPhysics = function (world)
-{ var gravityVector =
+{ const gravityVector =
       new BABYLON.Vector3 (0,
                            -Tootsville.Worlds[world].Gravity,
                            0);
@@ -83,7 +83,7 @@ Tootsville.tank.getCanvas = function ()
   { Tootsville.tank.canvas =
     document.getElementById ('tootsville3d'); }
   if (! Tootsville.tank.canvas)
-  { var canvas = document.createElement ('CANVAS');
+  { const canvas = document.createElement ('CANVAS');
     canvas.id = 'tootsville3d';
     canvas.touchAction = 'none';
     document.getElementsByTagName ('BODY')[0].appendChild (canvas);
@@ -91,7 +91,7 @@ Tootsville.tank.getCanvas = function ()
   return Tootsville.tank.canvas; };
 
 Tootsville.tank.convertCanvasEventTo3D = function (event)
-{ var picked = Tootsville.tank.scene.pick (
+{ const picked = Tootsville.tank.scene.pick (
     Tootsville.tank.scene.pointerX,
     Tootsville.tank.scene.pointerY);
   Tootsville.tank.acceptClick (event, picked.hit,
@@ -180,7 +180,7 @@ Tootsville.tank.initPlayerToot = function ()
                     ultraToot; }); }); };
 
 Tootsville.tank.initGroundPlane = function ()
-{ var ground =
+{ const ground =
       BABYLON.Mesh.CreateGround ('ground',
                                  { height: 100, width: 100,
                                    subdivisions: 10 },
