@@ -57,7 +57,9 @@ Tootsville.game.gatekeeper.logOK = function (gram)
 Tootsville.game.gatekeeper.avatars = function (gram)
 { let world = gram.inRoom;
   let avatars = gram.avatars;
-  Tootsville.warn ("unhandled datagram", gram); };
+  if (world == Tootsville.activity.world)
+  { for (let i = 0; i < avatars.length; ++i)
+    { Tootsville.game.updateAvatar (avatars [i].userName, avatars [i].avatar); } } };
 
 /**
  * No longer used.
