@@ -80,7 +80,7 @@ Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, 
 { // XXX: private
     try 
     { Tootsville.trace ("Got UltraToot meshes", meshes);
-      var modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
+      let modelRoot = new BABYLON.TransformNode ('UltraToot', Tootsville.tank.scene, true);
       Tootsville.Avatars.addMeshesToModelRoot (meshes, modelRoot);
       /* XXX: do something with particles and skeletons? */
       modelRoot.position.y = -Infinity;
@@ -109,12 +109,15 @@ Tootsville.Avatars.UltraTootBuilder.getBaseModel = function ()
             return; } }); };
 
 Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar) 
-{ var skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
+{ let skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
                                                    Tootsville.tank.scene);
   skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
-  var meshes = node.getChildMeshes ();
+  let padMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
+                                                   Tootsville.tank.scene);
+  padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
+  let meshes = node.getChildMeshes ();
   // TODO: filter out better
-  for (var i = 0; i < meshes.length; ++i) 
+  for (let i = 0; i < meshes.length; ++i) 
   { meshes[i].material = skinMaterial; } };
 
 Tootsville.Avatars.UltraTootBuilder.addClothes = function (node, avatar) 
