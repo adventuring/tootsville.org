@@ -50,7 +50,7 @@ Tootsville.tank.initOTSCamera = function ()
     'otsCamera',
     new BABYLON.Vector3 (0, 10, -100),
     Tootsville.tank.scene);
-  camera.radius = 5; // how closely to follow our Toot
+  camera.radius = 5; /* how closely to follow our Toot */
   camera.heightOffset = 4.5;
   camera.rotationOffset = 0;
   camera.cameraAcceleration = .005;
@@ -68,7 +68,7 @@ Tootsville.tank.initPhysics = function (world)
                            0);
   Tootsville.tank.scene.enablePhysics (gravityVector,
                                        Tootsville.tank.physics);
-  console.log ("Physics enabled for " +world);};
+  console.log ("Physics enabled for world", world);};
 
 Tootsville.tank.getCanvas = function ()
 { if (! Tootsville.tank.canvas)
@@ -202,7 +202,7 @@ Tootsville.tank.start3D = function ()
 
 Tootsville.tank.start3DIfReady = function ()
 { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
-  { Tootsville.tank.prepareFor3D.then (Tootsville.tank.start3DifReady); }
+  { return Tootsville.tank.prepareFor3D.then (Tootsville.tank.start3DifReady); }
   BABYLON.SceneLoader.ShowLoadingScreen = false;
 
   Tootsville.tank.init3DEngine ().then (
