@@ -63,9 +63,9 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, mod
     { Tootsville.warn ("Empty container returned for UltraToot");
       Tootsville.Avatars.UltraTootBuilder.addProxyToot (modelRoot); } else 
     { /* Expecting 13 meshes for current UltraToot */
-        if (13 != meshes.length) 
-        { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 13"); }
-        for (var i = 0; i < meshes.length; ++i) 
+        if (10 != meshes.length) 
+        { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 10"); }
+        for (let i = 0; i < meshes.length; ++i) 
         { meshes[i].setParent (modelRoot); } } }
   catch (e) 
   { Tootsville.warn ("Error adding meshes to model root for  UltraToot", e);
