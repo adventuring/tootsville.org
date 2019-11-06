@@ -34,6 +34,7 @@
 window.onGoogleYoloLoad = function ()
 { Tootsville.login.startSignIn ();
   Tootsville.login.googleYoloSignIn (); };
+
 window.addEventListener ('load', () => {
     setTimeout (function () {
         document.getElementById ('control-panel-icon').style.width = '7vw';
@@ -48,7 +49,7 @@ window.addEventListener ('load', () => {
 
     Tootsville.ui.setBackgroundMusic ("bensound-adventure");
     
-    Tootsville.ui.hud.refreshHUD ();
+    setInterval (Tootsville.ui.hud.refreshHUD (), 250);
     Tootsville.ui.hud.connectTalkBox ();
 
     document.addEventListener('keydown', Tootsville.ui.keys.onKeypress);
