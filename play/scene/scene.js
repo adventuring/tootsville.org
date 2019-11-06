@@ -244,7 +244,7 @@ Tootsville.tank.start3D = function ()
 
 Tootsville.tank.start3DIfReady = function ()
 { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
-  { return this.prepareFor3D.then (this.start3DifReady); }
+  { return this.prepareFor3D ().then (this.start3DifReady); }
   BABYLON.SceneLoader.ShowLoadingScreen = false;
 
   this.init3DEngine ().then (
