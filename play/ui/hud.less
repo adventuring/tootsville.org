@@ -753,8 +753,8 @@ h1.centered {
 }
 
 .name-tag {
-    position: absolute;
-    font-family: @font;
+    position: fixed;
+    font-family: Acme;
     color: white;
     text-align: center;
     background: #fff3;
@@ -763,13 +763,16 @@ h1.centered {
     border-radius: .5em;
     text-shadow: 1px 1px 2px #0008,2px 2px 2px #0004;
     font-size: 1rem;
+    z-index: 100;
+    min-width: 8rem;
+    max-width: 24rem;
 }
 
 /* Gamepads panel */
 
 #gamepad-loading, #gamepad {
     top: 3rem;
-    height: calc(100vh - 3rem);
+    height: calc(100vh - 6rem);
     left: 20vw;
     width: 60vw;
     overflow-y: scroll;
