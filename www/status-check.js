@@ -3,7 +3,7 @@ function checkServer (uri)
   setTimeout(function () { reallyCheckServer (uri) }, 150); }
 
 function reallyCheckServer (uri)
-{ fetch ("https://" + uri, { mode: 'no-cors' }).then (
+{ fetch (uri).then (
     (response) =>
         { if (response.ok)
           { document.getElementById("check-" + uri).innerHTML = "<FONT COLOR='green'> GO </FONT>"; }
