@@ -33,13 +33,15 @@ wd=$1
 copydir=$2
 dest=$3
 
+set +e
+
 if ! [ -d "$wd" ] || ! [ -d "$wd/$copydir" ];
 then
     exit 9
 fi
 
 cat - \
-    <( cd "$wd/$copydir" && \
+    <( cd "$wd/" && \
            shar -C xz -g 9 -M -Q -q -x \
                 -n "$copydir at $(hostname) on $(date)" \
                 "$copydir"/ ) \
