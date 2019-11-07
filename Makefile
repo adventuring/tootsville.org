@@ -240,7 +240,7 @@ bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd
 dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 	lessc --math=strict --source-map www/2019.less dist/www/2019.css
 
-#################### dev-test
+#################### devel-test
 
 devel-test:	devel-serve devel-play
 
@@ -261,6 +261,9 @@ devel-wwwtest:	devel-www
 
 devel-www:	dist/www.$(clusterorg) dist/www/httpd.pid
 	-notify-send -i document-new "Build Complete: www" "Finished building devel-www"
+
+devel-www-watch:	devel-www
+	while inotifywait -e close_write -r www ; do $(MAKE) devel-www ; done
 
 dist/www/httpd.pid:	dist/www/dev-www.httpd.conf
 	mkdir -p dist/www
