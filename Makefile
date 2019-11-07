@@ -168,6 +168,7 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 		$$(< build/js.order )                            \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
+	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ -i $@
 
 play:	dist/play.$(clusterorg)
 
