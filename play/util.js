@@ -61,25 +61,26 @@ Tootsville.util.rest = function (method, uri, body, headers)
   opts.headers = headers;
   Tootsville.trace ('REST: ' + method + ' ' + uri, opts);
   return fetch (uri, opts).then(
-      function (response)
-      { if (response.ok)
-        { if (200 == response.status)
-          { return response.json (); }
-          else if (204 == response.status)
-          { return null; } }
-        else
-        { Tootsville.warn("Server error from " + uri, response);
-          if (response.status >= 400 && response.status <= 499)
-          { return { error: response.status, response: response }; }
-          let json = response.json ();
-          return Tootsville.parrot.ask (
-              "Uh-oh! Server trouble!",
-              Tootsville.parrot.parrotErrorText(json),
-              [{ tag: 'retry', text: "Retry the network operation" }]).then
-          (() =>
-           { console.log ("User-initiated retry for " + origURI);
-             return Tootsville.util.rest (method, origURI, body, headers); }); }
-          return null; },
+      response =>
+          { if (response.ok)
+            { if (200 == response.status)
+              { return response.json (); }
+              else if (204 == response.status)
+              { return null; } }
+            else
+            { Tootsville.warn("Server error from " + uri, response);
+              if (response.status >= 400 && response.status <= 499)
+              { return { error: response.status, response: response }; }
+              response.json ().then (
+                  json =>
+                      { return Tootsville.parrot.ask (
+                          "Uh-oh! Server trouble!",
+                          Tootsville.parrot.parrotErrorText(json),
+                          [{ tag: 'retry', text: "Retry the network operation" }]).then
+                        (() =>
+                         { console.log ("User-initiated retry for " + origURI);
+                           return Tootsville.util.rest (method, origURI, body, headers); }); } ); }
+            return null; },
       error =>
           { Tootsville.warn("Fetch error ", error);
             Tootsville.parrot.ask (
@@ -92,7 +93,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
                 [{ tag: 'retry', text: "Retry the network operation" }]).then
             (() =>
              { console.log ("User-initiated retry after error for " + origURI);
-             return Tootsville.util.rest (method, origURI, body, headers); });} ); };
+               return Tootsville.util.rest (method, origURI, body, headers); });} ); };
 
 Tootsville.util.loadScript = function (src)
 { return new Promise( finish =>
