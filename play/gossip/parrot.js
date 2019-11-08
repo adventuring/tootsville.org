@@ -68,7 +68,7 @@ Tootsville.parrot.say = function (title, message)
       speech.style.display = 'none';
       speech.innerHTML = '<h2>' + title + '</h2>' + message;
       speech.style.display = 'block';
-      Tootsville.parrot.show(true); })};
+      Tootsville.parrot.show(true); });};
 
 Tootsville.parrot.ask = function (title, message, replies)
 { return new Promise
@@ -101,11 +101,13 @@ Tootsville.parrot.ynP = function (title, message)
 Tootsville.parrot.parrotErrorText = function (body)
 { let code = body.error;
   let text = body.status || body.errorMessage;
-  if (! text)
+  if (text)
+  { text = text.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;"); }
+  else
   { if (code)
     { text = "HTTP Error code " + code; }
     else
-    { text = "The server did not respond with a recognizeable error reply."; } }
+    { text = "The server did not respond with a recognizable error reply."; } }
   if (! code)
   { code = 500; }
   return "<P>The server reported an error.</P>" +
