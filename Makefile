@@ -353,32 +353,7 @@ dist/play.$(clusterorg):	worker htaccess \
 
 #################### deploy
 
-deploy-play:	predeploy-play
-	echo " » Deploy play.$(clusterorg)"
-	ssh play.$(clusterorg) "rm -rf play.$(clusterorg).before-deploy && mv play.$(clusterorg) play.$(clusterorg).before-deploy && mv play.$(clusterorg).new play.$(clusterorg)" || exit 9
-# TODO: status ∈ "started" "succeeded" "failed" — currently only success is reported
-	curl https://api.rollbar.com/api/1/deploy/ \
-	     -F access_token=$(ACCESS_TOKEN) \
-	     -F environment=play.$(clusterorg) \
-	     -F framework=gmake \
-	     -F notifier.name=gmake \
-	     -F revision=$(REVISION) \
-	     -F uuid=$(uuidgen) \
-	     -F local_username=$(LOCAL_USERNAME)
-
-deploy-www:	predeploy-www
-	echo " » Deploy www.$(clusterorg)"
-	ssh www.$(clusterorg) "mv www.$(clusterorg) www.$(clusterorg).before-deploy && mv www.$(clusterorg).new www.$(clusterorg)"
-	curl https://api.rollbar.com/api/1/deploy/ \
-	     -F access_token=$(ACCESS_TOKEN) \
-	     -F environment=www.$(clusterorg) \
-	     -F framework=gmake \
-	     -F notifier.name=gmake \
-	     -F revision=$(REVISION) \
-	     -F uuid=$(uuidgen) \
-	     -F local_username=$(LOCAL_USERNAME)
-
-predeploy:	no-fixmes connectivity predeploy-play predeploy-www remotes
+predeploy:	no-fixmes connectivity remotes
 
 connectivity:
 	echo " » Test connectivity"
@@ -421,13 +396,23 @@ no-fixmes:	TODO.scorecard
 			fi ;\
 	fi
 
-predeploy-play:	dist/play.$(clusterorg)
-	echo " » Pre-deploy play.$(clusterorg)"
-	bin/shar-stream dist/ play.$(clusterorg) play.$(clusterorg)
+deploy-play:	dist/play.$(clusterorg)
+	echo " » Deploy play.$(clusterorg)"
+	cd dist/; rsync -essh -rv play.$(clusterorg) play.$(clusterorg):
+# TODO: status ∈ "started" "succeeded" "failed" — currently only success is reported
+	curl https://api.rollbar.com/api/1/deploy/ \
+	     -F access_token=$(ACCESS_TOKEN) \
+	     -F environment=play.$(clusterorg) \
+	     -F framework=gmake \
+	     -F notifier.name=gmake \
+	     -F revision=$(REVISION) \
+	     -F uuid=$(uuidgen) \
+	     -F local_username=$(LOCAL_USERNAME)
 
-predeploy-www:	dist/www.$(clusterorg)
-	echo " » Pre-deploy www.$(clusterorg)"
-	bin/shar-stream dist/ www.$(clusterorg) www.$(clusterorg)
+
+deploy-www:	dist/www.$(clusterorg)
+	echo " » Deploy www.$(clusterorg)"
+	cd dist/; rsync -essh -rv www.$(clusterorg) www.$(clusterorg):
 
 dist/www.$(clusterorg):	htaccess dist/www/2019.css
 	mkdir -p dist/www.$(clusterorg)
