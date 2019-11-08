@@ -25,11 +25,11 @@
 #
 # USA
 
-all: .deps~ htaccess play worker servers TODO.org TODO.scorecard
+all: .deps~ htaccess play worker TODO.org TODO.scorecard
 
-test: all servers-test
+test: all
 
-deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
+deploy: all deploy-www deploy-play git-tag-deployment deploy-docs
 
 ####################
 
@@ -37,11 +37,6 @@ deploy: all deploy-www deploy-play deploy-servers git-tag-deployment deploy-docs
 	bin/do-install-deps
 	>> ~/.sbclrc
 	>.deps~
-
-####################
-
-servers-test:	../tootsville.net/Tootsville
-	../tootsville.net/Tootsville check
 
 #################### vars
 
@@ -80,13 +75,6 @@ clean:
 	find . -name \*~ -exec rm {} \;
 	rm -rf dist/ ; mkdir -p dist/
 	rm -f TODO.org TODO.scorecard	
-
-#################### servers
-
-servers:	../tootsville.net/Tootsville
-
-../tootsville.net/Tootsville:
-	$(MAKE) -C ../tootsville.net CLUSTER=$(CLUSTER) Tootsville test
 
 #################### doc
 
@@ -242,10 +230,7 @@ dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 
 #################### devel-test
 
-devel-test:	devel-serve devel-play
-
-devel-serve:	../tootsville.net/Tootsville
-	../tootsville.net/Tootsville server < /dev/null
+devel-test:	devel-play
 
 devel-play-watch:	devel-play
 	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done
@@ -381,9 +366,6 @@ deploy-play:	predeploy-play
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)
 
-deploy-servers:	../tootsville.net/Tootsville
-	$(MAKE) -C ../tootsville.net CLUSTER=$(CLUSTER) deploy
-
 deploy-www:	predeploy-www
 	echo " » Deploy www.$(clusterorg)"
 	ssh www.$(clusterorg) "mv www.$(clusterorg) www.$(clusterorg).before-deploy && mv www.$(clusterorg).new www.$(clusterorg)"
@@ -396,7 +378,7 @@ deploy-www:	predeploy-www
 	     -F uuid=$(uuidgen) \
 	     -F local_username=$(LOCAL_USERNAME)
 
-predeploy:	no-fixmes connectivity predeploy-play predeploy-www predeploy-servers remotes
+predeploy:	no-fixmes connectivity predeploy-play predeploy-www remotes
 
 connectivity:
 	echo " » Test connectivity"
@@ -461,9 +443,6 @@ dist/www.$(clusterorg):	htaccess dist/www/2019.css
 		cp www/index.qa.html dist/www.$(clusterorg)/index.html ;\
 	fi
 
-predeploy-servers:
-	$(MAKE) -C ../tootsville.net CLUSTOR=$(CLUSTER) predeploy
-
 remotes:
 	if ! git remote -v | grep github &>/dev/null ;\
 	then \
@@ -484,8 +463,8 @@ bump-next-version:
 	git add build/version
 	git commit -m "bump version number for next build"
 
-git-tag-deployment:
-	VERSION=$$(servers/Tootsville version-info version) ;\
+git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.asd
+	VERSION=$$(../tootsville.net/Tootsville version-info version) ;\
 	now=$$(date +%Y-%m-%d) ;\
 	msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	if git rev-parse v$$VERSION &>/dev/null ;\
@@ -522,7 +501,6 @@ git-tag-deployment:
 #################### deploy-docs
 
 deploy-docs:
-	make -C ../tootsville.net doc-publish
 	scp dist/htaccess.all/goethe.tootsville.net.htaccess goethe.tootsville.org:goethe.tootsville.org/.htaccess
 	scp www/favicon.??? goethe.tootsville.org:goethe.tootsville.org/
 	rsync -essh -zar www/error goethe.tootsville.org:goethe.tootsville.org/
