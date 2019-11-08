@@ -40,7 +40,7 @@ window.addEventListener ('load', () => {
         document.getElementById ('control-panel-icon').style.width = '7vw';
     }, 1000);
     
-    console.log ("\n\n\n This version of Tootsville is Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
+    console.info ("\n\n\n This version of Tootsville is Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
 
     window.addEventListener ('click', Tootsville.ui.onFirstClick);
     document.addEventListener ('fullscreenchange',
