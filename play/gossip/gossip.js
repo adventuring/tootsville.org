@@ -118,6 +118,9 @@ Tootsville.gossip.gatekeeperAccept = function (peer, event)
   { Tootsville.game.commands [ gram.c ] (gram.d, gram.u, gram.r); }
   else if (gram.from && Tootsville.game.gatekeeper [ gram.from ])
   { Tootsville.game.gatekeeper [ gram.from ] (gram); }
+  else if (gram.seq)
+  { for (let i = 0; i < gram.seq.length; ++i)
+    { Tootsville.gossip.gatekeeperAccept (peer, { data: gram.seq [i] }); } }
   else if (gram._cmd && gram._cmd == 'logOK')
   { Tootsville.game.gatekeeper.logOK (gram); }
   else
