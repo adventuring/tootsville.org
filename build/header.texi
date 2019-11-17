@@ -1,0 +1,4 @@
+@c Included into the server-side documentation
+@node Client-Side JavaScript
+@chapter Client-Side JavaScript
+

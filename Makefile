@@ -483,6 +483,13 @@ git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.as
 
 	$(MAKE) bump-next-version
 
+dist/doc.texi: $(shell cat build/js.order)
+	cp build/header.texi dist/doc.texi
+	for file in $$(< build/js.order ); do \
+		perl -e '$$b = ""; while (<>) { if (/\/\*\*/../\*\//) { s/-\*-.*?-\*-//; s/\/?\*\*?\/?[ \t]*//; $$b = $$b . $$_ } else { if (($$b ne "") && /(Tootsville.*)=/) { print "\@node $$1\n\@section $$1\n$$b"; $$b = ""; } } }' < $$file >> dist/doc.texi; \
+	done
+	cat build/footer.texi >> dist/doc.texi
+
 #################### deploy-docs
 
 deploy-docs:
