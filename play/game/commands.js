@@ -50,7 +50,7 @@ if (!('game' in Tootsville)) { Tootsville.game = { commands: {}}; };
 if (!('commands' in Tootsville.game)) { Tootsville.game.commands = {}; };
 
 /**
- * Alias for `setFurniture', q.v.
+ * Alias for `Tootsville.game.commands.setFurniture', q.v.
  */
 Tootsville.game.commands.addFurniture = function (d, u, r)
 { Tootsville.game.commands.setFurniture (d, u, r); };
@@ -60,8 +60,7 @@ Tootsville.game.commands.addFurniture = function (d, u, r)
 * No longer used
  */
 Tootsville.game.commands.addToList = function (d, u, r)
-{
-    /* TODO */ };
+{ Tootsville.game.gossip.signalCommandGone ('addToList', u, r); };
 
 
 /**
@@ -133,6 +132,9 @@ Tootsville.game.commands.addToList = function (d, u, r)
  *
  *@item <, >
  *Less-than represents rolling a scroll knob left; greater-than, right.
+ *
+ *
+ * @end table
  *
  *@subsection{Flash details}
  *

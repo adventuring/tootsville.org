@@ -207,14 +207,44 @@ Tootsville.game.gatekeeper.initUserRoom = function (gram)
     { let world = gram.moniker;
       Tootsville.warn ("unhandled datagram", gram); }}};
 
+/**
+ * Get a list of lots and house types which are available for starter houses
+ * to build on a lot.
+ *
+ * @table @code
+ * @item status
+ * This packet is ignored unless @code{status} is @code{true}
+ * @item lots
+ * The list of available lots in the given neighborhood.
+ * FIXME: format?
+ * @item houses
+ * The list of available hoses in the given neighborhood.
+ * FIXME: format?
+ * @item neighborhood
+ * The selected neighborhood.
+ */
 Tootsville.game.gatekeeper.getAvailableHouses = function (gram)
 { let successP = gram.status;
   if (! successP ) { return; }
   let lots = gram.lots;
   let houses = gram.houses;
+  let neighborhood = gram.neighborhood;
   Tootsville.warn ("unhandled datagram", gram);};
 
-Tootsville.game.gatekeeper.getMainInBox = function (gram)
+/**
+ * Get an enumeration of messages in the player's SMS ``inbox''
+ *
+ * @table @code
+ * @item status
+ * If @code{true}, there are messages.
+ * If @code{false}, there are no messages and the @code{mail}
+ * object is not present.
+ * @item mail
+ * An enumeration of message objects. Each message object
+ * has FIXME format.
+ * @end table
+ */
+Tootsville.game.gatekeeper.getMailInBox = function (gram)
 { let successP = gram.status;
   let mail;
   if (successP)
@@ -223,23 +253,47 @@ Tootsville.game.gatekeeper.getMainInBox = function (gram)
   { mail = []; }
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * Fetch one SMS message by UUID.
+ *
+ * @table @code
+ * @item status
+ * If @code{true}, a message was found.
+ * @item message
+ * The message object. This contains the
+ * message uuid, sender, and body in FIXME format.
+ * @end table
+ */
 Tootsville.game.gatekeeper.getMailMessage = function (gram)
 { let successP = gram.status;
   if (! successP ) { return; }
   let message = gram.message;
   Tootsville.warn ("unhandled datagram", gram); };
 
+/**
+ * Confirmation that a message were sent.
+ */
 Tootsville.game.gatekeeper.sendMailMessage = function (gram)
 { let successP = gram.status;
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * Notification of new SMS message(s)
+ */
 Tootsville.game.gatekeeper.postman = function (gram)
 { let newMailP = gram.newMail;
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * The user's buddy list and ignore list.
+ * 
+ * @table @code
+ * @item buddyList
+ * @item ignoreList
+ * @end table
+ */
 Tootsville.game.gatekeeper.getUserLists = function (gram)
 { let buddies = gram.buddyList || [];
-  let starred = gram.starred || [];
   let ignored = gram.ignoreList || [];
   Tootsville.warn ("unhandled datagram", gram);};
 
@@ -252,6 +306,36 @@ Tootsville.game.gatekeeper.buddyRequest = function (gram)
   let signature = gram.sign;
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ * General out-of-band messaging between users. Typically used for
+ * invitation to a location.
+ *
+ * @table @code
+ * @item type
+ * The type ofout-of-band message
+ * @item body
+ * The body of that message
+ * @item status
+ * Must be @code{true} or the message will be ignored.
+ * @end table
+ *
+ * The contents of the @code{body} vary by @code{type}
+ *
+ * @subsection Invitation
+ *
+ * An invitation has type @code{invite}.
+ *
+ * The body contains FIXME.
+ *
+ * @subsection Response
+ *
+ * WRITEME
+ *
+ * @subsection To Room
+ *
+ * WRITEME
+ *
+ */
 Tootsville.game.gatekeeper.outOfBand = function (gram)
 { let type = gram.type;
   if ("invite" == type)
@@ -266,6 +350,20 @@ Tootsville.game.gatekeeper.outOfBand = function (gram)
   else
   { Tootsville.warn("Unhandled out-of-band message type " + type); } };
 
+/**
+ * An administrative message
+ *
+ * This message comes from the Gossip Parrots in the UI.
+ *
+ * @table @code
+ * @item title
+ * The title of the message.
+ * @item message
+ * The body of the message.
+ * @item label
+ * The label of the message.
+ * @end table
+ */
 Tootsville.game.gatekeeper.admin = function (gram)
 { let title = gram.title;
   let message = gram.message;
@@ -273,23 +371,49 @@ Tootsville.game.gatekeeper.admin = function (gram)
   // FIXME call to parrot ⋯
   Tootsville.gossip.parrot.say (title, message, label); };
 
+/**
+ * Received acknowledgement of the server's time.
+ *
+ * @table @code
+ * @item status
+ * should be @code{true}
+ * @item serverTime
+ * In milliseconds since Unix epoch
+ * @item gameTime
+ * In milliseconds since Unix epoch
+ * @end table
+ */
 Tootsville.game.gatekeeper.serverTime = function (gram)
 { let successP = gram.status;
   let serverTime = gram.serverTime;
   let gameTime = gram.gameTime;
   Tootsville.warn ("unhandled datagram", gram); };
 
+/**
+ * We no longer have badges
+ */
 Tootsville.game.gatekeeper.badgeUpdate = function (gram)
 { let badges = gram.badges;
   Tootsville.warn ("ancient datagram now ignored", gram); };
 
+/**
+ * Force the character to move to (x,y,z) local.
+ *
+ * @table @code
+ * @item status
+ * Must be @code{true}
+ * @item x,y,z
+ * Local co@"ordinates
+ * @end table
+ */
 Tootsville.game.gatekeeper.forceMove = function (gram)
 { let x = gram.x;
   let y = gram.y;
   let z = gram.z;
   Tootsville.warn ("unhandled datagram", gram); };
 
+/**
+ * Acknowledgment of a bug report
+ */
 Tootsville.game.gatekeeper.reportBug = function (gram)
 { Tootsville.warn ("unhandled datagram", gram); };
-
-
