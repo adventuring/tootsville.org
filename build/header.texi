@@ -2,3 +2,38 @@
 @node Client-Side JavaScript
 @chapter Client-Side JavaScript
 
+This chapter enumerates the client-side JavaScript components of Tootsville.
+
+@node Modular JavaScript
+@section Modular JavaScript
+
+There is a certain ``module'' model which we use for the JavaScript. First,
+we use objects containing objects to represent distinct code modules; i.e.
+the global Tootsville object in turn contains objects which represent the
+various code modules, typically each of which is represented by a single
+source file.
+
+Secondly, our sources are laid out to ensure idempotency. It should be
+possible, at any time, to load any source file without interrupting the
+running game.
+
+Part of this means that our individual functions are defined in a form
+similar to the following:
+
+@verbatim
+Tootsville.module.functionName = function (lambda)
+{ ... }
+@end verbatim
+
+This also implies that data structures must be initialized only when they do
+not already exist.
+
+@verbatim
+if (!('Tootsville' in window)) { Tootsville = {}; }
+if (!('module' in Tootsville)) { Tootsville.module = {}; }
+if (!('dataElement' in Tootsville.module))
+{ Tootsville.module.dataElement = { static: 'initializers',
+                                    default: 'values' }; }
+@end verbatim
+
+
