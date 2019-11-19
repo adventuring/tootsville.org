@@ -38,8 +38,6 @@ window.onGoogleYoloLoad = function ()
 { Tootsville.login.startSignIn ();
   Tootsville.login.googleYoloSignIn (); };
 
-window.addEventListener ('load', Tootsville.bootstrap);
-
 /**
  * 
  */
@@ -73,3 +71,7 @@ Tootsville.bootstrap = function ()
 
     setInterval (Tootsville.updateClock, 250);
 };
+
+
+window.addEventListener ('load', Tootsville.bootstrap);
+
