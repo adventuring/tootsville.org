@@ -34,24 +34,33 @@
 if (!('Tootsville' in window)) { Tootsville = {game: {}}; }
 if (!('game' in Tootsville)) { Tootsville.game = {}; }
 
+/**
+* Is   the   `point'   near   to  the   center   of   current   activity
+* `Tootsville.activity' to be of interest to us? If the point is too far
+* away, we may not care about it.
+*/
 Tootsville.game.interestingPoint = function (point)
 { return ( (Math.abs (Tootsville.activity.x - point.x) < 1000)
            &&
            (Math.abs (Tootsville.activity.y - point.y) < 1000)
            &&
-           (Math.abs (Tootsville.activity.z - point.z) < 1000) ); }
+           (Math.abs (Tootsville.activity.z - point.z) < 1000) ); };
 
-/*
+/**
  * Structure of avatar data:
  *
- * avatar:  Path  to  avatar;  prefix with  /Assets/Avatars/5/  and  add
- * .babylon extension.
+ * @table
+ * @item avatar
+ *  Path  to  avatar;  prefix with  @code{/Assets/Avatars/5/}  and  add
+ * @code{.babylon} extension.
  *
- * clothes: Array  of clothing objects, each  of which has a  name "url"
- * (prefix with /Assets/Equipment/5/ and suffix with .babylon), optional
- * "color" and "altColor"
+ * @item clothes
+ * Array  of clothing objects, each  of which has a  name @code{url}
+ * (prefix with @code{/Assets/Equipment/5/} and suffix with @code{.babylon}), optional
+ * @code{color} and @code{altColor}
  *
- * φ:  Physics  structure.  Absence  of  φ  indicates  that  the  object
+ * @item φ
+ *  Physics  structure.  Absence  of  φ  indicates  that  the  object
  * is stationary. Data in Cannon format. φ contains:
  *
  * φ.mass,   φ.shape,    φ.position   =   {x:,   y:,    z:},   velocity,
@@ -59,8 +68,8 @@ Tootsville.game.interestingPoint = function (point)
  * angularDamping,    allowSleep,    sleepSpeedLimit,    sleepTimeLimit,
  * fixedRotation, linearFactor, angularFactor
  *
+* @end table
  */
-
 Tootsville.game.updateAvatar = function (userName, avatar)
 { const uuid = avatar.uuid;
   const position = avatar.φ.position;
@@ -74,6 +83,9 @@ Tootsville.game.updateAvatar = function (userName, avatar)
   else
   { this.makeAvatar (uuid); } };
 
+/**
+ * Update the avatar UUID from `Tootsville.avatars'
+ */
 Tootsville.game.refreshAvatar = function (uuid)
 { const avatar = Tootsville.avatars [uuid];
   const name = avatar.name;
@@ -95,11 +107,29 @@ Tootsville.game.attachLabelToAvatar = function (name, uuid)
   Tootsville.avatars [uuid].label = label;
   return label; };
 
-Tootsville.game.attachSpeechToAvatar = function (html, style, uuid)
+/**
+ * Attach a speech balloon object to the avatar. 
+ *
+ * @table @code
+ * @item html
+ * The inner HTML of the speech balloon. This is expected to contain only 
+ * plain text and possibly bolding.
+ * @item style
+ * The style class name of the balloon
+ * @item uuid
+ * The Toot UUID to whose avatar the speech will be attached
+ * @item moreStyle
+ * Additional stylesheet instructions, possibly for setting the foreground and
+ * background colors.
+ * @end table
+ */
+Tootsville.game.attachSpeechToAvatar = function (html, style, uuid, moreStyle)
 { const balloon = document.createElement ('DIV');
   balloon.innerHTML = html;
   balloon.className = style;
   balloon.slot = 'top';
+  if (moreStyle)
+  { balloon.style = moreStyle; }
   const hud = document.getElementById ('hud');
   hud.appendChild (balloon);
   setTimeout ( () =>

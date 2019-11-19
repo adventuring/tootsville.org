@@ -244,7 +244,7 @@ Tootsville.game.commands.getservertime = function (d, u, r)
 /**
  * Initialise a session key for stream or batch mode operations
  *
- *Replies with { from: initSession, key: (OPAQUE-STRING) }
+ *Replies with @{ from: initSession, key: (OPAQUE-STRING) @}
  *
  * See `INFINITY-GET-SESSION-APPLE'
  */

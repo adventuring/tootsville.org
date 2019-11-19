@@ -222,6 +222,7 @@ Tootsville.game.gatekeeper.initUserRoom = function (gram)
  * FIXME: format?
  * @item neighborhood
  * The selected neighborhood.
+ * @end table
  */
 Tootsville.game.gatekeeper.getAvailableHouses = function (gram)
 { let successP = gram.status;
@@ -312,7 +313,7 @@ Tootsville.game.gatekeeper.buddyRequest = function (gram)
  *
  * @table @code
  * @item type
- * The type ofout-of-band message
+ * The type of out-of-band message
  * @item body
  * The body of that message
  * @item status
@@ -353,7 +354,7 @@ Tootsville.game.gatekeeper.outOfBand = function (gram)
 /**
  * An administrative message
  *
- * This message comes from the Gossip Parrots in the UI.
+ * This message is presented by  the Gossip Parrots in the UI.
  *
  * @table @code
  * @item title

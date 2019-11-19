@@ -29,6 +29,9 @@
  */
 if (!('Tootsville' in window)) { Tootsville = { gamepadLayouts: {} }; };
 
+/**
+*
+*/
 Tootsville.gamepadLayouts =
 { '081f-e401':
   { name: 'NES USB Gamepad',

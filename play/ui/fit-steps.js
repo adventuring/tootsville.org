@@ -29,7 +29,8 @@
  *
  * USA
  *
- */if (!Tootsville.ui) { Tootsville.ui = {}; }
+ */
+if (!Tootsville.ui) { Tootsville.ui = {}; }
 
 Tootsville.ui.googleFit = {
     getStepCount: function () {

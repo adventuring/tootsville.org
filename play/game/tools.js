@@ -31,17 +31,38 @@ if (!('Tootsville' in window)) { Tootsville = {}; };
 if (!('game' in Tootsville)) { Tootsville.game = {}; };
 if (!('tools' in Tootsville.game)) { Tootsville.game.tools = {}; };
 
+/**
+ *
+ */
 Tootsville.game.tools.shovel = function (x, y, z)
 { /* TODO shovel */};
+/**
+ *
+ */
 Tootsville.game.tools.axe = function (x, y, z)
 { /* TODO axe */};
+/**
+ *
+ */
 Tootsville.game.tools.pickaxe = function (x, y, z)
 { /* TODO pickaxe */};
+/**
+ *
+ */
 Tootsville.game.tools.hammer = function (x, y, z)
 { /* TODO hammer */ };
+/**
+ *
+ */
 Tootsville.game.tools.sewingKit = function (x, y, z)
 { /* TODO sewing kit */ };
+/**
+ *
+ */
 Tootsville.game.tools.butterflyNet = function (x, y, z)
 { /* TODO butterfly net */ };
+/**
+ *
+ */
 Tootsville.game.tools.fishingRod = function (x, y, z)
 { /* TODO fishing rod */ };

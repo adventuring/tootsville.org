@@ -31,11 +31,20 @@
  *
  */
 
+/**
+ *
+ */
 window.onGoogleYoloLoad = function ()
 { Tootsville.login.startSignIn ();
   Tootsville.login.googleYoloSignIn (); };
 
-window.addEventListener ('load', () => {
+window.addEventListener ('load', Tootsville.bootstrap);
+
+/**
+ * 
+ */
+Tootsville.bootstrap = function ()
+{
     setTimeout (function () {
         document.getElementById ('control-panel-icon').style.width = '7vw';
     }, 1000);
@@ -63,4 +72,4 @@ window.addEventListener ('load', () => {
     Tootsville.login.start ();
 
     setInterval (Tootsville.updateClock, 250);
-});
+};
