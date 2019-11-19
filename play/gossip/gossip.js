@@ -133,6 +133,19 @@ Tootsville.gossip.gatekeeperAccept = function (peer, event)
 Tootsville.gossip.closeInfinityMode = function (peer, event)
 { Tootsville.warn ("Dropped peer connection", peer, event);
   Tootsville.gossip.peers = Tootsville.gossip.peers.filter ( el => { return el != peer; } ); };
+
+/**
+ * Ensure that we have at least 5 gossip network connections.
+ */
+Tootsville.gossip.ensureConnected = function (success)
+{ let length = Tootsville.gossip.peers.length;
+  if (length > 4)
+  { Tootsville.warn ("Gossipnet already connected at " + length + " points");
+    success (); } else
+  { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
+    Tootsville.gossip.connect (success); } };
+
+
 /**
  * Initiate Infinity mode communications; send a login packet out to $Eden
  */
@@ -214,17 +227,6 @@ Tootsville.gossip.connect = function (success)
  */
 Tootsville.gossip.connectedP = function ()
 { return Tootsville.gossip.peers.length > 0; };
-
-/**
- * Ensure that we have at least 5 gossip network connections.
- */
-Tootsville.gossip.ensureConnected = function (success)
-{ let length = Tootsville.gossip.peers.length;
-  if (length > 4)
-  { Tootsville.warn ("Gossipnet already connected at " + length + " points");
-    success (); } else
-  { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
-    Tootsville.gossip.connect (success); } };
 
 /**
  * Obtain ICE server info from the game server.
