@@ -34,6 +34,9 @@
 if (!("parrot" in Tootsville))
 { Tootsville.parrot = {}; }
 
+/**
+ *
+ */
 Tootsville.parrot.show = function (reallyp)
 { var parrot = document.getElementById('parrot');
   parrot.style.opacity = (reallyp ? 100 : 0);
@@ -46,10 +49,16 @@ Tootsville.parrot.show = function (reallyp)
   else
   { setTimeout(() => { parrot.style.display = 'none'; }, 1000 ); }};
 
+/**
+ *
+ */
 Tootsville.parrot.done = function ()
 { return new Promise
   ( (finish) => { Tootsville.parrot.show (false); finish (); } ); };
 
+/**
+ *
+ */
 Tootsville.parrot.say = function (title, message)
 { return new Promise
   ( (finish) =>
@@ -70,6 +79,9 @@ Tootsville.parrot.say = function (title, message)
       speech.style.display = 'block';
       Tootsville.parrot.show(true); });};
 
+/**
+ *
+ */
 Tootsville.parrot.ask = function (title, message, replies)
 { return new Promise
   ( (finish) =>
@@ -91,6 +103,9 @@ Tootsville.parrot.ask = function (title, message, replies)
       speech.style.display = 'block';
       Tootsville.parrot.show(true); }); };
 
+/**
+ *
+ */
 Tootsville.parrot.ynP = function (title, message)
 { return Tootsville.parrot.ask (title, message,
                                 [  { tag: false, text: "No" },
@@ -98,6 +113,9 @@ Tootsville.parrot.ynP = function (title, message)
 
 
 // 
+/**
+ *
+ */
 Tootsville.parrot.parrotErrorText = function (body)
 { let code = body.error;
   let text = body.status || body.errorMessage;

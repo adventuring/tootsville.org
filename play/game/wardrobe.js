@@ -33,6 +33,9 @@
 
 if (!('Tootsville' in window)) { Tootsville = {}; }
 
+/**
+ *
+ */
 Tootsville.wardrobe = {
 
     valences: {
@@ -53,116 +56,177 @@ Tootsville.wardrobe = {
         shirt: ['dress'],
         pants: ['skirt', 'dress'],
         skirt: ['pants', 'dress']
-    },
+    } };
 
-    findBaseSlot: function (slot)
-    { for (var baseSlot in Tootsville.wardrobe.valences)
-      { for (var j = 0; j < Tootsville.wardrobe.valences[ baseSlot ].length; ++j)
-        { if (slot == Tootsville.wardrobe.valences[ baseSlot ][ j ])
-          { return baseSlot; }}}
-      return null; },
+/**
+ *
+ */
+Tootsville.wardrobe.findBaseSlot = function (slot)
+{ for (var baseSlot in Tootsville.wardrobe.valences)
+  { for (var j = 0; j < Tootsville.wardrobe.valences[ baseSlot ].length; ++j)
+    { if (slot == Tootsville.wardrobe.valences[ baseSlot ][ j ])
+      { return baseSlot; }}}
+  return null; };
 
-    don: function (item, slot)
-    { if (Tootsville.wardrobe.wearingP (item))
-      { return; }
-      if (null == slot || undefined == slot)
-      { slot = item.valenceSlot; }
-      if (null != Tootsville.player.wearing[ slot ])
-      { Tootsville.wardrobe.doff (item); }
-      var valences = Tootsville.wardrobe.valences[ Tootsville.wardrobe.findBaseSlot (slot) ];
-      for (var i = 0; i < valences.length; ++i)
-      { }
-      /* TODO */
-    },
 
-    ready: function (item) {
-        if (Tootsville.wardrobe.readiedP (item))
-        { return; }
-        if (Tootsville.wardrobe.wearingP (item))
-        { Tootsville.wardrobe.doff (item); }
+/**
+ *
+ */
+Tootsville.wardrobe.don = function (item, slot)
+{ if (Tootsville.wardrobe.wearingP (item))
+  { return; }
+  if (null == slot || undefined == slot)
+  { slot = item.valenceSlot; }
+  if (null != Tootsville.player.wearing[ slot ])
+  { Tootsville.wardrobe.doff (item); }
+  var valences = Tootsville.wardrobe.valences[ Tootsville.wardrobe.findBaseSlot (slot) ];
+  for (var i = 0; i < valences.length; ++i)
+  { }
+  /* TODO */
+};
 
-        Tootsville.wardrobe.don (item, 'readied');
-    },
+/**
+ *
+ */
+Tootsville.wardrobe.ready = function (item) {
+    if (Tootsville.wardrobe.readiedP (item))
+    { return; }
+    if (Tootsville.wardrobe.wearingP (item))
+    { Tootsville.wardrobe.doff (item); }
 
-    readied: function () {
-        return Tootsville.wardrobe.wearingAs ('readied');
-    },
+    Tootsville.wardrobe.don (item, 'readied');
+};
 
-    readiedP: function (item) {
-        return Tootsville.wardrobe.readied () == item;
-    },
 
-    doff: function (item) {
-        if (! Tootsville.wardrobe.wearingP(item))
-        { return; }
-        /* TODO */
-    },
+/**
+ *
+ */
+Tootsville.wardrobe.readied = function () {
+    return Tootsville.wardrobe.wearingAs ('readied');
+};
 
-    wearing: function () {
-        if (! Tootsville.player) { return []; }
-        var set = {};
-        for (var i = 0; i < Tootsville.wardrobe.valences; ++i)
-        { for (var j = 0; j < Tootsville.wardrobe.valences[i].length; ++j)
-          { var slot = Tootsville.wardrobe.valences[i][j];
-            var equipped;
-            if (equipped = Tootsville.player.equipped(slot))
-            { set[ slot ] = equipped }}}
-        return set; },
 
-    wearingP: function (item) {
+/**
+ *
+ */
+Tootsville.wardrobe.readiedP = function (item) {
+    return Tootsville.wardrobe.readied () == item;
+};
 
-    },
 
-    refresh: function () {
-        /* TODO */
-    },
+/**
+ *
+ */
+Tootsville.wardrobe.doff = function (item) {
+    if (! Tootsville.wardrobe.wearingP(item))
+    { return; }
+    /* TODO */
+};
 
-    proposeExchange: function(tradePartner, offerItems, demandItems) {
-        if (!('character' in Tootsville)) return; // XXX assert?
-        return { exchange: {
-            offers: [
-                {
-                    from: Tootsville.character.name,
-                    items: Array.map(offerItems, Tootsville.Item.publicInfo)
-                },
-                {
-                    from: tradePartner,
-                    items: demandItems
-                }
-            ]
-        } };
-    },
 
-    signExchange: function(exchangePacket) {
-        exchangePacket.signedBy[Tootsville.character.name] = {
-            when: performance.now(),
-            sign: 'TODO'
-        };
-        return exchangePacket;
-    },
+/**
+ *
+ */
+Tootsville.wardrobe.wearing = function () {
+    if (! Tootsville.player) { return []; }
+    var set = {};
+    for (var i = 0; i < Tootsville.wardrobe.valences; ++i)
+    { for (var j = 0; j < Tootsville.wardrobe.valences[i].length; ++j)
+      { var slot = Tootsville.wardrobe.valences[i][j];
+        var equipped;
+        if (equipped = Tootsville.player.equipped(slot))
+        { set[ slot ] = equipped }}}
+    return set; };
 
-    finalizeExchange: function(exchangePacket) {
-        /* TODO */
-        return false;
-    },
 
-    drop: function(item) {
-        /* TODO */
-        return false;
-    },
+/**
+ *
+ */
+Tootsville.wardrobe.wearingP = function (item) {
 
-    take: function(item) {
-        /* TODO */
-        return false;
-    },
+};
 
-    inventory: function() {
-        /* TODO */
-        return [];
-    },
 
-    inventoryByKind: function(kind) {
-        /* TODO */
-        return [];
-    }
+/**
+ *
+ */
+Tootsville.wardrobe.refresh = function () {
+    /* TODO */
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.proposeExchange = function(tradePartner, offerItems, demandItems) {
+    if (!('character' in Tootsville)) return; // XXX assert?
+    return { exchange: {
+        offers: [
+            {
+                from: Tootsville.character.name,
+                items: Array.map(offerItems, Tootsville.Item.publicInfo)
+            },
+            {
+                from: tradePartner,
+                items: demandItems
+            }
+        ]
+    } };
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.signExchange = function(exchangePacket) {
+    exchangePacket.signedBy[Tootsville.character.name] = {
+        when: performance.now(),
+        sign: 'TODO'
+    };
+    return exchangePacket;
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.finalizeExchange = function(exchangePacket) {
+    /* TODO */
+    return false;
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.drop = function(item) {
+    /* TODO */
+    return false;
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.take = function(item) {
+    /* TODO */
+    return false;
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.inventory = function() {
+    /* TODO */
+    return [];
+};
+
+
+/**
+ *
+ */
+Tootsville.wardrobe.inventoryByKind = function(kind) {
+    /* TODO */
+    return [];
 };

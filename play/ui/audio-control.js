@@ -31,11 +31,20 @@
  *
  */
 
+/**
+*
+*/
 Tootsville.audio.volumeUp = function() 
 { Tootsville.audio.setVolume(Math.min(100, 10 + Tootsville.audio.currentVolume));};
+/**
+*
+*/
 Tootsville.audio.volumeDown = function() 
 { Tootsville.audio.setVolume(Math.max(0, (Tootsville.audio.currentVolume - 10)));};
 
+/**
+*
+*/
 Tootsville.audio.volumeMute = function() 
 { if (Tootsville.audio.currentVolume < 9) 
   { Tootsville.audio.setVolume(Tootsville.audio.savedVolume); }
@@ -43,28 +52,46 @@ Tootsville.audio.volumeMute = function()
   { Tootsville.audio.savedVolume = Tootsville.audio.currentVolume;
     Tootsville.audio.setVolume(0); } };
 
+/**
+*
+*/
 Tootsville.audio.updateVolumeUI = function() 
 { Tootsville.audio.updateVolumeSlider();
   Tootsville.audio.updateVolumeMuteIcon(); };
 
+/**
+*
+*/
 Tootsville.audio.setVolume = function(newVolume) 
 { Tootsville.audio.currentVolume = newVolume;
   Tootsville.audio.gainNode.gain.setValueAtTime(0, Tootsville.audio.context.currentTime);
   Tootsville.audio.updateVolumeUI(); };
 
+/**
+*
+*/
 Tootsville.audio.updateVolumeSlider = function() 
 { var slider = document.getElementById('volume-slider');
   if (slider) 
   { slider.value = Tootsville.audio.currentVolume;
     slider.disabled = false; } };
 
+/**
+*
+*/
 Tootsville.audio.updateVolumeMuteIcon = function() 
 { var muteIcon = document.getElementById('mute-icon');
   if (Tootsville.audio.currentVolume < 9) 
   { muteIcon.style.color = 'red'; } else 
   { muteIcon.style.color = 'black'; } };
 
+/**
+*
+*/
 Tootsville.audio.context = new (window.AudioContext || window.webkitAudioContext)();
+/**
+*
+*/
 Tootsville.audio.gainNode = Tootsville.audio.context.createGain();
 
 // if (navigator.mediaDevices.getUserMedia) 

@@ -35,6 +35,9 @@ if ( (!('ui' in Tootsville)) ||
      (!('hud' in Tootsville.ui)))
 { throw new Error("Can't map without keys and HUD"); }
 
+/**
+ *
+ */
 Tootsville.ui.commands =
     { 'beginning-of-line': Tootsville.ui.keys.beginningOfLine,
       'end-of-line': Tootsville.ui.keys.endOfLine,
@@ -85,6 +88,9 @@ Tootsville.ui.commands =
       'insert-char': Tootsville.ui.keys.insertChar
     };
 
+/**
+ *
+ */
 Tootsville.ui.runCommand = function (command, event)
 { var cmd = Tootsville.ui.commands[ command ];
   if (cmd) { (cmd)(event); } };

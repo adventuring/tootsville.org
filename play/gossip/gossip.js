@@ -105,7 +105,7 @@ Tootsville.gossip.createConnection = function ()
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**
- * Accept an inbound datagram from an EVENT
+ * Accept an inbound datagram from a peer for an event.
  *
  * See the server documentation of `DEFINFINITY' for a description of the
  * Infinity Mode protocols.
@@ -165,11 +165,21 @@ Tootsville.gossip.openInfinityMode = function (peer, event)
 /**
  * Broadcast a packet.
  *
- * C is the command;  D is the command's data (if any);  R is the target
- * Recipient (originally  Room), which  defaults to  '$World', A  is the
- * author   (default  self),   and   V  (via),   if  present,   prevents
+ *
+ * @table @code
+ * @item c
+ * is the command;  
+ * @item d
+ * is the command's data (if any);  
+ * @item r
+ * is the target Recipient (originally  Room), which  defaults to  '$World', 
+ * @item a 
+ *  is the author   (default  self),   and 
+ * @item  v 
+ *  (via),   if  present,   prevents
  * rebroadcasting the packet to the original sender. V (via) is expected
  * to be null, or an array of UUIDs.
+ * @end table
  */
 Tootsville.gossip.send = function (c, d, r, a, v)
 { let packet = Tootsville.gossip.createPacket (c, d, r || '$World', a, v);

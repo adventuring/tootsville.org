@@ -29,6 +29,14 @@
  */
 if (!('Tootsville' in window)) { Tootsville = {  }; }
 
+/**
+* The credits for the game as a string.
+*
+* Suitable  for an  ``about this  game'' dialog  box, credits  crawl, or
+* other presentation. This  is expected to run long, over  time, so take
+* some efforts to ensure that there  is scrolling or other affordance in
+* place to accomodate a very long message.
+*/
 Tootsville.credits = function ()
 { console.log ("Tootsville V was brought to you by:\n\n" +
                "Chief Engineer: Bruce-Robert Pocock\n\n" +
