@@ -485,10 +485,10 @@ git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.as
 
 dist/doc.texi: $(shell cat build/js.order)
 	cp build/header.texi dist/doc.texi
-	for file in $$(< build/js.order ); do \
+	for file in $$(grep -v lib/ build/js.order); do \
 		perl -e '$$b = ""; while (<>) { '\
-'if (/\/\*\*/../\*\//) { s/-\*-.*?-\*-//; s/\/?\*\*?\/?[ \t]*//; $$b = $$b . $$_ } '\
-'else { if (($$b ne "") && /(Tootsville.*)=/) '\
+'if (/\/\*\*/../\*\//) { s/-\*-.*?-\*-//; s/\/?\*[\*\/]?[ \t]*//; s/^ *//; $$b = $$b . $$_ } '\
+'else { if (($$b ne "") && /(Tootsville.*?)=/) '\
 '{ print "\n\@vskip 48pt\n\@node $$1\n\@section $$1\n\n$$b\n\n"; $$b = ""; } } }'\
 'print $$b;' < $$file >> dist/doc.texi; \
 	done
