@@ -208,8 +208,24 @@ Tootsville.gossip.signPacket = function (c, d, r)
        Tootsville.gossip.keyPair.privateKey ); };
 
 /**
- * Create and sign a packet; mandatory:  C command and D data; optional:
- * R recipient (default "$World")
+ * Create and sign a packet.
+ * @table @code
+ * @item c
+ * Command to broadcast.  This can be the string  @code{logOK}, which is
+ * handled    as   a    @code{_cmd}    (in   fact,    it's   the    only
+ * remaining @code{_cmd} command); a  string beginning with @code{:}, in
+ * which case  the command will be  a reply packet with  @code{from}; or
+ * any other string, in which case it's treated as a @code{c} command.
+ * @item d
+ * Data for the command. 
+ * @item r
+ * Optional recipient UUID (or default @code{$World})
+ * @end table
+ *
+ * Automatically   adds  @code{a}   for  author,   @code{u}  for   user,
+ * and @code{s} signature.
+ *
+ * Returns a JSON string of the signed packet. 
  */
 Tootsville.gossip.createPacket = function (c, d, r)
 { let packet = (( c == 'logOK' ) || ( c.substring (0, 1) == ':' ))
@@ -223,11 +239,16 @@ Tootsville.gossip.createPacket = function (c, d, r)
             : 'c') ] = (c.substring (0,1) == ':') ? c.substring(1) : c;
   return JSON.stringify (packet); };
 
+/**
+ * Send a logOK message to the gossip net.
+ */
 Tootsville.gossip.sendLogOK = function ()
 { Tootsville.gossip.sendPacket ('logOK', { neighbor: Tootsville.characterUUID }); };
 
 /**
  * Connect to the global gossip network.
+ *
+ * Calls next function @code{success} on success.
  */
 Tootsville.gossip.connect = function (success)
 { Tootsville.gossip.ensureKeyPair ();
@@ -235,7 +256,7 @@ Tootsville.gossip.connect = function (success)
   Tootsville.gossip.getOffer (success); };
 
 /**
- * Are we connected to the global gossip network?
+ * Are we connected to the global gossip network (at all)?
  */
 Tootsville.gossip.connectedP = function ()
 { return Tootsville.gossip.peers.length > 0; };
