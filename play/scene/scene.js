@@ -31,12 +31,10 @@
  *
  */
 
-if (! ("tank" in Tootsville)) {
-    Tootsville.tank = {};
-}
+if (! ("tank" in Tootsville)) { Tootsville.tank = {}; }
 
 /**
- *
+ * Accept a click in the scene and identify the next action to take.
  */
 Tootsville.tank.acceptClick = function (event, pickedP, distance,
                                         pickedMesh, pickedPoint)
@@ -49,12 +47,21 @@ Tootsville.tank.acceptClick = function (event, pickedP, distance,
                                point: pickedPoint }); } };
 
 /**
+ * Indicates whether the 2D overlay attachments need updating.
  *
+ * When true, the scene has changed  in some way that may invalidate the
+ * positions of things like speech balloons.
+ *
+ * XXX This is  currently ignored, and we always  update the attachments
+ * on every frame.
  */
 Tootsville.tank.attachmentOverlaysNeedUpdateP = false;
 
 /**
+ * Initialize  the Over-The-Shoulder  camera. 
  *
+ * This is the main follow camera  for the game. This camera follows the
+ * player's Toot through the scene.
  */
 Tootsville.tank.initOTSCamera = function ()
 { const camera = new BABYLON.FollowCamera (
@@ -79,7 +86,7 @@ Tootsville.tank.initOTSCamera = function ()
   return camera; };
 
 /**
- *
+ * Initialize the Cannon physics engine in the scene.
  */
 Tootsville.tank.initPhysics = function (world)
 { const gravityVector =
@@ -91,7 +98,7 @@ Tootsville.tank.initPhysics = function (world)
   console.log ("Physics enabled for world", world);};
 
 /**
- *
+ * Find or create the CANVAS object onto which the 3D scene is rendered.
  */
 Tootsville.tank.getCanvas = function ()
 { if (! Tootsville.tank.canvas)
@@ -106,7 +113,7 @@ Tootsville.tank.getCanvas = function ()
   return Tootsville.tank.canvas; };
 
 /**
- *
+ * Convert an event on the CANVAS object into a 3D event as appropriate.
  */
 Tootsville.tank.convertCanvasEventTo3D = function (event)
 { const picked = Tootsville.tank.scene.pick (
@@ -118,7 +125,7 @@ Tootsville.tank.convertCanvasEventTo3D = function (event)
                                picked.pickedPoint); };
 
 /**
- *
+ * Initialize the Babylon 3D scene object.
  */
 Tootsville.tank.initScene = function ()
 { console.log ("Initializing the Babylon Scene");
@@ -127,7 +134,11 @@ Tootsville.tank.initScene = function ()
   return Tootsville.tank.scene; };
 
 /**
- *
+ * Update one 2D attachment object.
+*
+* These attachments  are used  for avatar  labels, speech  balloons, &c.
+* and need to  be updated to keep  in sync with the  underlying 3D scene
+* from time to time.
  */
 Tootsville.tank.updateAttachment = function (model, attachment)
 { const center = BABYLON.Vector3.Project (
@@ -145,7 +156,7 @@ Tootsville.tank.updateAttachment = function (model, attachment)
   { attachment.style.top = center.y - 100; } };
 
 /**
- *
+ * Update the 2D attachments for one avatar. 
  */
 Tootsville.tank.updateAttachmentsForAvatar = function (avatar)
 { if (avatar.label)
@@ -154,14 +165,15 @@ Tootsville.tank.updateAttachmentsForAvatar = function (avatar)
   { Tootsville.tank.updateAttachment (avatar.model, avatar.speech); } };
 
 /**
- *
+ * Update all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.tank.updateAttachmentOverlays = function ()
 { for (let i = 0; i < Tootsville.game.avatars.length; ++i)
   { Tootsville.tank.updateAttachmentsForAvatar (Tootsville.game.avatars [i]); } };
 
 /**
- *
+ * This event  handler is called  whenever a frame  in the 3D  scene has
+ * been rendered.
  */
 Tootsville.tank.afterRender = function ()
 { if (true || Tootsville.tank.attachmentOverlaysNeedUpdateP)
@@ -169,7 +181,11 @@ Tootsville.tank.afterRender = function ()
     Tootsville.tank.attachmentOverlaysNeedUpdateP = false; } };
 
 /**
+ * Initialize the 3D engine, including Babylon 3D and Cannon physics.
  *
+ * The main  entry point  is `Tootsville.tank.start3D'  which eventually
+ * invokes this.  This function actually  connects the 3D engine  to the
+ * CANVAS object and 2D event system.
  */
 Tootsville.tank.init3DEngine = function ()
 { return new Promise (
@@ -194,7 +210,10 @@ Tootsville.tank.init3DEngine = function ()
           finish (); }); };
 
 /**
+ * Initialize a default  fill light source for the  game, until in-world
+ * light sources are working.
  *
+ * XXX Remove thi once the game has its own lights.
  */
 Tootsville.tank.initCrappyDefaultLight = function ()
 { var light = new BABYLON.HemisphericLight (
@@ -203,7 +222,9 @@ Tootsville.tank.initCrappyDefaultLight = function ()
     Tootsville.tank.scene); };
 
 /**
+ * Initialize our local player's Toot object. 
  *
+ * We know that it, at least, will always exist.
  */
 Tootsville.tank.initPlayerToot = function ()
 { if ( (! (Tootsville.character))
@@ -222,7 +243,9 @@ Tootsville.tank.initPlayerToot = function ()
                     ultraToot; }); }); };
 
 /**
+ * Initialize the ground plane.
  *
+ * TODO: have a height map across the groundplane.
  */
 Tootsville.tank.initGroundPlane = function ()
 { const ground =
@@ -245,7 +268,8 @@ Tootsville.tank.initGroundPlane = function ()
   return ground; };
 
 /**
- *
+ * Create the  text scene with ground  plane and the player's  Toot with
+ * a static light.
  */
 Tootsville.tank.createTestScene = function ()
 { console.log ("Creating a test scene with an over-the-shoulder camera, ground plane, light, and Toot.");
@@ -259,17 +283,18 @@ Tootsville.tank.createTestScene = function ()
   return Tootsville.tank.scene; };
 
 /**
- *
+ * Start the 3D render loop running.
  */
 Tootsville.tank.startRenderLoop = function ()
 { console.log ("Starting render loop for scene ", Tootsville.tank.scene,
                " with render function " , Tootsville.tank.scene.render);
-  Tootsville.tank.engine.runRenderLoop (
-      function ()
-      { Tootsville.tank.scene.render (); } ); };
+  Tootsville.tank.engine.runRenderLoop (Tootsville.tank.scene.render); };
 
 /**
+ * Prepare the libraries needed for the 3D scene (Babylon and Cannon).
  *
+ * We can load these hefty libraries asynchronously whilst the player is
+ * busy signing in.
  */
 Tootsville.tank.prepareFor3D = function ()
 { return new Promise (
@@ -285,7 +310,7 @@ Tootsville.tank.prepareFor3D = function ()
               Tootsville.tank.prepareFor3D); }}); };
 
 /**
- *
+ * Enqueue some foley sound effects that will be used in the scene.
  */
 Tootsville.tank.loadUISounds = function ()
 { var squawk = new BABYLON.Sound (
@@ -296,13 +321,15 @@ Tootsville.tank.loadUISounds = function ()
     { Tootsville.parrot.squawk = squawk; }); };
 
 /**
- *
+ * Start  the 3D  engine, after  doing any  necessary preparatory  work.
+ * This is the main entry point for the 3D simulation engine.
  */
 Tootsville.tank.start3D = function ()
 { Tootsville.tank.prepareFor3D ().then (Tootsville.tank.start3DIfReady); };
 
 /**
- *
+ * Ensure  that all  libraries  are  loaded and  actually  start the  3D
+ * engine. Called by `Tootsville.tank.start3D'
  */
 Tootsville.tank.start3DIfReady = function ()
 { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))

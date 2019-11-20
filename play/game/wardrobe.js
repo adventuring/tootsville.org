@@ -34,7 +34,9 @@
 if (!('Tootsville' in window)) { Tootsville = {}; }
 
 /**
- *
+ * Clothing  valences  and  conflicts,   encoded  for  Javascript  form.
+ * Compare to `WEAR-SLOT', which  should be the canonical representation
+ * and used to populate this.
  */
 Tootsville.wardrobe = {
 
@@ -59,7 +61,7 @@ Tootsville.wardrobe = {
     } };
 
 /**
- *
+ * Find a base slot in the 3D model for clothing to mount.
  */
 Tootsville.wardrobe.findBaseSlot = function (slot)
 { for (var baseSlot in Tootsville.wardrobe.valences)
@@ -70,7 +72,7 @@ Tootsville.wardrobe.findBaseSlot = function (slot)
 
 
 /**
- *
+ * Don an article of clothing on a wear slot.
  */
 Tootsville.wardrobe.don = function (item, slot)
 { if (Tootsville.wardrobe.wearingP (item))
@@ -135,7 +137,7 @@ Tootsville.wardrobe.wearing = function () {
       { var slot = Tootsville.wardrobe.valences[i][j];
         var equipped;
         if (equipped = Tootsville.player.equipped(slot))
-        { set[ slot ] = equipped }}}
+        { set[ slot ] = equipped; }}}
     return set; };
 
 
@@ -156,10 +158,13 @@ Tootsville.wardrobe.refresh = function () {
 
 
 /**
+ * Propose to exchange an item with a partner.
  *
+ * Offer   @code{offerItems}    to   @code{tradePartner},    in   return
+ * for @code{demandItems}.
  */
 Tootsville.wardrobe.proposeExchange = function(tradePartner, offerItems, demandItems) {
-    if (!('character' in Tootsville)) return; // XXX assert?
+    if (!('character' in Tootsville)) return {}; // XXX assert?
     return { exchange: {
         offers: [
             {
@@ -169,14 +174,11 @@ Tootsville.wardrobe.proposeExchange = function(tradePartner, offerItems, demandI
             {
                 from: tradePartner,
                 items: demandItems
-            }
-        ]
-    } };
-};
+            } ] } }; };
 
 
 /**
- *
+ * Sign an exchange packet
  */
 Tootsville.wardrobe.signExchange = function(exchangePacket) {
     exchangePacket.signedBy[Tootsville.character.name] = {

@@ -36,19 +36,23 @@ if (!('Avatars' in Tootsville)) { Tootsville.Avatars = { UltraTootBuilder: {} };
 if (!('UltraTootBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.UltraTootBuilder = {}; }
 
 /**
+ * Get the avatar for the given character name.
  *
+ * Returns a promise which resolves into character information.
+ *
+ * If character is falsey, returns a promise to an empty object.
  */
 Tootsville.Avatars.getAvatar = function (character)
 { if (!character) { return new Promise ( () => {} ); }
   return Tootsville.util.rest ('GET', 'toots/' + character); };
 
 /**
- *
+ * The UltraToot model object is re-used for each Toot object.
  */
 Tootsville.Avatars.UltraTootBuilder.model = null;
 
 /**
- *
+ * Create a Toot-like proxy object until the UltraToot model is available.
  */
 Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot)
 { // XXX: private
@@ -67,7 +71,7 @@ Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot)
     proxyBody.setParent (modelRoot); };
 
 /**
- *
+ * Buld the UltraToot model from the meshes loaded from the model file.
  */
 Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, modelRoot)
 { try
@@ -89,7 +93,7 @@ Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, mod
   return Tootsville.Avatars.UltraTootBuilder.model; };
 
 /**
- *
+ * Import the UltraToot model object into the scene.
  */
 Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, particles, skeletons)
 { // XXX: private
@@ -104,7 +108,7 @@ Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, 
     return Tootsville.Avatars.UltraTootBuilder.model; };
 
 /**
- *
+ * Load the UltraToot base model from the resource on Jumbo.
  */
 Tootsville.Avatars.UltraTootBuilder.getBaseModel = function ()
 { return new Promise (
@@ -125,13 +129,21 @@ Tootsville.Avatars.UltraTootBuilder.getBaseModel = function ()
             return; } }); };
 
 /**
+ * Set the colors of the Toot avatar.
  *
+ * This colorizes the  Toot's skin and pad colors, as  well as the black
+ * eyes and eyebrows.
+ *
+ * @code{node} is the 3D node containing the Toot meshes.
+ *
+ * @code{avatar} is an avatar object in standard form, as per `TOOT-INFO'
  */
 Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar)
-{ const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
+{ const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor,
                                                      Tootsville.tank.scene);
   skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
-  const padMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "+" + avatar.patternColor + "×" + avatar.pattern,
+  // TODO apply pattern texture map to the skin
+  const padMaterial = new BABYLON.StandardMaterial (avatar.padColor,
                                                     Tootsville.tank.scene);
   padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
   const eyeMaterial = new BABYLON.StandardMaterial ("eye", Tootsville.tank.scene);
@@ -148,14 +160,14 @@ Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar)
             padMaterial ); } };
 
 /**
- *
+ * Add clothes onto the avatar mesh
  */
 Tootsville.Avatars.UltraTootBuilder.addClothes = function (node, avatar)
 { // TODO
 };
 
 /**
- *
+ * Enable physics imposot for the Toot
  */
 Tootsville.Avatars.UltraTootBuilder.enablePhysics = function (node, avatar)
 { node.physicsImpostor = new BABYLON.PhysicsImpostor (node,
@@ -164,19 +176,23 @@ Tootsville.Avatars.UltraTootBuilder.enablePhysics = function (node, avatar)
                                                       Tootsville.tank.scene); };
 
 /**
+ * Create an UltraToot which is described by @code{avatar}.
  *
+ * See `TOOT-INFO' for a description of the format of @code{avatar}.
  */
 Tootsville.Avatars.UltraTootBuilder.makeToot = function (avatar)
 { return new Promise ( (finish) =>
                        { if (avatar.avatar == 'UltraToot')
-                         { Tootsville.Avatars.UltraTootBuilder.getBaseModel ().then ( (model) =>
-                                                                                      { var toot = model.clone ();
-                                                                                        toot.name = 'avatar/' + avatar.name;
-                                                                                        Tootsville.Avatars.UltraTootBuilder.enablePhysics (toot, avatar);
-                                                                                        Tootsville.Avatars.UltraTootBuilder.setColors (toot, avatar);
-                                                                                        Tootsville.Avatars.UltraTootBuilder.addClothes (toot, avatar);
-                                                                                        finish (toot);
-                                                                                        return; }); } else
+                         { Tootsville.Avatars.UltraTootBuilder.getBaseModel ().then
+                           ( (model) =>
+                             { var toot = model.clone ();
+                               toot.name = 'avatar/' + avatar.name;
+                               Tootsville.Avatars.UltraTootBuilder.enablePhysics (toot, avatar);
+                               Tootsville.Avatars.UltraTootBuilder.setColors (toot, avatar);
+                               Tootsville.Avatars.UltraTootBuilder.addClothes (toot, avatar);
+                               finish (toot);
+                               return; }); }
+                         else
                          { Tootsville.warn ("Avatar is not UltraToot: " + avatar.toSource ());
                            /* TODO  try to load non-UltraToot avatar */
                            var proxy = BABYLON.MeshBuilder.CreateSphere ('proxy for ' + avatar.name,
@@ -187,7 +203,7 @@ Tootsville.Avatars.UltraTootBuilder.makeToot = function (avatar)
                            finish (proxy);
                            return; } }); };
 /**
- *
+ * Move a Toot by @code{δv}
  */
 Tootsville.Avatars.UltraTootBuilder.moveToot = function (toot, δv)
 { //         var forwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);

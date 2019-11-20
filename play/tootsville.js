@@ -30,7 +30,12 @@
  * USA
  *
  */
- 
+
+/**
+ * The main  container object under  which nearly all other  modules are
+ * located, to  avoid potential  namespace conflicts with  other, loaded
+ * Javascript modules.
+ */
  var Tootsville = {
      /* Cluster name is hostname minus leading "play" */
      cluster: document.location.host.split('.').splice(1).join('.'),

@@ -32,6 +32,10 @@
  */
 if (!("util" in Tootsville)) { Tootsville.util = {}; }
 
+/**
+ * Ensure that @code{hostName} is a  valid hostname for the game cluster
+ * we're in.
+ */
 Tootsville.util.assertValidHostName = function (hostName)
 { if ("http" == hostName || "https" == hostName)
   { Tootsville.error ("Landed here with http/s as a hostName"); }
@@ -41,6 +45,22 @@ Tootsville.util.assertValidHostName = function (hostName)
   { return "https://tootsbook.com"; }
   return Tootsville.host["game"]; };
 
+/**
+ * The main REST client.
+ *
+ * @table @code
+ * @item method
+ * GET, PUT, or POST
+ * @item uri
+ * The URI to access under the game host.
+ * @item body
+ * A JSON body for a PUT or POST
+ * @item headers
+ * An object which maps to additional headers to be set on the request.
+ * X-Infinity-Auth will be set when logged in; Accept and Content-Type will be
+ * defaulted to application/json if not set.
+ * @end table
+ */
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
   let origURI = uri;
@@ -104,6 +124,12 @@ Tootsville.util.loadScript = function (src)
 
 //
 
+/**
+ * Check for the game REST server. 
+ * 
+ * Calls @url{https://game.tootsville.org/meta-game/ping}  and complains
+ * to the player if it can't be reached.
+ */
 Tootsville.util.ensureServersReachable = function ()
 { Tootsville.util.rest ('GET', 'meta-game/ping').then
   ( (response) => { Tootsville.trace ("Ping replied", response); },

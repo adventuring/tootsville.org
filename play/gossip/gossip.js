@@ -165,6 +165,8 @@ Tootsville.gossip.openInfinityMode = function (peer, event)
 /**
  * Broadcast a packet.
  *
+ * The constructed  packet will be  signed and  broadcast to each  of the
+ * mesh partners in the gossipnet.
  *
  * @table @code
  * @item c

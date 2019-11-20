@@ -35,16 +35,20 @@ if (!("game" in Tootsville))
 { Tootsville.game = {}; }
 
 /**
-*
-*/
+ * Hide the loading overlay once the game is ready.
+ *
+ * Call this function when the game is ready.
+ */
 Tootsville.game.hideWhenGameReady = function ()
 { var toHide = document.querySelectorAll('.hide-when-game-ready');
   for (var i = 0; i < toHide.length; i++)
   { toHide[i].style.display = 'none'; }};
 
 /**
-*
-*/
+ * Stop the watchdogs for slow loading.
+ *
+ * Call this function once the loading has been completed enough.
+ */
 Tootsville.game.stopSlowLoadingWatchdogs = function ()
 { clearTimeout(window.loadWatchdog1);
   clearTimeout(window.loadWatchdog2);
