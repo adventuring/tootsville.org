@@ -306,7 +306,8 @@ Tootsville.tank.prepareFor3D = function ()
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/cannon.js').then (
               Tootsville.tank.prepareFor3D); }
           else
-          { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.js').then (
+          { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
+                                        /*'https://cdn.babylonjs.com/babylon.js'*/).then (
               Tootsville.tank.prepareFor3D); }}); };
 
 /**
@@ -332,16 +333,16 @@ Tootsville.tank.start3D = function ()
  * engine. Called by `Tootsville.tank.start3D'
  */
 Tootsville.tank.start3DIfReady = function ()
-{ if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
-  { return Tootsville.tank.prepareFor3D ().then (Tootsville.tank.start3DifReady); }
-  BABYLON.SceneLoader.ShowLoadingScreen = false;
-  Tootsville.tank.init3DEngine ().then (
-      () =>
-          { console.log ("3D libraries loaded");
-            Tootsville.tank.createTestScene ();
-            Tootsville.tank.loadUISounds ();
-            Tootsville.tank.startRenderLoop ();
-            window.addEventListener ('resize',
-                                     Tootsville.tank.engine.resize); } );
+    { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
+      { return Tootsville.tank.prepareFor3D ().then (Tootsville.tank.start3DifReady); }
+      BABYLON.SceneLoader.ShowLoadingScreen = false;
+      Tootsville.tank.init3DEngine ().then (
+          () =>
+              { console.log ("3D libraries loaded");
+                Tootsville.tank.createTestScene ();
+                console.log ("Created test scene; starting rendering loop");
+                Tootsville.tank.startRenderLoop ();
+                window.addEventListener ('resize',
+                                         Tootsville.tank.engine.resize); } );
 
-  return true; };
+      return true; };
