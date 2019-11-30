@@ -79,7 +79,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
   { headers['Content-Type'] = 'application/json;charset=utf-8';
     opts.body = JSON.stringify(body); }
   opts.headers = headers;
-  Tootsville.trace ('REST: ' + method + ' ' + uri, opts);
+  console.debug ('REST: ' + method + ' ' + uri, opts);
   return fetch (uri, opts).then(
       response =>
           { if (response.ok)
