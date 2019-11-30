@@ -354,7 +354,7 @@ dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/worker.js \
 	dist/play.$(clusterorg)/.htaccess \
 	dist/play.$(clusterorg)/error/404.var \
-	dist/play.$(clusterorg)/system-check/index.html
+	dist/play.$(clusterorg)/play/system-check/index.html
 
 #################### deploy
 
