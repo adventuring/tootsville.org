@@ -128,8 +128,6 @@ dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.j
 		--js worker/Worker.js                      \
 		--js worker/WorkerStart.js                 \
 		--js_output_file $@
-	mv $@ $@~
-	cat build/license.js $@~ > $@
 	echo '//# sourceMappingURL=/worker.map' >> $@
 
 #################### dist/node-adopt.js
@@ -157,8 +155,6 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 		--language_out ECMASCRIPT5_STRICT                \
 		$$(< build/js.order )                            \
 		--js_output_file $@
-	mv $@ $@~
-	cat build/license.js $@~ > $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ -i $@
 
