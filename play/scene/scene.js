@@ -214,22 +214,6 @@ Tootsville.tank.init3DEngine = function ()
           console.log ("init3DEngine: ready");
           finish (); }); };
 
-/**
- * Initialize a default  fill light source for the  game, until in-world
- * light sources are working.
- *
- * XXX Remove this once the game has its own lights.
- *
- * TODO The sky  loader should create lights for sun,  moons, and a base
- * light for stars.
- */
-Tootsville.tank.initCrappyDefaultLight = function ()
-{ const light = new BABYLON.DirectionalLight (
-    'sunlight',
-    new BABYLON.Vector3 (0, -.5, -1),
-    Tootsville.tank.scene);
-  light.position = new BABYLON.Vector3 (20, 70, 120); /* TODO Sun position */
-  Tootsville.tank.shadowGenerator = new BABYLON.ShadowGenerator (1024, light); };
 
 /**
  * Initialize our local player's Toot object. 
@@ -245,28 +229,6 @@ Tootsville.tank.initPlayerToot = function ()
       Tootsville.character, Tootsville.tank.scene,
       model => { Tootsville.tank.camera.lockedTarget = model; } ); };
 
-/**
- * Initialize the ground plane.
- *
- * TODO: have a height map across the groundplane.
- */
-Tootsville.tank.initGroundPlane = function ()
-{ const ground =
-        BABYLON.Mesh.CreateGround ('ground',
-                                   100, 100, 10,
-                                   Tootsville.tank.scene);
-  ground.material = new BABYLON.StandardMaterial ('ground',
-                                                  Tootsville.tank.scene);
-  ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
-  ground.material.specularColor = new BABYLON.Color3.FromHexString (interpretTootColor ('spring-green'));
-  ground.receiveShadows = true;
-  ground.physicsImpostor =  new BABYLON.PhysicsImpostor (
-      ground,
-      BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 0, restitution: 3 });
-//  ground.checkCollisions = true;
-  console.log ("Ground plane is ", ground);
-  return ground; };
 
 /**
  * Create the  text scene with ground  plane and the player's  Toot with
@@ -277,10 +239,11 @@ Tootsville.tank.createTestScene = function ()
   console.log ("Babylon scene object is ", Tootsville.tank.scene);
   Tootsville.tank.initOTSCamera ();
   Tootsville.tank.initPhysics ('Tootanga');
-  Tootsville.tank.initCrappyDefaultLight ();
+  Tootsville.SkyBuilder.build ('CHOR'); /* XXX: other worlds some day */
+  Tootsville.GroundBuilder.build (0, 0, 0); /* TODO x, y, z */
   Tootsville.tank.initPlayerToot ();
-  Tootsville.tank.initGroundPlane ();
-  console.log ("Initialized scene is now", Tootsville.tank.scene);
+  Tootsville.SceneBuilder.build (0, 0, 0); /* TODO x, y, z */
+ console.log ("Initialized scene is now", Tootsville.tank.scene);
   return Tootsville.tank.scene; };
 
 /**

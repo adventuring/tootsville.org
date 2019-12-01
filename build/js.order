@@ -35,7 +35,11 @@ play/ui/keys.js
 play/ui/commands.js
 
 play/scene/scene.js
-play/scene/avatar.js
+play/scene/avatar-builder.js
+play/scene/avatar-viewer.js
+play/scene/furniture-builder.js
+play/scene/ground-builder.js
+play/scene/sky-builder.js
 
 play/game/stop-watchdogs.js
 
