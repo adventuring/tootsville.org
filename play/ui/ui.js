@@ -1,6 +1,6 @@
 /* -*- js2 -*- */
 
-/*@license
+/**@license
  *
  * ./play/ui/ui.js is part of Tootsville
  *

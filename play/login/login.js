@@ -1,6 +1,6 @@
 /* -*- js2 -*- */
 
-/*@license
+/**@license
  *
  * ./play/login/login.js is part of Tootsville
  *

@@ -1,6 +1,6 @@
 /* -*- js2 -*- */
 
-/*@license
+/**@license
  *
  * ./play/game/game.js is part of Tootsville
  *

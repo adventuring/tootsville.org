@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/game/stop-watchdogs.js is part of Tootsville
  *
