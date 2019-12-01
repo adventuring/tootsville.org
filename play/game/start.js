@@ -56,10 +56,12 @@ Tootsville.bootstrap = function ()
     Tootsville.game.hideWhenGameReady ();
     Tootsville.game.stopSlowLoadingWatchdogs ();
 
+    Tootsville.login.start ();
+
     Tootsville.ui.setBackgroundMusic ("bensound-adventure");
     
-    setInterval (Tootsville.ui.hud.refreshHUD (), 250);
-    Tootsville.ui.hud.connectTalkBox ();
+    Tootsville.ui.hud.initHUD ();
+    setInterval (Tootsville.updateClock, 250);
 
     document.addEventListener('keydown', Tootsville.ui.keys.onKeypress);
 
@@ -67,9 +69,6 @@ Tootsville.bootstrap = function ()
     
     Tootsville.util.ensureServersReachable ();
 
-    Tootsville.login.start ();
-
-    setInterval (Tootsville.updateClock, 250);
 };
 
 

@@ -67,7 +67,9 @@ Tootsville.gossip.acceptOffer = function (offer)
  */
 Tootsville.gossip.getOffer = function (success)
 { Tootsville.trace ("Fetching offer now");
-  Tootsville.util.rest ('GET', 'gossip/offers').then ((offer) => { Tootsville.gossip.acceptOffer (offer); success (); }); };
+  Tootsville.util.rest ('GET', 'gossip/offers').then (
+      (offer) => { Tootsville.gossip.acceptOffer (offer);
+                   if (success) { success (); } }); };
 
 /**
  * Wait for an answer to an offer which was posted. Comet-type long poll.

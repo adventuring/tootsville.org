@@ -88,13 +88,16 @@ Tootsville.tank.initOTSCamera = function ()
 /**
  * Initialize the Cannon physics engine in the scene.
  */
-Tootsville.tank.initPhysics = function (world)
-{ const gravityVector =
+Tootsville.tank.initPhysics = function (world, scene, physics)
+{ if (!scene)
+  { scene = Tootsville.tank.scene; }
+  if (!physics)
+  { physics = Tootsville.tank.physics; }
+  const gravityVector =
         new BABYLON.Vector3 (0,
                              -Tootsville.Worlds[world].Gravity,
                              0);
-  Tootsville.tank.scene.enablePhysics (gravityVector,
-                                       Tootsville.tank.physics);
+  scene.enablePhysics (gravityVector, physics);
   console.log ("Physics enabled for world", world);};
 
 /**
@@ -216,7 +219,7 @@ Tootsville.tank.init3DEngine = function ()
  * XXX Remove thi once the game has its own lights.
  */
 Tootsville.tank.initCrappyDefaultLight = function ()
-{ var light = new BABYLON.HemisphericLight (
+{ const light = new BABYLON.HemisphericLight (
     'uplight',
     new BABYLON.Vector3 (0,1,0),
     Tootsville.tank.scene); };
@@ -235,12 +238,11 @@ Tootsville.tank.initPlayerToot = function ()
   (Tootsville.character.name).then (
       (toot) =>
           { Tootsville.Avatars.UltraTootBuilder.makeToot (
-              toot
+              toot, Tootsville.tank.scene
           ).then (
-              (ultraToot) =>
+              ultraToot =>
                   { console.log ('loaded a Toot');
-                    Tootsville.tank.camera.lockedTarget =
-                    ultraToot; }); }); };
+                    Tootsville.tank.camera.lockedTarget = ultraToot; }); }); };
 
 /**
  * Initialize the ground plane.
@@ -250,20 +252,16 @@ Tootsville.tank.initPlayerToot = function ()
 Tootsville.tank.initGroundPlane = function ()
 { const ground =
         BABYLON.Mesh.CreateGround ('ground',
-                                   { height: 100, width: 100,
-                                     subdivisions: 10 },
+                                   100, 100, 10,
                                    Tootsville.tank.scene);
-  ground.material =
-  new BABYLON.StandardMaterial ('ground',
-                                Tootsville.tank.scene);
-  ground.material.diffuseColor =
-  new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
-  ground.physicsImpostor =
-  new BABYLON.PhysicsImpostor (
+  ground.material = new BABYLON.StandardMaterial ('ground',
+                                                  Tootsville.tank.scene);
+  ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
+  ground.physicsImpostor =  new BABYLON.PhysicsImpostor (
       ground,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 0, restitution: 3 });
-  ground.checkCollisions = true;
+//  ground.checkCollisions = true;
   console.log ("Ground plane is ", ground);
   return ground; };
 
@@ -287,8 +285,12 @@ Tootsville.tank.createTestScene = function ()
  */
 Tootsville.tank.startRenderLoop = function ()
 { console.log ("Starting render loop for scene ", Tootsville.tank.scene,
-               " with render function " , Tootsville.tank.scene.render);
-  Tootsville.tank.engine.runRenderLoop (Tootsville.tank.scene.render); };
+               " with render function ", Tootsville.tank.scene.render);
+  setTimeout (function ()
+              { Tootsville.tank.engine.runRenderLoop ( function ()
+                                                       { try { Tootsville.tank.scene.render () }
+                                                         catch (e) {} }); },
+              1); };
 
 /**
  * Prepare the libraries needed for the 3D scene (Babylon and Cannon).
