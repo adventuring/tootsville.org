@@ -43,4 +43,4 @@ if (navigator.userAgent.indexOf("Firefox/") > 0) {
     ffox.outerHTML = '';
 }
 
-Tootsville.audio.updateVolumeUI();
+Tootsville.UI.Audio.updateVolumeUI();

@@ -31,8 +31,7 @@
  *
  */
 
-if (!('Tootsville' in window)) { window.Tootsville = {ui:{}}; }
-if (!('ui' in Tootsville)) {Tootsville.UI={};}
+if (!('UI' in Tootsville)) {Tootsville.UI={};}
 
 Tootsville.UI.makeDivOrParagraph = function (text)
 { var element;

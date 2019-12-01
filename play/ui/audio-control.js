@@ -31,68 +31,73 @@
  *
  */
 
-/**
-*
-*/
-Tootsville.audio.volumeUp = function() 
-{ Tootsville.audio.setVolume(Math.min(100, 10 + Tootsville.audio.currentVolume));};
-/**
-*
-*/
-Tootsville.audio.volumeDown = function() 
-{ Tootsville.audio.setVolume(Math.max(0, (Tootsville.audio.currentVolume - 10)));};
+if (!('UI' in Tootsville)) { Tootsville.UI = { Audio: {} }; }
+if (!('Audio' in Tootsville.UI)) { Tootsville.UI.Audio = {}; }
 
 /**
-*
-*/
-Tootsville.audio.volumeMute = function() 
-{ if (Tootsville.audio.currentVolume < 9) 
-  { Tootsville.audio.setVolume(Tootsville.audio.savedVolume); }
+ * Raise the volume by 10%, up to a maximum of 100%.
+ */
+Tootsville.UI.Audio.volumeUp = function ()
+{ Tootsville.UI.Audio.setVolume(Math.min(100, 10 + Tootsville.UI.Audio.currentVolume));};
+
+/**
+ * Lower the volume by 10%, down to a minumum of 0.
+ */
+Tootsville.UI.Audio.volumeDown = function () 
+{ Tootsville.UI.Audio.setVolume(Math.max(0, (Tootsville.UI.Audio.currentVolume - 10)));};
+
+/**
+ * Temporarily mute or unmute the volume.
+ */
+Tootsville.UI.Audio.volumeMute = function () 
+{ if (Tootsville.UI.Audio.currentVolume < 9) 
+  { Tootsville.UI.Audio.setVolume(Tootsville.UI.Audio.savedVolume); }
   else 
-  { Tootsville.audio.savedVolume = Tootsville.audio.currentVolume;
-    Tootsville.audio.setVolume(0); } };
+  { Tootsville.UI.Audio.savedVolume = Tootsville.UI.Audio.currentVolume;
+    Tootsville.UI.Audio.setVolume(0); } };
 
 /**
-*
-*/
-Tootsville.audio.updateVolumeUI = function() 
-{ Tootsville.audio.updateVolumeSlider();
-  Tootsville.audio.updateVolumeMuteIcon(); };
+ * Update the volume controls UI in the control panel menu
+ */
+Tootsville.UI.Audio.updateVolumeUI = function ()
+{ Tootsville.UI.Audio.updateVolumeSlider();
+  Tootsville.UI.Audio.updateVolumeMuteIcon(); };
 
 /**
-*
-*/
-Tootsville.audio.setVolume = function(newVolume) 
-{ Tootsville.audio.currentVolume = newVolume;
-  Tootsville.audio.gainNode.gain.setValueAtTime(0, Tootsville.audio.context.currentTime);
-  Tootsville.audio.updateVolumeUI(); };
+ * Set the volume to ``newVolume''%
+ */
+Tootsville.UI.Audio.setVolume = function (newVolume) 
+{ Tootsville.UI.Audio.currentVolume = newVolume;
+  Tootsville.UI.Audio.gainNode.gain.setValueAtTime(0, Tootsville.UI.Audio.context.currentTime);
+  Tootsville.UI.Audio.updateVolumeUI(); };
 
 /**
-*
-*/
-Tootsville.audio.updateVolumeSlider = function() 
+ * Update the volume slider in the control panel.
+ */
+Tootsville.UI.Audio.updateVolumeSlider = function() 
 { var slider = document.getElementById('volume-slider');
   if (slider) 
-  { slider.value = Tootsville.audio.currentVolume;
+  { slider.value = Tootsville.UI.Audio.currentVolume;
     slider.disabled = false; } };
 
 /**
-*
-*/
-Tootsville.audio.updateVolumeMuteIcon = function() 
+ * Update the volume Mute indicator in the control panel
+ */
+Tootsville.UI.Audio.updateVolumeMuteIcon = function() 
 { var muteIcon = document.getElementById('mute-icon');
-  if (Tootsville.audio.currentVolume < 9) 
+  if (Tootsville.UI.Audio.currentVolume < 9) 
   { muteIcon.style.color = 'red'; } else 
   { muteIcon.style.color = 'black'; } };
 
 /**
-*
-*/
-Tootsville.audio.context = new (window.AudioContext || window.webkitAudioContext)();
+ *
+ */
+Tootsville.UI.Audio.context = new (window.AudioContext || window.webkitAudioContext)();
+
 /**
-*
-*/
-Tootsville.audio.gainNode = Tootsville.audio.context.createGain();
+ *
+ */
+Tootsville.UI.Audio.gainNode = Tootsville.UI.Audio.context.createGain();
 
 // if (navigator.mediaDevices.getUserMedia) 
 // { navigator.mediaDevices.getUserMedia (
@@ -101,8 +106,8 @@ Tootsville.audio.gainNode = Tootsville.audio.context.createGain();
 //     // Success callback
 //     stream =>
 //         { // var source = audioCtx.createMediaStreamSource(stream);
-//           // source.connect(Tootsville.audio.gainNode);
-//           // Tootsville.audio.gainNode.connect(Tootsville.audio.context.destination);
+//           // source.connect(Tootsville.UI.Audio.gainNode);
+//           // Tootsville.UI.Audio.gainNode.connect(Tootsville.UI.Audio.context.destination);
 //         },
 //     // Error callback
 //     err =>

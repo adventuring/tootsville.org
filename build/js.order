@@ -39,7 +39,7 @@ play/scene/scene-builder.js
 play/scene/sky-builder.js
 
 play/scene/avatar-viewer.js
-play/scene/scene.js
+play/scene/tank.js
 
 play/game/stop-watchdogs.js
 

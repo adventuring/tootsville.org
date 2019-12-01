@@ -43,13 +43,13 @@
       <!-- Volume controls and Mute -->
       <div id="control-panel-volume">
         <i id="mute-icon" class="fas fa-fw fa-volume-off"
-           onclick="Tootsville.audio.volumeMute()"></i>
+           onclick="Tootsville.UI.Audio.volumeMute()"></i>
         &nbsp;
-        <i class="fas fa-volume-down fa-fw" onclick="Tootsville.audio.volumeDown()"></i>
+        <i class="fas fa-volume-down fa-fw" onclick="Tootsville.UI.Audio.volumeDown()"></i>
         <input type="range" id="volume-slider" min="0" max="100"
                value="50" disabled
-               step="10" onchange="Tootsville.audio.setVolume(this.value)">
-        <i class="fas fa-volume-up fa-fw" onclick="Tootsville.audio.volumeUp()"></i>
+               step="10" onchange="Tootsville.UI.Audio.setVolume(this.value)">
+        <i class="fas fa-volume-up fa-fw" onclick="Tootsville.UI.Audio.volumeUp()"></i>
       </div>
 
       <hr>

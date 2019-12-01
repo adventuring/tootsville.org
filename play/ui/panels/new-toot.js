@@ -1,38 +1,37 @@
 /* -*- js2 -*- */
-if (!('Tootsville' in window)) { Tootsville = {}; }
-if (!('ui' in Tootsville)) { Tootsville.UI = {}; }
-if (!('newToot' in Tootsville.UI)) { Tootsville.UI.newToot = {}; }
+if (!('UI' in Tootsville)) { Tootsville.UI = {}; }
+if (!('newToot' in Tootsville.UI)) { Tootsville.UI.NewToot = {}; }
 
-Tootsville.UI.newToot.colors =
+Tootsville.UI.NewToot.colors =
     { base: [ "Cyan", "Indigo", "Orange", "Pink", "Red", "Turquoise", "Violet", "White", "Yellow" ],
       pad: [ "Cyan", "Indigo", "Pink", "Red", "Spring Green", "Violet", "White", "Yellow" ],
       pattern: [ "Black", "Cyan", "Indigo", "Orange", "Pink", "Rainbow", "Turquoise", "Violet", "White", "Yellow" ],
       "t-shirt": [ "Cyan", "Indigo", "Pink", "Red", "Spring Green", "Violet", "White", "Yellow" ] };
 
-Tootsville.UI.newToot.patterns =
+Tootsville.UI.NewToot.patterns =
     [ "Flowers", "Horseshoes", "Hearts", "Lightning", "Patches", "Polka-Dots", "Notes", "Sparkles", "Spots", "Stars", "Swirls" ];
 
-Tootsville.UI.newToot.changePattern = function (button)
+Tootsville.UI.NewToot.changePattern = function (button)
 { var picker = document.getElementById ("new-toot-pattern-picker");
   if (picker) { picker.opacity = 0;
                 setTimeout ( function () { picker.display = 'none';
                                            picker.parentElement.removeChild (picker); }, 100 ); }
-  else { Tootsville.UI.newToot.createPatternPicker (name, button); } };
+  else { Tootsville.UI.NewToot.createPatternPicker (name, button); } };
 
-Tootsville.UI.newToot.changeColor = function (name, button)
+Tootsville.UI.NewToot.changeColor = function (name, button)
 { var picker = document.getElementById ("new-toot-color-picker-" + name);
   if (picker) { picker.opacity = 0;
                 setTimeout ( function () { picker.display = 'none';
                                            picker.parentElement.removeChild (picker); }, 100 ); }
-  else { Tootsville.UI.newToot.createColorPicker (name, button); } };
+  else { Tootsville.UI.NewToot.createColorPicker (name, button); } };
 
-Tootsville.UI.newToot.updateAvatar = function (swatch, color)
+Tootsville.UI.NewToot.updateAvatar = function (swatch, color)
 { if ("base" == swatch)
   { document.getElementById('skin').style =
    "fill:" +
    interpretTootColor (color) +
     ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill";
-    Tootsville.UI.newToot.applyPatternColor (); }
+    Tootsville.UI.NewToot.applyPatternColor (); }
   else if ('pad' == swatch)
   { document.getElementById('hand-pad').style =
    "fill:" +
@@ -44,70 +43,70 @@ Tootsville.UI.newToot.updateAvatar = function (swatch, color)
     interpretTootColor (color) +
     ";fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"; }
   else if ('pattern' == swatch)
-  { Tootsville.UI.newToot.applyPatternColor (); } };
+  { Tootsville.UI.NewToot.applyPatternColor (); } };
 
-Tootsville.UI.newToot.randomize = function ()
-{ Tootsville.UI.newToot.setColor ('base',
-                                  Tootsville.UI.newToot.colors.base[ Math.floor (Math.random () * Tootsville.UI.newToot.colors.base.length) ]);
-  Tootsville.UI.newToot.setColor ('pad', Tootsville.UI.newToot.randomPadColor ());
-  Tootsville.UI.newToot.setColor ('pattern', Tootsville.UI.newToot.randomPatternColor ());
-  Tootsville.UI.newToot.setColor ('t-shirt',
-                                  Tootsville.UI.newToot.colors["t-shirt"][ Math.floor (Math.random () * Tootsville.UI.newToot.colors["t-shirt"].length) ]);
-  Tootsville.UI.newToot.setPattern (Tootsville.UI.newToot.patterns[ Math.floor (Math.random () * Tootsville.UI.newToot.patterns.length) ]);};
+Tootsville.UI.NewToot.randomize = function ()
+{ Tootsville.UI.NewToot.setColor ('base',
+                                  Tootsville.UI.NewToot.colors.base[ Math.floor (Math.random () * Tootsville.UI.NewToot.colors.base.length) ]);
+  Tootsville.UI.NewToot.setColor ('pad', Tootsville.UI.NewToot.randomPadColor ());
+  Tootsville.UI.NewToot.setColor ('pattern', Tootsville.UI.NewToot.randomPatternColor ());
+  Tootsville.UI.NewToot.setColor ('t-shirt',
+                                  Tootsville.UI.NewToot.colors["t-shirt"][ Math.floor (Math.random () * Tootsville.UI.NewToot.colors["t-shirt"].length) ]);
+  Tootsville.UI.NewToot.setPattern (Tootsville.UI.NewToot.patterns[ Math.floor (Math.random () * Tootsville.UI.NewToot.patterns.length) ]);};
 
-Tootsville.UI.newToot.rainbowGradient =
+Tootsville.UI.NewToot.rainbowGradient =
     "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
 
-Tootsville.UI.newToot.pickedColor = function (event)
+Tootsville.UI.NewToot.pickedColor = function (event)
 { var button = event.target;
   var picker = button.parentElement;
   var targetColor = picker.getAttribute ("data-target-color");
-  Tootsville.UI.newToot.setColor (targetColor, button.value);
+  Tootsville.UI.NewToot.setColor (targetColor, button.value);
   picker.style.display = 'none'; };
 
-Tootsville.UI.newToot.setColor = function (targetColor, value)
+Tootsville.UI.NewToot.setColor = function (targetColor, value)
 { var widget = document.getElementById ("new-toot-" + targetColor + "-color");
   if ("Rainbow" == value)
-  { widget.style.backgroundImage = Tootsville.UI.newToot.rainbowGradient;
+  { widget.style.backgroundImage = Tootsville.UI.NewToot.rainbowGradient;
     widget.style.backgroundColor = ""; }
   else
   { widget.style.backgroundImage = "";
     widget.style.backgroundColor = interpretTootColor (value); }
   widget.setAttribute ('data-color', value);
-  Tootsville.UI.newToot.updateAvatar (targetColor, value);
-  Tootsville.UI.newToot.changeColor (targetColor, value); };
+  Tootsville.UI.NewToot.updateAvatar (targetColor, value);
+  Tootsville.UI.NewToot.changeColor (targetColor, value); };
 
-Tootsville.UI.newToot.randomPatternColor = function ()
-{ var patternColors = Tootsville.UI.newToot.colors.pattern;
+Tootsville.UI.NewToot.randomPatternColor = function ()
+{ var patternColors = Tootsville.UI.NewToot.colors.pattern;
   var color = 'Rainbow';
   color = patternColors[ Math.floor (Math.random () * patternColors.length) ];
   if ( ('Rainbow' == color) ||
        (color == document.getElementById ("new-toot-base-color").getAttribute ("data-color")) )
-  { return Tootsville.UI.newToot.randomPatternColor (); };
+  { return Tootsville.UI.NewToot.randomPatternColor (); };
   return interpretTootColor (color);};
 
-Tootsville.UI.newToot.randomPadColor = function ()
-{ var padColors = Tootsville.UI.newToot.colors.pad;
+Tootsville.UI.NewToot.randomPadColor = function ()
+{ var padColors = Tootsville.UI.NewToot.colors.pad;
   var color = padColors[ Math.floor (Math.random () * padColors.length) ];
   if (color == document.getElementById ("new-toot-base-color").getAttribute ("data-color"))
-  { return Tootsville.UI.newToot.randomPadColor (); };
+  { return Tootsville.UI.NewToot.randomPadColor (); };
   return interpretTootColor (color);};
 
-Tootsville.UI.newToot.applyPatternColor = function ()
+Tootsville.UI.NewToot.applyPatternColor = function ()
 { var patternWidget = document.getElementById ("new-toot-pattern");
   var patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
   patternWidget.style.backgroundColor = interpretTootColor (document.getElementById ("new-toot-base-color").getAttribute ("data-color"));
   if (0 == patternWidget.children.length) { return; }
   for (var i = 0; i < 3; ++i)
   { patternWidget.children[0].children[3].children[i].style = "fill:" +
-    (  ('Rainbow' == patternColor) ? Tootsville.UI.newToot.randomPatternColor () : interpretTootColor (patternColor)  )+
+    (  ('Rainbow' == patternColor) ? Tootsville.UI.NewToot.randomPatternColor () : interpretTootColor (patternColor)  )+
     ";fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"; }};
 
-Tootsville.UI.newToot.pickedPattern = function (event)
+Tootsville.UI.NewToot.pickedPattern = function (event)
 { var button = event.target;
-  Tootsville.UI.newToot.setPattern (button.value); };
+  Tootsville.UI.NewToot.setPattern (button.value); };
 
-Tootsville.UI.newToot.setPattern = function (value)
+Tootsville.UI.NewToot.setPattern = function (value)
 { var widget = document.getElementById ("new-toot-pattern");
   fetch("https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + value + ".svg").then (
       (response) =>
@@ -116,15 +115,15 @@ Tootsville.UI.newToot.setPattern = function (value)
                   { widget.innerHTML = text;
                     widget.children[0].setAttribute ('width', widget.clientWidth);
                     widget.children[0].setAttribute ('height', widget.clientHeight);
-                    Tootsville.UI.newToot.applyPatternColor ();
+                    Tootsville.UI.NewToot.applyPatternColor ();
                   } ); } );
   widget.setAttribute ('data-pattern', value);
-  Tootsville.UI.newToot.changePattern (value); };
+  Tootsville.UI.NewToot.changePattern (value); };
 
-Tootsville.UI.newToot.notReady = function (reasons)
+Tootsville.UI.NewToot.notReady = function (reasons)
 { alert ("You're not quite ready yet." + reasons); }; // FIXME soft dialog
 
-Tootsville.UI.newToot.ready = function ()
+Tootsville.UI.NewToot.ready = function ()
 { var name = document.getElementById ("new-toot-name").value;
   var baseColor = document.getElementById ("new-toot-base-color").getAttribute ("data-color");
   var padColor = document.getElementById ("new-toot-pad-color").getAttribute ("data-color");
@@ -153,17 +152,17 @@ Tootsville.UI.newToot.ready = function ()
   if (! pattern)
   { notReady += ("\n\nPick a pattern for your Toot. (Click on the box at the bottom-right to see available patterns.)"); }
   if ("" != notReady)
-  { return Tootsville.UI.newToot.notReady (notReady); }
+  { return Tootsville.UI.NewToot.notReady (notReady); }
   Tootsville.util.rest ('POST', 'toots',
                         { name: name,
                           baseColor: baseColor,
                           padColor: padColor,
                           pattern: pattern,
                           patternColor: patternColor,
-                          tShirtColor: tShirtColor }).then (Tootsville.UI.newToot.afterCreate);
+                          tShirtColor: tShirtColor }).then (Tootsville.UI.NewToot.afterCreate);
   return true;};
 
-Tootsville.UI.newToot.afterCreate = function (reply)
+Tootsville.UI.NewToot.afterCreate = function (reply)
 { if (reply.error)
   { switch (reply.error)
     { case 400:
@@ -180,7 +179,7 @@ Tootsville.UI.newToot.afterCreate = function (reply)
       break;;
     }; } };
 
-Tootsville.UI.newToot.checkName = function ()
+Tootsville.UI.NewToot.checkName = function ()
 { var name = document.getElementById ("new-toot-name").value;
   document.getElementById("new-toot-name-problem-3-32").style.color =
   ( (name.length < 3 || name.length > 32) ? "red" : "black" );
@@ -193,18 +192,18 @@ Tootsville.UI.newToot.checkName = function ()
   document.getElementById("new-toot-name-problem-repeat").style.color =
   ( /[a-z]\1\1/.test (name.toLowerCase ()) ? "red" : "black" ); };
 
-Tootsville.UI.newToot.createPatternPicker = function (button)
+Tootsville.UI.NewToot.createPatternPicker = function (button)
 { var picker = document.createElement ("DIV");
   picker.setAttribute ("ID", "new-toot-pattern-picker");
   picker.className = 'new-toot-pattern-picker';
-  for (var n = 0; n < Tootsville.UI.newToot.patterns.length; ++n)
-  { var pattern = Tootsville.UI.newToot.patterns[ n ];
+  for (var n = 0; n < Tootsville.UI.NewToot.patterns.length; ++n)
+  { var pattern = Tootsville.UI.NewToot.patterns[ n ];
     var patternButton = document.createElement ("INPUT");
     patternButton.setAttribute ("TYPE", "RADIO");
     patternButton.setAttribute ("VALUE", pattern);
     patternButton.setAttribute ("NAME", "new-toot-pattern-picker");
     patternButton.setAttribute ("ID", "new-toot-pattern-picker-" + pattern);
-    patternButton.onchange = Tootsville.UI.newToot.pickedPattern;
+    patternButton.onchange = Tootsville.UI.NewToot.pickedPattern;
     patternButton.className = "pattern-picker-button";
     var label = document.createElement ("LABEL");
     var image = document.createElement ("IMG");
@@ -226,19 +225,19 @@ Tootsville.UI.newToot.createPatternPicker = function (button)
   picker.appendChild (buttonBox);
   document.getElementById ('hud').appendChild (picker); };
 
-Tootsville.UI.newToot.createColorPicker = function (name, button)
+Tootsville.UI.NewToot.createColorPicker = function (name, button)
 { var picker = document.createElement ("DIV");
   picker.setAttribute ("ID", "new-toot-color-picker-" + name);
   picker.className = 'new-toot-color-picker';
   picker.setAttribute ("data-target-color", name);
-  for (var n = 0; n < Tootsville.UI.newToot.colors[ name ].length; ++n)
-  { var color = Tootsville.UI.newToot.colors[ name ][ n ];
+  for (var n = 0; n < Tootsville.UI.NewToot.colors[ name ].length; ++n)
+  { var color = Tootsville.UI.NewToot.colors[ name ][ n ];
     var colorButton = document.createElement ("INPUT");
     colorButton.setAttribute ("TYPE", "RADIO");
     colorButton.setAttribute ("VALUE", color);
     colorButton.setAttribute ("NAME", "new-toot-color-picker-" + name);
     colorButton.setAttribute ("ID", "new-toot-color-picker-" + name + "-" + color);
-    colorButton.onchange = Tootsville.UI.newToot.pickedColor;
+    colorButton.onchange = Tootsville.UI.NewToot.pickedColor;
     colorButton.className = "color-picker-button";
     var label = document.createElement ("LABEL");
     label.appendChild (document.createTextNode (color));
@@ -247,7 +246,7 @@ Tootsville.UI.newToot.createColorPicker = function (name, button)
         label.style.color = "black";
     }
     if ("Rainbow" == color) {
-        label.style.backgroundImage = Tootsville.UI.newToot.rainbowGradient;
+        label.style.backgroundImage = Tootsville.UI.NewToot.rainbowGradient;
     } else {
         label.style.backgroundColor = interpretTootColor (color.toLowerCase ());
     }
