@@ -133,6 +133,8 @@ Tootsville.tank.convertCanvasEventTo3D = function (event)
 Tootsville.tank.initScene = function ()
 { console.log ("Initializing the Babylon Scene");
   Tootsville.tank.scene = new BABYLON.Scene (Tootsville.tank.engine);
+  const tod = Math.sin (Tootsville.decodeTime ().hour / 9);
+  Tootsville.tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
   Tootsville.tank.scene.registerAfterRender (Tootsville.tank.afterRender);
   return Tootsville.tank.scene; };
 
@@ -216,13 +218,18 @@ Tootsville.tank.init3DEngine = function ()
  * Initialize a default  fill light source for the  game, until in-world
  * light sources are working.
  *
- * XXX Remove thi once the game has its own lights.
+ * XXX Remove this once the game has its own lights.
+ *
+ * TODO The sky  loader should create lights for sun,  moons, and a base
+ * light for stars.
  */
 Tootsville.tank.initCrappyDefaultLight = function ()
-{ const light = new BABYLON.HemisphericLight (
-    'uplight',
-    new BABYLON.Vector3 (0,1,0),
-    Tootsville.tank.scene); };
+{ const light = new BABYLON.DirectionalLight (
+    'sunlight',
+    new BABYLON.Vector3 (0, -.5, -1),
+    Tootsville.tank.scene);
+  light.position = new BABYLON.Vector3 (20, 70, 120); /* TODO Sun position */
+  Tootsville.tank.shadowGenerator = new BABYLON.ShadowGenerator (1024, light); };
 
 /**
  * Initialize our local player's Toot object. 
@@ -232,17 +239,11 @@ Tootsville.tank.initCrappyDefaultLight = function ()
 Tootsville.tank.initPlayerToot = function ()
 { if ( (! (Tootsville.character))
        ||
-       (! (Tootsville.character.name)) ) { Tootsville.login.start ();
-                                           return;}
-  Tootsville.Avatars.getAvatar
-  (Tootsville.character.name).then (
-      (toot) =>
-          { Tootsville.Avatars.UltraTootBuilder.makeToot (
-              toot, Tootsville.tank.scene
-          ).then (
-              ultraToot =>
-                  { console.log ('loaded a Toot');
-                    Tootsville.tank.camera.lockedTarget = ultraToot; }); }); };
+       (! (Tootsville.character.avatar)) ) { Tootsville.login.start ();
+                                             return;}
+  Tootsville.Avatars.AvatarBuilder.build (
+      Tootsville.character, Tootsville.tank.scene,
+      model => { Tootsville.tank.camera.lockedTarget = model; } ); };
 
 /**
  * Initialize the ground plane.
@@ -257,6 +258,8 @@ Tootsville.tank.initGroundPlane = function ()
   ground.material = new BABYLON.StandardMaterial ('ground',
                                                   Tootsville.tank.scene);
   ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
+  ground.material.specularColor = new BABYLON.Color3.FromHexString (interpretTootColor ('spring-green'));
+  ground.receiveShadows = true;
   ground.physicsImpostor =  new BABYLON.PhysicsImpostor (
       ground,
       BABYLON.PhysicsImpostor.BoxImpostor,

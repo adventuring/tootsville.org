@@ -31,9 +31,8 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = { Avatars: { UltraTootBuilder: {}, Viewer: {}  } }; }
-if (!('Avatars' in Tootsville)) { Tootsville.Avatars = { UltraTootBuilder: {}, Viewer: {}  }; }
-if (!('UltraTootBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.UltraTootBuilder = {}; }
+if (!('Tootsville' in window)) { Tootsville = { Avatars: { AvatarBuilder: {}, Viewer: {}  } }; }
+if (!('Avatars' in Tootsville)) { Tootsville.Avatars = { AvatarBuilder: {}, Viewer: {}  }; }
 if (!('Viewer' in Tootsville.Avatars)) { Tootsville.Avatars.Viewer = {}; }
 
 /**
@@ -48,195 +47,27 @@ Tootsville.Avatars.getAvatar = function (character)
   return Tootsville.util.rest ('GET', 'toots/' + character); };
 
 /**
- * The UltraToot model object is re-used for each Toot object.
- */
-Tootsville.Avatars.UltraTootBuilder.model = null;
-
-/**
- * Create a Toot-like proxy object until the UltraToot model is available.
- */
-Tootsville.Avatars.UltraTootBuilder.addProxyToot = function (modelRoot, scene)
-{ // XXX: private
-    const proxyHead = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.head',
-                                                        { segments: 12, diameter: 1 },
-                                                        scene);
-    const proxyBody = BABYLON.MeshBuilder.CreateSphere ('UltraToot.proxy.body',
-                                                        { segments: 12, diameter: 1 },
-                                                        scene);
-    proxyHead.position.z = 1.5;
-    proxyHead.material = new BABYLON.StandardMaterial ('head', scene);
-    proxyHead.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('violet'));
-    proxyBody.position.z = .5;
-    proxyBody.material = new BABYLON.StandardMaterial ('body', scene);
-    proxyBody.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('violet'));
-    proxyBody.setParent (modelRoot); };
-
-/**
- * Buld the UltraToot model from the meshes loaded from the model file.
- */
-Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot = function (meshes, modelRoot, scene)
-{ try
-  { if (meshes.length == 0)
-    { Tootsville.warn ("Empty container returned for UltraToot");
-      Tootsville.Avatars.UltraTootBuilder.addProxyToot (modelRoot); } else
-    { /* Expecting 13 meshes for current UltraToot */
-        if (10 != meshes.length)
-        { Tootsville.warn ("Loading Ultratoot got " + meshes.length + " meshes, was expecting 10"); }
-        for (let i = 0; i < meshes.length; ++i)
-        { meshes[i].setParent (modelRoot); } } }
-  catch (e)
-  { Tootsville.warn ("Error adding meshes to model root for  UltraToot", e);
-    Tootsville.Avatars.UltraTootBuilder.addProxyToot (modelRoot); }
-  modelRoot.position.y = -Infinity;
-  scene.addTransformNode (modelRoot); // TODO: is this necessary?
-  Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
-  return Tootsville.Avatars.UltraTootBuilder.model; };
-
-/**
- * Import the UltraToot model object into the scene.
- */
-Tootsville.Avatars.UltraTootBuilder.importUltraToot = function (finish, meshes, particles, skeletons, scene)
-{ // XXX: private
-    Tootsville.trace ("Got UltraToot meshes", meshes);
-    const modelRoot = new BABYLON.TransformNode ('UltraToot', scene, true);
-    console.debug ("Adding meshes to model root");
-    Tootsville.Avatars.UltraTootBuilder.addMeshesToModelRoot (meshes, modelRoot, scene);
-    /* XXX: do something with particles and skeletons? */
-    console.debug ("Moving model to Y=-Infinity");
-    modelRoot.position.y = -Infinity;
-    console.debug ("Adding model root to scene");
-    scene.addTransformNode (modelRoot); // TODO: is this necessary?
-    console.debug ("Saving model as base for other Toots");
-    Tootsville.Avatars.UltraTootBuilder.model = modelRoot;
-    if (finish) { console.debug ("Calling importUltraToot finish function");
-                  finish (Tootsville.Avatars.UltraTootBuilder.model); }
-    console.debug ("Returning model");
-    return Tootsville.Avatars.UltraTootBuilder.model; };
-
-/**
- * Load the UltraToot base model from the resource on Jumbo.
- */
-Tootsville.Avatars.UltraTootBuilder.getBaseModel = function (scene)
-{ if (!scene)
-  { scene = Tootsville.tank.scene; }
-  return new Promise (
-    (finish) =>
-        { if (Tootsville.Avatars.UltraTootBuilder.model)
-          { finish (Tootsville.Avatars.UltraTootBuilder.model);
-            return; }
-          else
-          { BABYLON.SceneLoader.ImportMesh ("", /* import all meshes */
-                                            "https://jumbo.tootsville.org/Assets/Avatars/5/",
-                                            "UltraToot.babylon",
-                                            scene,
-                                            (meshes, particles, skeletons) =>
-                                            { Tootsville.Avatars.UltraTootBuilder.importUltraToot (
-                                                finish, meshes, particles, skeletons, scene); },
-                                            null, /* onprogress */
-                                            (scene, errorMessage) =>
-                                            { console.log (errorMessage); });
-            return; } }); };
-
-/**
- * Set the colors of the Toot avatar.
- *
- * This colorizes the  Toot's skin and pad colors, as  well as the black
- * eyes and eyebrows.
- *
- * @code{node} is the 3D node containing the Toot meshes.
- *
- * @code{avatar} is an avatar object in standard form, as per `TOOT-INFO'
- */
-Tootsville.Avatars.UltraTootBuilder.setColors = function (node, avatar, scene)
-{ const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor,
-                                                     scene);
-  skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
-  // TODO apply pattern texture map to the skin
-  const padMaterial = new BABYLON.StandardMaterial (avatar.padColor,
-                                                    scene);
-  padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
-  const eyeMaterial = new BABYLON.StandardMaterial ("eye", scene);
-  eyeMaterial.diffuseColor = new BABYLON.Color3.FromHexString ('#000000');
-  const meshes = node.getChildMeshes ();
-  for (let i = 0; i < meshes.length; ++i)
-  { const mesh = meshes[i];
-    mesh.material = (
-        mesh.name == 'Left Eyebrow' ? eyeMaterial :
-            mesh.name == 'Right Eyebrow' ? eyeMaterial :
-            mesh.name == 'Left Eye' ? eyeMaterial :
-            mesh.name == 'Right Eye' ? eyeMaterial :
-            mesh.name == 'Skin' ? skinMaterial :
-            padMaterial ); } };
-
-/**
- * Add clothes onto the avatar mesh
- */
-Tootsville.Avatars.UltraTootBuilder.addClothes = function (node, avatar)
-{ // TODO
-};
-
-/**
- * Enable physics imposot for the Toot
- */
-Tootsville.Avatars.UltraTootBuilder.enablePhysics = function (node, avatar, scene)
-{ node.physicsImpostor = new BABYLON.PhysicsImpostor (node,
-                                                      BABYLON.PhysicsImpostor.SphereImpostor,
-                                                      { mass: 1, restitution: 0.9 },
-                                                      scene); };
-
-/**
- * Create an UltraToot which is described by @code{avatar}.
- *
- * See `TOOT-INFO' for a description of the format of @code{avatar}.
- */
-Tootsville.Avatars.UltraTootBuilder.makeToot = function (avatar, scene)
-{ if (! (scene) )
-  { scene = Tootsville.tank.scene; }
-  return new Promise ( (finish) =>
-                       { if (avatar.avatar == 'UltraToot')
-                         { Tootsville.Avatars.UltraTootBuilder.getBaseModel (scene).then
-                           ( (model) =>
-                             { var toot = model.clone ();
-                               console.debug ("Constructing avatar for " + avatar.name);
-                               toot.name = 'avatar/' + avatar.name;
-                               try { Tootsville.Avatars.UltraTootBuilder.enablePhysics (toot, avatar, scene); }
-                               catch (e) { console.warn ("Enabling physics: ", e); }
-                               Tootsville.Avatars.UltraTootBuilder.setColors (toot, avatar, scene);
-                               Tootsville.Avatars.UltraTootBuilder.addClothes (toot, avatar, scene);
-                               console.debug ("Finished constructing avatar for " + avatar.name);
-                               finish (toot);
-                               return; }); }
-                         else
-                         { Tootsville.warn ("Avatar is not UltraToot: " + avatar.toSource ());
-                           /* TODO  try to load non-UltraToot avatar */
-                           var proxy = BABYLON.MeshBuilder.CreateSphere ('proxy for ' + avatar.name,
-                                                                         { segments: 8, diameter: .25},
-                                                                         scene);
-                           proxy.material = new BABYLON.StandardMaterial ('red', scene);
-                           proxy.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('red'));
-                           finish (proxy);
-                           return; } }); };
-/**
  * Move a Toot by @code{δv}
  */
-Tootsville.Avatars.UltraTootBuilder.moveToot = function (toot, δv)
-{ //         var forwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
-    // forwards.negate ();
-    // character.moveWithCollisions (forwards);
-    // // or
-    // var backwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, -gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
-    // character.moveWithCollisions (backwards);
-};
+// Tootsville.Avatars.UltraTootBuilder.moveToot = function (toot, δv)
+// { //         var forwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
+//     // forwards.negate ();
+//     // character.moveWithCollisions (forwards);
+//     // // or
+//     // var backwards = new BABYLON.Vector3 (parseFloat (Math.sin (character.rotation.y)) / speedCharacter, -gravity, parseFloat (Math.cos (character.rotation.y)) / speedCharacter);
+//     // character.moveWithCollisions (backwards);
+// };
 
 /**
- *
+ * Create a scene to contain the Avatar Viewer
  */
 Tootsville.Avatars.Viewer.createScene = function (canvas)
 { canvas.engine = new BABYLON.Engine (canvas, true);
-  canvas.scene = new BABYLON.Scene (canvas.engine); };
+  canvas.scene = new BABYLON.Scene (canvas.engine);
+  scene.clearColor = new BABYLON.Color3.FromHexString (interpretTootColor ('cyan')); };
 
 /**
- *
+ * Create a camera through which to observe the Avatar Viewer
  */
 Tootsville.Avatars.Viewer.createCamera = function (canvas)
 { const camera = new BABYLON.FollowCamera (
@@ -264,12 +95,10 @@ Tootsville.Avatars.Viewer.createLight = function (canvas)
  *
  */
 Tootsville.Avatars.Viewer.createToot = function (toot, canvas)
-{ Tootsville.Avatars.UltraTootBuilder.makeToot (
-    toot, canvas.scene
-          ).then (
-              ultraToot =>
-                  { console.info ('loaded a Toot into Viewer', canvas);
-                    canvas.camera.lockedTarget = ultraToot; }); };
+{ Tootsville.Avatars.AvatarBuilder.build (toot, canvas.scene).then (
+    model =>
+        { console.info ('loaded a Toot into Viewer', canvas);
+          canvas.camera.lockedTarget = model; }); };
 
 /**
  *
@@ -298,3 +127,85 @@ Tootsville.Avatars.createViewerInCanvas = function (toot, canvas)
             Tootsville.Avatars.Viewer.createLight (canvas);
             Tootsville.Avatars.Viewer.createToot (toot, canvas);
             Tootsville.Avatars.Viewer.startRendering (canvas); } ); };
+
+
+
+
+
+
+
+
+if (!('AvatarBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.AvatarBuilder = { baseAvatars: {} }; }
+
+if (!('baseAvatars' in Tootsville.Avatars.AvatarBuilder))
+{ Tootsville.Avatars.AvatarBuilder.baseAvatars = {}; }
+
+Tootsville.Avatars.AvatarBuilder.colorize = function (avatar, node, scene, finish)
+{ const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
+                                                     scene);
+  skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
+  /* TODO apply pattern texture map to the skin */
+  const padMaterial = new BABYLON.StandardMaterial (avatar.padColor,
+                                                    scene);
+  padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.padColor));
+  const eyeMaterial = new BABYLON.StandardMaterial ("eye", scene);
+  eyeMaterial.diffuseColor = new BABYLON.Color3.FromHexString ('#000000');
+  const meshes = node.getChildMeshes ();
+  for (let i = 0; i < meshes.length; ++i)
+  { const mesh = meshes[i];
+    mesh.material = (
+        mesh.name.indexOf ('Eye') >= 0  ? eyeMaterial :
+            mesh.name.indexOf ('Skin') >= 0 ? skinMaterial :
+            mesh.name.indexOf ('Pad') >= 0 ? padMaterial :
+            eyeMaterial );
+    console.debug ("Colorized mesh named " + mesh.name + " with material ", mesh.material.name); }
+  if (finish) { finish (node); } };
+
+Tootsville.Avatars.AvatarBuilder.build2 = function (avatar, root, scene, finish)
+{ console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
+  var object = root.clone ("avatar/" + avatar.name);
+  Tootsville.tank.shadowGenerator.getShadowMap ().renderList.push (object);
+  console.debug (avatar.name, "δ", object);
+  // object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
+  //                                                       BABYLON.PhysicsImpostor.SphereImpostor,
+  //                                                       { mass: 1, restitution: 0.9 },
+  //                                                       scene);
+  console.debug (avatar.name, "ε", object);
+  object.position = new BABYLON.Vector3 (0,0,0); /* TODO */
+  if (root.skeleton)
+  { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
+  Tootsville.avatars [avatar.name] = Object.assign ({}, avatar);
+  Tootsville.avatars [avatar.name].model = object;
+  Tootsville.Avatars.AvatarBuilder.colorize (avatar, root, scene, finish); };
+
+Tootsville.Avatars.AvatarBuilder.build = function (avatar, scene, finish)
+{ const root = Tootsville.Avatars.AvatarBuilder.baseAvatars [ avatar.avatar ];
+  if (root)
+  { Tootsville.Avatars.AvatarBuilder.build2 (avatar, root, scene, finish); }
+  else
+  { Tootsville.Avatars.AvatarBuilder.loadAvatarBase (avatar, scene, finish); } };
+
+Tootsville.Avatars.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
+{ var assetsManager = scene.assetManager;
+  if (! assetsManager)
+  { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
+  assetsManager.useDefaultLoadingScreen = false;
+  var loadTask = assetsManager.addMeshTask ("loading UltraToot", null, "https://jumbo.tootsville.org/Assets/Avatars/5/",
+                                            avatar.avatar + ".babylon");
+  loadTask.onSuccess = function (task)
+  { const modelRoot = new BABYLON.TransformNode ("baseAvatar/" + avatar.avatar, scene, true);
+    modelRoot.position = new BABYLON.Vector3 (0, -10, 0);
+    var i;
+    for (i = 0; i < task.loadedMeshes.length; ++i)
+    { task.loadedMeshes [i].setParent (modelRoot); }
+    for (i = 0; i < task.loadedParticleSystems.length; ++i)
+    { task.loadedParticleSystems [i].setParent (modelRoot); }
+    for (i = 0; i < task.loadedSkeletons.length; ++i)
+    { task.loadedSkeletons [i].setParent (modelRoot); }
+    Tootsville.Avatars.AvatarBuilder.baseAvatars [avatar.avatar] = modelRoot;
+    console.debug ("Loaded base avatar " + avatar.avatar + " with " +
+                   task.loadedMeshes.length + " meshes, " +
+                   task.loadedParticleSystems.length + " particle systems,  and " +
+                   task.loadedSkeletons.length + " skeletons.");
+    Tootsville.Avatars.AvatarBuilder.build2 (avatar, modelRoot, scene, finish); };
+  assetsManager.load (); };

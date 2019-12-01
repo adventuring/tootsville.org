@@ -274,7 +274,8 @@ Tootsville.ui.hud.positionPaperdollMini = function ()
 
                  mini.style.height = stageBox.height + 'px';
                  mini.style.width = stageBox.width + 'px';
-                 mini.style.borderRadius = 0; },
+                 mini.style.borderRadius = 0;
+                 mini.style.zIndex = 1500; },
                500);};
 
 /**
@@ -286,8 +287,9 @@ Tootsville.ui.hud.returnPaperdollMini = function ()
   mini.style.left = 'unset';
   mini.style.height = 'unset';
   mini.style.width = 'unset';
+  mini.style.zIndex = 'unset';
   setTimeout ( () => { mini.style = {}; }, 60);
-  mini.addEventListener ('click', openPaperdoll);
+  mini.addEventListener ('click', Tootsville.ui.hud.openPaperdoll);
 };
 
 /**

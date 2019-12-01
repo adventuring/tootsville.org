@@ -312,6 +312,7 @@ Tootsville.login.loginDone = function (reply)
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
   Tootsville.tank.start3D ();
+  document.title = reply.toot.name + " in Tootsville";
   Tootsville.ui.hud.refreshHUD (); };
 
 /**
@@ -330,7 +331,8 @@ Tootsville.login.removeChildFlag = function (li)
   if (child) { li.removeChild (child); } };
 
 /**
- *
+ * Finds  the  list  item  representing   a  named  Toot  in  the  login
+ * selection list.
  */
 Tootsville.login.findLIForToot = function (name)
 { var toots = document.querySelectorAll ('#toots-list>.toot');
