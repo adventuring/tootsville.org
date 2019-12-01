@@ -172,7 +172,7 @@ Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
  * Finally, the sixth layer is any precipitation effect.
  * @end enumerate
  */
-Tootsville.SkyBuiulder.build = function (world)
+Tootsville.SkyBuilder.build = function (world)
 { Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' == world);
   Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
   Tootsville.SkyBuilder.setSun ();

@@ -1,32 +1,32 @@
 /* -*- js2 -*- */
 if (!('Tootsville' in window)) { Tootsville = {}; }
-if (!('ui' in Tootsville)) { Tootsville.ui = {}; }
+if (!('ui' in Tootsville)) { Tootsville.UI = {}; }
 
-Tootsville.ui.beginSelectLoudness = function ()
+Tootsville.UI.beginSelectLoudness = function ()
 {}
 
-Tootsville.ui.endSelectLoudness = function ()
+Tootsville.UI.endSelectLoudness = function ()
 {}
 
-Tootsville.ui.beginSelectExpression = function ()
+Tootsville.UI.beginSelectExpression = function ()
 {}
 
-Tootsville.ui.endSelectExpression = function ()
+Tootsville.UI.endSelectExpression = function ()
 {}
 
-Tootsville.ui.beginSelectEmoji = function ()
+Tootsville.UI.beginSelectEmoji = function ()
 {}
 
-Tootsville.ui.endSelectEmoji = function ()
+Tootsville.UI.endSelectEmoji = function ()
 {}
 
-Tootsville.ui.talkSpeakKeyUp = function (ev)
+Tootsville.UI.talkSpeakKeyUp = function (ev)
 {}
 
-Tootsville.ui.talkSpeakKeyDown = function (ev)
+Tootsville.UI.talkSpeakKeyDown = function (ev)
 {}
 
-Tootsville.ui.talkSpeakSend = function ()
+Tootsville.UI.talkSpeakSend = function ()
 {}
 
-window.getElementById("talk-loud-selector").addEventListener('click', Tootsville.ui.beginSelectLoudness);
+window.getElementById("talk-loud-selector").addEventListener('click', Tootsville.UI.beginSelectLoudness);

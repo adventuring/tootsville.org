@@ -37,7 +37,7 @@ if (!('tootnix' in Tootsville))
 Tootsville.tootnix.calendar_app_calendar_load = function ()
 { var calDiv = document.getElementById("calendar-app-calendar");
   if (!calDiv) { return; };
-  Tootsville.ui.hud.loadHTML ("http://localhost:5000/world/clock/calendar/now/fragment.html"). // FIXME
+  Tootsville.UI.HUD.loadHTML ("http://localhost:5000/world/clock/calendar/now/fragment.html"). // FIXME
   then ( htmlf => { calDiv.innerHTML = '';
                     var cal = htmlf.getElementsByTagName ("TABLE")[0];
                     console.log (cal);

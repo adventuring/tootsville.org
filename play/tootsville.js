@@ -88,8 +88,8 @@ window.addEventListener('Tootsville/Login', function (ev)
                         false);
 
 window.loadWatchdog1 = setTimeout(() => {
-    if (Tootsville.ui.slowLoadingWatchdog)
-        Tootsville.ui.slowLoadingWatchdog();
+    if (Tootsville.UI.slowLoadingWatchdog)
+        Tootsville.UI.slowLoadingWatchdog();
     else
         setTimeout(window.loadWatchdog1, 300); },
                                   5000);

@@ -32,9 +32,9 @@
  */
 
 if (!('Tootsville' in window)) { window.Tootsville = {ui:{}}; }
-if (!('ui' in Tootsville)) {Tootsville.ui={};}
+if (!('ui' in Tootsville)) {Tootsville.UI={};}
 
-Tootsville.ui.makeDivOrParagraph = function (text)
+Tootsville.UI.makeDivOrParagraph = function (text)
 { var element;
   if (text.indexOf('<') >= 0)
   { element = document.createElement('DIV'); }
@@ -43,16 +43,16 @@ Tootsville.ui.makeDivOrParagraph = function (text)
   element.innerHTML = text;
   return element; };
 
-Tootsville.ui.makeIDFromTitle = function (title)
+Tootsville.UI.makeIDFromTitle = function (title)
 { return 'elt-' + title.replace(/[^a-zA-Z0-9]+/, '-'); };
 
-Tootsville.ui.makePrettyDialog = function (title,text,accept,cancel,resolve)
+Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
 { var dialog = document.createElement('DIALOG');
-  dialog.id = Tootsville.ui.makeIDFromTitle(title);
+  dialog.id = Tootsville.UI.makeIDFromTitle(title);
   var caption = document.createElement('H3');
   caption.innerHTML = title;
   dialog.appendChild(caption);
-  dialog.appendChild(Tootsville.ui.makeDivOrParagraph(text));
+  dialog.appendChild(Tootsville.UI.makeDivOrParagraph(text));
   var buttons = document.createElement('DIV');
   buttons.className = 'button-box';
   var cancelButton = document.createElement('BUTTON');
@@ -74,50 +74,50 @@ Tootsville.ui.makePrettyDialog = function (title,text,accept,cancel,resolve)
   dialog.appendChild(buttons);
   return dialog; };
 
-Tootsville.ui.confirmPretty = function (title,text,accept)
+Tootsville.UI.confirmPretty = function (title,text,accept)
 { var hud = document.getElementById('hud');
   return new Promise(resolve => {
       var cancel = 'Cancel';
       if ('Yes' == accept) { cancel = 'No'; }
-      hud.appendChild(Tootsville.ui.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
+      hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
-Tootsville.ui.forceQuit = function ()
-{ Tootsville.login.quit(); };
+Tootsville.UI.forceQuit = function ()
+{ Tootsville.Login.quit(); };
 
-Tootsville.ui.quit = function () { Tootsville.ui.signOut (); }
+Tootsville.UI.quit = function () { Tootsville.UI.signOut (); }
 
-Tootsville.ui.signOut = function ()
-{ Tootsville.ui.confirmPretty(
+Tootsville.UI.signOut = function ()
+{ Tootsville.UI.confirmPretty(
     "Quit?",
     "Are you sure you want to quit playing now?",
     "Quit").then
   ( reallyP =>
     { if (reallyP)
-      { Tootsville.login.quit(); }}); };
+      { Tootsville.Login.quit(); }}); };
 
-Tootsville.ui.setFullscreenFromNavigator = function ()
+Tootsville.UI.setFullscreenFromNavigator = function ()
 { var fullscreenCheck = document.getElementById('fullscreen-toggle');
   if (fullscreenCheck)
   { fullscreenCheck.checked = !! (document.fullscreenElement); }};
 
-Tootsville.ui.setFullscreen = function (really)
+Tootsville.UI.setFullscreen = function (really)
 { if (really)
   { document.documentElement.requestFullscreen(); }
   else
   { document.exitFullscreen(); }};
 
-Tootsville.ui.toggleFullscreen = function ()
-{ Tootsville.ui.setFullscreen( ! (document.fullscreenElement) ); };
+Tootsville.UI.toggleFullscreen = function ()
+{ Tootsville.UI.setFullscreen( ! (document.fullscreenElement) ); };
 
-Tootsville.ui.onFirstClick = function ()
-{ window.removeEventListener('click', Tootsville.ui.onFirstClick);
+Tootsville.UI.onFirstClick = function ()
+{ window.removeEventListener('click', Tootsville.UI.onFirstClick);
   document.addEventListener('beforeunload', (ev) => {
       var confirmationMessage = "If you leave or reload this page, you'll quit the game.";
       ev.returnValue = confirmationMessage;  /* Gecko, Trident, Chrome 34+ */
       return confirmationMessage; /* Gecko, WebKit, Chrome <34 */ }); };
 
-Tootsville.ui.slowLoadingWatchdog = function ()
-{ Tootsville.ui.confirmPretty
+Tootsville.UI.slowLoadingWatchdog = function ()
+{ Tootsville.UI.confirmPretty
   ( "Slow Loading?",
     ( "Loading seems to be taking a long time. You might have trouble " +
       "playing the game if your connection is very bad. Do you want to " +

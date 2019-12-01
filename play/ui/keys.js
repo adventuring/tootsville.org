@@ -32,18 +32,18 @@
  */
 
 if (!('Tootsville' in window)) { Tootsville = { ui: { keys: {} }}; }
-if (!('ui' in Tootsville)) { Tootsville.ui = { keys: {} }; }
-if (!('keys' in Tootsville.ui)) { Tootsville.ui.keys = {}; }
+if (!('ui' in Tootsville)) { Tootsville.UI = { keys: {} }; }
+if (!('keys' in Tootsville.UI)) { Tootsville.UI.keys = {}; }
 
-Tootsville.ui.keys.speakIt = function ()
+Tootsville.UI.keys.speakIt = function ()
 { document.getElementById('talk-speak').focus();
   return false; // Let <INPUT> edit handle it.
 };
 
-Tootsville.ui.keys.clearTalk = function ()
+Tootsville.UI.keys.clearTalk = function ()
 { document.getElementById('talk-speak').value = ''; };;
 
-Tootsville.ui.keys.bindings =
+Tootsville.UI.keys.bindings =
     { single: {
         Tab: null,
         Enter: 'speak-line',
@@ -152,17 +152,17 @@ Tootsville.ui.keys.bindings =
         withControl: {},
         withMeta: {} }};
 
-Tootsville.ui.keys.prefixed = false;
+Tootsville.UI.keys.prefixed = false;
 
-if (!('runCommand' in Tootsville.ui))
+if (!('runCommand' in Tootsville.UI))
 { /* placeholder until Commands loads */
-    Tootsville.ui.runCommand = function (binding, event) {}; }
+    Tootsville.UI.runCommand = function (binding, event) {}; }
 
-Tootsville.ui.keys.onKeypress = function (ev)
+Tootsville.UI.keys.onKeypress = function (ev)
 { var coda = 'single';
   if (ev.altKey || ev.metaKey ) { coda = 'withMeta'; }
   else if (ev.ctrlKey) { coda = 'withControl'; }
-  if (Tootsville.ui.keys.prefixed)
-  { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings["afterControl" + Tootsville.ui.keys.prefixed][coda], ev); }
+  if (Tootsville.UI.keys.prefixed)
+  { Tootsville.UI.runCommand(Tootsville.UI.keys.bindings["afterControl" + Tootsville.UI.keys.prefixed][coda], ev); }
   else
-  { Tootsville.ui.runCommand(Tootsville.ui.keys.bindings[coda], ev); } };
+  { Tootsville.UI.runCommand(Tootsville.UI.keys.bindings[coda], ev); } };

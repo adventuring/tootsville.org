@@ -36,7 +36,7 @@ if (! document.documentElement.requestFullscreen) {
     document.getElementById('fullscreen-toggle').disabled = true;
 }
 
-Tootsville.ui.setFullscreenFromNavigator();
+Tootsville.UI.setFullscreenFromNavigator();
 
 if (navigator.userAgent.indexOf("Firefox/") > 0) {
     var ffox = document.getElementById('control-panel-get-firefox');

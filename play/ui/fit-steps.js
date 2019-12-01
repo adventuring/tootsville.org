@@ -30,13 +30,13 @@
  * USA
  *
  */
-if (!Tootsville.ui) { Tootsville.ui = {}; }
+if (!Tootsville.UI) { Tootsville.UI = {}; }
 
-Tootsville.ui.googleFit = {
+Tootsville.UI.googleFit = {
     getStepCount: function () {
         return new Promise( (gotSteps, deniedSteps) => {
             Tootsville.util.ensureGoogleOAuth().then(
-                (pass) => { return Tootsville.ui.googleFit.sendStepCountRequest(); },
+                (pass) => { return Tootsville.UI.googleFit.sendStepCountRequest(); },
                 (fail) => { return deniedSteps(fail); });
         });
     },
@@ -62,7 +62,7 @@ Tootsville.ui.googleFit = {
     },
     wantStepCountAtLeast: function(wantCountAtLeast) {
         return new Promise( (pass, fail) => {
-            Tootsville.ui.googleFit.getStepCount().then( (actualCount) => {
+            Tootsville.UI.googleFit.getStepCount().then( (actualCount) => {
                 if (actualCount >= wantCountAtLeast) {
                     pass(actualCount);
                 } else {

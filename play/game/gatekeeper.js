@@ -370,7 +370,7 @@ Tootsville.game.gatekeeper.admin = function (gram)
   let message = gram.message;
   let label = gram.label;
   // FIXME call to parrot ⋯
-  Tootsville.gossip.parrot.say (title, message, label); };
+  Tootsville.Gossip.parrot.say (title, message, label); };
 
 /**
  * Received acknowledgement of the server's time.

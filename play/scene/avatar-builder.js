@@ -31,13 +31,15 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = { Avatars: { AvatarBuilder: {}, Viewer: {}  } }; }
-if (!('Avatars' in Tootsville)) { Tootsville.Avatars = { AvatarBuilder: {}, Viewer: {}  }; }
-if (!('AvatarBuilder' in Tootsville.Avatars)) { Tootsville.Avatars.AvatarBuilder = { baseAvatars: {} }; }
-if (!('baseAvatars' in Tootsville.Avatars.AvatarBuilder))
-{ Tootsville.Avatars.AvatarBuilder.baseAvatars = {}; }
+if (!('Tootsville' in window)) { Tootsville = { AvatarBuilder: {} }; }
+if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { baseAvatars: {} }; }
+if (!('baseAvatars' in Tootsville.AvatarBuilder))
+{ Tootsville.AvatarBuilder.baseAvatars = {}; }
 
-Tootsville.Avatars.AvatarBuilder.colorize = function (avatar, node, scene, finish)
+/**
+ *
+ */
+Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
 { const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
                                                      scene);
   skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
@@ -58,7 +60,10 @@ Tootsville.Avatars.AvatarBuilder.colorize = function (avatar, node, scene, finis
     console.debug ("Colorized mesh named " + mesh.name + " with material ", mesh.material.name); }
   if (finish) { finish (node); } };
 
-Tootsville.Avatars.AvatarBuilder.build2 = function (avatar, root, scene, finish)
+/**
+ * Actually build the (cloned meshes) avatar. Don't call this directly, call `Tootsville.AvatarBuilder.build'.
+ */
+Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
 { console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
   var object = root.clone ("avatar/" + avatar.name);
   Tootsville.tank.shadowGenerator.getShadowMap ().renderList.push (object);
@@ -73,21 +78,18 @@ Tootsville.Avatars.AvatarBuilder.build2 = function (avatar, root, scene, finish)
   { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
   Tootsville.avatars [avatar.name] = Object.assign ({}, avatar);
   Tootsville.avatars [avatar.name].model = object;
-  Tootsville.Avatars.AvatarBuilder.colorize (avatar, root, scene, finish); };
+  Tootsville.AvatarBuilder.colorize (avatar, root, scene, finish); };
 
-Tootsville.Avatars.AvatarBuilder.build = function (avatar, scene, finish)
-{ const root = Tootsville.Avatars.AvatarBuilder.baseAvatars [ avatar.avatar ];
-  if (root)
-  { Tootsville.Avatars.AvatarBuilder.build2 (avatar, root, scene, finish); }
-  else
-  { Tootsville.Avatars.AvatarBuilder.loadAvatarBase (avatar, scene, finish); } };
-
-Tootsville.Avatars.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
+/**
+ * Load the base avatar model from Jumbo.
+ */
+Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
 { var assetsManager = scene.assetManager;
   if (! assetsManager)
   { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
   assetsManager.useDefaultLoadingScreen = false;
-  var loadTask = assetsManager.addMeshTask ("loading UltraToot", null, "https://jumbo.tootsville.org/Assets/Avatars/5/",
+  var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
+                                            "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".babylon");
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.TransformNode ("baseAvatar/" + avatar.avatar, scene, true);
@@ -99,10 +101,25 @@ Tootsville.Avatars.AvatarBuilder.loadAvatarBase = function (avatar, scene, finis
     { task.loadedParticleSystems [i].setParent (modelRoot); }
     for (i = 0; i < task.loadedSkeletons.length; ++i)
     { task.loadedSkeletons [i].setParent (modelRoot); }
-    Tootsville.Avatars.AvatarBuilder.baseAvatars [avatar.avatar] = modelRoot;
+    Tootsville.AvatarBuilder.baseAvatars [avatar.avatar] = modelRoot;
     console.debug ("Loaded base avatar " + avatar.avatar + " with " +
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +
                    task.loadedSkeletons.length + " skeletons.");
-    Tootsville.Avatars.AvatarBuilder.build2 (avatar, modelRoot, scene, finish); };
+    Tootsville.AvatarBuilder.build2 (avatar, modelRoot, scene, finish); };
   assetsManager.load (); };
+
+
+/**
+ * Build an avatar based upon the description passed in.
+ *
+ * The  structure  of   the  avatar  description  is   as  explained  at
+ * `TOOT-INFO'.
+ */
+Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
+{ const root = Tootsville.AvatarBuilder.baseAvatars [ avatar.avatar ];
+  if (root)
+  { Tootsville.AvatarBuilder.build2 (avatar, root, scene, finish); }
+  else
+  { Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); } };
+

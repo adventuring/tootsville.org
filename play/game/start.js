@@ -35,8 +35,8 @@
  *
  */
 window.onGoogleYoloLoad = function ()
-{ Tootsville.login.startSignIn ();
-  Tootsville.login.googleYoloSignIn (); };
+{ Tootsville.Login.startSignIn ();
+  Tootsville.Login.googleYoloSignIn (); };
 
 /**
  * 
@@ -49,21 +49,21 @@ Tootsville.bootstrap = function ()
     
     console.info ("\n\n\n This version of Tootsville is Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
 
-    window.addEventListener ('click', Tootsville.ui.onFirstClick);
+    window.addEventListener ('click', Tootsville.UI.onFirstClick);
     document.addEventListener ('fullscreenchange',
-                               Tootsville.ui.setFullscreenFromNavigator);
+                               Tootsville.UI.setFullscreenFromNavigator);
 
     Tootsville.game.hideWhenGameReady ();
     Tootsville.game.stopSlowLoadingWatchdogs ();
 
-    Tootsville.login.start ();
+    Tootsville.Login.start ();
 
-    Tootsville.ui.setBackgroundMusic ("bensound-adventure");
+    Tootsville.UI.setBackgroundMusic ("bensound-adventure");
     
-    Tootsville.ui.hud.initHUD ();
+    Tootsville.UI.HUD.initHUD ();
     setInterval (Tootsville.updateClock, 250);
 
-    document.addEventListener('keydown', Tootsville.ui.keys.onKeypress);
+    document.addEventListener('keydown', Tootsville.UI.keys.onKeypress);
 
     Tootsville.tank.prepareFor3D ();
     

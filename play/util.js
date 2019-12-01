@@ -72,8 +72,8 @@ Tootsville.util.rest = function (method, uri, body, headers)
   if (!headers) { headers = {}; }
   if (! ('Accept' in headers))
   { headers['Accept'] = 'application/json;encoding=utf-8'; }
-  if (Tootsville.login.firebaseAuth)
-  { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth; }
+  if (Tootsville.Login.firebaseAuth)
+  { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.Login.firebaseAuth; }
   let opts = { method: method };
   if (body && (! ('Content-Type' in headers)))
   { headers['Content-Type'] = 'application/json;charset=utf-8';

@@ -31,9 +31,8 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = { Avatars: { AvatarBuilder: {}, Viewer: {}  } }; }
-if (!('Avatars' in Tootsville)) { Tootsville.Avatars = { AvatarBuilder: {}, Viewer: {}  }; }
-if (!('Viewer' in Tootsville.Avatars)) { Tootsville.Avatars.Viewer = {}; }
+if (!('Tootsville' in window)) { Tootsville = { AvatarViewer: {} }; }
+if (!('AvatarViewer' in Tootsville)) { Tootsville.AvatarViewer = {}; }
 
 /**
  * Get the avatar for the given character name.
@@ -42,7 +41,7 @@ if (!('Viewer' in Tootsville.Avatars)) { Tootsville.Avatars.Viewer = {}; }
  *
  * If character is falsey, returns a promise to an empty object.
  */
-Tootsville.Avatars.getAvatar = function (character)
+Tootsville.AvatarViewer.getAvatar = function (character)
 { if (!character) { return new Promise ( () => {} ); }
   return Tootsville.util.rest ('GET', 'toots/' + character); };
 
@@ -61,7 +60,7 @@ Tootsville.Avatars.getAvatar = function (character)
 /**
  * Create a scene to contain the Avatar Viewer
  */
-Tootsville.Avatars.Viewer.createScene = function (canvas)
+Tootsville.AvatarViewer.createScene = function (canvas)
 { canvas.engine = new BABYLON.Engine (canvas, true);
   canvas.scene = new BABYLON.Scene (canvas.engine);
   scene.clearColor = new BABYLON.Color3.FromHexString (interpretTootColor ('cyan')); };
@@ -69,7 +68,7 @@ Tootsville.Avatars.Viewer.createScene = function (canvas)
 /**
  * Create a camera through which to observe the Avatar Viewer
  */
-Tootsville.Avatars.Viewer.createCamera = function (canvas)
+Tootsville.AvatarViewer.createCamera = function (canvas)
 { const camera = new BABYLON.FollowCamera (
     'Toot Viewer camera',
     new BABYLON.Vector3 (0, 10, -100),
@@ -85,7 +84,7 @@ Tootsville.Avatars.Viewer.createCamera = function (canvas)
 /**
  *
  */
-Tootsville.Avatars.Viewer.createLight = function (canvas)
+Tootsville.AvatarViewer.createLight = function (canvas)
 { const light = new BABYLON.HemisphericLight (
     'uplight',
     new BABYLON.Vector3 (0,1,0),
@@ -94,8 +93,8 @@ Tootsville.Avatars.Viewer.createLight = function (canvas)
 /**
  *
  */
-Tootsville.Avatars.Viewer.createToot = function (toot, canvas)
-{ Tootsville.Avatars.AvatarBuilder.build (toot, canvas.scene).then (
+Tootsville.AvatarViewer.createToot = function (toot, canvas)
+{ Tootsville.AvatarBuilder.build (toot, canvas.scene).then (
     model =>
         { console.info ('loaded a Toot into Viewer', canvas);
           canvas.camera.lockedTarget = model; }); };
@@ -103,7 +102,7 @@ Tootsville.Avatars.Viewer.createToot = function (toot, canvas)
 /**
  *
  */
-Tootsville.Avatars.Viewer.startRendering = function (canvas) {
+Tootsville.AvatarViewer.startRendering = function (canvas) {
     canvas.engine.runRenderLoop (canvas.scene.render);
     window.addEventListener ('resize', canvas.engine.resize);
 };
@@ -112,21 +111,21 @@ Tootsville.Avatars.Viewer.startRendering = function (canvas) {
  * Create a 3D  viewer with a single  avatar in it, out  of an arbitrary
  * CANVAS element. Creates a Babylon 3D scene with just the avatar.
  */
-Tootsville.Avatars.createViewerInCanvas = function (toot, canvas)
+Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
 { if (! canvas) { return; }
   if (toot.charAt instanceof Function) // is a string
-  { Tootsville.Avatars.getAvatar (toot).then (t2 =>
-                                              { Tootsville.Avatars.createViewerInCanvas (t2, canvas); });
+  { Tootsville.AvatarViewer.getAvatar (toot).then (t2 =>
+                                              { Tootsville.AvatarViewer.createViewerInCanvas (t2, canvas); });
     return; }
   Tootsville.tank.prepareFor3D ().then (
       () =>
-          { Tootsville.Avatars.Viewer.createScene (canvas);
+          { Tootsville.AvatarViewer.createScene (canvas);
             canvas.physics = new BABYLON.CannonJSPlugin ();
             Tootsville.tank.initPhysics ('Tootanga', canvas.scene, canvas.physics);
-            Tootsville.Avatars.Viewer.createCamera (canvas);
-            Tootsville.Avatars.Viewer.createLight (canvas);
-            Tootsville.Avatars.Viewer.createToot (toot, canvas);
-            Tootsville.Avatars.Viewer.startRendering (canvas); } ); };
+            Tootsville.AvatarViewer.createCamera (canvas);
+            Tootsville.AvatarViewer.createLight (canvas);
+            Tootsville.AvatarViewer.createToot (toot, canvas);
+            Tootsville.AvatarViewer.startRendering (canvas); } ); };
 
 
 

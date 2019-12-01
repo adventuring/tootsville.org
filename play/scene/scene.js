@@ -223,9 +223,9 @@ Tootsville.tank.init3DEngine = function ()
 Tootsville.tank.initPlayerToot = function ()
 { if ( (! (Tootsville.character))
        ||
-       (! (Tootsville.character.avatar)) ) { Tootsville.login.start ();
+       (! (Tootsville.character.avatar)) ) { Tootsville.Login.start ();
                                              return;}
-  Tootsville.Avatars.AvatarBuilder.build (
+  Tootsville.AvatarBuilder.build (
       Tootsville.character, Tootsville.tank.scene,
       model => { Tootsville.tank.camera.lockedTarget = model; } ); };
 
@@ -243,7 +243,7 @@ Tootsville.tank.createTestScene = function ()
   Tootsville.GroundBuilder.build (0, 0, 0); /* TODO x, y, z */
   Tootsville.tank.initPlayerToot ();
   Tootsville.SceneBuilder.build (0, 0, 0); /* TODO x, y, z */
- console.log ("Initialized scene is now", Tootsville.tank.scene);
+  console.log ("Initialized scene is now", Tootsville.tank.scene);
   return Tootsville.tank.scene; };
 
 /**

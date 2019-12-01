@@ -1,9 +1,9 @@
 /* -*- js2 -*- */
 
 if (!('Tootsville' in window)) { Tootsville = {}; }
-if (!('ui' in Tootsville)) { Tootsville.ui = {}; }
+if (!('ui' in Tootsville)) { Tootsville.UI = {}; }
 
-Tootsville.ui.setBackgroundMusic = function (song)
+Tootsville.UI.setBackgroundMusic = function (song)
 { var backgroundMusic = document.querySelector("#background-music");
   if (backgroundMusic)
   { console.log ("Fading out previous song");
