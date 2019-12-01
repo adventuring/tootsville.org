@@ -30,37 +30,37 @@
  * USA
  *
  */
-if ( (!('ui' in Tootsville)) ||
-     (!('keys' in Tootsville.UI)) ||
-     (!('hud' in Tootsville.UI)))
+if ( (!('UI' in Tootsville)) ||
+     (!('Keys' in Tootsville.UI)) ||
+     (!('HUD' in Tootsville.UI)))
 { throw new Error("Can't map without keys and HUD"); }
 
 /**
  *
  */
 Tootsville.UI.commands =
-    { 'beginning-of-line': Tootsville.UI.keys.beginningOfLine,
-      'end-of-line': Tootsville.UI.keys.endOfLine,
-      'backward-char': Tootsville.UI.keys.backwardChar,
-      'forward-char': Tootsville.UI.keys.forwardChar,
-      'prefix-C-c': Tootsville.UI.keys.prefixCc,
-      'prefix-C-x': Tootsville.UI.keys.prefixCx,
-      'delete-char': Tootsville.UI.keys.deleteChar,
-      'delete-backward-char': Tootsville.UI.keys.deleteBackwardChar,
-      'keyboard-quit': Tootsville.UI.keys.keyboardQuit,
-      'help': Tootsville.UI.keys.help,
-      'kill-line': Tootsville.UI.keys.killLine,
-      'next-history-line': Tootsville.UI.keys.nextHistoryLine,
-      'prior-history-line': Tootsville.UI.keys.priorHistoryLine,
-      'isearch': Tootsville.UI.keys.isearch,
-      'isearch-backward': Tootsville.UI.keys.isearchBackward,
-      'transpose-chars': Tootsville.UI.keys.transposeChars,
-      'kill-region': Tootsville.UI.keys.killRegion,
-      'yank': Tootsville.UI.keys.yank,
-      'speak-line': Tootsville.UI.keys.speakLine,
-      'begin-speaking': Tootsville.UI.keys.beginSpeaking,
-      'begin-whispering': Tootsville.UI.keys.beginWhispering,
-      'begin-shouting': Tootsville.UI.keys.beginShouting,
+    { 'beginning-of-line': Tootsville.UI.Keys.beginningOfLine,
+      'end-of-line': Tootsville.UI.Keys.endOfLine,
+      'backward-char': Tootsville.UI.Keys.backwardChar,
+      'forward-char': Tootsville.UI.Keys.forwardChar,
+      'prefix-C-c': Tootsville.UI.Keys.prefixCc,
+      'prefix-C-x': Tootsville.UI.Keys.prefixCx,
+      'delete-char': Tootsville.UI.Keys.deleteChar,
+      'delete-backward-char': Tootsville.UI.Keys.deleteBackwardChar,
+      'keyboard-quit': Tootsville.UI.Keys.keyboardQuit,
+      'help': Tootsville.UI.Keys.help,
+      'kill-line': Tootsville.UI.Keys.killLine,
+      'next-history-line': Tootsville.UI.Keys.nextHistoryLine,
+      'prior-history-line': Tootsville.UI.Keys.priorHistoryLine,
+      'isearch': Tootsville.UI.Keys.isearch,
+      'isearch-backward': Tootsville.UI.Keys.isearchBackward,
+      'transpose-chars': Tootsville.UI.Keys.transposeChars,
+      'kill-region': Tootsville.UI.Keys.killRegion,
+      'yank': Tootsville.UI.Keys.yank,
+      'speak-line': Tootsville.UI.Keys.speakLine,
+      'begin-speaking': Tootsville.UI.Keys.beginSpeaking,
+      'begin-whispering': Tootsville.UI.Keys.beginWhispering,
+      'begin-shouting': Tootsville.UI.Keys.beginShouting,
       'clear-hud': Tootsville.UI.HUD.clearHUD,
       'control-panel': Tootsville.UI.HUD.showControlPanel,
       'toggle-control-panel': Tootsville.UI.HUD.toggleControlPanel,
@@ -70,22 +70,22 @@ Tootsville.UI.commands =
       'open-talk': Tootsville.UI.openTalkBox,
       'toggle-talk': Tootsville.UI.toggleTalkBox,
       'close-talk': Tootsville.UI.closeTalkBox,
-      'text-entry': Tootsville.UI.keys.textEntry,
-      'backward-word': Tootsville.UI.keys.backwardWord,
-      'forward-word': Tootsville.UI.keys.forwardWord,
-      'capitalize-word': Tootsville.UI.keys.capitalizeWord,
-      'upcase-word': Tootsville.UI.keys.upcaseWord,
-      'downcase-word': Tootsville.UI.keys.downcaseWord,
-      'backward-sentence': Tootsville.UI.keys.backwardSentence,
-      'forward-sentence': Tootsville.UI.keys.forwardSentence,
-      'select-all': Tootsville.UI.keys.selectAll,
-      'kill-sentence': Tootsville.UI.keys.killSentence,
-      'kill-word': Tootsville.UI.keys.killWord,
-      'transpose-words': Tootsville.UI.keys.transposeWords,
-      'kill-ring-save': Tootsville.UI.keys.killRingSave,
-      'execute-extended-command': Tootsville.UI.keys.executeExtendedCommand,
-      'yank-pop': Tootsville.UI.keys.yankPop,
-      'insert-char': Tootsville.UI.keys.insertChar
+      'text-entry': Tootsville.UI.Keys.textEntry,
+      'backward-word': Tootsville.UI.Keys.backwardWord,
+      'forward-word': Tootsville.UI.Keys.forwardWord,
+      'capitalize-word': Tootsville.UI.Keys.capitalizeWord,
+      'upcase-word': Tootsville.UI.Keys.upcaseWord,
+      'downcase-word': Tootsville.UI.Keys.downcaseWord,
+      'backward-sentence': Tootsville.UI.Keys.backwardSentence,
+      'forward-sentence': Tootsville.UI.Keys.forwardSentence,
+      'select-all': Tootsville.UI.Keys.selectAll,
+      'kill-sentence': Tootsville.UI.Keys.killSentence,
+      'kill-word': Tootsville.UI.Keys.killWord,
+      'transpose-words': Tootsville.UI.Keys.transposeWords,
+      'kill-ring-save': Tootsville.UI.Keys.killRingSave,
+      'execute-extended-command': Tootsville.UI.Keys.executeExtendedCommand,
+      'yank-pop': Tootsville.UI.Keys.yankPop,
+      'insert-char': Tootsville.UI.Keys.insertChar
     };
 
 /**

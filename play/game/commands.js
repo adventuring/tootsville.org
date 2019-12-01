@@ -43,28 +43,28 @@
  * d is the d: element of the command 
 */
 
-if (!('Tootsville' in window)) { Tootsville = { game: { commands: {}}}; };
-if (!('game' in Tootsville)) { Tootsville.game = { commands: {}}; };
-if (!('commands' in Tootsville.game)) { Tootsville.game.commands = {}; };
+if (!('Tootsville' in window)) { Tootsville = { Game: { Commands: {}}}; };
+if (!('Game' in Tootsville)) { Tootsville.Game = { Commands: {}}; };
+if (!('Commands' in Tootsville.Game)) { Tootsville.Game.Commands = {}; };
 
 /**
- * Alias for `Tootsville.game.commands.setFurniture', q.v.
+ * Alias for `Tootsville.Game.Commands.setFurniture', q.v.
  */
-Tootsville.game.commands.addFurniture = function (d, u, r)
-{ Tootsville.game.commands.setFurniture (d, u, r); };
+Tootsville.Game.Commands.addFurniture = function (d, u, r)
+{ Tootsville.Game.Commands.setFurniture (d, u, r); };
 
 
 /**
  * No longer used
  */
-Tootsville.game.commands.addToList = function (d, u, r)
-{ Tootsville.game.gossip.signalCommandGone ('addToList', u, r); };
+Tootsville.Game.Commands.addToList = function (d, u, r)
+{ Tootsville.Game.gossip.signalCommandGone ('addToList', u, r); };
 
 
 /**
  * See `INFINTY-CLICK'
  */
-Tootsville.game.commands.click = function (d, u, r)
+Tootsville.Game.Commands.click = function (d, u, r)
 {
     /* TODO */ };
 
@@ -74,7 +74,7 @@ Tootsville.game.commands.click = function (d, u, r)
  *
  * See `INFINITY-CREATE-USER-HOUSE'
  */
-Tootsville.game.commands.createUserHouse = function (d, u, r)
+Tootsville.Game.Commands.createUserHouse = function (d, u, r)
 {
     /* TODO */ };
 
@@ -84,7 +84,7 @@ Tootsville.game.commands.createUserHouse = function (d, u, r)
  *
  * See `INFINITY-DOFF' and `INFINITY-DOFFF'
  */
-Tootsville.game.commands.doff = function (d, u, r)
+Tootsville.Game.Commands.doff = function (d, u, r)
 {
     /* TODO */ };
 
@@ -94,7 +94,7 @@ Tootsville.game.commands.doff = function (d, u, r)
  *
  * See `INFINITY-DON'
  */
-Tootsville.game.commands.don = function (d, u, r)
+Tootsville.Game.Commands.don = function (d, u, r)
 {
     /* TODO */ };
 
@@ -106,7 +106,7 @@ Tootsville.game.commands.don = function (d, u, r)
  *
  * See `INFINITY-ECHO'
  */
-Tootsville.game.commands.echo = function (d, u, r)
+Tootsville.Game.Commands.echo = function (d, u, r)
 {
     /* TODO */ };
 
@@ -118,7 +118,7 @@ Tootsville.game.commands.echo = function (d, u, r)
  * See `INFINITY-END-EVENT' (and `INFINITY-START-EVENT' for context)
  *
  */
-Tootsville.game.commands.endevent = function (d, u, r)
+Tootsville.Game.Commands.endevent = function (d, u, r)
 {
     /* TODO */ };
 
@@ -128,7 +128,7 @@ Tootsville.game.commands.endevent = function (d, u, r)
  *
  * See `INFINITY-FINGER'
  */
-Tootsville.game.commands.finger = function (d, u, r)
+Tootsville.Game.Commands.finger = function (d, u, r)
 {
     /* TODO */ };
 
@@ -136,7 +136,7 @@ Tootsville.game.commands.finger = function (d, u, r)
 /**
  * See `INFINITY-GAME-ACTION'
  */
-Tootsville.game.commands.gameAction = function (d, u, r)
+Tootsville.Game.Commands.gameAction = function (d, u, r)
 {
     /* TODO */ };
 
@@ -148,7 +148,7 @@ Tootsville.game.commands.gameAction = function (d, u, r)
  * 
  * See `INFINITY-GET-APPLE'
  */
-Tootsville.game.commands.getApple = function (d, u, r)
+Tootsville.Game.Commands.getApple = function (d, u, r)
 {
     /* TODO */ };
 
@@ -158,7 +158,7 @@ Tootsville.game.commands.getApple = function (d, u, r)
  *
  * See `INFINITY-GET-AVATARS' and `INFINITY-FINGER'
  */
-Tootsville.game.commands.getAvatars = function (d, u, r)
+Tootsville.Game.Commands.getAvatars = function (d, u, r)
 {
     /* TODO */ };
 
@@ -177,7 +177,7 @@ Tootsville.game.commands.getAvatars = function (d, u, r)
  *and Empires  of the Air are  being replaced with algorithmic  checks, so
  *this routine was removed in Appius 1.2.0.
  */
-Tootsville.game.commands.getColorPalettes = function (d, u, r)
+Tootsville.Game.Commands.getColorPalettes = function (d, u, r)
 {
     /* TODO */ };
 
@@ -187,7 +187,7 @@ Tootsville.game.commands.getColorPalettes = function (d, u, r)
  *
  * See `INFINITY-GET-INVENTORY'
  */
-Tootsville.game.commands.getInventory = function (d, u, r)
+Tootsville.Game.Commands.getInventory = function (d, u, r)
 {
     /* TODO */ };
 
@@ -198,7 +198,7 @@ Tootsville.game.commands.getInventory = function (d, u, r)
  * See `INFINITY-GET-INVENTORY-BY-TYPE'
  *
  */
-Tootsville.game.commands.getInventoryByType = function (d, u, r)
+Tootsville.Game.Commands.getInventoryByType = function (d, u, r)
 {
     /* TODO */ };
 
@@ -210,7 +210,7 @@ Tootsville.game.commands.getInventoryByType = function (d, u, r)
  *
  * See `INFINITY-GET-ONLINE-USERS'
  */
-Tootsville.game.commands.getOnlineUsers = function (d, u, r)
+Tootsville.Game.Commands.getOnlineUsers = function (d, u, r)
 {
     /* TODO */ };
 
@@ -222,7 +222,7 @@ Tootsville.game.commands.getOnlineUsers = function (d, u, r)
  *
  * See `INFINITY-GET-ROOM-LIST'
  */
-Tootsville.game.commands.getRoomList = function (d, u, r)
+Tootsville.Game.Commands.getRoomList = function (d, u, r)
 {
     /* TODO */ };
 
@@ -236,7 +236,7 @@ Tootsville.game.commands.getRoomList = function (d, u, r)
  *
  * See `INFINITY-GET-SERVER-TIME'
  */
-Tootsville.game.commands.getservertime = function (d, u, r)
+Tootsville.Game.Commands.getservertime = function (d, u, r)
 {
     /* TODO */ };
 
@@ -248,7 +248,7 @@ Tootsville.game.commands.getservertime = function (d, u, r)
  *
  * See `INFINITY-GET-SESSION-APPLE'
  */
-Tootsville.game.commands.getSessionApple = function (d, u, r)
+Tootsville.Game.Commands.getSessionApple = function (d, u, r)
 {
     /* TODO */ };
 
@@ -256,7 +256,7 @@ Tootsville.game.commands.getSessionApple = function (d, u, r)
 /**
  * See `INFINITY-GET-STORE-ITEM-INFO'
  */
-Tootsville.game.commands.getStoreItemInfo = function (d, u, r)
+Tootsville.Game.Commands.getStoreItemInfo = function (d, u, r)
 {
     /* TODO */ };
 
@@ -266,7 +266,7 @@ Tootsville.game.commands.getStoreItemInfo = function (d, u, r)
  *
  * See `INFINITY-GET-USER-LISTS'
  */
-Tootsville.game.commands.getUserLists = function (d, u, r)
+Tootsville.Game.Commands.getUserLists = function (d, u, r)
 {
     /* TODO */ };
 
@@ -274,7 +274,7 @@ Tootsville.game.commands.getUserLists = function (d, u, r)
 /**
  * See `INFINITY-GET-WALLET'
  */
-Tootsville.game.commands.getWallet = function (d, u, r)
+Tootsville.Game.Commands.getWallet = function (d, u, r)
 {
     /* TODO */ };
 
@@ -284,7 +284,7 @@ Tootsville.game.commands.getWallet = function (d, u, r)
  *
  * See `INFINITY-GET-ZONE-LIST'
  */
-Tootsville.game.commands.getZoneList = function (d, u, r)
+Tootsville.Game.Commands.getZoneList = function (d, u, r)
 {
     /* TODO */ };
 
@@ -295,7 +295,7 @@ Tootsville.game.commands.getZoneList = function (d, u, r)
  * See `INFINITY-GIVE'
  *
  */
-Tootsville.game.commands.give = function (d, u, r)
+Tootsville.Game.Commands.give = function (d, u, r)
 {
     /* TODO */ };
 
@@ -305,7 +305,7 @@ Tootsville.game.commands.give = function (d, u, r)
  *
  * See `INFINITY-GO'
  */
-Tootsville.game.commands.go = function (d, u, r)
+Tootsville.Game.Commands.go = function (d, u, r)
 {
     /* TODO */ };
 
@@ -317,7 +317,7 @@ Tootsville.game.commands.go = function (d, u, r)
  *
  * See `INFINITY-INIT-USER-ROOM'
  */
-Tootsville.game.commands.initUserRoom = function (d, u, r)
+Tootsville.Game.Commands.initUserRoom = function (d, u, r)
 {
     /* TODO */ };
 
@@ -328,7 +328,7 @@ Tootsville.game.commands.initUserRoom = function (d, u, r)
  * See `INFINITY-JOIN'
  *
  */
-Tootsville.game.commands.join = function (d, u, r)
+Tootsville.Game.Commands.join = function (d, u, r)
 {
     /* TODO */ };
 
@@ -338,7 +338,7 @@ Tootsville.game.commands.join = function (d, u, r)
  *
  * See `INFINITY-LOGIN'
  */
-Tootsville.game.commands.login = function (d, u, r)
+Tootsville.Game.Commands.login = function (d, u, r)
 {
     /* TODO */ };
 
@@ -348,7 +348,7 @@ Tootsville.game.commands.login = function (d, u, r)
  *
  * See `INFINITY-LOGOUT'
  */
-Tootsville.game.commands.logout = function (d, u, r)
+Tootsville.Game.Commands.logout = function (d, u, r)
 {
     /* TODO */ };
 
@@ -358,7 +358,7 @@ Tootsville.game.commands.logout = function (d, u, r)
  *
  * See `INFINITY-MAIL-CUSTOMER-SERVICE'
  */
-Tootsville.game.commands.mailCustomerService = function (d, u, r)
+Tootsville.Game.Commands.mailCustomerService = function (d, u, r)
 {
     /* TODO */ };
 
@@ -368,7 +368,7 @@ Tootsville.game.commands.mailCustomerService = function (d, u, r)
  *
  * See `INFINITY-PEEK-AT-INVENTORY'
  */
-Tootsville.game.commands.peekAtInventory = function (d, u, r)
+Tootsville.Game.Commands.peekAtInventory = function (d, u, r)
 {
     /* TODO */ };
 
@@ -379,7 +379,7 @@ Tootsville.game.commands.peekAtInventory = function (d, u, r)
  * See `INFINITY-PING'
  *
  */
-Tootsville.game.commands.ping = function (d, u, r)
+Tootsville.Game.Commands.ping = function (d, u, r)
 {
     /* TODO */ };
 
@@ -388,7 +388,7 @@ Tootsville.game.commands.ping = function (d, u, r)
  * See `INFINITY-PROMPT-REPLY'
  *
  */
-Tootsville.game.commands.promptReply = function (d, u, r)
+Tootsville.Game.Commands.promptReply = function (d, u, r)
 {
     /* TODO */ };
 
@@ -398,7 +398,7 @@ Tootsville.game.commands.promptReply = function (d, u, r)
  *
  * See `INFINITY-REMOVE-FROM-LIST'
  */
-Tootsville.game.commands.removeFromList = function (d, u, r)
+Tootsville.Game.Commands.removeFromList = function (d, u, r)
 {
     /* TODO */ };
 
@@ -409,7 +409,7 @@ Tootsville.game.commands.removeFromList = function (d, u, r)
  *
  * See `INFINITY-REPORT-BUG'
  */
-Tootsville.game.commands.reportBug = function (d, u, r)
+Tootsville.Game.Commands.reportBug = function (d, u, r)
 {
     /* TODO */ };
 
@@ -419,7 +419,7 @@ Tootsville.game.commands.reportBug = function (d, u, r)
  *
  * See `INFINITY-REPORT-USER'
  */
-Tootsville.game.commands.reportUser = function (d, u, r)
+Tootsville.Game.Commands.reportUser = function (d, u, r)
 {
     /* TODO */ };
 
@@ -430,7 +430,7 @@ Tootsville.game.commands.reportUser = function (d, u, r)
  * See `INFINITY-REQUEST-BUDDY'
  *
  */
-Tootsville.game.commands.requestBuddy = function (d, u, r)
+Tootsville.Game.Commands.requestBuddy = function (d, u, r)
 {
     /* TODO */ };
 
@@ -441,7 +441,7 @@ Tootsville.game.commands.requestBuddy = function (d, u, r)
  * See `INFINITY-SEND-OUT-OF-BAND-MESSAGE'
  *
  */
-Tootsville.game.commands.sendOutOfBandMessage = function (d, u, r)
+Tootsville.Game.Commands.sendOutOfBandMessage = function (d, u, r)
 {
     /* TODO */ };
 
@@ -451,7 +451,7 @@ Tootsville.game.commands.sendOutOfBandMessage = function (d, u, r)
  *
  * See `INFINITY-SERVER-TIME'
  */
-Tootsville.game.commands.serverTime = function (d, u, r)
+Tootsville.Game.Commands.serverTime = function (d, u, r)
 { let serverTime = d.serverTime;
     /* TODO */ };
 
@@ -461,7 +461,7 @@ Tootsville.game.commands.serverTime = function (d, u, r)
  *
  * See `INFINITY-SET-AVATAR-COLOR'
  */
-Tootsville.game.commands.setAvatarColor = function (d, u, r)
+Tootsville.Game.Commands.setAvatarColor = function (d, u, r)
 {
     /* TODO */ };
 
@@ -471,7 +471,7 @@ Tootsville.game.commands.setAvatarColor = function (d, u, r)
  *
  * See `INFINITY-SPAWN-ZONE'
  */
-Tootsville.game.commands.spawnZone = function (d, u, r)
+Tootsville.Game.Commands.spawnZone = function (d, u, r)
 {
     /* TODO */ };
 
@@ -482,7 +482,7 @@ Tootsville.game.commands.spawnZone = function (d, u, r)
  * See `INFINITY-SPEAK'
  *
  */
-Tootsville.game.commands.speak = function (d, u, r)
+Tootsville.Game.Commands.speak = function (d, u, r)
 { let speech = d.speech;
     /* TODO */ };
 
@@ -491,7 +491,7 @@ Tootsville.game.commands.speak = function (d, u, r)
  * See `INFINITY-START-EVENT' (and `INFINITY-END-EVENT')
  *
  */
-Tootsville.game.commands.startEvent = function (d, u, r)
+Tootsville.Game.Commands.startEvent = function (d, u, r)
 {
     /* TODO */ };
 
@@ -499,7 +499,7 @@ Tootsville.game.commands.startEvent = function (d, u, r)
 /**
  * See `INFINITY-END-EVENT' (and `INFINITY-START-EVENT')
  */
-Tootsville.game.commands.endEvent = function (d, u, r)
+Tootsville.Game.Commands.endEvent = function (d, u, r)
 {
     /* TODO */ };
 
@@ -507,7 +507,7 @@ Tootsville.game.commands.endEvent = function (d, u, r)
 /**
  * See `INFINITY-USE-EQUIPMENT'
  */
-Tootsville.game.commands.useEquipment = function (d, u, r)
+Tootsville.Game.Commands.useEquipment = function (d, u, r)
 {
     /* TODO */ };
 
@@ -529,5 +529,5 @@ Tootsville.game.commands.useEquipment = function (d, u, r)
  * This command is valid on the Gossipnet, but does not have a 
  * REST equivalent.
  */
-Tootsville.game.commands.walk = function (d, u, r)
+Tootsville.Game.Commands.walk = function (d, u, r)
 { /* TODO */ };

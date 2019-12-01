@@ -112,19 +112,19 @@ Tootsville.Gossip.createConnection = function ()
  * See the server documentation of `DEFINFINITY' for a description of the
  * Infinity Mode protocols.
  *
- * Commands are handled via the Tootsville.game.gatekeeper handlers.
+ * Commands are handled via the Tootsville.Game.gatekeeper handlers.
  */
 Tootsville.Gossip.gatekeeperAccept = function (peer, event)
 { let gram = event.data;
-  if (gram.c && Tootsville.game.commands [ gram.c ])
-  { Tootsville.game.commands [ gram.c ] (gram.d, gram.u, gram.r); }
-  else if (gram.from && Tootsville.game.gatekeeper [ gram.from ])
-  { Tootsville.game.gatekeeper [ gram.from ] (gram); }
+  if (gram.c && Tootsville.Game.Commands [ gram.c ])
+  { Tootsville.Game.Commands [ gram.c ] (gram.d, gram.u, gram.r); }
+  else if (gram.from && Tootsville.Game.gatekeeper [ gram.from ])
+  { Tootsville.Game.gatekeeper [ gram.from ] (gram); }
   else if (gram.seq)
   { for (let i = 0; i < gram.seq.length; ++i)
     { Tootsville.Gossip.gatekeeperAccept (peer, { data: gram.seq [i] }); } }
   else if (gram._cmd && gram._cmd == 'logOK')
-  { Tootsville.game.gatekeeper.logOK (gram); }
+  { Tootsville.Game.gatekeeper.logOK (gram); }
   else
   { Tootsville.warn ("Unknown datagram type received", gram); }
   /* TODO: echo routing */ };

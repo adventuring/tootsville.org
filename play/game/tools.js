@@ -28,8 +28,8 @@
  * USA
  */
 if (!('Tootsville' in window)) { Tootsville = {}; };
-if (!('game' in Tootsville)) { Tootsville.game = {}; };
-if (!('tools' in Tootsville.game)) { Tootsville.game.tools = {}; };
+if (!('game' in Tootsville)) { Tootsville.Game = {}; };
+if (!('tools' in Tootsville.Game)) { Tootsville.Game.tools = {}; };
 
 /**
  * Use a shovel at the given coördinates.
@@ -38,21 +38,21 @@ if (!('tools' in Tootsville.game)) { Tootsville.game.tools = {}; };
  *
  * Using a shovel can also fill a hole, hiding any objects in the hole.
  */
-Tootsville.game.tools.shovel = function (x, y, z)
+Tootsville.Game.tools.shovel = function (x, y, z)
 { /* TODO shovel */};
 /**
  * Use an axe at the given coördinates.
  *
  * Cut a branch or tree trunk.
  */
-Tootsville.game.tools.axe = function (x, y, z)
+Tootsville.Game.tools.axe = function (x, y, z)
 { /* TODO axe */};
 /**
  * Use a pickaxe at the given coördinates.
  *
  * Break apart a rock into smaller stones.
  */
-Tootsville.game.tools.pickaxe = function (x, y, z)
+Tootsville.Game.tools.pickaxe = function (x, y, z)
 { /* TODO pickaxe */};
 /**
  * Use a hammer at the given coördinates.
@@ -60,26 +60,26 @@ Tootsville.game.tools.pickaxe = function (x, y, z)
  * Given     some    building     materials,    combine     them    into
  * a constructed object.
  */
-Tootsville.game.tools.hammer = function (x, y, z)
+Tootsville.Game.tools.hammer = function (x, y, z)
 { /* TODO hammer */ };
 /**
  * Use a sewing kit at the given coördinates.
  *
  * Used to create clothing from cloth.
  */
-Tootsville.game.tools.sewingKit = function (x, y, z)
+Tootsville.Game.tools.sewingKit = function (x, y, z)
 { /* TODO sewing kit */ };
 /**
  * Use a butterfly net at the given coördinates.
  *
  * Attempt to capture a bug.
  */
-Tootsville.game.tools.butterflyNet = function (x, y, z)
+Tootsville.Game.tools.butterflyNet = function (x, y, z)
 { /* TODO butterfly net */ };
 /**
  * Use a fishing rod at the given coördinates.
  *
  * Attempt to catch a fish.
  */
-Tootsville.game.tools.fishingRod = function (x, y, z)
+Tootsville.Game.tools.fishingRod = function (x, y, z)
 { /* TODO fishing rod */ };

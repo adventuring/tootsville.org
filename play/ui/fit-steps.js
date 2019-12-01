@@ -30,7 +30,7 @@
  * USA
  *
  */
-if (!Tootsville.UI) { Tootsville.UI = {}; }
+if (!('UI' in Tootsville)) { Tootsville.UI = {}; }
 
 Tootsville.UI.googleFit = {
     getStepCount: function () {

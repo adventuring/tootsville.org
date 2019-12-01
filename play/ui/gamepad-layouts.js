@@ -27,11 +27,30 @@
  *
  * USA
  */
-if (!('Tootsville' in window)) { Tootsville = { gamepadLayouts: {} }; };
 
 /**
-*
-*/
+ * The known layouts and mappings to names of several popular types of controllers.
+ *
+ * This provides a name for the type of controller based upon its USB ID
+ * string  (hex codes),  as  well as  names for  its  buttons and  axes.
+ * This will  allow the  end user  to configure their  device in  a more
+ * user-friendly way; eg,  by identifying a button as  ``A'' rather than
+ * ``button 0'' they will be more  easily able to identify the controls.
+ * (Seriously, who can remember if ``Start'' is button 8 or 7?)
+ *
+ * Supported (so far) are all the gamepads I (BRP) use, which is to say:
+ *
+ * @itemize
+ * @item
+ * Generic NES-style USB gamepad
+ * @item
+ * Nintendo Switch USB gamepad
+ * @item
+ * SEGA Saturn style USB gamepad
+ * @item
+ * XBox 360 USB gamepad
+ * @end itemize
+ */
 Tootsville.gamepadLayouts =
 { '081f-e401':
   { name: 'NES USB Gamepad',

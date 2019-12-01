@@ -41,77 +41,77 @@
  *
  */
 
-if (! ('Tootsville' in window)) { Tootsville={ui:{gamepad:{}}}; }
-if (! ('ui' in Tootsville)) { Tootsville.UI={gamepad:{}}; }
-if (! ('gamepad' in Tootsville.UI)) { Tootsville.UI.gamepad={}; }
+if (! ('Tootsville' in window)) { Tootsville={UI:{Gamepad:{}}}; }
+if (! ('UI' in Tootsville)) { Tootsville.UI={Gamepad:{}}; }
+if (! ('Gamepad' in Tootsville.UI)) { Tootsville.UI.Gamepad={}; }
 
 /**
  * All connected gamepad controllers.
  */
-Tootsville.UI.gamepad.controllers = {};
+Tootsville.UI.Gamepad.controllers = {};
 /**
  * Gamepad controller state data.
  *
  * TODO, document format
  */
-Tootsville.UI.gamepad.controllerState = {};
+Tootsville.UI.Gamepad.controllerState = {};
 
 /**
  * Event handler for gamepad connections
  */
-Tootsville.UI.gamepad.connectHandler = function (ev)
-{ Tootsville.UI.gamepad.addGamepad (ev.gamepad); };
+Tootsville.UI.Gamepad.connectHandler = function (ev)
+{ Tootsville.UI.Gamepad.addGamepad (ev.gamepad); };
 
 /**
  * Add a gamepad and initialize state data.
  */
-Tootsville.UI.gamepad.addGamepad = function (gamepad)
-{ Tootsville.UI.gamepad.controllers [gamepad.index] = gamepad;
-  Tootsville.UI.gamepad.controllerState [gamepad.index] = {buttons: [], axes: []};
+Tootsville.UI.Gamepad.addGamepad = function (gamepad)
+{ Tootsville.UI.Gamepad.controllers [gamepad.index] = gamepad;
+  Tootsville.UI.Gamepad.controllerState [gamepad.index] = {buttons: [], axes: []};
   for (var i=0; i < gamepad.buttons.length; i++)
-  { Tootsville.UI.gamepad.controllerState [gamepad.index].buttons [i] = null; }
+  { Tootsville.UI.Gamepad.controllerState [gamepad.index].buttons [i] = null; }
   for (i=0; i<gamepad.axes.length; i++)
-  { Tootsville.UI.gamepad.controllerState [gamepad.index].axes [i] = 0; }
+  { Tootsville.UI.Gamepad.controllerState [gamepad.index].axes [i] = 0; }
   Tootsville.trace ("New gamepad detected", gamepad);
-  window.requestAnimationFrame (Tootsville.UI.gamepad.updateStatus); };
+  window.requestAnimationFrame (Tootsville.UI.Gamepad.updateStatus); };
 
 /**
  * Event handler for gamepad disconnections.
  */
-Tootsville.UI.gamepad.disconnectHandler = function (e)
-{ Tootsville.UI.gamepad.removeGamepad (e.gamepad); };
+Tootsville.UI.Gamepad.disconnectHandler = function (e)
+{ Tootsville.UI.Gamepad.removeGamepad (e.gamepad); };
 
 /**
  * Remove a gamepad from the active state.
  */
-Tootsville.UI.gamepad.removeGamepad = function (gamepad)
-{ delete Tootsville.UI.gamepad.controllers [gamepad.index];
-  delete Tootsville.UI.gamepad.controllerState [gamepad.index]; };
+Tootsville.UI.Gamepad.removeGamepad = function (gamepad)
+{ delete Tootsville.UI.Gamepad.controllers [gamepad.index];
+  delete Tootsville.UI.Gamepad.controllerState [gamepad.index]; };
 
 /**
  * Update gamepad status.
  */
-Tootsville.UI.gamepad.updateStatus = function ()
-{ for (j in Tootsville.UI.gamepad.controllers)
-  { var controller = Tootsville.UI.gamepad.controllers [j];
+Tootsville.UI.Gamepad.updateStatus = function ()
+{ for (j in Tootsville.UI.Gamepad.controllers)
+  { var controller = Tootsville.UI.Gamepad.controllers [j];
     for (var i=0; i<controller.buttons.length; i++)
     { var val = controller.buttons [i];
       if (typeof (val) == "object")
       { val = val.value; }
-      if (Math.abs (Tootsville.UI.gamepad.controllerState [j].buttons [i] - val) > 0.01)
-      { Tootsville.UI.gamepad.controllerState [j].buttons [i] = val;
-        Tootsville.UI.gamepad.buttonEvent (j, i); }}
+      if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
+      { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
+        Tootsville.UI.Gamepad.buttonEvent (j, i); }}
     for (var i = 0; i < controller.axes.length; i ++)
     { var val = controller.axes [i];
-      if (Math.abs (Tootsville.UI.gamepad.controllerState [j].axes [i] - val) > 0.01)
-      { Tootsville.UI.gamepad.controllerState [j].axes [i] = val;
-        Tootsville.UI.gamepad.axisEvent (j, i); }}}
-  window.requestAnimationFrame (Tootsville.UI.gamepad.updateStatus); };
+      if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
+      { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
+        Tootsville.UI.Gamepad.axisEvent (j, i); }}}
+  window.requestAnimationFrame (Tootsville.UI.Gamepad.updateStatus); };
 
 /**
  * Scan gamepads for updates
  */
-Tootsville.UI.gamepad.scanGamepads = function ()
+Tootsville.UI.Gamepad.scanGamepads = function ()
 { var gamepads = (navigator.getGamepads
                   ? navigator.getGamepads ()
                   : (navigator.webkitGetGamepads
@@ -120,16 +120,16 @@ Tootsville.UI.gamepad.scanGamepads = function ()
   for (var i = 0; i < gamepads.length; i++)
   { if (gamepads [i])
     { if (! (gamepads [i].index in controllers))
-      { Tootsville.UI.gamepad.addGamepad (gamepads [i]); }
+      { Tootsville.UI.Gamepad.addGamepad (gamepads [i]); }
       else
-      { Tootsville.UI.gamepad.controllers [gamepads [i].index] = gamepads [i]; }}}};
+      { Tootsville.UI.Gamepad.controllers [gamepads [i].index] = gamepads [i]; }}}};
 
 (function ()
  { if ('GamepadEvent' in window)
-   { window.addEventListener ("gamepadconnected", Tootsville.UI.gamepad.connectHandler);
-     window.addEventListener ("gamepaddisconnected", Tootsville.UI.gamepad.disconnectHandler); }
+   { window.addEventListener ("gamepadconnected", Tootsville.UI.Gamepad.connectHandler);
+     window.addEventListener ("gamepaddisconnected", Tootsville.UI.Gamepad.disconnectHandler); }
    else if ('WebKitGamepadEvent' in window)
-   { window.addEventListener ("webkitgamepadconnected", Tootsville.UI.gamepad.connectHandler);
-     window.addEventListener ("webkitgamepaddisconnected", Tootsville.UI.gamepad.disconnectHandler); }
+   { window.addEventListener ("webkitgamepadconnected", Tootsville.UI.Gamepad.connectHandler);
+     window.addEventListener ("webkitgamepaddisconnected", Tootsville.UI.Gamepad.disconnectHandler); }
    else
-   { setInterval (Tootsville.UI.gamepad.scanGamepads, 333); } }) ();
+   { setInterval (Tootsville.UI.Gamepad.scanGamepads, 333); } }) ();

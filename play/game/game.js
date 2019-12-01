@@ -32,14 +32,14 @@
  */
 
 if (!('Tootsville' in window)) { Tootsville = {game: {}}; }
-if (!('game' in Tootsville)) { Tootsville.game = {}; }
+if (!('game' in Tootsville)) { Tootsville.Game = {}; }
 
 /**
 * Is   the   `point'   near   to  the   center   of   current   activity
 * `Tootsville.activity' to be of interest to us? If the point is too far
 * away, we may not care about it.
 */
-Tootsville.game.interestingPoint = function (point)
+Tootsville.Game.interestingPoint = function (point)
 { return ( (Math.abs (Tootsville.activity.x - point.x) < 1000)
            &&
            (Math.abs (Tootsville.activity.y - point.y) < 1000)
@@ -70,10 +70,10 @@ Tootsville.game.interestingPoint = function (point)
  *
 * @end table
  */
-Tootsville.game.updateAvatar = function (userName, avatar)
+Tootsville.Game.updateAvatar = function (userName, avatar)
 { const uuid = avatar.uuid;
   const position = avatar.φ.position;
-  if (! Tootsville.game.interestingPoint (position))
+  if (! Tootsville.Game.interestingPoint (position))
   { return; }
   Tootsville.avatars [uuid] = avatar;
   if (userName)
@@ -86,7 +86,7 @@ Tootsville.game.updateAvatar = function (userName, avatar)
 /**
  * Update the avatar UUID from `Tootsville.avatars'
  */
-Tootsville.game.refreshAvatar = function (uuid)
+Tootsville.Game.refreshAvatar = function (uuid)
 { const avatar = Tootsville.avatars [uuid];
   const name = avatar.name;
   if (name && !avatar.label)
@@ -94,7 +94,7 @@ Tootsville.game.refreshAvatar = function (uuid)
   Tootsville.tank.updateAttachmentsForAvatar (avatar);
   /* TODO: update physics, position, facing, animation */ };
 
-Tootsville.game.attachLabelToAvatar = function (name, uuid)
+Tootsville.Game.attachLabelToAvatar = function (name, uuid)
 { const label = document.createElement ('DIV');
   if (Tootsville.avatars [uuid].childP)
   { label.innerHTML = '◆' + name; }
@@ -123,7 +123,7 @@ Tootsville.game.attachLabelToAvatar = function (name, uuid)
  * background colors.
  * @end table
  */
-Tootsville.game.attachSpeechToAvatar = function (html, style, uuid, moreStyle)
+Tootsville.Game.attachSpeechToAvatar = function (html, style, uuid, moreStyle)
 { const balloon = document.createElement ('DIV');
   balloon.innerHTML = html;
   balloon.className = style;

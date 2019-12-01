@@ -53,8 +53,8 @@ Tootsville.bootstrap = function ()
     document.addEventListener ('fullscreenchange',
                                Tootsville.UI.setFullscreenFromNavigator);
 
-    Tootsville.game.hideWhenGameReady ();
-    Tootsville.game.stopSlowLoadingWatchdogs ();
+    Tootsville.Game.hideWhenGameReady ();
+    Tootsville.Game.stopSlowLoadingWatchdogs ();
 
     Tootsville.Login.start ();
 
@@ -63,7 +63,7 @@ Tootsville.bootstrap = function ()
     Tootsville.UI.HUD.initHUD ();
     setInterval (Tootsville.updateClock, 250);
 
-    document.addEventListener('keydown', Tootsville.UI.keys.onKeypress);
+    document.addEventListener('keydown', Tootsville.UI.Keys.onKeypress);
 
     Tootsville.tank.prepareFor3D ();
     
