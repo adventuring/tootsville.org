@@ -117,11 +117,11 @@ Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
   { Tootsville.AvatarViewer.getAvatar (toot).then (t2 =>
                                               { Tootsville.AvatarViewer.createViewerInCanvas (t2, canvas); });
     return; }
-  Tootsville.tank.prepareFor3D ().then (
+  Tootsville.Tank.prepareFor3D ().then (
       () =>
           { Tootsville.AvatarViewer.createScene (canvas);
             canvas.physics = new BABYLON.CannonJSPlugin ();
-            Tootsville.tank.initPhysics ('Tootanga', canvas.scene, canvas.physics);
+            Tootsville.Tank.initPhysics ('Tootanga', canvas.scene, canvas.physics);
             Tootsville.AvatarViewer.createCamera (canvas);
             Tootsville.AvatarViewer.createLight (canvas);
             Tootsville.AvatarViewer.createToot (toot, canvas);

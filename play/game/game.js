@@ -91,7 +91,7 @@ Tootsville.Game.refreshAvatar = function (uuid)
   const name = avatar.name;
   if (name && !avatar.label)
   { this.attachLabelToAvatar (name, uuid); }
-  Tootsville.tank.updateAttachmentsForAvatar (avatar);
+  Tootsville.Tank.updateAttachmentsForAvatar (avatar);
   /* TODO: update physics, position, facing, animation */ };
 
 Tootsville.Game.attachLabelToAvatar = function (name, uuid)

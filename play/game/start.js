@@ -65,7 +65,7 @@ Tootsville.bootstrap = function ()
 
     document.addEventListener('keydown', Tootsville.UI.Keys.onKeypress);
 
-    Tootsville.tank.prepareFor3D ();
+    Tootsville.Tank.prepareFor3D ();
     
     Tootsville.util.ensureServersReachable ();
 

@@ -44,9 +44,9 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
 { const ground =
         BABYLON.Mesh.CreateGround ('ground',
                                    100, 100, 10,
-                                   Tootsville.tank.scene);
+                                   Tootsville.Tank.scene);
   ground.material = new BABYLON.StandardMaterial ('ground',
-                                                  Tootsville.tank.scene);
+                                                  Tootsville.Tank.scene);
   ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
   ground.material.specularColor = new BABYLON.Color3.FromHexString (interpretTootColor ('spring-green'));
   ground.receiveShadows = true;
@@ -61,7 +61,7 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
 /**
  * Build the ground plane (terrain map) for the scene at x, y, z. 
  *
- * Affects Tootsville.tank.scene.
+ * Affects Tootsville.Tank.scene.
  */
 Tootsville.GroundBuilder.build = function (x, y, z)
 {

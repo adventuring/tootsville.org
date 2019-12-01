@@ -36,7 +36,7 @@
     <div id="control-panel">
 
       <section class="mobile-only">
-        <button onclick="Tootsville.ui.hud.closePanel()">Close</button>
+        <button onclick="Tootsville.UI.HUD.closePanel()">Close</button>
         <hr>
       </section>
 
@@ -58,26 +58,26 @@
 
       <div>
         <input type="checkbox" id="fullscreen-toggle"
-               onChange="Tootsville.ui.hud.closePanel();Tootsville.ui.setFullscreen(this.checked);">
+               onChange="Tootsville.UI.HUD.closePanel();Tootsville.ui.setFullscreen(this.checked);">
         <label id="control-panel-fullscreen" for="fullscreen-toggle">
           Fullscreen
         </label>
       </div>
       <div id="control-panel-gamepad"
-           onclick="Tootsville.ui.hud.showHUDPanel('gamepad')">
+           onclick="Tootsville.UI.HUD.showHUDPanel('gamepad')">
         <i class="fas fa-gamepad"></i>
         Gamepad
       </div>
 
       <!-- Help -->
 
-      <div id="control-panel-help" onclick="Tootsville.ui.hud.showHUDPanel('help');">
+      <div id="control-panel-help" onclick="Tootsville.UI.HUD.showHUDPanel('help');">
         <i class="fas fa-life-ring fa-fw"></i>
         Help
       </div>
 
       <div id="control-panel-get-firefox"
-           onclick="Tootsville.ui.hud.closePanel();window.open('https://getfirefox.com/','get-firefox')">
+           onclick="Tootsville.UI.HUD.closePanel();window.open('https://getfirefox.com/','get-firefox')">
         <a href="https://getfirefox.com/" target="get-firefox">
           <i class="fab fa-firefox fa-fw"></i> Get Firefox
           <i class="fas fa-window-restore footnote-marker"></i>
@@ -88,7 +88,7 @@
 
       <hr>
 
-      <div id="control-panel-sign-out" onclick="Tootsville.ui.hud.closePanel();Tootsville.ui.signOut()">
+      <div id="control-panel-sign-out" onclick="Tootsville.UI.HUD.closePanel();Tootsville.ui.signOut()">
         <i class="fas fa-sign-out-alt fa-fw"></i>
         Quit or Change Players
       </div>

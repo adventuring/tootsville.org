@@ -41,8 +41,8 @@ if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
  *
  * This is always black in space (when atmosphereP is false).
  *
- * The  sky data  is  taken  from Tootsville.tank.sky  and  the scene  is
- * Tootsville.tank.scene.
+ * The  sky data  is  taken  from Tootsville.Tank.sky  and  the scene  is
+ * Tootsville.Tank.scene.
  *
  * XXX  Some day,  using  a  GLSL shader  for  the  background would  be
  * awesome, but  that's more work  than is  valuable at this  stage (for
@@ -54,12 +54,12 @@ if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
 Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
 { if (atmosphereP)
   { /* TODO observe sun position and set appropriately */
-      Tootsville.tank.scene.clearColor = new BABYLON.Color3 (.7, .7, 1);
-      Tootsville.tank.scene.ambientColor = new BABYLON.Color3 (.7, .7, .7);
+      Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7, .7, 1);
+      Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (.7, .7, .7);
       Tootsville.SkyBuilder.initCrappyDefaultLight (); }
   else
-  { Tootsville.tank.scene.clearColor = new BABYLON.Color3 (0, 0, 0);
-    Tootsville.tank.scene.ambientColor = new BABYLON.Color3 (0, 0, 0); } };
+  { Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (0, 0, 0);
+    Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (0, 0, 0); } };
 
 /**
  * The second layer of  the sky are the stars, which  are faded with the
@@ -136,14 +136,14 @@ Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
 { const light = new BABYLON.DirectionalLight (
     'sunlight',
     new BABYLON.Vector3 (0, -.5, -1),
-    Tootsville.tank.scene);
+    Tootsville.Tank.scene);
   light.position = new BABYLON.Vector3 (20, 70, 120); /* TODO Sun position */
-  Tootsville.tank.shadowGenerator = new BABYLON.ShadowGenerator (1024, light); };
+  Tootsville.Tank.shadowGenerator = new BABYLON.ShadowGenerator (1024, light); };
 
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
- * Tootsville.tank.sky and affects the scene at Tootsville.tank.scene.
+ * Tootsville.Tank.sky and affects the scene at Tootsville.Tank.scene.
  *
  * Depending on the world in question, the sky may have these layers:
  *
@@ -187,7 +187,7 @@ Tootsville.SkyBuilder.build = function (world)
 /**
  * Fetch sky data from the game server
  *
- * Updates Tootsville.tank.sky
+ * Updates Tootsville.Tank.sky
  *
  * TODO, we  should replicate the  logic for predicting the  altitude of
 * the sun and moons from the  Lisp code in Javascript, however, the Lisp

@@ -225,7 +225,7 @@ Tootsville.Login.dimUnpickedCharacters = function (picked)
  */
 Tootsville.Login.doRealLogin = function (name)
 { Tootsville.Login.serverLinkTokenToCharacter (name).
-  then (Tootsville.tank.startSimulation); };
+  then (Tootsville.Tank.startSimulation); };
 
 /**
  *
@@ -311,7 +311,7 @@ Tootsville.Login.loginDone = function (reply)
   Tootsville.characterUUID = reply.toot.uuid;
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
-  Tootsville.tank.start3D ();
+  Tootsville.Tank.start3D ();
   document.title = reply.toot.name + " in Tootsville";
   Tootsville.UI.HUD.refreshHUD (); };
 

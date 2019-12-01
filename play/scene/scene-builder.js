@@ -36,7 +36,7 @@ if (!('SceneBuilder' in Tootsville)) { Tootsville.SceneBuilder = {}; }
 /**
  * Place furniture as found in the current scene.
  *
- * Affects Tootsville.tank.scene
+ * Affects Tootsville.Tank.scene
  */
 Tootsville.SceneBuilder.build = function (x, y, z)
 {};

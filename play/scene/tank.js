@@ -2,7 +2,7 @@
 
 /*@license
  *
- * ./play/scene/scene.js is part of Tootsville
+ * ./play/scene/tank.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,12 +31,12 @@
  *
  */
 
-if (! ("tank" in Tootsville)) { Tootsville.tank = {}; }
+if (! ("Tank" in Tootsville)) { Tootsville.Tank = {}; }
 
 /**
  * Accept a click in the scene and identify the next action to take.
  */
-Tootsville.tank.acceptClick = function (event, pickedP, distance,
+Tootsville.Tank.acceptClick = function (event, pickedP, distance,
                                         pickedMesh, pickedPoint)
 { if (! pickedP) { return; }
   if (Tootsville.pickTargetListener)
@@ -55,7 +55,7 @@ Tootsville.tank.acceptClick = function (event, pickedP, distance,
  * XXX This is  currently ignored, and we always  update the attachments
  * on every frame.
  */
-Tootsville.tank.attachmentOverlaysNeedUpdateP = false;
+Tootsville.Tank.attachmentOverlaysNeedUpdateP = false;
 
 /**
  * Initialize  the Over-The-Shoulder  camera. 
@@ -63,11 +63,11 @@ Tootsville.tank.attachmentOverlaysNeedUpdateP = false;
  * This is the main follow camera  for the game. This camera follows the
  * player's Toot through the scene.
  */
-Tootsville.tank.initOTSCamera = function ()
+Tootsville.Tank.initOTSCamera = function ()
 { const camera = new BABYLON.FollowCamera (
     'otsCamera',
     new BABYLON.Vector3 (0, 10, -100),
-    Tootsville.tank.scene);
+    Tootsville.Tank.scene);
   camera.radius = 5; /* how closely to follow our Toot */
   camera.heightOffset = 4.5;
   camera.rotationOffset = 0;
@@ -75,24 +75,24 @@ Tootsville.tank.initOTSCamera = function ()
   camera.maxCameraSpeed = 10;
   // camera.ellipsoid = new BABYLON.Vector3 (.5,1,.5);
   // camera.checkCollisions = true;
-  Tootsville.tank.camera = camera;
+  Tootsville.Tank.camera = camera;
   console.log ("Created camera", camera);
-  Tootsville.tank.camera.onProjectionMatrixChangedObservable.add (
+  Tootsville.Tank.camera.onProjectionMatrixChangedObservable.add (
       () =>
-          { Tootsville.tank.attachmentOverlaysNeedUpdateP = true; } );
-  Tootsville.tank.camera.onViewMatrixChangedObservable.add (
+          { Tootsville.Tank.attachmentOverlaysNeedUpdateP = true; } );
+  Tootsville.Tank.camera.onViewMatrixChangedObservable.add (
       () =>
-          { Tootsville.tank.onViewMatrixChangedObservable = true; } );
+          { Tootsville.Tank.onViewMatrixChangedObservable = true; } );
   return camera; };
 
 /**
  * Initialize the Cannon physics engine in the scene.
  */
-Tootsville.tank.initPhysics = function (world, scene, physics)
+Tootsville.Tank.initPhysics = function (world, scene, physics)
 { if (!scene)
-  { scene = Tootsville.tank.scene; }
+  { scene = Tootsville.Tank.scene; }
   if (!physics)
-  { physics = Tootsville.tank.physics; }
+  { physics = Tootsville.Tank.physics; }
   const gravityVector =
         new BABYLON.Vector3 (0,
                              -Tootsville.Worlds[world].Gravity,
@@ -103,26 +103,26 @@ Tootsville.tank.initPhysics = function (world, scene, physics)
 /**
  * Find or create the CANVAS object onto which the 3D scene is rendered.
  */
-Tootsville.tank.getCanvas = function ()
-{ if (! Tootsville.tank.canvas)
-  { Tootsville.tank.canvas =
+Tootsville.Tank.getCanvas = function ()
+{ if (! Tootsville.Tank.canvas)
+  { Tootsville.Tank.canvas =
     document.getElementById ('tootsville3d'); }
-  if (! Tootsville.tank.canvas)
+  if (! Tootsville.Tank.canvas)
   { const canvas = document.createElement ('CANVAS');
     canvas.id = 'tootsville3d';
     canvas.touchAction = 'none';
     document.getElementsByTagName ('BODY')[0].appendChild (canvas);
-    Tootsville.tank.canvas = canvas; }
-  return Tootsville.tank.canvas; };
+    Tootsville.Tank.canvas = canvas; }
+  return Tootsville.Tank.canvas; };
 
 /**
  * Convert an event on the CANVAS object into a 3D event as appropriate.
  */
-Tootsville.tank.convertCanvasEventTo3D = function (event)
-{ const picked = Tootsville.tank.scene.pick (
-    Tootsville.tank.scene.pointerX,
-    Tootsville.tank.scene.pointerY);
-  Tootsville.tank.acceptClick (event, picked.hit,
+Tootsville.Tank.convertCanvasEventTo3D = function (event)
+{ const picked = Tootsville.Tank.scene.pick (
+    Tootsville.Tank.scene.pointerX,
+    Tootsville.Tank.scene.pointerY);
+  Tootsville.Tank.acceptClick (event, picked.hit,
                                picked.distance,
                                picked.pickedMesh,
                                picked.pickedPoint); };
@@ -130,13 +130,13 @@ Tootsville.tank.convertCanvasEventTo3D = function (event)
 /**
  * Initialize the Babylon 3D scene object.
  */
-Tootsville.tank.initScene = function ()
+Tootsville.Tank.initScene = function ()
 { console.log ("Initializing the Babylon Scene");
-  Tootsville.tank.scene = new BABYLON.Scene (Tootsville.tank.engine);
+  Tootsville.Tank.scene = new BABYLON.Scene (Tootsville.Tank.engine);
   const tod = Math.sin (Tootsville.decodeTime ().hour / 9);
-  Tootsville.tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
-  Tootsville.tank.scene.registerAfterRender (Tootsville.tank.afterRender);
-  return Tootsville.tank.scene; };
+  Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
+  Tootsville.Tank.scene.registerAfterRender (Tootsville.Tank.afterRender);
+  return Tootsville.Tank.scene; };
 
 /**
  * Update one 2D attachment object.
@@ -145,14 +145,14 @@ Tootsville.tank.initScene = function ()
 * and need to  be updated to keep  in sync with the  underlying 3D scene
 * from time to time.
  */
-Tootsville.tank.updateAttachment = function (model, attachment)
+Tootsville.Tank.updateAttachment = function (model, attachment)
 { const center = BABYLON.Vector3.Project (
     model.getAbsolutePosition (),
     BABYLON.Matrix.IdentityReadOnly,
-    Tootsville.tank.scene.getTransformMatrix (),
-    Tootsville.tank.camera.viewport.toGlobal (
-        Tootsville.tank.engine.getRenderWidth (),
-        Tootsville.tank.engine.getRenderHeight ()));
+    Tootsville.Tank.scene.getTransformMatrix (),
+    Tootsville.Tank.camera.viewport.toGlobal (
+        Tootsville.Tank.engine.getRenderWidth (),
+        Tootsville.Tank.engine.getRenderHeight ()));
   attachment.style.left = center.x;
   /* FIXME: use bounding box height */
   if ('bottom' == attachment.slot)
@@ -163,54 +163,54 @@ Tootsville.tank.updateAttachment = function (model, attachment)
 /**
  * Update the 2D attachments for one avatar. 
  */
-Tootsville.tank.updateAttachmentsForAvatar = function (avatar)
+Tootsville.Tank.updateAttachmentsForAvatar = function (avatar)
 { if (avatar.label)
-  { Tootsville.tank.updateAttachment (avatar.model, avatar.label); }
+  { Tootsville.Tank.updateAttachment (avatar.model, avatar.label); }
   if (avatar.speech)
-  { Tootsville.tank.updateAttachment (avatar.model, avatar.speech); } };
+  { Tootsville.Tank.updateAttachment (avatar.model, avatar.speech); } };
 
 /**
  * Update all 2D attachment overlays to follow the 3D scene.
  */
-Tootsville.tank.updateAttachmentOverlays = function ()
+Tootsville.Tank.updateAttachmentOverlays = function ()
 { for (let i = 0; i < Tootsville.Game.avatars.length; ++i)
-  { Tootsville.tank.updateAttachmentsForAvatar (Tootsville.Game.avatars [i]); } };
+  { Tootsville.Tank.updateAttachmentsForAvatar (Tootsville.Game.avatars [i]); } };
 
 /**
  * This event  handler is called  whenever a frame  in the 3D  scene has
  * been rendered.
  */
-Tootsville.tank.afterRender = function ()
-{ if (true || Tootsville.tank.attachmentOverlaysNeedUpdateP)
-  { Tootsville.tank.updateAttachmentOverlays ();
-    Tootsville.tank.attachmentOverlaysNeedUpdateP = false; } };
+Tootsville.Tank.afterRender = function ()
+{ if (true || Tootsville.Tank.attachmentOverlaysNeedUpdateP)
+  { Tootsville.Tank.updateAttachmentOverlays ();
+    Tootsville.Tank.attachmentOverlaysNeedUpdateP = false; } };
 
 /**
  * Initialize the 3D engine, including Babylon 3D and Cannon physics.
  *
- * The main  entry point  is `Tootsville.tank.start3D'  which eventually
+ * The main  entry point  is `Tootsville.Tank.start3D'  which eventually
  * invokes this.  This function actually  connects the 3D engine  to the
  * CANVAS object and 2D event system.
  */
-Tootsville.tank.init3DEngine = function ()
+Tootsville.Tank.init3DEngine = function ()
 { return new Promise (
     (finish) =>
-        { Tootsville.tank.getCanvas ();
-          if (! Tootsville.tank.engine)
+        { Tootsville.Tank.getCanvas ();
+          if (! Tootsville.Tank.engine)
           { console.log ("Initializing Babylon3D as graphics engine for tank");
-            Tootsville.tank.engine =
-            new BABYLON.Engine (Tootsville.tank.canvas,
+            Tootsville.Tank.engine =
+            new BABYLON.Engine (Tootsville.Tank.canvas,
                                 true); }
-          if (! Tootsville.tank.physics)
+          if (! Tootsville.Tank.physics)
           { console.log ("Enabling CannonJS physics engine for tank");
-            Tootsville.tank.physics = new BABYLON.CannonJSPlugin (); }
-          if (! Tootsville.tank.scene)
-          { Tootsville.tank.initScene (); }
+            Tootsville.Tank.physics = new BABYLON.CannonJSPlugin (); }
+          if (! Tootsville.Tank.scene)
+          { Tootsville.Tank.initScene (); }
           // TODO confirm if this is engine or scene:
-          Tootsville.tank.engine.workerCollisions = true;
-          Tootsville.tank.canvas.addEventListener (
+          Tootsville.Tank.engine.workerCollisions = true;
+          Tootsville.Tank.canvas.addEventListener (
               'click',
-              Tootsville.tank.convertCanvasEventTo3D);
+              Tootsville.Tank.convertCanvasEventTo3D);
           console.log ("init3DEngine: ready");
           finish (); }); };
 
@@ -220,41 +220,41 @@ Tootsville.tank.init3DEngine = function ()
  *
  * We know that it, at least, will always exist.
  */
-Tootsville.tank.initPlayerToot = function ()
+Tootsville.Tank.initPlayerToot = function ()
 { if ( (! (Tootsville.character))
        ||
        (! (Tootsville.character.avatar)) ) { Tootsville.Login.start ();
                                              return;}
   Tootsville.AvatarBuilder.build (
-      Tootsville.character, Tootsville.tank.scene,
-      model => { Tootsville.tank.camera.lockedTarget = model; } ); };
+      Tootsville.character, Tootsville.Tank.scene,
+      model => { Tootsville.Tank.camera.lockedTarget = model; } ); };
 
 
 /**
  * Create the  text scene with ground  plane and the player's  Toot with
  * a static light.
  */
-Tootsville.tank.createTestScene = function ()
+Tootsville.Tank.createTestScene = function ()
 { console.log ("Creating a test scene with an over-the-shoulder camera, ground plane, light, and Toot.");
-  console.log ("Babylon scene object is ", Tootsville.tank.scene);
-  Tootsville.tank.initOTSCamera ();
-  Tootsville.tank.initPhysics ('Tootanga');
+  console.log ("Babylon scene object is ", Tootsville.Tank.scene);
+  Tootsville.Tank.initOTSCamera ();
+  Tootsville.Tank.initPhysics ('Tootanga');
   Tootsville.SkyBuilder.build ('CHOR'); /* XXX: other worlds some day */
   Tootsville.GroundBuilder.build (0, 0, 0); /* TODO x, y, z */
-  Tootsville.tank.initPlayerToot ();
+  Tootsville.Tank.initPlayerToot ();
   Tootsville.SceneBuilder.build (0, 0, 0); /* TODO x, y, z */
-  console.log ("Initialized scene is now", Tootsville.tank.scene);
-  return Tootsville.tank.scene; };
+  console.log ("Initialized scene is now", Tootsville.Tank.scene);
+  return Tootsville.Tank.scene; };
 
 /**
  * Start the 3D render loop running.
  */
-Tootsville.tank.startRenderLoop = function ()
-{ console.log ("Starting render loop for scene ", Tootsville.tank.scene,
-               " with render function ", Tootsville.tank.scene.render);
+Tootsville.Tank.startRenderLoop = function ()
+{ console.log ("Starting render loop for scene ", Tootsville.Tank.scene,
+               " with render function ", Tootsville.Tank.scene.render);
   setTimeout (function ()
-              { Tootsville.tank.engine.runRenderLoop ( function ()
-                                                       { try { Tootsville.tank.scene.render () }
+              { Tootsville.Tank.engine.runRenderLoop ( function ()
+                                                       { try { Tootsville.Tank.scene.render () }
                                                          catch (e) {} }); },
               1); };
 
@@ -264,7 +264,7 @@ Tootsville.tank.startRenderLoop = function ()
  * We can load these hefty libraries asynchronously whilst the player is
  * busy signing in.
  */
-Tootsville.tank.prepareFor3D = function ()
+Tootsville.Tank.prepareFor3D = function ()
 { return new Promise (
     finish =>
         { if ( ("BABYLON" in window) &&
@@ -272,16 +272,16 @@ Tootsville.tank.prepareFor3D = function ()
           { finish (); }
           else if ("BABYLON" in window)
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/cannon.js').then (
-              Tootsville.tank.prepareFor3D); }
+              Tootsville.Tank.prepareFor3D); }
           else
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
                                         /*'https://cdn.babylonjs.com/babylon.js'*/).then (
-              Tootsville.tank.prepareFor3D); }}); };
+              Tootsville.Tank.prepareFor3D); }}); };
 
 /**
  * Enqueue some foley sound effects that will be used in the scene.
  */
-Tootsville.tank.loadUISounds = function ()
+Tootsville.Tank.loadUISounds = function ()
 { var squawk = new BABYLON.Sound (
     "parrot-squawk",
     "https://jumbo.tootsville.org/Assets/Voices/parrot-squawk.wav",
@@ -293,24 +293,24 @@ Tootsville.tank.loadUISounds = function ()
  * Start  the 3D  engine, after  doing any  necessary preparatory  work.
  * This is the main entry point for the 3D simulation engine.
  */
-Tootsville.tank.start3D = function ()
-{ Tootsville.tank.prepareFor3D ().then (Tootsville.tank.start3DIfReady); };
+Tootsville.Tank.start3D = function ()
+{ Tootsville.Tank.prepareFor3D ().then (Tootsville.Tank.start3DIfReady); };
 
 /**
  * Ensure  that all  libraries  are  loaded and  actually  start the  3D
- * engine. Called by `Tootsville.tank.start3D'
+ * engine. Called by `Tootsville.Tank.start3D'
  */
-Tootsville.tank.start3DIfReady = function ()
+Tootsville.Tank.start3DIfReady = function ()
     { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
-      { return Tootsville.tank.prepareFor3D ().then (Tootsville.tank.start3DifReady); }
+      { return Tootsville.Tank.prepareFor3D ().then (Tootsville.Tank.start3DifReady); }
       BABYLON.SceneLoader.ShowLoadingScreen = false;
-      Tootsville.tank.init3DEngine ().then (
+      Tootsville.Tank.init3DEngine ().then (
           () =>
               { console.log ("3D libraries loaded");
-                Tootsville.tank.createTestScene ();
+                Tootsville.Tank.createTestScene ();
                 console.log ("Created test scene; starting rendering loop");
-                Tootsville.tank.startRenderLoop ();
+                Tootsville.Tank.startRenderLoop ();
                 window.addEventListener ('resize',
-                                         Tootsville.tank.engine.resize); } );
+                                         Tootsville.Tank.engine.resize); } );
 
       return true; };
