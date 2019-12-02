@@ -66,7 +66,7 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
 {
-    if (atmosphereP && Tootsville.SkyBuilder.sunY() > 0)
+    if (atmosphereP && Tootsville.SkyBuilder.sunY() < 0)
     { const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
                                           Tootsville.Tank.scene, true); } };
 
