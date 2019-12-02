@@ -9,8 +9,8 @@ play/rollbar.js
 play/colors.js
 play/time.js
 
-play/gossip/parrot.js
-play/gossip/gossip.js
+play/gossip/Parrot.js
+play/gossip/Gossip.js
 
 play/login/Login.js
 

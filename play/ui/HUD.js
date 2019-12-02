@@ -170,7 +170,7 @@ Tootsville.UI.HUD.loadHUDPanel = function (panelName, finish)
               { Tootsville.error ("Failed to load: " + panelName); }
               var panelDiv = htmlf.getElementById (panelName);
               if (!panelDiv)
-              { Tootsville.parrot.say ("Pop-up problem",
+              { Tootsville.Parrot.say ("Pop-up problem",
                                        "I loaded the pop-up for " + panelName +
                                        " and got back something I couldn't use. You won't be able " +
                                        "to access that panel for now. ☹");

@@ -93,9 +93,9 @@ Tootsville.util.rest = function (method, uri, body, headers)
               { return { error: response.status, response: response }; }
               response.json ().then (
                   json =>
-                      { return Tootsville.parrot.ask (
+                      { return Tootsville.Parrot.ask (
                           "Uh-oh! Server trouble!",
-                          Tootsville.parrot.parrotErrorText(json),
+                          Tootsville.Parrot.parrotErrorText(json),
                           [{ tag: 'retry', text: "Retry the network operation" }]).then
                         (() =>
                          { console.log ("User-initiated retry for " + origURI);
@@ -103,7 +103,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
             return null; },
       error =>
           { Tootsville.warn("Fetch error ", error);
-            Tootsville.parrot.ask (
+            Tootsville.Parrot.ask (
                 "Uh-oh! Network trouble!",
                 "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
                     uri.replace('/', '/&shy;') +
@@ -133,7 +133,7 @@ Tootsville.util.loadScript = function (src)
 Tootsville.util.ensureServersReachable = function ()
 { Tootsville.util.rest ('GET', 'meta-game/ping').then
   ( (response) => { Tootsville.trace ("Ping replied", response); },
-    (error) => { Tootsville.parrot.say (
+    (error) => { Tootsville.Parrot.say (
         "Squawk! I don't see any servers!",
         "I'm not able to reach any of the Tootsville.Game servers. "+
             "This probably means you won't be able to sign in." ); } ); };

@@ -310,7 +310,7 @@ Tootsville.Tank.loadUISounds = function ()
     "https://jumbo.tootsville.org/Assets/Voices/parrot-squawk.wav",
     Tootsville.Tank.scene,
     function ()
-    { Tootsville.parrot.squawk = squawk; }); };
+    { Tootsville.Parrot.squawk = squawk; }); };
 
 /**
  * Start  the 3D  engine, after  doing any  necessary preparatory  work.

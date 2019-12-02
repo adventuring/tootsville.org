@@ -271,7 +271,7 @@ Tootsville.Gossip.getICE = function ()
   ( response => { Tootsville.Gossip.iceServers = response;
                   Tootsville.Gossip.ensureConnected ().then
                   ( Tootsville.Gossip.sendLogOK ); },
-    error => { Tootsville.parrot.say (
+    error => { Tootsville.Parrot.say (
         "Squawk! Trouble getting connection servers",
         "I'm not able to get connection servers needed to join the game. Are you online?" );
                Tootsville.UI.HUD.refreshHUD (); } ); };

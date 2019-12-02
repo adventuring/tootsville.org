@@ -97,7 +97,7 @@ Tootsville.Login.serverQueryCharacters = function ()
                       { reject (); } else
                       { finish (response.toots); } },
                 error =>
-                    { Tootsville.parrot.ask ("Can't get Toots list",
+                    { Tootsville.Parrot.ask ("Can't get Toots list",
                                              "I can't get a list of your Toots. Maybe there are network problems?",
                                              [{ tag: "retry",
                                                 text: "Try Again" }]).
@@ -191,7 +191,7 @@ Tootsville.Login.generateNewToot = function ()
  *
  */
 Tootsville.Login.startCharacterCreation = function ()
-{ Tootsville.parrot.say ("Let's get started!",
+{ Tootsville.Parrot.say ("Let's get started!",
                          "<p>Let's create your Toot character.</p>" +
                          "<p>This takes about a minute. I'll create a new " +
                          "Toot character for you. You can change the name, colors, or " +
@@ -233,7 +233,7 @@ Tootsville.Login.doRealLogin = function (name)
 Tootsville.Login.playWithCharacter = function (name)
 { let li = this.findLIForToot (name);
   if (li ['data-toot'].childP)
-  { Tootsville.parrot.ask ("That's a Child Toot",
+  { Tootsville.Parrot.ask ("That's a Child Toot",
                            "Are you sure you want to sign in with a Child account?",
                            [{ tag: "yes", text: "Sign In" },
                             { tag: "no", text: "Cancel" }]).
