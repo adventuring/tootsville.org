@@ -75,7 +75,7 @@ Tootsville.AvatarViewer.createCamera = function (canvas, name)
     Tootsville.Tank.scene);
   
   camera.target = BABYLON.Vector3.Zero;
-  
+  camera.inputs.clear ();
   canvas.camera = camera; };
 
 /**
