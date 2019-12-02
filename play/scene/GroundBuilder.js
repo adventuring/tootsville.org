@@ -43,7 +43,7 @@ if (!('GroundBuilder' in Tootsville)) { Tootsville.GroundBuilder = {}; }
 Tootsville.GroundBuilder.initGroundPlane = function ()
 { const ground =
         BABYLON.Mesh.CreateGround ('ground',
-                                   100, 100, 10,
+                                   2000, 2000, 10,
                                    Tootsville.Tank.scene);
   ground.material = new BABYLON.StandardMaterial ('ground',
                                                   Tootsville.Tank.scene);
@@ -54,7 +54,7 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
       ground,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 0, restitution: 3 });
-//  ground.checkCollisions = true;
+  ground.checkCollisions = true;
   console.log ("Ground plane is ", ground);
   return ground; };
 

@@ -121,7 +121,7 @@ Tootsville.UI.Keys.bindings =
     },
       withControl:
       { 'a': 'beginning-of-line',
-        'b': 'backward-word',
+        'b': 'backward-char',
         'c': 'prefix C-c',
         'd': 'delete',
         'e': 'end-of-line',
@@ -131,6 +131,7 @@ Tootsville.UI.Keys.bindings =
         'k': 'kill-line',
         'n': 'next-history-line',
         'p': 'prior-history-line',
+        'q': 'reset-login',
         'r': 'isearch-backward',
         's': 'isearch',
         't': 'transpose-chars',
@@ -158,12 +159,261 @@ if (!('runCommand' in Tootsville.UI))
 { /* placeholder until Commands loads */
     Tootsville.UI.runCommand = function (binding, event) {}; }
 
-Tootsville.UI.Keys.onKeypress = function (ev)
-{ var coda = 'single';
+Tootsville.UI.Keys.onKeyDown = function (ev)
+{ Tootsville.UI.talkSpeak = document.getElementById('talk-speak');
+  var coda = 'single';
   if (ev.altKey || ev.metaKey ) { coda = 'withMeta'; }
   else if (ev.ctrlKey) { coda = 'withControl'; }
-  console.debug ("Key: " + coda + " " + ev.key);
   if (Tootsville.UI.Keys.prefixed)
   { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings["afterControl" + Tootsville.UI.Keys.prefixed][coda], ev); }
   else
   { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings[coda][ev.key], ev); } };
+
+// 
+
+/**
+ * Move the cursor backwards one character in the speaking box.
+ */
+Tootsville.UI.Keys.backwardChar = function (event)
+{ var point = Tootsville.UI.talkSpeak.selectionStart - 1;
+  point = Math.max (0, point);
+  Tootsville.UI.talkSpeak.focus ();
+  Tootsville.UI.talkSpeak.setSelectionRange (point, point); };
+
+/**
+ * Move the cursor back to the previous sentence start.
+ * 
+ * Sentences are defined  to be delimited by  period, exclamation point,
+ * or question mark.
+ */
+Tootsville.UI.Keys.backwardSentence = function (event)
+{ /* TODO */ };
+
+/**
+ * Move the cursor back one word.
+ *
+ * A word is considered to consist of contiguous letters or digits.
+ */
+Tootsville.UI.Keys.backwardWord = function (event)
+{ /* TODO */ };
+
+/**
+ * Move the cursor to the start of the line.
+ */
+Tootsville.UI.Keys.beginningOfLine = function (event)
+{ Tootsville.UI.talkSpeak.focus ();
+  Tootsville.UI.talkSpeak.setSelectionRange (0,0); };
+
+/**
+ * Set the speaking volume to shouting.
+ */
+Tootsville.UI.Keys.beginShouting = function (event)
+{ /* TODO */ };
+
+/**
+ * Set the  speaking volume to  speaking normally (neither  shouting nor
+ * whispering)
+ */
+Tootsville.UI.Keys.beginSpeaking = function (event)
+{ /* TODO */ };
+
+/**
+ * Set the speaking volume to whispering.
+ */
+Tootsville.UI.Keys.beginWhispering = function (event)
+{ /* TODO */ };
+
+/**
+ * Upcase the  first letter of the  word under the cursor,  and downcase
+ * the remaining letters.
+ */
+Tootsville.UI.Keys.capitalizeWord = function (event)
+{ /* TODO */ };
+
+/**
+ * Delete the character to the left of the cursor.
+ */
+Tootsville.UI.Keys.deleteBackwardChar = function (event)
+{ /* TODO */ };
+
+/**
+ * Delete the character to the right of the cursor.
+ */
+Tootsville.UI.Keys.deleteChar = function (event)
+{ /* TODO */ };
+
+/**
+ * Downcase the word under the cursor.
+ */
+Tootsville.UI.Keys.downcaseWord = function (event)
+{ /* TODO */ };
+
+/**
+ * Move the cursor to after the end of the line.
+ */
+Tootsville.UI.Keys.endOfLine = function (event)
+{ /* TODO */ };
+
+/**
+ * Reserved for future use.
+ *
+ * Should prompt  for an extended command  to execute. This is  bound to
+ * M-x and is analogous to the function in Emacs.
+ */
+Tootsville.UI.Keys.executeExtendedCommand = function (event)
+{ /* TODO */ };
+
+/**
+ * Move the cursor forward one character.
+ */
+Tootsville.UI.Keys.forwardChar = function (event)
+{ var point = Tootsville.UI.talkSpeak.selectionEnd + 1;
+  Tootsville.UI.talkSpeak.focus ();
+  Tootsville.UI.talkSpeak.setSelectionRange (point, point); };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.forwardSentence = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.forwardWord = function (event)
+{ /* TODO */ };
+
+/**
+ * Load the game help panel
+ */
+Tootsville.UI.Keys.help = function (event)
+{ Tootsville.UI.HUD.showHUDPanel('help'); };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.insertChar = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.isearch = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.isearchBackward = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.keyboardQuit = function (event)
+{ /* TODO */ };
+
+/**
+ * Delete the entire contents of the speaking box.
+ */
+Tootsville.UI.Keys.killLine = function (event)
+{ Tootsville.UI.talkSpeak.value = '';
+  Tootsville.UI.talkSpeak.focus (); };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.killRegion = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.killRingSave = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.killSentence = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.killWord = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.nextHistoryLine = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.prefixCc = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.prefixCx = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.priorHistoryLine = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.selectAll = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.speakLine = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.textEntry = function (event)
+{ /* TODO */ };
+
+/**
+ * Switch the characters before and after the cursor
+ */
+Tootsville.UI.Keys.transposeChars = function (event)
+{ /* TODO */ };
+
+/**
+ * Switch the word under the cursor with the prior word.
+ *
+ * When on a non-word character, switch the words before and after it.
+ */
+Tootsville.UI.Keys.transposeWords = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.upcaseWord = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.yank = function (event)
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.Keys.yankPop = function (event)
+{ /* TODO */ };

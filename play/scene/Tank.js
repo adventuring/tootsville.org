@@ -257,8 +257,15 @@ Tootsville.Tank.createScene = function ()
   Tootsville.GroundBuilder.build (0, 0, 0); /* TODO x, y, z */
   Tootsville.Tank.initPlayerToot ();
   Tootsville.SceneBuilder.build (0, 0, 0); /* TODO x, y, z */
-  BABYLON.SceneOptimizer.OptimizeAsync(Tootsville.Tank.scene,
-                                       BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed());
+
+  /* Optimize display on lower-end systems at the expense of frame rate, if necessary */
+  var optimize = BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed();
+  optimize.targetFrameRate = 25;
+  BABYLON.SceneOptimizer.OptimizeAsync(Tootsville.Tank.scene, optimize);
+
+  /* Make emissive objects glow */
+  new BABYLON.GlowLayer("glow", Tootsville.Tank.scene);
+  
   console.log ("Initialized scene is now", Tootsville.Tank.scene);
   return Tootsville.Tank.scene; };
 
@@ -270,7 +277,7 @@ Tootsville.Tank.startRenderLoop = function ()
                " with render function ", Tootsville.Tank.scene.render);
   setTimeout (function ()
               { Tootsville.Tank.engine.runRenderLoop ( function ()
-                                                       { try { Tootsville.Tank.scene.render () }
+                                                       { try { Tootsville.Tank.scene.render (); }
                                                          catch (e) {} }); },
               1); };
 

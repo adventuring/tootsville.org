@@ -85,7 +85,8 @@ Tootsville.UI.commands =
       'kill-ring-save': Tootsville.UI.Keys.killRingSave,
       'execute-extended-command': Tootsville.UI.Keys.executeExtendedCommand,
       'yank-pop': Tootsville.UI.Keys.yankPop,
-      'insert-char': Tootsville.UI.Keys.insertChar
+      'insert-char': Tootsville.UI.Keys.insertChar,
+      'reset-login': Tootsville.Login.quit
     };
 
 /**
@@ -93,4 +94,12 @@ Tootsville.UI.commands =
  */
 Tootsville.UI.runCommand = function (command, event)
 { var cmd = Tootsville.UI.commands[ command ];
-  if (cmd) { (cmd)(event); } else { console.warn ("No such command as " + command); }  };
+  if (cmd)
+  { (cmd)(event);
+    /* Beat up browsers trying to steal our keystrokes */
+    event.preventDefault ();
+    event.stopImmediatePropagation ();
+    event.cancelBubble = true; }
+  else if (undefined == cmd)
+  { return; }
+  else { console.warn ("No such command as " + command); }  };

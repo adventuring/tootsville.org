@@ -33,7 +33,6 @@
 
 if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
 
-
 /** 
  * The first layer of the sky is the ambient light of the scene, and the
  * color  of   the  sky  itself.   This  is  based  entirely   upon  the
@@ -76,7 +75,30 @@ Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
  * Position the sun relative to the viewer
  */
 Tootsville.SkyBuilder.setSun = function ()
-{};
+{ if (Tootsville.SkyBuilder.sun)
+  { Tootsville.error ("Sun already exists"); return; }
+  const sun = BABYLON.Mesh.CreateSphere ("The Sun", { segments: 10, diameter: 1 }, Tootsville.Tank.scene);
+  const sunFire = new BABYLON.StandardMaterial("Nuclear Fire", Tootsville.Tank.scene);
+  sunFire.emissiveColor = new BABYLON.Color3(1,.90,.95);
+  sunFire.disableLighting = true;
+  sun.material = sunFire;
+  sun.position.x = Tootsville.SkyBuilder.sunX ();
+  sun.position.y = Tootsville.SkyBuilder.sunY ();
+  Tootsville.SkyBuilder.sun = sun;
+  const light = new BABYLON.DirectionalLight (
+      'Sunlight', sun.position.clone ().negate (), Tootsville.Tank.scene);
+  light.position = sun.position.clone ();
+  Tootsville.SkyBuilder.sunLight = light;
+  const shadowGenerator = new BABYLON.ShadowGenerator (1024, light);
+  // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
+  //  * scattering effects */
+  // shadowGenerator.bias = 0.00001;
+  // shadowGenerator.normalBias = 0.01;
+  // shadowGenerator.useContactHardeningShadow = true;
+  // shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
+  // shadowGenerator.setDarkness(0.5);
+  // Tootsville.Tank.shadowGenerator = shadowGenerator;
+};
 
 /**
  * Position the planet Chœrogryllum relative to the viewer. Used when the
@@ -129,36 +151,8 @@ Tootsville.SkyBuilder.setPrecipitation = function ()
 Tootsville.SkyBuilder.sunY = function ()
 { return (Math.sin(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2; };
 
-Tootsville.SkyBuilder.sunZ = function ()
+Tootsville.SkyBuilder.sunX = function ()
 { return (Math.cos(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2; };
-
-/**
- * Initialize a default  fill light source for the  game, until in-world
- * light sources are working.
- *
- * XXX Remove this once the game has its own lights.
- *
- * TODO The sky  loader should create lights for sun,  moons, and a base
- * light for stars.
- */
-Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
-{ const sunY = Tootsville.SkyBuilder.sunY() * 10000;
-  const sunZ = Tootsville.SkyBuilder.sunZ() * 10000;
-  const light = new BABYLON.DirectionalLight (
-      'sunlight',
-      new BABYLON.Vector3 (0, -sunY, -sunZ),
-      Tootsville.Tank.scene);
-  light.position = new BABYLON.Vector3 (0, sunY, sunZ);
-  // const shadowGenerator = new BABYLON.ShadowGenerator (1024, light);
-  // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
-  //  * scattering effects */
-  // shadowGenerator.bias = 0.00001;
-  // shadowGenerator.normalBias = 0.01;
-  // shadowGenerator.useContactHardeningShadow = true;
-  // shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
-  // shadowGenerator.setDarkness(0.5);
-  // Tootsville.Tank.shadowGenerator = shadowGenerator;
-};
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
@@ -201,7 +195,20 @@ Tootsville.SkyBuilder.build = function (world)
   if ('PINK' != world) { Tootsville.SkyBuilder.setThePinkMoon (); }
   if ('CHOR' == world)
   { Tootsville.SkyBuilder.setCloudCover ();
-    Tootsville.SkyBuilder.setPrecipitation ();} };
+    Tootsville.SkyBuilder.setPrecipitation ();}
+  setInterval (Tootsville.SkyBuilder.update, 60000); };
+
+/**
+ * Update sky positions and the like.
+ *
+ * XXX Some things aren't able to be updated yet.
+ */
+Tootsville.SkyBuilder.update = function ()
+{ Tootsville.SkyBuilder.sun.position.x = Tootsville.SkyBuilder.sunX ();
+  Tootsville.SkyBuilder.sun.position.yy= Tootsville.SkyBuilder.sunY ();
+  Tootsville.SkyBuilder.sunLight.position = Tootsville.SkyBuilder.sun.position.clone ();
+  /* TODO: Repoint directional light */
+};
 
 /**
  * Fetch sky data from the game server
