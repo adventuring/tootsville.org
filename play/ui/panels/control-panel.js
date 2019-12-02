@@ -39,7 +39,7 @@ if (! document.documentElement.requestFullscreen) {
 Tootsville.UI.setFullscreenFromNavigator();
 
 if (navigator.userAgent.indexOf("Firefox/") > 0) {
-    var ffox = document.getElementById('control-panel-get-firefox');
+    const ffox = document.getElementById('control-panel-get-firefox');
     ffox.outerHTML = '';
 }
 

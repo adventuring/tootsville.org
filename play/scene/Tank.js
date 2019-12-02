@@ -68,13 +68,29 @@ Tootsville.Tank.initOTSCamera = function ()
     'otsCamera',
     new BABYLON.Vector3 (0, 10, -100),
     Tootsville.Tank.scene);
-  camera.radius = 5; /* how closely to follow our Toot */
+  camera.radius = 30; /* how closely to follow our Toot */
   camera.heightOffset = 4.5;
   camera.rotationOffset = 0;
-  camera.cameraAcceleration = .005;
-  camera.maxCameraSpeed = 10;
+  camera.cameraAcceleration = .0005;
+  camera.maxCameraSpeed = 5;
+//  camera.attachControl (Tootsville.Tank.scene.
   // camera.ellipsoid = new BABYLON.Vector3 (.5,1,.5);
   // camera.checkCollisions = true;
+  Tootsville.Tank.camera = camera;
+  console.log ("Created camera", camera);
+  Tootsville.Tank.camera.onProjectionMatrixChangedObservable.add (
+      () =>
+          { Tootsville.Tank.attachmentOverlaysNeedUpdateP = true; } );
+  Tootsville.Tank.camera.onViewMatrixChangedObservable.add (
+      () =>
+          { Tootsville.Tank.onViewMatrixChangedObservable = true; } );
+  return camera; };
+
+Tootsville.Tank.initArcCamera = function ()
+{ const camera = new BABYLON.ArcRotateCamera (
+    "Tootsville Camera", 0, 0, 10,
+    new BABYLON.Vector3 (0, 0, 0), Tootsville.Tank.scene);
+  camera.setPosition (new BABYLON.Vector3 (0, 0, -20));
   Tootsville.Tank.camera = camera;
   console.log ("Created camera", camera);
   Tootsville.Tank.camera.onProjectionMatrixChangedObservable.add (
@@ -224,23 +240,25 @@ Tootsville.Tank.initPlayerToot = function ()
        (! (Tootsville.character.avatar)) ) { Tootsville.Login.start ();
                                              return;}
   Tootsville.AvatarBuilder.build (
-      Tootsville.character, Tootsville.Tank.scene,
-      model => { Tootsville.Tank.camera.lockedTarget = model; } ); };
+      Tootsville.character, Tootsville.Tank.scene// ,
+      // model => { Tootsville.Tank.camera.lockedTarget = model; }
+  ); };
 
 
 /**
  * Create the  text scene with ground  plane and the player's  Toot with
  * a static light.
  */
-Tootsville.Tank.createTestScene = function ()
+Tootsville.Tank.createScene = function ()
 { console.log ("Creating a test scene with an over-the-shoulder camera, ground plane, light, and Toot.");
   console.log ("Babylon scene object is ", Tootsville.Tank.scene);
-  Tootsville.Tank.initOTSCamera ();
   Tootsville.Tank.initPhysics ('Tootanga');
   Tootsville.SkyBuilder.build ('CHOR'); /* XXX: other worlds some day */
   Tootsville.GroundBuilder.build (0, 0, 0); /* TODO x, y, z */
   Tootsville.Tank.initPlayerToot ();
   Tootsville.SceneBuilder.build (0, 0, 0); /* TODO x, y, z */
+  BABYLON.SceneOptimizer.OptimizeAsync(Tootsville.Tank.scene,
+                                       BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed());
   console.log ("Initialized scene is now", Tootsville.Tank.scene);
   return Tootsville.Tank.scene; };
 
@@ -283,7 +301,7 @@ Tootsville.Tank.loadUISounds = function ()
 { var squawk = new BABYLON.Sound (
     "parrot-squawk",
     "https://jumbo.tootsville.org/Assets/Voices/parrot-squawk.wav",
-    Tootsville.scene,
+    Tootsville.Tank.scene,
     function ()
     { Tootsville.parrot.squawk = squawk; }); };
 
@@ -305,10 +323,13 @@ Tootsville.Tank.start3DIfReady = function ()
       Tootsville.Tank.init3DEngine ().then (
           () =>
               { console.log ("3D libraries loaded");
-                Tootsville.Tank.createTestScene ();
+                Tootsville.Tank.createScene ();
                 console.log ("Created test scene; starting rendering loop");
+                setTimeout ( () => { Tootsville.Tank.initOTSCamera ();
+                                     Tootsville.Tank.scene.activeCamera = Tootsville.Tank.camera; }, 100);
                 Tootsville.Tank.startRenderLoop ();
+                /* FIXME this seems to miss many resize events? */
                 window.addEventListener ('resize',
-                                         Tootsville.Tank.engine.resize); } );
+                                         (ev) => { Tootsville.Tank.engine.resize () }); } );
 
       return true; };

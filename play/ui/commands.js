@@ -93,4 +93,4 @@ Tootsville.UI.commands =
  */
 Tootsville.UI.runCommand = function (command, event)
 { var cmd = Tootsville.UI.commands[ command ];
-  if (cmd) { (cmd)(event); } };
+  if (cmd) { (cmd)(event); } else { console.warn ("No such command as " + command); }  };

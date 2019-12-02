@@ -67,8 +67,10 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  * the opacity of the stars when the sun is up. FIXME
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
-{ const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
-                                      Tootsville.Tank.scene, true); };
+{
+    if (atmosphereP && Tootsville.SkyBuilder.sunY() < 0)
+    { const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
+                                          Tootsville.Tank.scene, true); } };
 
 /**
  * Position the sun relative to the viewer

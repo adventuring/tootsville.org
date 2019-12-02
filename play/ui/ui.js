@@ -83,7 +83,7 @@ Tootsville.UI.confirmPretty = function (title,text,accept)
 Tootsville.UI.forceQuit = function ()
 { Tootsville.Login.quit(); };
 
-Tootsville.UI.quit = function () { Tootsville.UI.signOut (); }
+Tootsville.UI.quit = function () { Tootsville.UI.signOut (); };
 
 Tootsville.UI.signOut = function ()
 { Tootsville.UI.confirmPretty(
@@ -106,10 +106,13 @@ Tootsville.UI.setFullscreen = function (really)
   { document.exitFullscreen(); }};
 
 Tootsville.UI.toggleFullscreen = function ()
-{ Tootsville.UI.setFullscreen( ! (document.fullscreenElement) ); };
+{ Tootsville.UI.setFullscreen( ! (document.fullscreenElement) );
+  if (Tootsville.Tank.engine)
+  { setTimeout ( () => { Tootsville.Tank.engine.resize (); }, 1000); } };
 
 Tootsville.UI.onFirstClick = function ()
 { window.removeEventListener('click', Tootsville.UI.onFirstClick);
+  console.log ('noticed a first click');
   document.addEventListener('beforeunload', (ev) => {
       var confirmationMessage = "If you leave or reload this page, you'll quit the game.";
       ev.returnValue = confirmationMessage;  /* Gecko, Trident, Chrome 34+ */

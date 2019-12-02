@@ -162,7 +162,8 @@ Tootsville.UI.Keys.onKeypress = function (ev)
 { var coda = 'single';
   if (ev.altKey || ev.metaKey ) { coda = 'withMeta'; }
   else if (ev.ctrlKey) { coda = 'withControl'; }
+  console.debug ("Key: " + coda + " " + ev.key);
   if (Tootsville.UI.Keys.prefixed)
   { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings["afterControl" + Tootsville.UI.Keys.prefixed][coda], ev); }
   else
-  { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings[coda], ev); } };
+  { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings[coda][ev.key], ev); } };

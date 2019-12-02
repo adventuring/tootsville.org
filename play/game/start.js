@@ -52,7 +52,7 @@ Tootsville.bootstrap = function ()
     window.addEventListener ('click', Tootsville.UI.onFirstClick);
     document.addEventListener ('fullscreenchange',
                                Tootsville.UI.setFullscreenFromNavigator);
-
+    /* TODO detect navigator going offline */
     Tootsville.Game.hideWhenGameReady ();
     Tootsville.Game.stopSlowLoadingWatchdogs ();
 
