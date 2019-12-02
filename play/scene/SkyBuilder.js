@@ -64,10 +64,11 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
 /**
  * The second layer of  the sky are the stars, which  are faded with the
  * relative brightness of  the background layer. ie:  We actually reduce
- * the opacity of the stars when the sun is up.
+ * the opacity of the stars when the sun is up. FIXME
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
-{};
+{ var texture = new BABYLON.CubeTexture("https://jumbo.tootsville.org/Assets/Textures/5/Starfield", Tootsville.Tank.scene);
+  Tootsville.Tank.scene.createDefaultSkybox(texture, true, 10000); };
 
 /**
  * Position the sun relative to the viewer
@@ -182,7 +183,7 @@ Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
  */
 Tootsville.SkyBuilder.build = function (world)
 { Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' == world);
-  Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
+  // Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
   Tootsville.SkyBuilder.setSun ();
   if ('CHOR' != world) { Tootsville.SkyBuilder.setPlanet (); }
   if ('MOON' != world) { Tootsville.SkyBuilder.setTheMoon (); }
