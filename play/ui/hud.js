@@ -343,10 +343,9 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
  */
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
-    if (Tootsville.character != paperdoll.avatar)
-  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
-  paperdoll.avatar = Tootsville.character;
-};
+  if (!(Tootsville.util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
+  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll);
+    paperdoll.avatar = Object.assign({}, Tootsville.character); } };
 
 /**
  * Refresh the display of the active equipment item.

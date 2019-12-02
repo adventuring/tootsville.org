@@ -137,3 +137,18 @@ Tootsville.util.ensureServersReachable = function ()
         "Squawk! I don't see any servers!",
         "I'm not able to reach any of the Tootsville.Game servers. "+
             "This probably means you won't be able to sign in." ); } ); };
+
+/**
+ * Check for value equality of two objects
+ */
+Tootsville.util.equalP = function (a, b)
+{ const aProps = Object.getOwnPropertyNames(a);
+  const bProps = Object.getOwnPropertyNames(b);
+  if (aProps.length != bProps.length)
+  { return false; }
+  for (var i = 0; i < aProps.length; ++i)
+  { var propName = aProps[i];
+    if (a[propName] !== b[propName])
+    { return false; } }
+  return true; };
+
