@@ -36,19 +36,19 @@
       <h2> Create a New Toot </h2>
       <button id="new-toot-base-color"
               title="Base Color"
-              onclick="Tootsville.ui.newToot.changeColor('base',this)"></button>
+              onclick="Tootsville.UI.NewToot.changeColor('base',this)"></button>
       <button id="new-toot-pad-color"
               title="Pad Color"
-              onclick="Tootsville.ui.newToot.changeColor('pad',this)"></button>
+              onclick="Tootsville.UI.NewToot.changeColor('pad',this)"></button>
       <button id="new-toot-pattern-color"
               title="Pattern Color"
-              onclick="Tootsville.ui.newToot.changeColor('pattern',this)"></button>
+              onclick="Tootsville.UI.NewToot.changeColor('pattern',this)"></button>
       <button id="new-toot-pattern"
               title="Pattern"
-              onclick="Tootsville.ui.newToot.changePattern(this)"></button>
+              onclick="Tootsville.UI.NewToot.changePattern(this)"></button>
       <button id="new-toot-t-shirt-color"
               title="T-Shirt Color"
-              onclick="Tootsville.ui.newToot.changeColor('t-shirt',this)"></button>
+              onclick="Tootsville.UI.NewToot.changeColor('t-shirt',this)"></button>
       <svg xmlns="http://www.w3.org/2000/svg" width="25mm" height="25mm" viewBox="0 0 250 250" version="1.1"
               id="new-toot-paperdoll"><g id="layer1" transform="translate(0,-47)">
         <path
@@ -92,8 +92,8 @@
         <legend><label for="new-toot-name">Name:</label></legend>
         <input type="text" name="new-toot-name" id="new-toot-name"
                size="32"
-               onkeyup="Tootsville.ui.newToot.checkName()"
-               onchange="Tootsville.ui.newToot.checkName()"
+               onkeyup="Tootsville.UI.NewToot.checkName()"
+               onchange="Tootsville.UI.NewToot.checkName()"
                placeholder="(Toot's name here)"
                pattern="[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?">
         <div id="new-toot-name-howto">
@@ -115,13 +115,13 @@
         </fieldset>
         <div id="new-toot-ready-box">
           <p>  Once  you're   happy  with  your  new   Toot's  name  and
-            appearance, click <b onclick="Tootsville.ui.newToot.ready()">Ready</b>: </p>
+            appearance, click <b onclick="Tootsville.UI.NewToot.ready()">Ready</b>: </p>
             <button id="new-toot-cancel"
                     onclick="Tootsville.UI.HUD.closePanel ()">Cancel</button>
           <button id="new-toot-ready"
-                  onclick="Tootsville.ui.newToot.ready ()">Ready</button>
+                  onclick="Tootsville.UI.NewToot.ready ()">Ready</button>
         </div>
     </div>
-    <script>Tootsville.ui.newToot.randomize()</script>
+    <script>Tootsville.UI.NewToot.randomize()</script>
   </body>
 </html>
