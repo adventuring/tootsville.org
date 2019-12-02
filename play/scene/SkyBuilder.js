@@ -53,10 +53,10 @@ if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
  */
 Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
 { if (atmosphereP)
-  { /* TODO observe sun position and set appropriately */
-      Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7, .7, 1);
-      Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (.7, .7, .7);
-      Tootsville.SkyBuilder.initCrappyDefaultLight (); }
+  { const tod = Tootsville.SkyBuilder.sunY()+1/2;
+    Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
+    Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (.7 * tod, .7 * tod, .7 * tod);
+    Tootsville.SkyBuilder.initCrappyDefaultLight (); }
   else
   { Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (0, 0, 0);
     Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (0, 0, 0); } };
@@ -123,6 +123,12 @@ Tootsville.SkyBuilder.setCloudCover = function ()
 Tootsville.SkyBuilder.setPrecipitation = function ()
 {};
 
+Tootsville.SkyBuilder.sunY = function ()
+{ return (Math.sin(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2; };
+
+Tootsville.SkyBuilder.sunZ = function ()
+{ return (Math.cos(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2; };
+
 /**
  * Initialize a default  fill light source for the  game, until in-world
  * light sources are working.
@@ -133,11 +139,13 @@ Tootsville.SkyBuilder.setPrecipitation = function ()
  * light for stars.
  */
 Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
-{ const light = new BABYLON.DirectionalLight (
-    'sunlight',
-    new BABYLON.Vector3 (0, -.5, -1),
-    Tootsville.Tank.scene);
-  light.position = new BABYLON.Vector3 (20, 70, 120); /* TODO Sun position */
+{ const sunY = Tootsville.SkyBuilder.sunY() * 10000;
+  const sunZ = Tootsville.SkyBuilder.sunZ() * 10000;
+  const light = new BABYLON.DirectionalLight (
+      'sunlight',
+      new BABYLON.Vector3 (0, -sunY, -sunZ),
+      Tootsville.Tank.scene);
+  light.position = new BABYLON.Vector3 (0, sunY, sunZ);
   Tootsville.Tank.shadowGenerator = new BABYLON.ShadowGenerator (1024, light); };
 
 

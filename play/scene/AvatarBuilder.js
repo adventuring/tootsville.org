@@ -66,12 +66,13 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
 Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
 { console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
   var object = root.clone ("avatar/" + avatar.name);
-  Tootsville.Tank.shadowGenerator.getShadowMap ().renderList.push (object);
+  // Tootsville.Tank.shadowGenerator.getShadowMap ().renderList.push (object);
   console.debug (avatar.name, "δ", object);
-  // object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
-  //                                                       BABYLON.PhysicsImpostor.SphereImpostor,
-  //                                                       { mass: 1, restitution: 0.9 },
-  //                                                       scene);
+  object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
+                                                        BABYLON.PhysicsImpostor.SphereImpostor,
+                                                        { mass: 1, restitution: 0.9 },
+                                                        scene);
+  
   console.debug (avatar.name, "ε", object);
   object.position = new BABYLON.Vector3 (0,0,0); /* TODO */
   if (root.skeleton)

@@ -133,8 +133,6 @@ Tootsville.Tank.convertCanvasEventTo3D = function (event)
 Tootsville.Tank.initScene = function ()
 { console.log ("Initializing the Babylon Scene");
   Tootsville.Tank.scene = new BABYLON.Scene (Tootsville.Tank.engine);
-  const tod = Math.sin (Tootsville.decodeTime ().hour / 9);
-  Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
   Tootsville.Tank.scene.registerAfterRender (Tootsville.Tank.afterRender);
   return Tootsville.Tank.scene; };
 
