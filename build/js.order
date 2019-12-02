@@ -32,14 +32,14 @@ play/ui/keys.js
 
 play/ui/commands.js
 
-play/scene/avatar-builder.js
-play/scene/furniture-builder.js
-play/scene/ground-builder.js
-play/scene/scene-builder.js
-play/scene/sky-builder.js
+play/scene/AvatarBuilder.js
+play/scene/FurnitureBuilder.js
+play/scene/GroundBuilder.js
+play/scene/SceneBuilder.js
+play/scene/SkyBuilder.js
 
-play/scene/avatar-viewer.js
-play/scene/tank.js
+play/scene/AvatarViewer.js
+play/scene/Tank.js
 
 play/game/stop-watchdogs.js
 
