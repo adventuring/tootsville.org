@@ -12,7 +12,7 @@ play/time.js
 play/gossip/parrot.js
 play/gossip/gossip.js
 
-play/login/login.js
+play/login/Login.js
 
 play/lib/adapter.js/adapter.js
 
@@ -23,7 +23,7 @@ play/game/gatekeeper.js
 play/ui/connect.js
 play/ui/gamepad-layouts.js
 play/ui/gamepad.js
-play/ui/hud.js
+play/ui/HUD.js
 play/ui/ui.js
 play/ui/music.js
 play/ui/fullscreen-polyfill.js
