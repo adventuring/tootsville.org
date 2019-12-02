@@ -32,9 +32,7 @@
  */
 
 if (!('Tootsville' in window)) { Tootsville = { AvatarBuilder: {} }; }
-if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { baseAvatars: {} }; }
-if (!('baseAvatars' in Tootsville.AvatarBuilder))
-{ Tootsville.AvatarBuilder.baseAvatars = {}; }
+if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
 
 /**
  *
@@ -67,7 +65,8 @@ Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
 { var label = document.createElement ('DIV');
   label.innerHTML = avatar.name;
   label.cssClass = 'name-tag';
-  Tootsville.avatars [avatar.name].label = label; };
+  if (!('avatars' in scene)) { scene.avatars = {}; }
+  scene.avatars [avatar.name].label = label; };
 
 /**
  * Actually build the (cloned meshes) avatar. Don't call this directly, call `Tootsville.AvatarBuilder.build'.
@@ -77,12 +76,12 @@ Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
   var object = root.clone ("avatar/" + avatar.name);
   // if (Tootsville.Tank.shadowGenerator)
   // { Tootsville.Tank.shadowGenerator.addShadowCaster (object); }
-  console.debug (avatar.name, "ε", object);
   object.position = new BABYLON.Vector3 (0, -50, 0); /* TODO */
   if (root.skeleton)
   { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
-  Tootsville.avatars [avatar.name] = Object.assign ({}, avatar);
-  Tootsville.avatars [avatar.name].model = object;
+  if (!('avatars' in scene)) { scene.avatars = {}; }
+  scene.avatars [avatar.name] = Object.assign ({}, avatar);
+  scene.avatars [avatar.name].model = object;
   Tootsville.AvatarBuilder.addNameLabel (avatar, root, scene);
   console.debug (avatar.name, "δ", object);
   // object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
@@ -113,7 +112,8 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
     { task.loadedParticleSystems [i].setParent (modelRoot); }
     for (i = 0; i < task.loadedSkeletons.length; ++i)
     { task.loadedSkeletons [i].setParent (modelRoot); }
-    Tootsville.AvatarBuilder.baseAvatars [avatar.avatar] = modelRoot;
+    if (!('baseAvatars' in scene)) { scene.baseAvatars = {}; }
+    scene.baseAvatars [avatar.avatar] = modelRoot;
     console.debug ("Loaded base avatar " + avatar.avatar + " with " +
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +
@@ -129,7 +129,8 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
  * `TOOT-INFO'.
  */
 Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
-{ const root = Tootsville.AvatarBuilder.baseAvatars [ avatar.avatar ];
+{ if (!('baseAvatars' in scene)) { scene.baseAvatars = {}; }
+  const root = scene.baseAvatars [ avatar.avatar ];
   if (root)
   { Tootsville.AvatarBuilder.build2 (avatar, root, scene, finish); }
   else
