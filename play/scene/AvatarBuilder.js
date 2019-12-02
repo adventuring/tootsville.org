@@ -61,24 +61,35 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
   if (finish) { finish (node); } };
 
 /**
+ *
+ */
+Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
+{ var label = document.createElement ('DIV');
+  label.innerHTML = avatar.name;
+  label.cssClass = 'name-tag';
+  Tootsville.avatars [avatar.name].label = label; };
+
+/**
  * Actually build the (cloned meshes) avatar. Don't call this directly, call `Tootsville.AvatarBuilder.build'.
  */
 Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
 { console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
   var object = root.clone ("avatar/" + avatar.name);
-  // Tootsville.Tank.shadowGenerator.getShadowMap ().renderList.push (object);
-  console.debug (avatar.name, "δ", object);
-  object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
-                                                        BABYLON.PhysicsImpostor.SphereImpostor,
-                                                        { mass: 1, restitution: 0.9 },
-                                                        scene);
-  
+  // if (Tootsville.Tank.shadowGenerator)
+  // { Tootsville.Tank.shadowGenerator.addShadowCaster (object); }
   console.debug (avatar.name, "ε", object);
-  object.position = new BABYLON.Vector3 (0,0,0); /* TODO */
+  object.position = new BABYLON.Vector3 (0, -50, 0); /* TODO */
   if (root.skeleton)
   { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
   Tootsville.avatars [avatar.name] = Object.assign ({}, avatar);
   Tootsville.avatars [avatar.name].model = object;
+  Tootsville.AvatarBuilder.addNameLabel (avatar, root, scene);
+  console.debug (avatar.name, "δ", object);
+  // object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
+  //                                                       BABYLON.PhysicsImpostor.SphereImpostor,
+  //                                                       { mass: 1, restitution: 0.9 },
+  //                                                       scene);
+
   Tootsville.AvatarBuilder.colorize (avatar, root, scene, finish); };
 
 /**

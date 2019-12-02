@@ -71,8 +71,8 @@ Tootsville.AvatarViewer.createScene = function (canvas)
 Tootsville.AvatarViewer.createCamera = function (canvas, name)
 { const camera = new BABYLON.FreeCamera (
     'AvatarViewer ' + name + ' Camera',
-    new BABYLON.Vector3 (0, 10, -100),
-    Tootsville.Tank.scene);
+    new BABYLON.Vector3 (0, 4.5, -12.5),
+    canvas.scene);
   
   camera.target = BABYLON.Vector3.Zero;
   camera.inputs.clear ();

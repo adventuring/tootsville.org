@@ -67,8 +67,10 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  * the opacity of the stars when the sun is up. FIXME
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
-{ var texture = new BABYLON.CubeTexture("https://jumbo.tootsville.org/Assets/Textures/5/Starfield", Tootsville.Tank.scene);
-  Tootsville.Tank.scene.createDefaultSkybox(texture, true, 10000); };
+{ const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield", Tootsville.Tank.scene);
+  starfield.isBackground = true;
+  starfield.texture.level = 0;
+  starfield.texture.wAng = 0; };
 
 /**
  * Position the sun relative to the viewer
@@ -147,8 +149,16 @@ Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
       new BABYLON.Vector3 (0, -sunY, -sunZ),
       Tootsville.Tank.scene);
   light.position = new BABYLON.Vector3 (0, sunY, sunZ);
-  Tootsville.Tank.shadowGenerator = new BABYLON.ShadowGenerator (1024, light); };
-
+  // const shadowGenerator = new BABYLON.ShadowGenerator (1024, light);
+  // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
+  //  * scattering effects */
+  // shadowGenerator.bias = 0.00001;
+  // shadowGenerator.normalBias = 0.01;
+  // shadowGenerator.useContactHardeningShadow = true;
+  // shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
+  // shadowGenerator.setDarkness(0.5);
+  // Tootsville.Tank.shadowGenerator = shadowGenerator;
+};
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
