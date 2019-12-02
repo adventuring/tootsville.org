@@ -67,10 +67,8 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  * the opacity of the stars when the sun is up. FIXME
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
-{ const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield", Tootsville.Tank.scene);
-  starfield.isBackground = true;
-  starfield.texture.level = 0;
-  starfield.texture.wAng = 0; };
+{ const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
+                                      Tootsville.Tank.scene, true); };
 
 /**
  * Position the sun relative to the viewer
@@ -193,7 +191,7 @@ Tootsville.SkyBuilder.initCrappyDefaultLight = function ()
  */
 Tootsville.SkyBuilder.build = function (world)
 { Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' == world);
-  // Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
+  Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
   Tootsville.SkyBuilder.setSun ();
   if ('CHOR' != world) { Tootsville.SkyBuilder.setPlanet (); }
   if ('MOON' != world) { Tootsville.SkyBuilder.setTheMoon (); }
