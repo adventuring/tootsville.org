@@ -142,7 +142,9 @@ Tootsville.util.ensureServersReachable = function ()
  * Check for value equality of two objects
  */
 Tootsville.util.equalP = function (a, b)
-{ const aProps = Object.getOwnPropertyNames(a);
+{ if (!((a instanceof Object) && (b instanceof Object)))
+  { return false; }
+  const aProps = Object.getOwnPropertyNames(a);
   const bProps = Object.getOwnPropertyNames(b);
   if (aProps.length != bProps.length)
   { return false; }
