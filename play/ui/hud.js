@@ -260,7 +260,8 @@ Tootsville.UI.HUD.positionPaperdollMini = function ()
   mini.style.cursor = 'default';
   setTimeout ( () =>
                { mini.style.left = centerX + "px";
-                 mini.style.top = centerY + "px"; },
+                 mini.style.top = centerY + "px";
+                 if (mini.engine && mini.engine.resize) { mini.engine.resize (); } },
                5);
   setTimeout ( () =>
                { mini.style.top = stageBox.top + 'px';
@@ -276,7 +277,8 @@ Tootsville.UI.HUD.positionPaperdollMini = function ()
                  mini.style.height = stageBox.height + 'px';
                  mini.style.width = stageBox.width + 'px';
                  mini.style.borderRadius = 0;
-                 mini.style.zIndex = 1500; },
+                 mini.style.zIndex = 1500;
+                 if (mini.engine && mini.engine.resize) { mini.engine.resize (); } },
                500);};
 
 /**
@@ -289,7 +291,8 @@ Tootsville.UI.HUD.returnPaperdollMini = function ()
   mini.style.height = 'unset';
   mini.style.width = 'unset';
   mini.style.zIndex = 'unset';
-  setTimeout ( () => { mini.style = {}; }, 60);
+  setTimeout ( () => { mini.style = {};
+                       if (mini.engine && mini.engine.resize) { mini.engine.resize (); } }, 60);
   mini.addEventListener ('click', Tootsville.UI.HUD.openPaperdoll);
 };
 
