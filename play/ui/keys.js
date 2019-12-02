@@ -47,10 +47,10 @@ Tootsville.UI.Keys.bindings =
     { single: {
         Tab: null,
         Enter: 'speak-line',
-        ArrowDown: null,
-        ArrowLeft: 'backward-char',
-        ArrowRight: 'forward-char',
-        ArrowUp: null,
+        ArrowDown: 'arrow-down',
+        ArrowLeft: 'arrow-left',
+        ArrowRight: 'arrow-right',
+        ArrowUp: 'arrow-up',
         End: 'end-of-line',
         Home: 'beginning-of-line',
         PageDown: null,
@@ -417,3 +417,40 @@ Tootsville.UI.Keys.yank = function (event)
  */
 Tootsville.UI.Keys.yankPop = function (event)
 { /* TODO */ };
+
+/**
+*
+*/
+Tootsville.UI.Keys.arrowLeft = function (event)
+{ if (document.activeElement === Tootsville.UI.talkSpeak)
+  { Tootsville.UI.Keys.backwardChar (event); }
+  else
+  { Tootsville.UI.takeOneStep (-1, 0); } };
+
+/**
+*
+*/
+Tootsville.UI.Keys.arrowRight = function (event)
+{ if (document.activeElement === Tootsville.UI.talkSpeak)
+  { Tootsville.UI.Keys.forwardChar (event); }
+  else
+  { Tootsville.UI.takeOneStep (1, 0); } };
+
+/**
+*
+*/
+Tootsville.UI.Keys.arrowUp = function (event)
+{ if (document.activeElement === Tootsville.UI.talkSpeak)
+  { /* retype last line */ }
+  else
+  { Tootsville.UI.takeOneStep (0, -1); } };
+
+/**
+*
+*/
+Tootsville.UI.Keys.arrowDown = function (event)
+{ if (document.activeElement === Tootsville.UI.talkSpeak)
+  { Tootsville.UI.Keys.killLine (); }
+  else
+  { Tootsville.UI.takeOneStep (0, -1); } };
+

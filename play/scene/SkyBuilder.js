@@ -54,8 +54,7 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
 { if (atmosphereP)
   { const tod = Tootsville.SkyBuilder.sunY()+1/2;
     Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
-    Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (.7 * tod, .7 * tod, .7 * tod);
-    Tootsville.SkyBuilder.initCrappyDefaultLight (); }
+    Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (.7 * tod, .7 * tod, .7 * tod); }
   else
   { Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (0, 0, 0);
     Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (0, 0, 0); } };
@@ -67,7 +66,7 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
 {
-    if (atmosphereP && Tootsville.SkyBuilder.sunY() < 0)
+    if (atmosphereP && Tootsville.SkyBuilder.sunY() > 0)
     { const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
                                           Tootsville.Tank.scene, true); } };
 
@@ -92,12 +91,12 @@ Tootsville.SkyBuilder.setSun = function ()
   const shadowGenerator = new BABYLON.ShadowGenerator (1024, light);
   // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
   //  * scattering effects */
-  // shadowGenerator.bias = 0.00001;
-  // shadowGenerator.normalBias = 0.01;
-  // shadowGenerator.useContactHardeningShadow = true;
-  // shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
-  // shadowGenerator.setDarkness(0.5);
-  // Tootsville.Tank.shadowGenerator = shadowGenerator;
+  shadowGenerator.bias = 0.00001;
+  shadowGenerator.normalBias = 0.01;
+  shadowGenerator.useContactHardeningShadow = true;
+  shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
+  shadowGenerator.setDarkness(0.5);
+  Tootsville.Tank.shadowGenerator = shadowGenerator;
 };
 
 /**
@@ -149,10 +148,10 @@ Tootsville.SkyBuilder.setPrecipitation = function ()
 {};
 
 Tootsville.SkyBuilder.sunY = function ()
-{ return (Math.sin(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2; };
+{ return (Math.sin(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
 
 Tootsville.SkyBuilder.sunX = function ()
-{ return (Math.cos(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2; };
+{ return (Math.cos(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
