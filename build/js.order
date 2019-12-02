@@ -19,6 +19,7 @@ play/lib/adapter.js/adapter.js
 play/game/wardrobe.js
 play/game/commands.js
 play/game/gatekeeper.js
+play/game/Tools.js
 
 play/ui/connect.js
 play/ui/gamepad-layouts.js
