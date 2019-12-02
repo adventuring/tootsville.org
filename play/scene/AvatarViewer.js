@@ -45,7 +45,7 @@ Tootsville.AvatarViewer.getAvatar = function (character)
 { if (!character) { return new Promise ( () => {} ); }
   return Tootsville.util.rest ('GET', 'toots/' + character); };
 
-/**
+/*
  * Move a Toot by @code{δv}
  */
 // Tootsville.Avatars.UltraTootBuilder.moveToot = function (toot, δv)
@@ -68,18 +68,15 @@ Tootsville.AvatarViewer.createScene = function (canvas)
 /**
  * Create a camera through which to observe the Avatar Viewer
  */
-Tootsville.AvatarViewer.createCamera = function (canvas)
-{ const camera = new BABYLON.ArcRotateCamera (
-    'Tootsville Camera', 0, 0, .5,
-    BABYLON.Vector3.Zero,
-    //new BABYLON.Vector3 (0, 10, -100),
+Tootsville.AvatarViewer.createCamera = function (canvas, name)
+{ const camera = new BABYLON.FreeCamera (
+    'AvatarViewer ' + name + ' Camera',
+    new BABYLON.Vector3 (0, 10, -100),
     Tootsville.Tank.scene);
   
-  camera.setPosition (new BABYLON.Vector3 (0, 0, 20));
   camera.target = BABYLON.Vector3.Zero;
   
-  canvas.camera = camera;
-};
+  canvas.camera = camera; };
 
 /**
  * Create a light source for the AvatarViewer.
@@ -125,8 +122,8 @@ Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
           { Tootsville.AvatarViewer.createScene (canvas);
             canvas.physics = new BABYLON.CannonJSPlugin ();
             canvas.scene.enablePhysics (new BABYLON.Vector3 (0, -10, 0), canvas.physics);
-            Tootsville.AvatarViewer.createCamera (canvas);
+            Tootsville.AvatarViewer.createCamera (canvas, toot.name);
             Tootsville.AvatarViewer.createLight (canvas);
-            canvas.camera.zoomOn ([Tootsville.AvatarBuilder.build (toot, canvas.scene)], true);
+            Tootsville.AvatarBuilder.build (toot, canvas.scene);
             Tootsville.AvatarViewer.startRendering (canvas); } ); };
 
