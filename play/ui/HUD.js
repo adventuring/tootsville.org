@@ -473,5 +473,5 @@ Tootsville.UI.HUD.connectTalkBox = function ()
  * Set up the HUD layer and start housekeeping
  */
 Tootsville.UI.HUD.initHUD = function ()
-{ setInterval (Tootsville.UI.HUD.refreshHUD (), 250);
+{ setInterval (Tootsville.UI.HUD.refreshHUD, 250);
   Tootsville.UI.HUD.connectTalkBox (); };
