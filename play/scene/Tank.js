@@ -190,8 +190,8 @@ Tootsville.Tank.updateAttachmentsForAvatar = function (avatar)
  * Update all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.Tank.updateAttachmentOverlays = function ()
-{ for (let i = 0; i < Tootsville.Tank.scene.avatars.length; ++i)
-  { Tootsville.Tank.updateAttachmentsForAvatar (Tootsville.Tank.scene.avatars [i]); } };
+{ Array.forEach (Object.values(Tootsville.Tank.scene.avatars),
+                 avatar => {Tootsville.Tank.updateAttachmentOverlays(avatar); } ); };
 
 /**
  * This event  handler is called  whenever a frame  in the 3D  scene has
