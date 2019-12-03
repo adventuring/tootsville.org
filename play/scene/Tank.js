@@ -167,12 +167,14 @@ Tootsville.Tank.updateAttachment = function (model, attachment)
     Tootsville.Tank.camera.viewport.toGlobal (
         Tootsville.Tank.engine.getRenderWidth (),
         Tootsville.Tank.engine.getRenderHeight ()));
-  attachment.style.left = center.x;
-  /* FIXME: use bounding box height */
-  if ('bottom' == attachment.slot)
-  { attachment.style.top = center.y + 100; }
-  else
-  { attachment.style.top = center.y - 100; } };
+  const rel = center.divide ({x: Tootsville.Tank.engine.getRenderWidth(),
+                              y: Tootsville.Tank.engine.getRenderHeight (),
+                              z: 1});
+  const abs = rel.multiply ({x: document.getElementById('tootsville3d').offsetWidth,
+                             y: document.getElementById('tootsville3d').offsetHeight,
+                             z: 1});
+  attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
+  attachment.style.left = Math.max (30, Math.min (abs.y, window.innerWidth - 30)) + 'px'; };
 
 /**
  * Update the 2D attachments for one avatar. 
@@ -187,8 +189,8 @@ Tootsville.Tank.updateAttachmentsForAvatar = function (avatar)
  * Update all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.Tank.updateAttachmentOverlays = function ()
-{ for (let i = 0; i < Tootsville.avatars.length; ++i)
-  { Tootsville.Tank.updateAttachmentsForAvatar (Tootsville.avatars [i]); } };
+{ for (let i = 0; i < Tootsville.Tank.scene.avatars.length; ++i)
+  { Tootsville.Tank.updateAttachmentsForAvatar (Tootsville.Tank.scene.avatars [i]); } };
 
 /**
  * This event  handler is called  whenever a frame  in the 3D  scene has

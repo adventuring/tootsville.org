@@ -64,7 +64,8 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
 Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
 { var label = document.createElement ('DIV');
   label.innerHTML = avatar.name;
-  label.cssClass = 'name-tag';
+  label.className = 'name-tag';
+  document.getElementById('hud').append (label);
   if (!('avatars' in scene)) { scene.avatars = {}; }
   scene.avatars [avatar.name].label = label; };
 
@@ -87,7 +88,7 @@ Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
   console.debug (avatar.name, "δ", object);
   object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
                                                         BABYLON.PhysicsImpostor.SphereImpostor,
-                                                        { mass: 1, restitution: 0.9 },
+                                                        { mass: 1000, restitution: 0.4 },
                                                         scene);
 
   Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); };

@@ -127,5 +127,6 @@ Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
             Tootsville.AvatarBuilder.build (toot, canvas.scene);
             canvas.scene.avatars [toot.name].physicsImpostor.mass = 0;
             canvas.scene.avatars [toot.name].position = BABYLON.Vector3.Zero ();
+            canvas.scene.baseAvatars [toot.avatar].dispose ();
             canvas.scene.render (); } ); };
 
