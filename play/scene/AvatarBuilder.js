@@ -85,10 +85,10 @@ Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
   scene.avatars [avatar.name].model = object;
   Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene);
   console.debug (avatar.name, "δ", object);
-  // object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
-  //                                                       BABYLON.PhysicsImpostor.SphereImpostor,
-  //                                                       { mass: 1, restitution: 0.9 },
-  //                                                       scene);
+  object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
+                                                        BABYLON.PhysicsImpostor.SphereImpostor,
+                                                        { mass: 1, restitution: 0.9 },
+                                                        scene);
 
   Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); };
 
@@ -105,7 +105,7 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
                                             avatar.avatar + ".babylon");
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.TransformNode ("baseAvatar/" + avatar.avatar, scene, true);
-    modelRoot.position = BABYLON.Vector3.Zero;
+    modelRoot.position = BABYLON.Vector3.Zero ();
     modelRoot.infiniteDistance = true;
     var i;
     for (i = 0; i < task.loadedMeshes.length; ++i)
