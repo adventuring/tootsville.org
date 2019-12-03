@@ -348,7 +348,8 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
   if (!(Tootsville.util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
   { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll);
-    paperdoll.avatar = Object.assign({}, Tootsville.character); } };
+    paperdoll.avatar = Object.assign({}, Tootsville.character); }
+  if (paperdoll.scene) { paperdoll.scene.render (); } };
 
 /**
  * Refresh the display of the active equipment item.
