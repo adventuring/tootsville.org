@@ -170,11 +170,12 @@ Tootsville.Tank.updateAttachment = function (model, attachment)
   const rel = center.divide ({x: Tootsville.Tank.engine.getRenderWidth(),
                               y: Tootsville.Tank.engine.getRenderHeight (),
                               z: 1});
-  const abs = rel.multiply ({x: document.getElementById('tootsville3d').offsetWidth,
-                             y: document.getElementById('tootsville3d').offsetHeight,
-                             z: 1});
+  let abs = rel.multiply ({x: document.getElementById('tootsville3d').offsetWidth,
+                           y: document.getElementById('tootsville3d').offsetHeight,
+                           z: 1});
   attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
-  attachment.style.left = Math.max (30, Math.min (abs.y, window.innerWidth - 30)) + 'px'; };
+  abs.x -= attachment.offsetWidth / 2;
+  attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
  * Update the 2D attachments for one avatar. 
