@@ -102,7 +102,7 @@ Tootsville.Tank.initArcCamera = function ()
   return camera; };
 
 /**
- * Initialize the Cannon physics engine in the scene.
+ * Initialize the Ammo physics engine in the scene.
  */
 Tootsville.Tank.initPhysics = function (world, scene, physics)
 { if (!scene)
@@ -200,7 +200,7 @@ Tootsville.Tank.afterRender = function ()
     Tootsville.Tank.attachmentOverlaysNeedUpdateP = false; } };
 
 /**
- * Initialize the 3D engine, including Babylon 3D and Cannon physics.
+ * Initialize the 3D engine, including Babylon 3D and Ammo physics.
  *
  * The main  entry point  is `Tootsville.Tank.start3D'  which eventually
  * invokes this.  This function actually  connects the 3D engine  to the
@@ -216,8 +216,8 @@ Tootsville.Tank.init3DEngine = function ()
             new BABYLON.Engine (Tootsville.Tank.canvas,
                                 true); }
           if (! Tootsville.Tank.physics)
-          { console.log ("Enabling CannonJS physics engine for tank");
-            Tootsville.Tank.physics = new BABYLON.CannonJSPlugin (); }
+          { console.log ("Enabling AMMO.js physics engine for tank");
+            Tootsville.Tank.physics = new BABYLON.AmmoJSPlugin (true); }
           if (! Tootsville.Tank.scene)
           { Tootsville.Tank.initScene (); }
           // TODO confirm if this is engine or scene:
@@ -282,7 +282,7 @@ Tootsville.Tank.startRenderLoop = function ()
               1); };
 
 /**
- * Prepare the libraries needed for the 3D scene (Babylon and Cannon).
+ * Prepare the libraries needed for the 3D scene (Babylon and AMMO.js).
  *
  * We can load these hefty libraries asynchronously whilst the player is
  * busy signing in.
@@ -291,10 +291,10 @@ Tootsville.Tank.prepareFor3D = function ()
 { return new Promise (
     finish =>
         { if ( ("BABYLON" in window) &&
-               ("CANNON" in window))
+               ("Ammo" in window))
           { finish (); }
           else if ("BABYLON" in window)
-          { Tootsville.util.loadScript ('https://cdn.babylonjs.com/cannon.js').then (
+          { Tootsville.util.loadScript ('https://cdn.jsdelivr.net/npm/ammo-node@1.0.0/ammo.js').then (
               Tootsville.Tank.prepareFor3D); }
           else
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
@@ -324,7 +324,7 @@ Tootsville.Tank.start3D = function ()
  * engine. Called by `Tootsville.Tank.start3D'
  */
 Tootsville.Tank.start3DIfReady = function ()
-    { if ( (! ("BABYLON" in window)) || (! ("CANNON" in window)))
+    { if ( (! ("BABYLON" in window)) || (! ("Ammo" in window)))
       { return Tootsville.Tank.prepareFor3D ().then (Tootsville.Tank.start3DifReady); }
       BABYLON.SceneLoader.ShowLoadingScreen = false;
       Tootsville.Tank.init3DEngine ().then (

@@ -120,7 +120,7 @@ Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
   Tootsville.Tank.prepareFor3D ().then (
       () =>
           { Tootsville.AvatarViewer.createScene (canvas);
-            canvas.physics = new BABYLON.CannonJSPlugin ();
+            canvas.physics = new BABYLON.AmmoJSPlugin (true);
             canvas.scene.enablePhysics (BABYLON.Vector3.Zero, canvas.physics);
             Tootsville.AvatarViewer.createCamera (canvas, toot.name);
             Tootsville.AvatarViewer.createLight (canvas);
