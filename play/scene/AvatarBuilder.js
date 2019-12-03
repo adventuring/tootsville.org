@@ -54,8 +54,8 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
         mesh.name.indexOf ('Eye') >= 0  ? eyeMaterial :
             mesh.name.indexOf ('Skin') >= 0 ? skinMaterial :
             mesh.name.indexOf ('Pad') >= 0 ? padMaterial :
-            eyeMaterial );
-    console.debug ("Colorized mesh named " + mesh.name + " with material ", mesh.material.name); }
+            eyeMaterial ); }
+  console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName); 
   if (finish) { finish (node); } };
 
 /**
