@@ -223,16 +223,16 @@ Tootsville.SkyBuilder.update = function (world)
   const fill = Tootsville.SkyBuilder.fillLight;
   if (sun.position.y < 0)
   { sunLight.intensity = 0;
-    fill.intensity = 3;
-    fill.diffuse = new BABYLON.Color3(0, 0, 0.2);
-    fill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
-    fill.groundColor = new BABYLON.Color3(0, 0, 0.2);}
+    fill.intensity = 1;
+    fill.diffuse = new BABYLON.Color3(.5, .5, .7);
+    fill.specular = new BABYLON.Color3(.5, .5, .5);
+    fill.groundColor = new BABYLON.Color3(.25, .25, .35);}
   else
   { sunLight.intensity = 1;
     fill.intensity = 1;
-    fill.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
-    fill.specular = new BABYLON.Color3(0.75, 0.75, 0.75);
-    fill.groundColor = new BABYLON.Color3(0.2, 0.2, 0.2);}
+    fill.diffuse = new BABYLON.Color3(.5, .5, .5);
+    fill.specular = new BABYLON.Color3(.75, .75, .75);
+    fill.groundColor = new BABYLON.Color3(.2, .2, .2);}
   Tootsville.SkyBuilder.sunLight.direction = Tootsville.SkyBuilder.sun.position.negate (); };
 
 /**
