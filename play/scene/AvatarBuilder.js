@@ -55,7 +55,7 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
             mesh.name.indexOf ('Skin') >= 0 ? skinMaterial :
             mesh.name.indexOf ('Pad') >= 0 ? padMaterial :
             eyeMaterial ); }
-  console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName); 
+  // console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName); 
   if (finish) { finish (node); } };
 
 /**
@@ -64,7 +64,7 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
 Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
 { if (scene !== Tootsville.Tank.scene) { return; } /* XXX Labels in other contexts */
   var label = document.createElement ('DIV');
-  label.innerHTML = avatar.name;
+  label.innerHTML = avatar.userName; /* Note this may start with ◆ */
   label.className = 'name-tag';
   document.getElementById('hud').append (label);
   scene.avatars [avatar.name].label = label;
@@ -93,6 +93,9 @@ Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
  */
 Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
 { let skinMesh = object.getChildMeshes().filter( mesh => mesh.name.indexOf ('Skin') >= 0 )[0];
+  if (!(skinMesh))
+  { console.error ("Avatar has no skin layer?");
+    return; }
   object.physicsImpostor = new BABYLON.PhysicsImpostor (skinMesh,
                                                         BABYLON.PhysicsImpostor.SphereImpostor,
                                                         { mass: 6000, restitution: .05 },
@@ -106,11 +109,8 @@ Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
  */
 Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
 { console.debug ("Building " + avatar.avatar + " " + avatar.userName);
-  var object = root.clone ("avatar/" + avatar.name);
-  object.infiniteDistance = false;
+  const object = root;
   // TODO set scaling
-  if (root.skeleton)
-  { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, object, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enablePhysics (avatar, object, scene); } catch (e) { console.error (e); }
@@ -129,9 +129,8 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".babylon");
   loadTask.onSuccess = function (task)
-  { const modelRoot = new BABYLON.TransformNode ("baseAvatar/" + avatar.avatar, scene, true);
-    modelRoot.position = BABYLON.Vector3.Zero ();
-    modelRoot.infiniteDistance = true;
+  { const modelRoot = new BABYLON.TransformNode ("avatar/" + avatar.name, scene, true);
+    modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
     var i;
     for (i = 0; i < task.loadedMeshes.length; ++i)
     { task.loadedMeshes [i].setParent (modelRoot); }
@@ -139,8 +138,6 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
     { task.loadedParticleSystems [i].setParent (modelRoot); }
     for (i = 0; i < task.loadedSkeletons.length; ++i)
     { task.loadedSkeletons [i].setParent (modelRoot); }
-    if (!('baseAvatars' in scene)) { scene.baseAvatars = {}; }
-    scene.baseAvatars [avatar.avatar] = modelRoot;
     console.debug ("Loaded base avatar " + avatar.avatar + " with " +
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +
@@ -156,10 +153,5 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
  * `TOOT-INFO'.
  */
 Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
-{ if (!('baseAvatars' in scene)) { scene.baseAvatars = {}; }
-  const root = scene.baseAvatars [ avatar.avatar ];
-  if (root)
-  { Tootsville.AvatarBuilder.build2 (avatar, root, scene, finish); }
-  else
-  { Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); } };
+{ Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };
 
