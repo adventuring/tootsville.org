@@ -59,39 +59,64 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
   if (finish) { finish (node); } };
 
 /**
- *
+ * Adds a nametag to an avatar. (Only in the main scene, for now.)
  */
 Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
-{ var label = document.createElement ('DIV');
+{ if (scene !== Tootsville.Tank.scene) { return; } /* XXX Labels in other contexts */
+  var label = document.createElement ('DIV');
   label.innerHTML = avatar.name;
   label.className = 'name-tag';
   document.getElementById('hud').append (label);
-  if (!('avatars' in scene)) { scene.avatars = {}; }
-  scene.avatars [avatar.name].label = label; };
+  scene.avatars [avatar.name].label = label;
+  Tootsville.Tank.updateAttachmentsForAvatar (avatar); };
+
 
 /**
- * Actually build the (cloned meshes) avatar. Don't call this directly, call `Tootsville.AvatarBuilder.build'.
+ * Enable the object to cast shadows in the scene
+ */
+Tootsville.AvatarBuilder.enableShadows = function (object, scene)
+{
+  // if (Tootsville.Tank.shadowGenerator)
+    // { Tootsville.Tank.shadowGenerator.addShadowCaster (object);
+};
+
+/**
+ * Add the avatar to the global list of avatars in the scene
+ */
+Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
+{ if (!('avatars' in scene)) { scene.avatars = {}; }
+  scene.avatars [avatar.name] = Object.assign ({}, avatar);
+  scene.avatars [avatar.name].model = object; };
+
+/**
+ * Create a physics impostor for the object
+ */
+Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
+{ let skinMesh = object.getChildMeshes().filter( mesh => mesh.name.indexOf ('Skin') >= 0 )[0];
+  object.physicsImpostor = new BABYLON.PhysicsImpostor (skinMesh,
+                                                        BABYLON.PhysicsImpostor.SphereImpostor,
+                                                        { mass: 6000, restitution: .05 },
+                                                        scene); };
+
+
+/**
+ * Actually build the (cloned meshes) avatar.
+ *
+ * Don't call this directly, call `Tootsville.AvatarBuilder.build'.
  */
 Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
 { console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
   var object = root.clone ("avatar/" + avatar.name);
   object.infiniteDistance = false;
-  // if (Tootsville.Tank.shadowGenerator)
-  // { Tootsville.Tank.shadowGenerator.addShadowCaster (object); }
-
+  // TODO set scaling
   if (root.skeleton)
   { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
-  if (!('avatars' in scene)) { scene.avatars = {}; }
-  scene.avatars [avatar.name] = Object.assign ({}, avatar);
-  scene.avatars [avatar.name].model = object;
-  Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene);
+  try {Tootsville.AvatarBuilder.rememberAvatar (avatar, object, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene); } catch (e) { console.error (e); }
   console.debug (avatar.name, "δ", object);
-  object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
-                                                        BABYLON.PhysicsImpostor.SphereImpostor,
-                                                        { mass: 1000, restitution: 0.4 },
-                                                        scene);
-
-  Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); };
+  try { Tootsville.AvatarBuilder.enablePhysics (avatar, object, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.enableShadows (object, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); } catch (e) { console.error (e); } };
 
 /**
  * Load the base avatar model from Jumbo.
