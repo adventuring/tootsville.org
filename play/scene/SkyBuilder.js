@@ -71,8 +71,9 @@ Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
       if (layer.name == 'starfield')
       { layer.dispose(); } }
     else
+    { if (0 == Tootsville.Tank.scene.layers.length)
     { const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
-                                          Tootsville.Tank.scene, true); } };
+                                          Tootsville.Tank.scene, true); } } };
 
 /**
  * Position the sun relative to the viewer
@@ -156,11 +157,19 @@ Tootsville.SkyBuilder.setCloudCover = function ()
 Tootsville.SkyBuilder.setPrecipitation = function ()
 {};
 
+/**
+*
+*/
 Tootsville.SkyBuilder.sunY = function ()
-{ return (Math.sin(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
+{ const time = Tootsville.decodeTime ();
+  return (Math.sin((((time.hour+time.min/60) / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
 
+/**
+*
+*/
 Tootsville.SkyBuilder.sunX = function ()
-{ return (Math.cos(((Tootsville.decodeTime ().hour / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
+{ const time = Tootsville.decodeTime ();
+  return (Math.cos((((time.hour+time.min/60) / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
