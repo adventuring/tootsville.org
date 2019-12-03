@@ -65,15 +65,19 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  * the opacity of the stars when the sun is up. FIXME
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
-{
-    if (atmosphereP && Tootsville.SkyBuilder.sunY() > 0)
-    { var layer = Tootsville.Tank.scene.layers[0];
-      if (layer.name == 'starfield')
-      { layer.dispose(); } }
-    else
-    { if (0 == Tootsville.Tank.scene.layers.length)
-    { const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
-                                          Tootsville.Tank.scene, true); } } };
+{ let starsP = true;
+  if (atmosphereP && Tootsville.SkyBuilder.sunY() > 0)
+  { starsP = false; }
+  let layersP = (('layers' in Tootsville.Tank.scene) && (0 < Tootsville.Tank.scene.layers.length));
+  if (starsP && (! layersP))
+  { const starfield = new BABYLON.Layer("starfield",
+                                        "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
+                                        Tootsville.Tank.scene, true); }
+  if (starsP || (! layersP))
+  { return; }
+  const layer = Tootsville.Tank.scene.layers[0];
+  if (layer && layer.name == 'starfield')
+  { layer.dispose(); } };
 
 /**
  * Position the sun relative to the viewer
