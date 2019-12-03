@@ -93,16 +93,16 @@ Tootsville.SkyBuilder.setSun = function ()
   sun.position.x = Tootsville.SkyBuilder.sunX ();
   sun.position.y = Tootsville.SkyBuilder.sunY ();
   Tootsville.SkyBuilder.sun = sun;
-  const light = new BABYLON.DirectionalLight (
+  const sunLight = new BABYLON.DirectionalLight (
       'Sunlight', sun.position.clone ().negate (), Tootsville.Tank.scene);
-  if (sun.position.y < 0) { light.intensity = 0; }
-  light.position = sun.position.clone ();
-  Tootsville.SkyBuilder.sunLight = light;
+  if (sun.position.y < 0) { sunLight.intensity = 0; }
+  sunLight.position = sun.position.clone ();
+  Tootsville.SkyBuilder.sunLight = sunLight;
 
-  const fill = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), Tootsville.Tank.scene);
+  const fill = new BABYLON.HemisphericLight("Fill Light", new BABYLON.Vector3(-1, 1, 0), Tootsville.Tank.scene);
   Tootsville.SkyBuilder.fillLight = fill;
   
-  const shadowGenerator = new BABYLON.ShadowGenerator (1024, light);
+  const shadowGenerator = new BABYLON.ShadowGenerator (1024, sunLight);
   // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
   //  * scattering effects */
   shadowGenerator.bias = 0.00001;
@@ -162,15 +162,19 @@ Tootsville.SkyBuilder.setPrecipitation = function ()
 {};
 
 /**
-*
-*/
+ * Get the instantaneous position of the sun in Y
+ *
+ * Accurate to ±1 min (of time)
+ */
 Tootsville.SkyBuilder.sunY = function ()
 { const time = Tootsville.decodeTime ();
   return (Math.sin((((time.hour+time.min/60) / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
 
 /**
-*
-*/
+ * Get the instantaneous position of the sun in X
+ *
+ * Accurate to ±1 min (of time)
+ */
 Tootsville.SkyBuilder.sunX = function ()
 { const time = Tootsville.decodeTime ();
   return (Math.cos((((time.hour+time.min/60) / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
