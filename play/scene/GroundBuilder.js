@@ -50,10 +50,10 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
   ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
   ground.material.specularColor = new BABYLON.Color3.FromHexString (interpretTootColor ('spring-green'));
   ground.receiveShadows = true;
-  ground.physicsImpostor =  new BABYLON.PhysicsImpostor (
-      ground,
-      BABYLON.PhysicsImpostor.BoxImpostor,
-      { mass: 0, restitution: 3 });
+  ground.physicsImpostor =  new BABYLON.PhysicsImpostor (ground,
+                                                         BABYLON.PhysicsImpostor.BoxImpostor,
+                                                         { mass: 0, friction: .5, restitution: 3 },
+                                                         Tootsville.Tank.scene);
   ground.checkCollisions = true;
   console.log ("Ground plane is ", ground);
   return ground; };
