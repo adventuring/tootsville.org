@@ -162,7 +162,7 @@ Tootsville.Gossip.openInfinityMode = function (peer, event)
                                 zone: 'Universe' },
                               '$Eden'));
   Tootsville.Gossip.peers = Tootsville.Gossip.peers.concat (peer);
-  Tootsville.Gossip.ensureConnected (); };
+  setInterval (Tootsville.Gossip.ensureConnected, 500); };
 
 /**
  * Broadcast a packet.

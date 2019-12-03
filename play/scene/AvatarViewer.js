@@ -73,7 +73,7 @@ Tootsville.AvatarViewer.createCamera = function (canvas, name)
     'AvatarViewer ' + name + ' Camera',
     new BABYLON.Vector3 (0, 4.5, -12.5),
     canvas.scene);
-  
+
   camera.target = BABYLON.Vector3.Zero;
   camera.inputs.clear ();
   canvas.camera = camera; };
@@ -121,9 +121,9 @@ Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
       () =>
           { Tootsville.AvatarViewer.createScene (canvas);
             canvas.physics = new BABYLON.CannonJSPlugin ();
-            canvas.scene.enablePhysics (new BABYLON.Vector3 (0, -10, 0), canvas.physics);
+            canvas.scene.enablePhysics (BABYLON.Vector3.Zero, canvas.physics);
             Tootsville.AvatarViewer.createCamera (canvas, toot.name);
             Tootsville.AvatarViewer.createLight (canvas);
             Tootsville.AvatarBuilder.build (toot, canvas.scene);
-            Tootsville.AvatarViewer.startRendering (canvas); } ); };
+            canvas.scene.render (); } ); };
 

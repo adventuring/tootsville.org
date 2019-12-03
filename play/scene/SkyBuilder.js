@@ -40,7 +40,7 @@ if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
  *
  * This is always black in space (when atmosphereP is false).
  *
- * The  sky data  is  taken  from Tootsville.Tank.sky  and  the scene  is
+ * The  sky data  is  taken  from Tootsville.SkyBuilder.sky  and  the scene  is
  * Tootsville.Tank.scene.
  *
  * XXX  Some day,  using  a  GLSL shader  for  the  background would  be
@@ -52,7 +52,7 @@ if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
  */
 Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
 { if (atmosphereP)
-  { const tod = Tootsville.SkyBuilder.sunY()+1/2;
+  { const tod = Tootsville.SkyBuilder.sunY()/2000 + 1/2;
     Tootsville.Tank.scene.clearColor = new BABYLON.Color3 (.7 * tod, .7 * tod, 1 * tod);
     Tootsville.Tank.scene.ambientColor = new BABYLON.Color3 (.7 * tod, .7 * tod, .7 * tod); }
   else
@@ -66,7 +66,11 @@ Tootsville.SkyBuilder.setFirstSkyLayer = function (atmosphereP)
  */
 Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
 {
-    if (atmosphereP && Tootsville.SkyBuilder.sunY() < 0)
+    if (atmosphereP && Tootsville.SkyBuilder.sunY() > 0)
+    { var layer = Tootsville.Tank.scene.layers[0];
+      if (layer.name == 'starfield')
+      { layer.dispose(); } }
+    else
     { const starfield = new BABYLON.Layer("starfield", "https://jumbo.tootsville.org/Assets/Textures/5/Starfield.png",
                                           Tootsville.Tank.scene, true); } };
 
@@ -86,8 +90,13 @@ Tootsville.SkyBuilder.setSun = function ()
   Tootsville.SkyBuilder.sun = sun;
   const light = new BABYLON.DirectionalLight (
       'Sunlight', sun.position.clone ().negate (), Tootsville.Tank.scene);
+  if (sun.position.y < 0) { light.intensity = 0; }
   light.position = sun.position.clone ();
   Tootsville.SkyBuilder.sunLight = light;
+
+  const fill = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), Tootsville.Tank.scene);
+  Tootsville.SkyBuilder.fillLight = fill;
+  
   const shadowGenerator = new BABYLON.ShadowGenerator (1024, light);
   // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
   //  * scattering effects */
@@ -155,7 +164,7 @@ Tootsville.SkyBuilder.sunX = function ()
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
- * Tootsville.Tank.sky and affects the scene at Tootsville.Tank.scene.
+ * Tootsville.SkyBuilder.sky and affects the scene at Tootsville.Tank.scene.
  *
  * Depending on the world in question, the sky may have these layers:
  *
@@ -195,28 +204,41 @@ Tootsville.SkyBuilder.build = function (world)
   if ('CHOR' == world)
   { Tootsville.SkyBuilder.setCloudCover ();
     Tootsville.SkyBuilder.setPrecipitation ();}
-  setInterval (Tootsville.SkyBuilder.update, 60000); };
+  Tootsville.SkyBuilder.update ();
+  setInterval ( () => { Tootsville.SkyBuilder.update (world); }, 60000); };
 
 /**
  * Update sky positions and the like.
  *
  * XXX Some things aren't able to be updated yet.
  */
-Tootsville.SkyBuilder.update = function ()
-{ Tootsville.SkyBuilder.sun.position.x = Tootsville.SkyBuilder.sunX ();
-  Tootsville.SkyBuilder.sun.position.yy= Tootsville.SkyBuilder.sunY ();
-  Tootsville.SkyBuilder.sunLight.position = Tootsville.SkyBuilder.sun.position.clone ();
-  /* TODO: Repoint directional light */
-};
+Tootsville.SkyBuilder.update = function (world)
+{ Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' == world);
+  Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
+  const sun = Tootsville.SkyBuilder.sun;
+  sun.position.x = Tootsville.SkyBuilder.sunX ();
+  sun.position.y = Tootsville.SkyBuilder.sunY ();
+  const sunLight = Tootsville.SkyBuilder.sunLight;
+  sunLight.position = Tootsville.SkyBuilder.sun.position.clone ();
+  const fill = Tootsville.SkyBuilder.fillLight;
+  if (sun.position.y < 0)
+  { sunLight.intensity = 0;
+    fill.intensity = 3;
+    fill.diffuse = new BABYLON.Color3(0, 0, 0.2);
+    fill.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+    fill.groundColor = new BABYLON.Color3(0, 0, 0.2);}
+  else
+  { sunLight.intensity = 1;
+    fill.intensity = 1;
+    fill.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
+    fill.specular = new BABYLON.Color3(0.75, 0.75, 0.75);
+    fill.groundColor = new BABYLON.Color3(0.2, 0.2, 0.2);}
+  Tootsville.SkyBuilder.sunLight.direction = Tootsville.SkyBuilder.sun.position.negate (); };
 
 /**
  * Fetch sky data from the game server
  *
- * Updates Tootsville.Tank.sky
- *
- * TODO, we  should replicate the  logic for predicting the  altitude of
-* the sun and moons from the  Lisp code in Javascript, however, the Lisp
-* code itself is not final and we don't need to do that work twice.
+ * Updates Tootsville.SkyBuilder.sky
  */
 Tootsville.SkyBuilder.updateSkyData = function ()
 {};

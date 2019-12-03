@@ -74,22 +74,23 @@ Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
 Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
 { console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
   var object = root.clone ("avatar/" + avatar.name);
+  object.infiniteDistance = false;
   // if (Tootsville.Tank.shadowGenerator)
   // { Tootsville.Tank.shadowGenerator.addShadowCaster (object); }
-  object.position = new BABYLON.Vector3 (0, -50, 0); /* TODO */
+
   if (root.skeleton)
   { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
   if (!('avatars' in scene)) { scene.avatars = {}; }
   scene.avatars [avatar.name] = Object.assign ({}, avatar);
   scene.avatars [avatar.name].model = object;
-  Tootsville.AvatarBuilder.addNameLabel (avatar, root, scene);
+  Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene);
   console.debug (avatar.name, "δ", object);
   // object.physicsImpostor = new BABYLON.PhysicsImpostor (object,
   //                                                       BABYLON.PhysicsImpostor.SphereImpostor,
   //                                                       { mass: 1, restitution: 0.9 },
   //                                                       scene);
 
-  Tootsville.AvatarBuilder.colorize (avatar, root, scene, finish); };
+  Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); };
 
 /**
  * Load the base avatar model from Jumbo.
@@ -104,7 +105,8 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
                                             avatar.avatar + ".babylon");
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.TransformNode ("baseAvatar/" + avatar.avatar, scene, true);
-    modelRoot.position = new BABYLON.Vector3 (0, -10, 0);
+    modelRoot.position = BABYLON.Vector3.Zero;
+    modelRoot.infiniteDistance = true;
     var i;
     for (i = 0; i < task.loadedMeshes.length; ++i)
     { task.loadedMeshes [i].setParent (modelRoot); }

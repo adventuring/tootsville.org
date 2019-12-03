@@ -107,22 +107,29 @@ Tootsville.Login.serverQueryCharacters = function ()
                       Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
 
 /**
- *
+ * The set of Toot characters available to the player.
  */
 Tootsville.Login.toots = {};
 
 /**
+ * Actually instantiate  a decorated Toot  List Item with  avatar, note,
+ * and child flag.
  *
+ * This is called after Toot Info has been fetched from the server.
  */
 Tootsville.Login.createTootListItem2 = function (li, toot)
 { li.innerHTML = '';
   li ['data-toot'] = toot;
   li.className = 'toot';
-  if ('UltraToot' == toot.avatar)
-  { var img = document.createElement ('SPAN');
-    img.innerHTML = Tootsville.Login.avatarSVG;
-    Tootsville.Login.colorizeAvatar (toot, img);
-    li.appendChild (img); }
+  const canvas = document.createElement ('CANVAS');
+  canvas.width = 96;
+  canvas.height = 96;
+  li.appendChild (canvas);
+  /* Create a closure that owns its own copies of toot and canvas */
+  var createViewer = function (tt, cc) { return () => { console.debug ("Drawing avatar " + tt.name + " in a canvas");
+                                                        Tootsville.AvatarViewer.createViewerInCanvas (tt, cc); }; };
+  /* Create AvatarViewer asynchronously */
+  setTimeout ( createViewer (toot, canvas), 10 );
   li.innerHTML += '<SPAN CLASS="toot-name">' +
   toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
   Tootsville.Login.addChildFlag (li); };
