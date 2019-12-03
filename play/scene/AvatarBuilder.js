@@ -105,7 +105,7 @@ Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
  * Don't call this directly, call `Tootsville.AvatarBuilder.build'.
  */
 Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
-{ console.debug ("Building " + avatar.name + " as a " + avatar.avatar + " avatar in scene ", scene);
+{ console.debug ("Building " + avatar.avatar + " " + avatar.userName);
   var object = root.clone ("avatar/" + avatar.name);
   object.infiniteDistance = false;
   // TODO set scaling
@@ -113,7 +113,6 @@ Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
   { object.skeleton = root.skeleton.clone ("skeleton/" + avatar.name); }
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, object, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene); } catch (e) { console.error (e); }
-  console.debug (avatar.name, "δ", object);
   try { Tootsville.AvatarBuilder.enablePhysics (avatar, object, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (object, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); } catch (e) { console.error (e); } };
