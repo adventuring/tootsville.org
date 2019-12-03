@@ -114,7 +114,7 @@ Tootsville.Tank.initPhysics = function (world, scene, physics)
                              -Tootsville.Worlds[world].Gravity,
                              0);
   scene.enablePhysics (gravityVector, physics);
-  console.log ("Physics enabled for world", world);};
+  console.log ("Physics enabled for world " + world);};
 
 /**
  * Find or create the CANVAS object onto which the 3D scene is rendered.
@@ -252,11 +252,15 @@ Tootsville.Tank.initPlayerToot = function ()
 Tootsville.Tank.createScene = function ()
 { console.log ("Creating a test scene with an over-the-shoulder camera, ground plane, light, and Toot.");
   console.log ("Babylon scene object is ", Tootsville.Tank.scene);
-  Tootsville.Tank.initPhysics ('Tootanga');
-  Tootsville.SkyBuilder.build ('CHOR'); /* XXX: other worlds some day */
-  Tootsville.GroundBuilder.build (0, 0, 0); /* TODO x, y, z */
-  Tootsville.Tank.initPlayerToot ();
-  Tootsville.SceneBuilder.build (0, 0, 0); /* TODO x, y, z */
+  try { Tootsville.Tank.initPhysics (Tootsville.activity.world); } catch (e) { console.error (e); }
+  try { Tootsville.SkyBuilder.build (Tootsville.activity.world); } catch (e) { console.error (e); }
+  try { Tootsville.GroundBuilder.build (Tootsville.activity.x,
+                                        Tootsville.activity.y,
+                                        Tootsville.activity.z); } catch (e) { console.error (e); }
+  try { Tootsville.Tank.initPlayerToot (); } catch (e) { console.error (e); }
+  try { Tootsville.SceneBuilder.build (Tootsville.activity.x,
+                                       Tootsville.activity.y,
+                                       Tootsville.activity.z); } catch (e) { console.error (e); }
 
   /* Optimize display on lower-end systems at the expense of frame rate, if necessary */
   var optimize = BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed();
