@@ -259,7 +259,7 @@ Tootsville.Tank.prepareFor3D = function ()
                ("Ammo" in window))
           { finish (); }
           else if ("BABYLON" in window)
-          { Tootsville.util.loadScript ('https://cdn.jsdelivr.net/npm/ammo-node@1.0.0/ammo.js').then (
+          { Tootsville.util.loadScript ('http://cdn.babylonjs.com/ammo.js').then (
               Tootsville.Tank.prepareFor3D); }
           else
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
