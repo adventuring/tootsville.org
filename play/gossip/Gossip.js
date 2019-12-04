@@ -103,7 +103,8 @@ Tootsville.Gossip.createConnection = function ()
       offer => { Tootsville.trace ("Posting offer to servers. Expect confirmation log line next.",
                                    peer.connection.localDescription);
                  Tootsville.util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
-                     next => { Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }); });
+                     next => { console.debug ("⁂", next);
+                               Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }); });
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**

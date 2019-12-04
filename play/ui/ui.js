@@ -33,6 +33,7 @@
 
 if (!('UI' in Tootsville)) {Tootsville.UI={};}
 
+/** */
 Tootsville.UI.makeDivOrParagraph = function (text)
 { var element;
   if (text.indexOf('<') >= 0)
@@ -42,9 +43,11 @@ Tootsville.UI.makeDivOrParagraph = function (text)
   element.innerHTML = text;
   return element; };
 
+/** */
 Tootsville.UI.makeIDFromTitle = function (title)
 { return 'elt-' + title.replace(/[^a-zA-Z0-9]+/, '-'); };
 
+/** */
 Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
 { var dialog = document.createElement('DIALOG');
   dialog.id = Tootsville.UI.makeIDFromTitle(title);
@@ -73,6 +76,7 @@ Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
   dialog.appendChild(buttons);
   return dialog; };
 
+/** */
 Tootsville.UI.confirmPretty = function (title,text,accept)
 { var hud = document.getElementById('hud');
   return new Promise(resolve => {
@@ -80,11 +84,14 @@ Tootsville.UI.confirmPretty = function (title,text,accept)
       if ('Yes' == accept) { cancel = 'No'; }
       hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
+/** */
 Tootsville.UI.forceQuit = function ()
 { Tootsville.Login.quit(); };
 
+/** */
 Tootsville.UI.quit = function () { Tootsville.UI.signOut (); };
 
+/** */
 Tootsville.UI.signOut = function ()
 { Tootsville.UI.confirmPretty(
     "Quit?",
@@ -94,22 +101,26 @@ Tootsville.UI.signOut = function ()
     { if (reallyP)
       { Tootsville.Login.quit(); }}); };
 
+/** */
 Tootsville.UI.setFullscreenFromNavigator = function ()
 { var fullscreenCheck = document.getElementById('fullscreen-toggle');
   if (fullscreenCheck)
   { fullscreenCheck.checked = !! (document.fullscreenElement); }};
 
+/** */
 Tootsville.UI.setFullscreen = function (really)
 { if (really)
   { document.documentElement.requestFullscreen(); }
   else
   { document.exitFullscreen(); }};
 
+/** */
 Tootsville.UI.toggleFullscreen = function ()
 { Tootsville.UI.setFullscreen( ! (document.fullscreenElement) );
   if (Tootsville.Tank.engine)
   { setTimeout ( () => { Tootsville.Tank.engine.resize (); }, 1000); } };
 
+/** */
 Tootsville.UI.onFirstClick = function ()
 { window.removeEventListener('click', Tootsville.UI.onFirstClick);
   console.log ('noticed a first click');
@@ -118,6 +129,7 @@ Tootsville.UI.onFirstClick = function ()
       ev.returnValue = confirmationMessage;  /* Gecko, Trident, Chrome 34+ */
       return confirmationMessage; /* Gecko, WebKit, Chrome <34 */ }); };
 
+/** */
 Tootsville.UI.slowLoadingWatchdog = function ()
 { Tootsville.UI.confirmPretty
   ( "Slow Loading?",
@@ -128,3 +140,8 @@ Tootsville.UI.slowLoadingWatchdog = function ()
   ( waitP =>
     { if (! waitP)
       { document.location = 'https://wiki.tootsville.org/wikiki/PlayNotLoading'; } }); };
+
+/** FIXME … This totally needs to go through the simulation tank code. This is a hack for testing. */
+Tootsville.UI.takeOneStep = function (δx, δz)
+{ Tootsville.Tank.scene.avatars [Tootsville.character.name].model.position.x += δx;
+  Tootsville.Tank.scene.avatars [Tootsville.character.name].model.position.z += δz;};

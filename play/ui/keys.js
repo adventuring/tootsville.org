@@ -452,5 +452,5 @@ Tootsville.UI.Keys.arrowDown = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { Tootsville.UI.Keys.killLine (); }
   else
-  { Tootsville.UI.takeOneStep (0, -1); } };
+  { Tootsville.UI.takeOneStep (0, 1); } };
 
