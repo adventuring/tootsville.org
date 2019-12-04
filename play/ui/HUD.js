@@ -473,11 +473,13 @@ Tootsville.UI.HUD.toggleTalkEmoji = function ()
  */
 Tootsville.UI.HUD.connectTalkBox = function ()
 { document.getElementById ("talk-loud-selector").addEventListener
-  ("click", Tootsville.UI.HUD.toggleTalkLoud);};
-{ document.getElementById ("talk-expression").addEventListener
-  ("click", Tootsville.UI.HUD.toggleTalkExpression);};
-{ document.getElementById ("talk-emoji").addEventListener
-  ("click", Tootsville.UI.HUD.toggleTalkEmoji);};
+  ("click", Tootsville.UI.HUD.toggleTalkLoud);
+ document.getElementById ("talk-expression").addEventListener
+  ("click", Tootsville.UI.HUD.toggleTalkExpression);
+ document.getElementById ("talk-emoji").addEventListener
+  ("click", Tootsville.UI.HUD.toggleTalkEmoji);
+   document.getElementById ("talk-speak-button").addEventListener
+  ("click", Tootsville.UI.Keys.speakLine); };
 
 /**
  * Set up the HUD layer and start housekeeping
@@ -494,20 +496,40 @@ Tootsville.UI.HUD.initHUD = function ()
 * from time to time.
  */
 Tootsville.UI.HUD.refreshAttachment = function (model, attachment)
-{ const abs = BABYLON.Vector3.Project (
+{ const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
+  const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
+  const abs = BABYLON.Vector3.Project (
     model.getAbsolutePosition (),
     BABYLON.Matrix.IdentityReadOnly,
     Tootsville.Tank.scene.getTransformMatrix (),
     Tootsville.Tank.camera.viewport.toGlobal (
-        Tootsville.Tank.engine.getRenderWidth (),
-        Tootsville.Tank.engine.getRenderHeight ())).divide (
-            {x: Tootsville.Tank.engine.getRenderWidth(),
-             y: Tootsville.Tank.engine.getRenderHeight (),
-             z: 1}).multiply (
-                 {x: document.getElementById('tootsville3d').offsetWidth,
-                  y: document.getElementById('tootsville3d').offsetHeight,
-                  z: 1});
+        renderWidth, renderHeight)).divide (
+            {x: renderWidth, y: renderHeight, z: 1}).multiply (
+                {x: document.getElementById('tootsville3d').offsetWidth,
+                 y: document.getElementById('tootsville3d').offsetHeight,
+                 z: 1});
   attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
+  attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
+
+/**
+ *
+ */
+Tootsville.UI.HUD.refreshSpeechAttachment = function (model, attachment)
+{ const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
+  const renderHeight = Tootsville.Tank.engine.getRenderHeight ();  
+  const abs = BABYLON.Vector3.Project (
+    model.getAbsolutePosition (),
+    BABYLON.Matrix.IdentityReadOnly,
+    Tootsville.Tank.scene.getTransformMatrix (),
+    Tootsville.Tank.camera.viewport.toGlobal (
+        renderWidth, renderHeight)).divide (
+            {x: renderWidth, y: renderHeight, z: 1}).multiply (
+                {x: document.getElementById('tootsville3d').offsetWidth,
+                 y: document.getElementById('tootsville3d').offsetHeight,
+                 z: 1});
+  /* Shitty Z index guesswork here. XXX Get the Toot's actual height. */
+  const adjust = (1000 - Math.abs (model.position.z - Tootsville.Tank.camera.position.z) ) / 2000 * renderHeight / 2.5;
+  attachment.style.top = Math.max (30, Math.min (abs.y - adjust, window.innerHeight - 30)) + 'px';
   attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
@@ -517,16 +539,16 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
 { if (avatar.label)
   { Tootsville.UI.HUD.refreshAttachment (avatar.model, avatar.label); }
   if (avatar.speech)
-  { Tootsville.UI.HUD.refreshAttachment (avatar.model, avatar.speech); } };
+  { Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, avatar.speech); } };
 
 /**
  * Refresh all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
 { if ( (!Tootsville.Tank.scene) ||
-       (! Tootsville.Tank.scene.avatars) )
+       (!Tootsville.Tank.scene.avatars) )
   { return; }
- const names = Object.keys(Tootsville.Tank.scene.avatars);
+  const names = Object.keys(Tootsville.Tank.scene.avatars);
   for (var i = 0; i < names.length; ++i)
   { let avatar = Tootsville.Tank.scene.avatars [names [i]];
     if (avatar) { Tootsville.UI.HUD.refreshAttachmentsForAvatar(avatar); } }; };

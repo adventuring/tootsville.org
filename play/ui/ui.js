@@ -143,5 +143,45 @@ Tootsville.UI.slowLoadingWatchdog = function ()
 
 /** FIXME … This totally needs to go through the simulation tank code. This is a hack for testing. */
 Tootsville.UI.takeOneStep = function (δx, δz)
-{ Tootsville.Tank.scene.avatars [Tootsville.character.name].model.position.x += δx;
-  Tootsville.Tank.scene.avatars [Tootsville.character.name].model.position.z += δz;};
+{ const model = Tootsville.Tank.scene.avatars [Tootsville.character.name].model;
+  const targetRotation = Math.atan2 (-δx, -δz);
+  let delay = 100;
+  if (targetRotation != model.rotation)
+  { delay += 250;
+    const rotateNeg = model.rotation.y - targetRotation;
+    const rotatePos = targetRotation - model.rotation.y;
+    let δrotate = rotatePos;
+    if (Math.abs (rotateNeg) < Math.abs (rotatePos))
+    { δrotate = rotateNeg; }
+    for (var i = 0; i < 4; ++i)
+    { setTimeout ( () => { model.rotation.y += δrotate / 4; } , i * 250/4); } }
+  setTimeout ( () => {
+      //Force Settings
+      const forceDirection = new BABYLON.Vector3(δx, 0, δz);
+      const forceMagnitude = 1000;
+      const contactLocalRefPoint = BABYLON.Vector3.Zero();
+      model.physicsImpostor.applyForce(forceDirection.scale(forceMagnitude),
+                                       model.getAbsolutePosition().add(contactLocalRefPoint));
+  }, delay );
+  setTimeout ( () => {
+      //Force Settings
+      const forceDirection = new BABYLON.Vector3(-δx, 0, -δz);
+      const forceMagnitude = 1000;
+      const contactLocalRefPoint = BABYLON.Vector3.Zero();
+      model.physicsImpostor.applyForce(forceDirection.scale(forceMagnitude),
+                                       model.getAbsolutePosition().add(contactLocalRefPoint));
+  }, delay + 333 );};
+
+/** FIXME Gossip and more */
+Tootsville.UI.say = function (words)
+{ const balloon = document.createElement ('DIV');
+  balloon.className = 'speech';
+  balloon.innerText = words;
+  const avatar = Tootsville.Tank.scene.avatars [Tootsville.character.name];
+  avatar.speech = balloon;
+  Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
+  document.getElementById('hud').append (balloon);
+  setTimeout ( () => {if (Tootsville.Tank.scene.avatars [Tootsville.character.name].speech.innerText == words)
+                      { balloon.parentNode.removeChild (balloon);
+                        delete Tootsville.Tank.scene.avatars [Tootsville.character.name]['speech']; }},
+               5000 + words.length * 100);};

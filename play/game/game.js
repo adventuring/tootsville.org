@@ -31,8 +31,8 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = {game: {}}; }
-if (!('game' in Tootsville)) { Tootsville.Game = {}; }
+if (!('Tootsville' in window)) { Tootsville = {Game: {}}; }
+if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
 
 /**
 * Is   the   `point'   near   to  the   center   of   current   activity

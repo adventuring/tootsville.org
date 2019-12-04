@@ -68,7 +68,7 @@ Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
   label.className = 'name-tag';
   document.getElementById('hud').append (label);
   scene.avatars [avatar.name].label = label;
-  Tootsville.Tank.updateAttachmentsForAvatar (avatar); };
+  Tootsville.UI.HUD.refreshAttachment (model, label); };
 
 
 /**
@@ -96,10 +96,23 @@ Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
   if (!(skinMesh))
   { console.error ("Avatar has no skin layer?");
     return; }
-  object.physicsImpostor = new BABYLON.PhysicsImpostor (skinMesh,
-                                                        BABYLON.PhysicsImpostor.SphereImpostor,
-                                                        { mass: 6000, restitution: .05 },
-                                                        scene); };
+  skinMesh.physicsImpostor =
+  new BABYLON.PhysicsImpostor (skinMesh,
+                               BABYLON.PhysicsImpostor.BoxImpostor,
+                               { mass: 6000, restitution: .05 },
+                               scene);
+  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== skinMesh);
+  for (let i = 0; i < otherMeshes.length; ++i)
+  { otherMeshes [i].physicsImpostor =
+    new BABYLON.PhysicsImpostor (otherMeshes [i],
+                                 BABYLON.PhysicsImpostor.SphereImpostor,
+                                 { mass: 10, restitution: .2 },
+                                 scene); }
+  object.physicsImpostor =
+    new BABYLON.PhysicsImpostor (object,
+                                 BABYLON.PhysicsImpostor.CapsuleImpostor,
+                                 { mass: 10, restitution: .2 },
+                                 scene); };
 
 
 /**

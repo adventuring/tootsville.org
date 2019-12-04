@@ -378,7 +378,9 @@ Tootsville.UI.Keys.selectAll = function (event)
  *
  */
 Tootsville.UI.Keys.speakLine = function (event)
-{ /* TODO */ };
+{ Tootsville.UI.say (Tootsville.UI.talkSpeak.value);
+  console.info ("Speaking: «" + Tootsville.UI.talkSpeak.value + "»");
+  Tootsville.UI.talkSpeak.value = ''; };
 
 /**
  *
@@ -443,7 +445,7 @@ Tootsville.UI.Keys.arrowUp = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { /* retype last line */ }
   else
-  { Tootsville.UI.takeOneStep (0, -1); } };
+  { Tootsville.UI.takeOneStep (0, 1); } };
 
 /**
 *
@@ -452,5 +454,5 @@ Tootsville.UI.Keys.arrowDown = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { Tootsville.UI.Keys.killLine (); }
   else
-  { Tootsville.UI.takeOneStep (0, 1); } };
+  { Tootsville.UI.takeOneStep (0, -1); } };
 

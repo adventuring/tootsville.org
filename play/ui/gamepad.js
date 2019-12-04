@@ -68,9 +68,9 @@ Tootsville.UI.Gamepad.connectHandler = function (ev)
 Tootsville.UI.Gamepad.addGamepad = function (gamepad)
 { Tootsville.UI.Gamepad.controllers [gamepad.index] = gamepad;
   Tootsville.UI.Gamepad.controllerState [gamepad.index] = {buttons: [], axes: []};
-  for (var i=0; i < gamepad.buttons.length; i++)
+  for (var i = 0; i < gamepad.buttons.length; ++i)
   { Tootsville.UI.Gamepad.controllerState [gamepad.index].buttons [i] = null; }
-  for (i=0; i<gamepad.axes.length; i++)
+  for (i = 0; i < gamepad.axes.length; ++i)
   { Tootsville.UI.Gamepad.controllerState [gamepad.index].axes [i] = 0; }
   Tootsville.trace ("New gamepad detected", gamepad);
   window.requestAnimationFrame (Tootsville.UI.Gamepad.updateStatus); };
@@ -88,21 +88,27 @@ Tootsville.UI.Gamepad.removeGamepad = function (gamepad)
 { delete Tootsville.UI.Gamepad.controllers [gamepad.index];
   delete Tootsville.UI.Gamepad.controllerState [gamepad.index]; };
 
+Tootsville.UI.Gamepad.axisEvent = function (controllerIndex, axisIndex)
+{ if (0 == axisIndex || 1 == axisIndex)
+  { Tootsville.UI.takeOneStep (
+      Tootsville.UI.GamePad.controllerState [controllerIndex].axes [0],
+      Tootsville.UI.GamePad.controllerState [controllerIndex].axes [1]); } };
+
 /**
  * Update gamepad status.
  */
 Tootsville.UI.Gamepad.updateStatus = function ()
-{ for (j in Tootsville.UI.Gamepad.controllers)
-  { var controller = Tootsville.UI.Gamepad.controllers [j];
-    for (var i=0; i<controller.buttons.length; i++)
-    { var val = controller.buttons [i];
+{ for (let j = 0; j < Tootsville.UI.Gamepad.controllers.length; ++j)
+  { let controller = Tootsville.UI.Gamepad.controllers [j];
+    for (let i = 0; i < controller.buttons.length; ++i)
+    { let val = controller.buttons [i];
       if (typeof (val) == "object")
       { val = val.value; }
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
       { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
         Tootsville.UI.Gamepad.buttonEvent (j, i); }}
-    for (var i = 0; i < controller.axes.length; i ++)
-    { var val = controller.axes [i];
+    for (i = 0; i < controller.axes.length; i ++)
+    { val = controller.axes [i];
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
       { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
         Tootsville.UI.Gamepad.axisEvent (j, i); }}}
