@@ -346,7 +346,7 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
  */
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
-  if (Tootsville.character && (! paperdoll.scene) )
+  if (Tootsville.character.avatar && (! paperdoll.scene) )
   { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
   if ( (! Tootsville.character) ||
        (! paperdoll.scene) ||
@@ -444,7 +444,7 @@ Tootsville.UI.HUD.refreshHUD = function ()
   Tootsville.UI.HUD.refreshTalkStatus ();
   Tootsville.UI.HUD.refreshWallet ();
   Tootsville.UI.HUD.refreshPaperdoll ();
-  Tootsville.UI.HUD.updateAttachmentOverlays (); };
+  Tootsville.UI.HUD.refreshAttachmentOverlays (); };
 
 /**
  * Toggle visibility of the Loudness selector for the Talk Box.
@@ -483,50 +483,50 @@ Tootsville.UI.HUD.connectTalkBox = function ()
  * Set up the HUD layer and start housekeeping
  */
 Tootsville.UI.HUD.initHUD = function ()
-{ setInterval (Tootsville.UI.HUD.refreshHUD, 250);
+{ setInterval (Tootsville.UI.HUD.refreshHUD, 333);
   Tootsville.UI.HUD.connectTalkBox (); };
 
 /**
- * Update one 2D attachment object.
+ * Refresh one 2D attachment object.
 *
 * These attachments  are used  for avatar  labels, speech  balloons, &c.
-* and need to  be updated to keep  in sync with the  underlying 3D scene
+* and need to  be refreshd to keep  in sync with the  underlying 3D scene
 * from time to time.
  */
-Tootsville.UI.HUD.updateAttachment = function (model, attachment)
-{ const center = BABYLON.Vector3.Project (
+Tootsville.UI.HUD.refreshAttachment = function (model, attachment)
+{ const abs = BABYLON.Vector3.Project (
     model.getAbsolutePosition (),
     BABYLON.Matrix.IdentityReadOnly,
     Tootsville.Tank.scene.getTransformMatrix (),
     Tootsville.Tank.camera.viewport.toGlobal (
         Tootsville.Tank.engine.getRenderWidth (),
-        Tootsville.Tank.engine.getRenderHeight ()));
-  const rel = center.divide ({x: Tootsville.Tank.engine.getRenderWidth(),
-                              y: Tootsville.Tank.engine.getRenderHeight (),
-                              z: 1});
-  let abs = rel.multiply ({x: document.getElementById('tootsville3d').offsetWidth,
-                           y: document.getElementById('tootsville3d').offsetHeight,
-                           z: 1});
+        Tootsville.Tank.engine.getRenderHeight ())).divide (
+            {x: Tootsville.Tank.engine.getRenderWidth(),
+             y: Tootsville.Tank.engine.getRenderHeight (),
+             z: 1}).multiply (
+                 {x: document.getElementById('tootsville3d').offsetWidth,
+                  y: document.getElementById('tootsville3d').offsetHeight,
+                  z: 1});
   attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
   attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
- * Update the 2D attachments for one avatar. 
+ * Refresh the 2D attachments for one avatar. 
  */
-Tootsville.UI.HUD.updateAttachmentsForAvatar = function (avatar)
+Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
 { if (avatar.label)
-  { Tootsville.UI.HUD.updateAttachment (avatar.model, avatar.label); }
+  { Tootsville.UI.HUD.refreshAttachment (avatar.model, avatar.label); }
   if (avatar.speech)
-  { Tootsville.UI.HUD.updateAttachment (avatar.model, avatar.speech); } };
+  { Tootsville.UI.HUD.refreshAttachment (avatar.model, avatar.speech); } };
 
 /**
- * Update all 2D attachment overlays to follow the 3D scene.
+ * Refresh all 2D attachment overlays to follow the 3D scene.
  */
-Tootsville.UI.HUD.updateAttachmentOverlays = function ()
+Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
 { if ( (!Tootsville.Tank.scene) ||
        (! Tootsville.Tank.scene.avatars) )
   { return; }
  const names = Object.keys(Tootsville.Tank.scene.avatars);
   for (var i = 0; i < names.length; ++i)
   { let avatar = Tootsville.Tank.scene.avatars [names [i]];
-    if (avatar) { Tootsville.UI.HUD.updateAttachmentsForAvatar(avatar); } }; };
+    if (avatar) { Tootsville.UI.HUD.refreshAttachmentsForAvatar(avatar); } }; };
