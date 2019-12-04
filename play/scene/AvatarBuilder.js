@@ -107,15 +107,14 @@ Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
  *
  * Don't call this directly, call `Tootsville.AvatarBuilder.build'.
  */
-Tootsville.AvatarBuilder.build2 = function (avatar, root, scene, finish)
+Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
 { console.debug ("Building " + avatar.avatar + " " + avatar.userName);
-  const object = root;
   // TODO set scaling
-  try {Tootsville.AvatarBuilder.rememberAvatar (avatar, object, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.addNameLabel (avatar, object, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.enablePhysics (avatar, object, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.enableShadows (object, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.colorize (avatar, object, scene, finish); } catch (e) { console.error (e); } };
+  try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.addNameLabel (avatar, model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); } };
 
 /**
  * Load the base avatar model from Jumbo.
@@ -145,13 +144,25 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
     Tootsville.AvatarBuilder.build2 (avatar, modelRoot, scene, finish); };
   assetsManager.load (); };
 
+/**
+ *
+ */
+Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
+{ try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); }
+  try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
+  finish (model); };
 
 /**
  * Build an avatar based upon the description passed in.
  *
  * The  structure  of   the  avatar  description  is   as  explained  at
  * `TOOT-INFO'.
+ *
+ * A duplicate of an existing avatar will not be created, but it may be updated.
  */
 Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
-{ Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };
+{ if (scene.avatars && scene.avatars [avatar.name] && scene.avatars [avatar.name].model)
+  { Tootsville.AvatarBuilder.update (avatar, scene.avatars [avatar.name].model, scene, finish); }
+  else
+  { Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); } };
 

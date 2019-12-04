@@ -346,10 +346,19 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
  */
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
+  if (Tootsville.character && (! paperdoll.scene) )
+  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
+  if ( (! Tootsville.character) ||
+       (! paperdoll.scene) ||
+       (! Tootsville.Tank.scene) ) { return; }
   if (!(Tootsville.util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
-  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll);
-    paperdoll.avatar = Object.assign({}, Tootsville.character); }
-  if (paperdoll.scene) { paperdoll.scene.render (); } };
+  { Tootsville.AvatarBuilder.update (Tootsville.character, paperdoll.scene.avatars [Tootsville.character.name].model,
+                                     paperdoll.scene, () =>
+                                     { paperdoll.avatar = Object.assign({}, Tootsville.character);
+                                       paperdoll.scene.render (); });
+    /* XXX These probably belong in some kind of watcher for wardrobe changes, but for now this works. */
+  Tootsville.AvatarBuilder.update (Tootsville.character, Tootsville.Tank.scene.avatars [Tootsville.character.name].model,
+                                   Tootsville.Tank.scene, () => {}); } };
 
 /**
  * Refresh the display of the active equipment item.
@@ -434,7 +443,8 @@ Tootsville.UI.HUD.refreshHUD = function ()
 { Tootsville.UI.HUD.refreshEquipment ();
   Tootsville.UI.HUD.refreshTalkStatus ();
   Tootsville.UI.HUD.refreshWallet ();
-  Tootsville.UI.HUD.refreshPaperdoll (); };
+  Tootsville.UI.HUD.refreshPaperdoll ();
+  Tootsville.UI.HUD.updateAttachmentOverlays (); };
 
 /**
  * Toggle visibility of the Loudness selector for the Talk Box.
@@ -475,3 +485,48 @@ Tootsville.UI.HUD.connectTalkBox = function ()
 Tootsville.UI.HUD.initHUD = function ()
 { setInterval (Tootsville.UI.HUD.refreshHUD, 250);
   Tootsville.UI.HUD.connectTalkBox (); };
+
+/**
+ * Update one 2D attachment object.
+*
+* These attachments  are used  for avatar  labels, speech  balloons, &c.
+* and need to  be updated to keep  in sync with the  underlying 3D scene
+* from time to time.
+ */
+Tootsville.UI.HUD.updateAttachment = function (model, attachment)
+{ const center = BABYLON.Vector3.Project (
+    model.getAbsolutePosition (),
+    BABYLON.Matrix.IdentityReadOnly,
+    Tootsville.Tank.scene.getTransformMatrix (),
+    Tootsville.Tank.camera.viewport.toGlobal (
+        Tootsville.Tank.engine.getRenderWidth (),
+        Tootsville.Tank.engine.getRenderHeight ()));
+  const rel = center.divide ({x: Tootsville.Tank.engine.getRenderWidth(),
+                              y: Tootsville.Tank.engine.getRenderHeight (),
+                              z: 1});
+  let abs = rel.multiply ({x: document.getElementById('tootsville3d').offsetWidth,
+                           y: document.getElementById('tootsville3d').offsetHeight,
+                           z: 1});
+  attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
+  attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
+
+/**
+ * Update the 2D attachments for one avatar. 
+ */
+Tootsville.UI.HUD.updateAttachmentsForAvatar = function (avatar)
+{ if (avatar.label)
+  { Tootsville.UI.HUD.updateAttachment (avatar.model, avatar.label); }
+  if (avatar.speech)
+  { Tootsville.UI.HUD.updateAttachment (avatar.model, avatar.speech); } };
+
+/**
+ * Update all 2D attachment overlays to follow the 3D scene.
+ */
+Tootsville.UI.HUD.updateAttachmentOverlays = function ()
+{ if ( (!Tootsville.Tank.scene) ||
+       (! Tootsville.Tank.scene.avatars) )
+  { return; }
+ const names = Object.keys(Tootsville.Tank.scene.avatars);
+  for (var i = 0; i < names.length; ++i)
+  { let avatar = Tootsville.Tank.scene.avatars [names [i]];
+    if (avatar) { Tootsville.UI.HUD.updateAttachmentsForAvatar(avatar); } }; };

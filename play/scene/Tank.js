@@ -152,55 +152,13 @@ Tootsville.Tank.initScene = function ()
   Tootsville.Tank.scene.registerAfterRender (Tootsville.Tank.afterRender);
   return Tootsville.Tank.scene; };
 
-/**
- * Update one 2D attachment object.
-*
-* These attachments  are used  for avatar  labels, speech  balloons, &c.
-* and need to  be updated to keep  in sync with the  underlying 3D scene
-* from time to time.
- */
-Tootsville.Tank.updateAttachment = function (model, attachment)
-{ const center = BABYLON.Vector3.Project (
-    model.getAbsolutePosition (),
-    BABYLON.Matrix.IdentityReadOnly,
-    Tootsville.Tank.scene.getTransformMatrix (),
-    Tootsville.Tank.camera.viewport.toGlobal (
-        Tootsville.Tank.engine.getRenderWidth (),
-        Tootsville.Tank.engine.getRenderHeight ()));
-  const rel = center.divide ({x: Tootsville.Tank.engine.getRenderWidth(),
-                              y: Tootsville.Tank.engine.getRenderHeight (),
-                              z: 1});
-  let abs = rel.multiply ({x: document.getElementById('tootsville3d').offsetWidth,
-                           y: document.getElementById('tootsville3d').offsetHeight,
-                           z: 1});
-  attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
-  abs.x -= attachment.offsetWidth / 2;
-  attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
-
-/**
- * Update the 2D attachments for one avatar. 
- */
-Tootsville.Tank.updateAttachmentsForAvatar = function (avatar)
-{ if (avatar.label)
-  { Tootsville.Tank.updateAttachment (avatar.model, avatar.label); }
-  if (avatar.speech)
-  { Tootsville.Tank.updateAttachment (avatar.model, avatar.speech); } };
-
-/**
- * Update all 2D attachment overlays to follow the 3D scene.
- */
-Tootsville.Tank.updateAttachmentOverlays = function ()
-{ Array.forEach (Object.values(Tootsville.Tank.scene.avatars),
-                 avatar => {Tootsville.Tank.updateAttachmentOverlays(avatar); } ); };
 
 /**
  * This event  handler is called  whenever a frame  in the 3D  scene has
  * been rendered.
  */
 Tootsville.Tank.afterRender = function ()
-{ if (true || Tootsville.Tank.attachmentOverlaysNeedUpdateP)
-  { Tootsville.Tank.updateAttachmentOverlays ();
-    Tootsville.Tank.attachmentOverlaysNeedUpdateP = false; } };
+{ };
 
 /**
  * Initialize the 3D engine, including Babylon 3D and Ammo physics.
@@ -324,16 +282,14 @@ Tootsville.Tank.loadUISounds = function ()
  * This is the main entry point for the 3D simulation engine.
  */
 Tootsville.Tank.start3D = function ()
-{ Tootsville.Tank.prepareFor3D ().then (Tootsville.Tank.start3DIfReady); };
+{ Tootsville.Tank.prepareFor3D ().then (Tootsville.Tank.start3DReal); };
 
 /**
  * Ensure  that all  libraries  are  loaded and  actually  start the  3D
  * engine. Called by `Tootsville.Tank.start3D'
  */
-Tootsville.Tank.start3DIfReady = function ()
-    { if ( (! ("BABYLON" in window)) || (! ("Ammo" in window)))
-      { return Tootsville.Tank.prepareFor3D ().then (Tootsville.Tank.start3DifReady); }
-      BABYLON.SceneLoader.ShowLoadingScreen = false;
+Tootsville.Tank.start3DReal = function ()
+    { BABYLON.SceneLoader.ShowLoadingScreen = false;
       Tootsville.Tank.init3DEngine ().then (
           () =>
               { console.log ("3D libraries loaded");
@@ -344,6 +300,6 @@ Tootsville.Tank.start3DIfReady = function ()
                 Tootsville.Tank.startRenderLoop ();
                 /* FIXME this seems to miss many resize events? */
                 window.addEventListener ('resize',
-                                         (ev) => { Tootsville.Tank.engine.resize () }); } );
+                                         (ev) => { Tootsville.Tank.engine.resize (); }); } );
 
       return true; };
