@@ -61,14 +61,14 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
 /**
  * Adds a nametag to an avatar. (Only in the main scene, for now.)
  */
-Tootsville.AvatarBuilder.addNameLabel = function (avatar, model, scene)
-{ if (scene !== Tootsville.Tank.scene) { return; } /* XXX Labels in other contexts */
-  var label = document.createElement ('DIV');
-  label.innerHTML = avatar.userName; /* Note this may start with ◆ */
-  label.className = 'name-tag';
-  document.getElementById('hud').append (label);
-  scene.avatars [avatar.name].label = label;
-  Tootsville.UI.HUD.refreshAttachment (model, label); };
+Tootsville.AvatarBuilder.addNameTag = function (avatar, model, scene)
+{ if (scene !== Tootsville.Tank.scene) { return; }
+  var nameTag = document.createElement ('DIV');
+  nameTag.innerHTML = avatar.userName; /* Note this may start with ◆ */
+  nameTag.className = 'name-tag';
+  document.getElementById('hud').append (nameTag);
+  scene.avatars [avatar.name].nameTag = nameTag;
+  Tootsville.UI.HUD.refreshAttachment (model, nameTag); };
 
 
 /**
@@ -105,12 +105,12 @@ Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
   for (let i = 0; i < otherMeshes.length; ++i)
   { otherMeshes [i].physicsImpostor =
     new BABYLON.PhysicsImpostor (otherMeshes [i],
-                                 BABYLON.PhysicsImpostor.SphereImpostor,
+                                 BABYLON.PhysicsImpostor.NoImpostor,
                                  { mass: 10, restitution: 0 },
                                  scene); }
   object.physicsImpostor =
-    new BABYLON.NoImpostor (object,
-                                 BABYLON.PhysicsImpostor.CapsuleImpostor,
+    new BABYLON.PhysicsImpostor (object,
+                                 BABYLON.PhysicsImpostor.NoImpostor,
                                  { mass: 6000, restitution: .05 },
                                  scene); };
 
@@ -124,7 +124,7 @@ Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
 { console.debug ("Building " + avatar.avatar + " " + avatar.userName);
   // TODO set scaling
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.addNameLabel (avatar, model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); } };
@@ -141,15 +141,15 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".babylon");
   loadTask.onSuccess = function (task)
-  { const modelRoot = new BABYLON.TransformNode ("avatar/" + avatar.name, scene, true);
+  { const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
     modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
     var i;
     for (i = 0; i < task.loadedMeshes.length; ++i)
-    { task.loadedMeshes [i].setParent (modelRoot); }
+    { modelRoot.addChild (task.loadedMeshes [i]); }
     for (i = 0; i < task.loadedParticleSystems.length; ++i)
-    { task.loadedParticleSystems [i].setParent (modelRoot); }
+    { modelRoot.addChild (task.loadedParticleSystems [i]); }
     for (i = 0; i < task.loadedSkeletons.length; ++i)
-    { task.loadedSkeletons [i].setParent (modelRoot); }
+    { modelRoot.addChild (task.loadedSkeletons [i]); }
     console.debug ("Loaded base avatar " + avatar.avatar + " with " +
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +

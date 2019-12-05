@@ -80,28 +80,23 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
  *
  */
 Tootsville.Game.Nav.updateFacing = function (avatar)
-{ if (avatar.model.rotation instanceof Number)
-  { avatar.model.rotation = new BABYLON.Vector3 (0, avatar.model.rotation, 0);
-    console.error ("Rotation got fucked up"); }
-  let δRotation = avatar.model.rotation.y - avatar.facing;
+{ let δRotation = avatar.model.rotationQuaternion.y - avatar.facing;
   if (δRotation >= Math.PI)
   { δRotation -= Math.PI * 2; }
   else if (δRotation <= -Math.PI)
   { δRotation += Math.PI * 2; }
   let rotationSpeed = Math.abs(δRotation/8);
   if (δRotation > 0)
-  { avatar.model.rotation.y -= rotationSpeed;
-    if (avatar.model.rotation.y < -Math.PI) { avatar.model.rotation.y = Math.PI; } }
+  { avatar.model.rotate(BABYLON.Axis.Y, -rotationSpeed); }
   else
-  { avatar.model.rotation.y += rotationSpeed;
-    if (avatar.model.rotation.y > Math.PI) { avatar.model.rotation.y = -Math.PI; } } };
+  { avatar.model.rotate(BABYLON.Axis.Y, rotationSpeed); } };
 
 /**
  *
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (! avatar.model) { return; }
-  if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
+  if (Math.abs (avatar.model.rotationQuaternion.y - avatar.facing) > .01)
   { Tootsville.Game.Nav.updateFacing (avatar); }
   if (avatar.course)
   { let done = Tootsville.Game.Nav.updateWalk (avatar, avatar.course);

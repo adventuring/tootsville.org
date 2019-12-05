@@ -33,11 +33,16 @@
 
 (function () {
      var clickHandlers = {
-         'control-panel-icon': () => { Tootsville.UI.HUD.toggleHUDPanel('control-panel'); },
-         'toolbox-mobile-phone': () => { Tootsville.UI.HUD.showHUDPanel('mobile'); },
-         'toolbox-contacts': () => { Tootsville.UI.HUD.showHUDPanel('contacts'); },
-         'paperdoll-mini': () => Tootsville.UI.HUD.openPaperdoll,
-         'troubleshooting-icon': () => { Tootsville.UI.HUD.toggleHUDPanel('troubleshooting'); }
+         'control-panel-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
+                                            event.preventDefault (); },
+         'toolbox-mobile-phone': (event) => { Tootsville.UI.HUD.showHUDPanel('mobile');
+                                              event.preventDefault ();  },
+         'toolbox-contacts': (event) => { Tootsville.UI.HUD.showHUDPanel('contacts');
+                                          event.preventDefault ();  },
+         'paperdoll-mini': (event) => { Tootsville.UI.HUD.openPaperdoll ();
+                                        event.preventDefault (); },
+         'troubleshooting-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('troubleshooting');
+                                              event.preventDefault ();  }
      };
      for (var id in clickHandlers) {
          document.getElementById(id).addEventListener('click', clickHandlers[id]);

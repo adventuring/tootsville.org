@@ -498,7 +498,7 @@ Tootsville.UI.HUD.initHUD = function ()
 * and need to  be refreshd to keep  in sync with the  underlying 3D scene
 * from time to time.
  */
-Tootsville.UI.HUD.refreshAttachment = function (model, attachment)
+Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
   const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
   const abs = BABYLON.Vector3.Project (
@@ -511,13 +511,13 @@ Tootsville.UI.HUD.refreshAttachment = function (model, attachment)
                 {x: document.getElementById('tootsville3d').offsetWidth,
                  y: document.getElementById('tootsville3d').offsetHeight,
                  z: 1});
-  attachment.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
-  attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
+  nameTag.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
+  nameTag.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
  *
  */
-Tootsville.UI.HUD.refreshSpeechAttachment = function (model, attachment)
+Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
   const renderHeight = Tootsville.Tank.engine.getRenderHeight ();  
   const abs = BABYLON.Vector3.Project (
@@ -532,15 +532,15 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, attachment)
                  z: 1});
   /* Shitty Z index guesswork here. XXX Get the Toot's actual height. */
   const adjust = (1000 - Math.abs (model.position.z - Tootsville.Tank.camera.position.z) ) / 2000 * renderHeight / 2.5;
-  attachment.style.top = Math.max (30, Math.min (abs.y - adjust, window.innerHeight - 30)) + 'px';
-  attachment.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
+  speechBubble.style.top = Math.max (30, Math.min (abs.y - adjust, window.innerHeight - 30)) + 'px';
+  speechBubble.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
  * Refresh the 2D attachments for one avatar. 
  */
 Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
-{ if (avatar.label)
-  { Tootsville.UI.HUD.refreshAttachment (avatar.model, avatar.label); }
+{ if (avatar.nameTag)
+  { Tootsville.UI.HUD.refreshNameTagAttachment (avatar.model, avatar.nameTag); }
   if (avatar.speech)
   { Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, avatar.speech); } };
 
