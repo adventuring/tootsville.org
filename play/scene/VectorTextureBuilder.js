@@ -10,3 +10,6 @@ Tootsville.Tank.VectorTextureBuilder.build = function (svgData, name)
   const svgMaterial = new BABYLON.PBRMaterial (name, Tootsville.Tank.scene);
   const svgMaterial.albedoTexture = svgTexture;
   return svgMaterial; }
+
+Tootsville.Tank.VectorTextureBuilder.buildPattern = function (patternName, baseColor, patternColor)
+{ console.error ("VectorTextureBuilder.buildPattern is not written yet"); /* TODO */ }
