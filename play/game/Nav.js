@@ -70,7 +70,7 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
   { console.error ("Course fail, ", avatar.course, " yields ", position);
     return true; }
 
-  avatar.model.position = position;
+  avatar.model.moveWithCollisions (position.subtract (avatar.model.position));
   
   Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatar);
 
