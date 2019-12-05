@@ -63,6 +63,8 @@ Tootsville.bootstrap = function ()
     Tootsville.UI.HUD.initHUD ();
     setInterval (Tootsville.updateClock, 250);
 
+    setInterval (Tootsville.Game.update, 33);
+
     document.addEventListener('keydown', Tootsville.UI.Keys.onKeyDown);
 
     Tootsville.Tank.prepareFor3D ();

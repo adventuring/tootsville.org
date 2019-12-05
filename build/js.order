@@ -20,6 +20,9 @@ play/game/wardrobe.js
 play/game/commands.js
 play/game/gatekeeper.js
 play/game/Tools.js
+play/game/Game.js
+play/game/Speech.js
+play/game/Nav.js
 
 play/ui/connect.js
 play/ui/gamepad-layouts.js

@@ -92,7 +92,10 @@ Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
  * Create a physics impostor for the object
  */
 Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
-{ let skinMesh = object.getChildMeshes().filter( mesh => mesh.name.indexOf ('Skin') >= 0 )[0];
+{ return;
+
+// ☠☠☠
+  let skinMesh = object.getChildMeshes().filter( mesh => mesh.name.indexOf ('Skin') >= 0 )[0];
   if (!(skinMesh))
   { console.error ("Avatar has no skin layer?");
     return; }

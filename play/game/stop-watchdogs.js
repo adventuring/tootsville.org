@@ -31,8 +31,7 @@
  *
  */
 
-if (!("game" in Tootsville))
-{ Tootsville.Game = {}; }
+if (!("Game" in Tootsville)) { Tootsville.Game = {}; }
 
 /**
  * Hide the loading overlay once the game is ready.

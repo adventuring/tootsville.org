@@ -350,6 +350,7 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
   { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
   if ( (! Tootsville.character) ||
        (! paperdoll.scene) ||
+       (! paperdoll.scene.avatars) ||
        (! Tootsville.Tank.scene) ) { return; }
   if (!(Tootsville.util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
   { Tootsville.AvatarBuilder.update (Tootsville.character, paperdoll.scene.avatars [Tootsville.character.name].model,
@@ -545,10 +546,4 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
  * Refresh all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
-{ if ( (!Tootsville.Tank.scene) ||
-       (!Tootsville.Tank.scene.avatars) )
-  { return; }
-  const names = Object.keys(Tootsville.Tank.scene.avatars);
-  for (var i = 0; i < names.length; ++i)
-  { let avatar = Tootsville.Tank.scene.avatars [names [i]];
-    if (avatar) { Tootsville.UI.HUD.refreshAttachmentsForAvatar(avatar); } }; };
+{};
