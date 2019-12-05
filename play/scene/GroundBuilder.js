@@ -66,5 +66,4 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
 Tootsville.GroundBuilder.build = function (x, y, z)
 {
     /* TODO — get terrain data and build heightmap */
-    Tootsville.GroundBuilder.initGroundPlane ();
-}
+    const ground = Tootsville.GroundBuilder.initGroundPlane (); };

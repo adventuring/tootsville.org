@@ -92,10 +92,7 @@ Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
  * Create a physics impostor for the object
  */
 Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
-{ return;
-
-// ☠☠☠
-  let skinMesh = object.getChildMeshes().filter( mesh => mesh.name.indexOf ('Skin') >= 0 )[0];
+{ let skinMesh = object.getChildMeshes().filter( mesh => mesh.name.indexOf ('Skin') >= 0 )[0];
   if (!(skinMesh))
   { console.error ("Avatar has no skin layer?");
     return; }
@@ -109,12 +106,12 @@ Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
   { otherMeshes [i].physicsImpostor =
     new BABYLON.PhysicsImpostor (otherMeshes [i],
                                  BABYLON.PhysicsImpostor.SphereImpostor,
-                                 { mass: 10, restitution: .2 },
+                                 { mass: 10, restitution: 0 },
                                  scene); }
   object.physicsImpostor =
-    new BABYLON.PhysicsImpostor (object,
+    new BABYLON.NoImpostor (object,
                                  BABYLON.PhysicsImpostor.CapsuleImpostor,
-                                 { mass: 10, restitution: .2 },
+                                 { mass: 6000, restitution: .05 },
                                  scene); };
 
 

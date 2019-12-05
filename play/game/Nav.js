@@ -36,8 +36,7 @@ if (!('Nav' in Tootsville.Game)) { Tootsville.Game.Nav= {}; }
 
 if (!('now' in Tootsville.Game)) { Tootsville.Game.now = 0; }
 
-Tootsville.Game.Nav.MAX_ROTATION = .02;
-Tootsville.Game.Nav.WALK_SPEED = .01;
+Tootsville.Game.Nav.WALK_SPEED = .3;
 
 /**
  *
@@ -51,10 +50,10 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
   avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z); };
 
 /**
-*
-*
-* returns true when the course has been completed
-*/
+ *
+ *
+ * returns true when the course has been completed
+ */
 Tootsville.Game.Nav.updateWalk = function (avatar, course)
 { if (course.startTime > Tootsville.Game.now) { return false; }
   if (! course.walkΔ)
@@ -81,10 +80,21 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
  *
  */
 Tootsville.Game.Nav.updateFacing = function (avatar)
-{ avatar.model.rotation.y += Math.max (Tootsville.Game.Nav.MAX_ROTATION,
-                                       avatar.model.rotation.y - avatar.facing);
-  while (avatar.model.rotation.y < 0) { avatar.model.rotation.y += 2 * Math.PI; }
-  while (avatar.model.rotation.y > 2 * Math.PI) { avatar.model.rotation.y -= 2 * Math.PI; } };
+{ if (avatar.model.rotation instanceof Number)
+  { avatar.model.rotation = new BABYLON.Vector3 (0, avatar.model.rotation, 0);
+    console.error ("Rotation got fucked up"); }
+  let δRotation = avatar.model.rotation.y - avatar.facing;
+  if (δRotation >= Math.PI)
+  { δRotation -= Math.PI * 2; }
+  else if (δRotation <= -Math.PI)
+  { δRotation += Math.PI * 2; }
+  let rotationSpeed = Math.abs(δRotation/8);
+  if (δRotation > 0)
+  { avatar.model.rotation.y -= rotationSpeed;
+    if (avatar.model.rotation.y < -Math.PI) { avatar.model.rotation.y = Math.PI; } }
+  else
+  { avatar.model.rotation.y += rotationSpeed;
+    if (avatar.model.rotation.y > Math.PI) { avatar.model.rotation.y = -Math.PI; } } };
 
 /**
  *

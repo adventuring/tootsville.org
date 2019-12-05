@@ -34,19 +34,6 @@
 if (! ("Tank" in Tootsville)) { Tootsville.Tank = {}; }
 
 /**
- * Accept a click in the scene and identify the next action to take.
- */
-Tootsville.Tank.acceptClick = function (event, pickedP, distance,
-                                        pickedMesh, pickedPoint)
-{ if (! pickedP) { return; }
-  if (Tootsville.pickTargetListener)
-  { Tootsville.pickTargetListener (pickedMesh, pickedPoint); }
-  else if (pickedMesh.acceptAction)
-  { pickedMesh.acceptAction ({ method: 'click',
-                               target: pickedMesh,
-                               point: pickedPoint }); } };
-
-/**
  * Indicates whether the 2D overlay attachments need updating.
  *
  * When true, the scene has changed  in some way that may invalidate the
@@ -58,7 +45,7 @@ Tootsville.Tank.acceptClick = function (event, pickedP, distance,
 Tootsville.Tank.attachmentOverlaysNeedUpdateP = false;
 
 /**
- * Initialize  the Over-The-Shoulder  camera. 
+ * Initialize  the Over-The-Shoulder  camera.
  *
  * This is the main follow camera  for the game. This camera follows the
  * player's Toot through the scene.
@@ -73,7 +60,7 @@ Tootsville.Tank.initOTSCamera = function ()
   camera.rotationOffset = 0;
   camera.cameraAcceleration = .0005;
   camera.maxCameraSpeed = 5;
-//  camera.attachControl (Tootsville.Tank.scene.
+  //  camera.attachControl (Tootsville.Tank.scene.
   // camera.ellipsoid = new BABYLON.Vector3 (.5,1,.5);
   // camera.checkCollisions = true;
   Tootsville.Tank.camera = camera;
@@ -135,13 +122,18 @@ Tootsville.Tank.getCanvas = function ()
  * Convert an event on the CANVAS object into a 3D event as appropriate.
  */
 Tootsville.Tank.convertCanvasEventTo3D = function (event)
-{ const picked = Tootsville.Tank.scene.pick (
-    Tootsville.Tank.scene.pointerX,
-    Tootsville.Tank.scene.pointerY);
-  Tootsville.Tank.acceptClick (event, picked.hit,
-                               picked.distance,
-                               picked.pickedMesh,
-                               picked.pickedPoint); };
+{ const picked = Tootsville.Tank.scene.pick (event.clientX, event.clientY);
+  if (! picked) { return; }
+  if (! picked.pickedMesh) { return; }
+  if (picked.pickedMesh.name == 'ground')
+  { console.log ('User clicked ground');
+    Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+                                     picked.pickedPoint); }
+  else if (0 == picked.pickedMesh.name.indexOf ('avatar/'))
+  { console.log ('User clicked avatar ',  picked.pickedMesh.name, picked); }
+  else
+  { console.debug ('User clicked mesh ', picked.pickedMesh.name, picked); } };
+
 
 /**
  * Initialize the Babylon 3D scene object.
@@ -186,12 +178,15 @@ Tootsville.Tank.init3DEngine = function ()
           Tootsville.Tank.canvas.addEventListener (
               'click',
               Tootsville.Tank.convertCanvasEventTo3D);
+          document.getElementById('hud').addEventListener (
+              'click',
+              Tootsville.Tank.convertCanvasEventTo3D);
           console.log ("init3DEngine: ready");
           finish (); }); };
 
 
 /**
- * Initialize our local player's Toot object. 
+ * Initialize our local player's Toot object.
  *
  * We know that it, at least, will always exist.
  */
@@ -264,7 +259,7 @@ Tootsville.Tank.prepareFor3D = function ()
           else
           { Tootsville.util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
                                         /*'https://cdn.babylonjs.com/babylon.js'*/).then (
-              Tootsville.Tank.prepareFor3D); }}); };
+                                            Tootsville.Tank.prepareFor3D); }}); };
 
 /**
  * Enqueue some foley sound effects that will be used in the scene.
@@ -289,17 +284,17 @@ Tootsville.Tank.start3D = function ()
  * engine. Called by `Tootsville.Tank.start3D'
  */
 Tootsville.Tank.start3DReal = function ()
-    { BABYLON.SceneLoader.ShowLoadingScreen = false;
-      Tootsville.Tank.init3DEngine ().then (
-          () =>
-              { console.log ("3D libraries loaded");
-                Tootsville.Tank.createScene ();
-                console.log ("Created test scene; starting rendering loop");
-                setTimeout ( () => { Tootsville.Tank.initOTSCamera ();
-                                     Tootsville.Tank.scene.activeCamera = Tootsville.Tank.camera; }, 100);
-                Tootsville.Tank.startRenderLoop ();
-                /* FIXME this seems to miss many resize events? */
-                window.addEventListener ('resize',
-                                         (ev) => { Tootsville.Tank.engine.resize (); }); } );
+{ BABYLON.SceneLoader.ShowLoadingScreen = false;
+  Tootsville.Tank.init3DEngine ().then (
+      () =>
+          { console.log ("3D libraries loaded");
+            Tootsville.Tank.createScene ();
+            console.log ("Created test scene; starting rendering loop");
+            setTimeout ( () => { Tootsville.Tank.initOTSCamera ();
+                                 Tootsville.Tank.scene.activeCamera = Tootsville.Tank.camera; }, 100);
+            Tootsville.Tank.startRenderLoop ();
+            /* FIXME this seems to miss many resize events? */
+            window.addEventListener ('resize',
+                                     (ev) => { Tootsville.Tank.engine.resize (); }); } );
 
-      return true; };
+  return true; };

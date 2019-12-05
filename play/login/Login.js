@@ -109,7 +109,7 @@ Tootsville.Login.serverQueryCharacters = function ()
 /**
  * The set of Toot characters available to the player.
  */
-Tootsville.Login.toots = {};
+if (!('toots' in Tootsville.Login)) { Tootsville.Login.toots = {}; }
 
 /**
  * Actually instantiate  a decorated Toot  List Item with  avatar, note,
@@ -125,11 +125,11 @@ Tootsville.Login.createTootListItem2 = function (li, toot)
   canvas.width = 96;
   canvas.height = 96;
   li.appendChild (canvas);
-  /* Create a closure that owns its own copies of toot and canvas */
-  var createViewer = function (tt, cc) { return () => { console.debug ("Drawing avatar " + tt.name + " in a canvas");
-                                                        Tootsville.AvatarViewer.createViewerInCanvas (tt, cc); }; };
   /* Create AvatarViewer asynchronously */
-  setTimeout ( createViewer (toot, canvas), 10 );
+  setTimeout ( () => { console.debug ("Drawing avatar " + toot.name + " in a canvas");
+                       Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas);
+                       canvas.scene.render (); },
+               10 );
   li.innerHTML += '<SPAN CLASS="toot-name">' +
   toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
   Tootsville.Login.addChildFlag (li); };

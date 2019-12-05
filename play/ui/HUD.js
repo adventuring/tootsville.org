@@ -317,20 +317,22 @@ Tootsville.UI.HUD.destroyHUD = function ()
 /**
  * Open (reveal) the Talk Box.
  */
-Tootsville.UI.HUD.openTalkBox = function ()
+Tootsville.UI.HUD.openTalkBox = function (event)
 { Tootsville.UI.HUD.talkBoxOpenP = true;
   document.getElementById ('talk-box').removeEventListener
   ('click', Tootsville.UI.HUD.openTalkBox);
-  document.getElementById ('talk-box').style.bottom = 0;};
+  document.getElementById ('talk-box').style.bottom = 0;
+  if (event) { event.preventDefault (); } };
 
 /**
  * Close (hide) the Talk Box
  */
-Tootsville.UI.HUD.closeTalkBox = function ()
+Tootsville.UI.HUD.closeTalkBox = function (event)
 { Tootsville.UI.HUD.talkBoxOpenP = false;
   document.getElementById ('talk-box').addEventListener
   ('click', Tootsville.UI.HUD.openTalkBox);
-  document.getElementById ('talk-box').style.bottom = '-2.25rem';};
+  document.getElementById ('talk-box').style.bottom = '-2.25rem';
+  if (event) { event.preventDefault (); } };
 
 /**
  * Toggle visibility of the Talk Box
