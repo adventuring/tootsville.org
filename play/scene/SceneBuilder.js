@@ -39,4 +39,11 @@ if (!('SceneBuilder' in Tootsville)) { Tootsville.SceneBuilder = {}; }
  * Affects Tootsville.Tank.scene
  */
 Tootsville.SceneBuilder.build = function (x, y, z)
-{};
+{ const scene = Tootsville.Tank.scene;
+  for (let i = 1; i < 20; ++i)
+  { let sphere = BABYLON.Mesh.CreateSphere("sphere" * i, 4, 2 + i * 2, scene);
+    sphere.position.y = 9 * i;
+    sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere,
+                                                         BABYLON.PhysicsImpostor.SphereImpostor,
+                                                         { mass: 1, restitution: 0.9 },
+                                                         scene); } };
