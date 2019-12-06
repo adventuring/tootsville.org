@@ -127,8 +127,12 @@ Tootsville.Tank.convertCanvasEventTo3D = function (event)
   if (! picked.pickedMesh) { return; }
   if (picked.pickedMesh == Tootsville.Tank.ground)
   { console.log ('User clicked ground at ', picked.pickedPoint);
-    Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
-                                     picked.pickedPoint);
+    if (event.detail > 1) /* double or triple click */
+    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+                                       picked.pickedPoint); }
+    else
+    { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+                                 picked.pickedPoint); }
     return; }
   const pickedName = picked.pickedMesh.name || '';
   if (0 == pickedName.indexOf ('avatar/'))
