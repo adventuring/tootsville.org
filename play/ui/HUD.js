@@ -580,7 +580,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
 */
 Tootsville.UI.HUD.showPlayerCard = function (name)
 { if (name == Tootsville.character.name) { return; }
-  alert ("TODO: Show Player Card for " + name); };|
+  alert ("TODO: Show Player Card for " + name); };
 
 /**
  *
