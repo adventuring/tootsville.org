@@ -46,10 +46,20 @@ Tootsville.Tank.CameraManager.updateCamera = function (camera, avatar, zoomMode)
   else // Tootsville.Tank.CameraManager.ZOOM_MODE_GAME
   { Tootsville.Tank.CameraManager.positionCameraForGameBoard (camera, avatar); } };
 
+/**
+ * Position the camera to enclose the avatar completely.
+ */
 Tootsville.Tank.CameraManager.positionCameraForAvatarViewer = function (camera, avatar)
 { console.error ("Unimplemented: positionCameraForAvatarViewer"); };
+/**
+ * Position the camera to have the avatar about ¼ the screen width.
+ */
 Tootsville.Tank.CameraManager.positionCameraForAvatarCloseUp = function (camera, avatar)
 { console.error ("Unimplemented: positionCameraForAvatarCloseUp"); };
+
+/**
+ * Position the camera to have the avatar about 1⁄20 the screen width.
+ */
 Tootsville.Tank.CameraManager.positionCameraForGameBoard = function (camera, avatar)
 { const worldMatrix = avatar.model.getWorldMatrix();
   const transformMatrix = camera.getScene().getTransformMatrix();
