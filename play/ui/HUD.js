@@ -573,23 +573,27 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
     { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                  picked.pickedPoint); }
     return; }
-  Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh); };
+  Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh, picked); };
 
 /**
 *
 */
 Tootsville.UI.HUD.showPlayerCard = function (name)
-{ alert ("TODO: Show Player Card for " + name); };
+{ if (name == Tootsville.character.name) { return; }
+  alert ("TODO: Show Player Card for " + name); };|
 
 /**
  *
  */
-Tootsville.UI.HUD.clickedOnMesh = function (mesh)
+Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
 { const pickedName = mesh.name || '';
   if (0 == pickedName.indexOf ('avatar/'))
-  { console.log ('User clicked avatar ',  picked.pickedMesh.name, picked);
-    Tootsville.UI.HUD.showPlayerCard (picked.pickedMesh.name.substr (7)); }
+  { Tootsville.UI.HUD.showPlayerCard (mesh.name.substr (7)); }
+  else if (0 == pickedName.indexOf ('item/'))
+  { Tootsville.Game.clickedOnItem (mesh.name, picked); }
   else
-  { console.debug ('User clicked mesh ', picked.pickedMesh.name, picked);
+  { console.debug ('User clicked mesh ', mesh.name, picked);
     if (mesh.parent)
-    { Tootsville.UI.HUD.clickedOnMesh (mesh.parent); } } };
+    { Tootsville.UI.HUD.clickedOnMesh (mesh.parent, picked); }
+    else
+    { console.debug ("No parent node of ", mesh.name, picked); } } };
