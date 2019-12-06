@@ -108,6 +108,7 @@ Tootsville.SkyBuilder.setSun = function ()
   //  * scattering effects */
   shadowGenerator.bias = 0.00001;
   shadowGenerator.normalBias = 0.01;
+  shadowGenerator.usePoissonSampling = true;
   shadowGenerator.useContactHardeningShadow = true;
   shadowGenerator.contactHardeningLightSizeUVRatio = 0.05;
   shadowGenerator.setDarkness(0.5);
