@@ -328,8 +328,8 @@ Tootsville.Tank.getLargestChildMesh = function (object)
  * The avatar for the active local player
  */
 Tootsville.Tank.playerAvatar = function ()
-{ if ( (! Tootsville.scene) ||
-       (! Tootsville.scene.avatars) )
+{ if ( (! Tootsville.Tank.scene) ||
+       (! Tootsville.Tank.scene.avatars) )
   { return null; }
   return Tootsville.Tank.scene.avatars [ Tootsville.character.name ]; };
 
@@ -337,10 +337,10 @@ Tootsville.Tank.playerAvatar = function ()
  * Reposition the camera as needed.
  */
 Tootsville.Tank.updateCamera = function ()
-{ if  ((! Tootsville.Tank.camera) ||
-       (! Tootsville.Tank.scene) ||
-       (! Tootsville.Tank.scene.avatars))
+{ const playerAvatar = Tootsville.Tank.playerAvatar ();
+  if  ((! Tootsville.Tank.camera) ||
+       (! playerAvatar))
   { return; }
     Tootsville.Tank.CameraManager.updateCamera (Tootsville.Tank.camera,
-                                                Tootsville.Tank.playerAvatar (),
+                                                playerAvatar,
                                                 Tootsville.Tank.CameraManager.ZOOM_MODE_GAME); };
