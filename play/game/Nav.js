@@ -83,7 +83,10 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
  *
  */
 Tootsville.Game.Nav.updateFacing = function (avatar)
-{ let δRotation = avatar.model.rotationQuaternion.y - avatar.facing;
+{ return;
+
+  // This makes him spastic … FIXME #25
+  let δRotation = avatar.model.rotationQuaternion.y - avatar.facing;
   if (δRotation >= Math.PI)
   { δRotation -= Math.PI * 2; }
   else if (δRotation <= -Math.PI)
