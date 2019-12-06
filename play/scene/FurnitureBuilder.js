@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/scene/sky-builder.js is part of Tootsville
+ * ./play/scene/FurnitureBuilder.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -32,11 +32,11 @@
  */
 
 if (!('FurnitureBuilder' in Tootsville)) { Tootsville.FurnitureBuilder = { itemTemplates: {} }; }
-if (!('itemTemplates' in Tootsville.FurnitureBuilder))
-{ Tootsville.FurnitureBuilder.itemTemplates = {}; }
+
+if (!('itemTemplates' in Tootsville.FurnitureBuilder)) { Tootsville.FurnitureBuilder.itemTemplates = {}; }
 
 /**
- *
+ * Colorize a furniture item
  */
 Tootsville.FurnitureBuilder.colorize = function (item, model, scene, finish)
 { const baseMaterial = new BABYLON.StandardMaterial (item.baseColor, scene);
@@ -69,7 +69,7 @@ Tootsville.FurnitureBuilder.enableShadows = function (object, scene)
           Tootsville.Tank.getLargestChildMesh (object)); }; };
 
 /**
- * Enable physics on the furniture item.
+ * Create a physics impostor for the object
  */
 Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
 { let largestChild = Tootsville.Tank.getLargestChildMesh (object);
@@ -128,7 +128,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
   { const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
     let i;
     modelRoot.position = new BABYLON.Vector3 (item.position.x, item.position.y, item.position.z);
-    modelRoot.rotate (BABYLON.Axis.Y, modelRoot.facing);
+    modelRoot.rotate (BABYLON.Axis.Y, item.facing);
     for (i = 0; i < task.loadedMeshes.length; ++i)
     { modelRoot.addChild (task.loadedMeshes [i]);
       task.loadedMeshes [i].renderOutline = true;
@@ -152,4 +152,8 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  *
  */
 Tootsville.FurnitureBuilder.build = function (item, scene, finish)
-{ Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); };
+{ if (scene.items && scene.items [item.uuid] && scene.items [item.uuid].model)
+  { Tootsville.FurnitureBuilder.update (item. scene.items [item.uuid].model, scene, finish); }
+  else
+ { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };
+

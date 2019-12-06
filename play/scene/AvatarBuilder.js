@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/scene/avatar-builder.js is part of Tootsville
+ * ./play/scene/AvatarBuilder.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,12 +31,11 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = { AvatarBuilder: {} }; }
 if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
 
 
 /**
- *
+ * Colorize an Avatar and apply their pattern
  */
 Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
 { const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
@@ -141,7 +140,7 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
     modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
-    var i;
+    let i;
     for (i = 0; i < task.loadedMeshes.length; ++i)
     { modelRoot.addChild (task.loadedMeshes [i]);
       task.loadedMeshes [i].renderOutline = true;
