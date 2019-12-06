@@ -56,4 +56,4 @@ Tootsville.Game.update = function ()
 { Tootsville.Game.now = (new Date).getTime ();
   Tootsville.Game.Nav.updateAvatars ();
   Tootsville.Game.Speech.updateSpeech ();
-};
+  Tootsville.Tank.updateCamera (); };
