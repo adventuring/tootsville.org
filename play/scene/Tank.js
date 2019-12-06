@@ -152,7 +152,7 @@ Tootsville.Tank.initScene = function ()
  * been rendered.
  */
 Tootsville.Tank.afterRender = function ()
-{ };
+{ Tootsville.Tank.updateCamera (); };
 
 /**
  * Initialize the 3D engine, including Babylon 3D and Ammo physics.
