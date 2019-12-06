@@ -51,7 +51,7 @@ Tootsville.Game.Speech.removeSpeech = function (balloon)
 { balloon.parentNode.removeChild (balloon); };
 
 Tootsville.Game.Speech.updateSpeech = function ()
-{ if (!Tootsville.Tank.scene) { return; }
+{ if ( (!Tootsville.Tank.scene) || (!Tootsville.Tank.scene.avatars) ) { return; }
   const avatars = Object.values(Tootsville.Tank.scene.avatars);
   for (let i = 0; i < avatars.length; ++i)
   { let balloon = avatars [i].speech;
