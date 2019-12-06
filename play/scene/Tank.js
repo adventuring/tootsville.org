@@ -119,17 +119,19 @@ Tootsville.Tank.getCanvas = function ()
   return Tootsville.Tank.canvas; };
 
 /**
- * Convert an event on the CANVAS object into a 3D event as appropriate.
+ * Convert an event on the HUD or CANVAS object into a 3D event as appropriate.
  */
 Tootsville.Tank.convertCanvasEventTo3D = function (event)
 { const picked = Tootsville.Tank.scene.pick (event.clientX, event.clientY);
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
-  if (picked.pickedMesh.name == 'ground')
-  { console.log ('User clicked ground');
+  if (picked.pickedMesh == Tootsville.Tank.ground)
+  { console.log ('User clicked ground at ', picked.pickedPoint);
     Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
-                                     picked.pickedPoint); }
-  else if (0 == picked.pickedMesh.name.indexOf ('avatar/'))
+                                     picked.pickedPoint);
+    return; }
+  const pickedName = picked.pickedMesh.name || '';
+  if (0 == pickedName.indexOf ('avatar/'))
   { console.log ('User clicked avatar ',  picked.pickedMesh.name, picked); }
   else
   { console.debug ('User clicked mesh ', picked.pickedMesh.name, picked); } };
