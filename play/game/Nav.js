@@ -42,6 +42,11 @@ if (!('now' in Tootsville.Game)) { Tootsville.Game.now = 0; }
 Tootsville.Game.Nav.WALK_SPEED = .025;
 
 /**
+ * The run speed of a Toot. Currently a constant.
+ */
+Tootsville.Game.Nav.WALK_SPEED = .04;
+
+/**
  * 
  */
 Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
@@ -51,6 +56,13 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
                     speed: Tootsville.Game.Nav.WALK_SPEED,
                     walkΔ: destinationPoint.subtract (avatar.model.position) };
   avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z); };
+
+/**
+*
+*/
+Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
+{ Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint);
+  avatar.course.speed = Tootsville.Game.Nav.RUN_SPEED; };
 
 /**
  *
