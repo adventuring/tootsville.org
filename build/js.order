@@ -41,6 +41,7 @@ play/scene/FurnitureBuilder.js
 play/scene/GroundBuilder.js
 play/scene/SceneBuilder.js
 play/scene/SkyBuilder.js
+play/scene/CameraManager.js
 
 play/scene/AvatarViewer.js
 play/scene/Tank.js
