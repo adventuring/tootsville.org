@@ -150,6 +150,9 @@ Tootsville.UI.takeOneStep = function (δx, δz)
                                                         model.position.z + δz));
 };
 
-/** FIXME Gossip and more */
+/** 
+ *
+ */
 Tootsville.UI.say = function (words)
-{ Tootsville.Game.Speech.say (words); };
+{ if ("" != words)
+  { Tootsville.Game.Speech.say (words); } };
