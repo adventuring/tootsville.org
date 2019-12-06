@@ -33,6 +33,17 @@
 
 if (!('SceneBuilder' in Tootsville)) { Tootsville.SceneBuilder = {}; }
 
+Tootsville.SceneBuilder.makeBallPit = function (scene)
+{  for (let i = 1; i < 100; ++i)
+   { let sphere = BABYLON.Mesh.CreateSphere("sphere" * i, 4, 2 + 10 * i / 100, scene);
+     sphere.position.x = Math.sin (i);
+     sphere.position.y = 8 * i;
+     sphere.position.z = Math.cos (i);
+    sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere,
+                                                         BABYLON.PhysicsImpostor.SphereImpostor,
+                                                         { mass: 1, restitution: 0.1 },
+                                                         scene); } };
+
 /**
  * Place furniture as found in the current scene.
  *
@@ -40,10 +51,19 @@ if (!('SceneBuilder' in Tootsville)) { Tootsville.SceneBuilder = {}; }
  */
 Tootsville.SceneBuilder.build = function (x, y, z)
 { const scene = Tootsville.Tank.scene;
-  for (let i = 1; i < 20; ++i)
-  { let sphere = BABYLON.Mesh.CreateSphere("sphere" * i, 4, 2 + i * 2, scene);
-    sphere.position.y = 9 * i;
-    sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere,
-                                                         BABYLON.PhysicsImpostor.SphereImpostor,
-                                                         { mass: 1, restitution: 0.9 },
-                                                         scene); } };
+  Tootsville.FurnitureBuilder.build (
+      { uuid: 'fountain1',
+        template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 6000 },
+        baseColor: 'periwinkle', altColor: 'yellow', position: { x: 25, y: 0, z: -25 }, facing: 0 },
+      scene);
+  Tootsville.FurnitureBuilder.build (
+      { uuid: 'fountain2',
+        template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 6000 },
+        baseColor: 'periwinkle', altColor: 'yellow', position: { x: 25, y: 0, z: 25 }, facing: Math.PI * 2/3 },
+      scene);
+  Tootsville.FurnitureBuilder.build (
+      { uuid: 'fountain3',
+        template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 6000 },
+        baseColor: 'periwinkle', altColor: 'yellow', position: { x: -25, y: 0, z: -25 }, facing: Math.PI * 4/3 },
+      scene);
+  Tootsville.SceneBuilder.makeBallPit (scene); };
