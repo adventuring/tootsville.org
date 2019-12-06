@@ -71,3 +71,15 @@ Tootsville.Tank.CameraManager.positionCameraForGameBoard = function (camera, ava
 
 }
         
+/*
+BABYLON.Vector3.Project (
+    model.getAbsolutePosition (),
+    BABYLON.Matrix.IdentityReadOnly,
+    Tootsville.Tank.scene.getTransformMatrix (),
+    Tootsville.Tank.camera.viewport.toGlobal (
+        renderWidth, renderHeight)).divide (
+            {x: renderWidth, y: renderHeight, z: 1}).multiply (
+                {x: document.getElementById('tootsville3d').offsetWidth,
+                 y: document.getElementById('tootsville3d').offsetHeight,
+                 z: 1});
+*/
