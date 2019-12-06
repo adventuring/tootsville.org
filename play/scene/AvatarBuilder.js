@@ -34,10 +34,11 @@
 if (!('Tootsville' in window)) { Tootsville = { AvatarBuilder: {} }; }
 if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
 
+
 /**
  *
  */
-Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
+Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
 { const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
                                                      scene);
   skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
@@ -47,7 +48,7 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
   padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.padColor));
   const eyeMaterial = new BABYLON.StandardMaterial ("eye", scene);
   eyeMaterial.diffuseColor = new BABYLON.Color3.FromHexString ('#000000');
-  const meshes = node.getChildMeshes ();
+  const meshes = model.getChildMeshes ();
   for (let i = 0; i < meshes.length; ++i)
   { const mesh = meshes[i];
     mesh.material = (
@@ -56,7 +57,7 @@ Tootsville.AvatarBuilder.colorize = function (avatar, node, scene, finish)
             mesh.name.indexOf ('Pad') >= 0 ? padMaterial :
             eyeMaterial ); }
   // console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName); 
-  if (finish) { finish (node); } };
+  if (finish) { finish (model); } };
 
 /**
  * Adds a nametag to an avatar. (Only in the main scene, for now.)
