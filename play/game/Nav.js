@@ -104,9 +104,7 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (! avatar.model) { return; }
   if (! avatar.model.rotationQuaternion) {
       // WtH?
-      return;
-
-  }
+      avatar.model.rotationQuaternion = new BABYLON.Quaternion (0, avatar.facing, 0, 0); }
   if (Math.abs (avatar.model.rotationQuaternion.y - avatar.facing) > .01)
   { Tootsville.Game.Nav.updateFacing (avatar); }
   if (avatar.course)
