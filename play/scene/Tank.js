@@ -61,8 +61,8 @@ Tootsville.Tank.initOTSCamera = function ()
   camera.cameraAcceleration = .0005;
   camera.maxCameraSpeed = 5;
   //  camera.attachControl (Tootsville.Tank.scene.
-  // camera.ellipsoid = new BABYLON.Vector3 (.5,1,.5);
-  // camera.checkCollisions = true;
+  camera.ellipsoid = new BABYLON.Vector3 (50,10,50);
+  camera.checkCollisions = true;
   Tootsville.Tank.camera = camera;
   console.log ("Created camera", camera);
   Tootsville.Tank.camera.onProjectionMatrixChangedObservable.add (
