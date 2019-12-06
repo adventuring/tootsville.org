@@ -102,6 +102,11 @@ Tootsville.Game.Nav.updateFacing = function (avatar)
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (! avatar.model) { return; }
+  if (! avatar.model.rotationQuaternion) {
+      // WtH?
+      return;
+
+  }
   if (Math.abs (avatar.model.rotationQuaternion.y - avatar.facing) > .01)
   { Tootsville.Game.Nav.updateFacing (avatar); }
   if (avatar.course)
