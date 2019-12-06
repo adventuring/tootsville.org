@@ -36,10 +36,13 @@ if (!('Nav' in Tootsville.Game)) { Tootsville.Game.Nav= {}; }
 
 if (!('now' in Tootsville.Game)) { Tootsville.Game.now = 0; }
 
-Tootsville.Game.Nav.WALK_SPEED = .3;
+/**
+ * The walk speed of a Toot. Currently a constant.
+ */
+Tootsville.Game.Nav.WALK_SPEED = .025;
 
 /**
- *
+ * 
  */
 Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
 { avatar.course = { startPoint: avatar.model.position,
