@@ -95,7 +95,7 @@ Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
 Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
 { let largestChild = Tootsville.Tank.getLargestChildMesh (object);
   largestChild.physicsImpostor =
-  new BABYLON.PhysicsImpostor (skinMesh,
+  new BABYLON.PhysicsImpostor (largestChild,
                                BABYLON.PhysicsImpostor.BoxImpostor,
                                { mass: 6000, restitution: .05 },
                                scene);
