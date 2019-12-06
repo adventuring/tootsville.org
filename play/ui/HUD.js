@@ -299,8 +299,9 @@ Tootsville.UI.HUD.returnPaperdollMini = function ()
 /**
  * Open the Paperdoll display from the paperdoll-mini widget.
  */
-Tootsville.UI.HUD.openPaperdoll = function ()
-{ document.getElementById ('paperdoll-mini').removeEventListener
+Tootsville.UI.HUD.openPaperdoll = function (event)
+{ event.preventDefault ();
+  document.getElementById ('paperdoll-mini').removeEventListener
   ('click', Tootsville.UI.HUD.openPaperdoll);
   Tootsville.UI.HUD.showHUDPanel ('paperdoll').
   then ( () =>
@@ -452,24 +453,24 @@ Tootsville.UI.HUD.refreshHUD = function ()
 /**
  * Toggle visibility of the Loudness selector for the Talk Box.
  */
-Tootsville.UI.HUD.toggleTalkLoud = function ()
-{ };
+Tootsville.UI.HUD.toggleTalkLoud = function (event)
+{ event.preventDefault (); };
 
 /**
  * Toggle visibility of the Expressions selector for the Talk Box.
 *
 * TODO
  */
-Tootsville.UI.HUD.toggleTalkExpression = function ()
-{ };
+Tootsville.UI.HUD.toggleTalkExpression = function (event)
+{ event.preventDefault (); };
 
 /**
  * Toggle visibility of the Emoji selector for the Talk Box.
 * 
 * TODO
  */
-Tootsville.UI.HUD.toggleTalkEmoji = function ()
-{ };
+Tootsville.UI.HUD.toggleTalkEmoji = function (event)
+{ event.preventDefault (); };
 
 /**
  * Connect events for the Talk box widgets at the bottom of the display.
