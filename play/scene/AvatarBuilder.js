@@ -69,17 +69,17 @@ Tootsville.AvatarBuilder.addNameTag = function (avatar, model, scene)
   nameTag.className = 'name-tag';
   document.getElementById('hud').append (nameTag);
   scene.avatars [avatar.name].nameTag = nameTag;
-  Tootsville.UI.HUD.refreshAttachment (model, nameTag); };
+  Tootsville.UI.HUD.refreshNameTagAttachment (model, nameTag); };
 
 
 /**
  * Enable the object to cast shadows in the scene
  */
 Tootsville.AvatarBuilder.enableShadows = function (object, scene)
-{
-  // if (Tootsville.Tank.shadowGenerator)
-    // { Tootsville.Tank.shadowGenerator.addShadowCaster (object);
-};
+{ if (Tootsville.Tank.shadowGenerator)
+  { /* Tootsville.Tank.shadowGenerator.addShadowCaster (object); */
+      Tootsville.Tank.shadowGenerator.getShadowMap ().renderList.push (
+          Tootsville.Tank.getLargestChildMesh (object)); }; };
 
 /**
  * Add the avatar to the global list of avatars in the scene
