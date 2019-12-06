@@ -55,7 +55,7 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
                                                          { mass: 0, friction: .5, restitution: 3 },
                                                          Tootsville.Tank.scene);
   ground.checkCollisions = true;
-  console.log ("Ground plane is ", ground);
+  Tootsville.Tank.ground = ground;
   return ground; };
 
 /**
