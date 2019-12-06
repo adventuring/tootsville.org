@@ -143,7 +143,9 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
     modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
     var i;
     for (i = 0; i < task.loadedMeshes.length; ++i)
-    { modelRoot.addChild (task.loadedMeshes [i]); }
+    { modelRoot.addChild (task.loadedMeshes [i]);
+      task.loadedMeshes [i].renderOutline = true;
+      task.loadedMeshes [i].outlineColor = BABYLON.Color3.Black (); }
     for (i = 0; i < task.loadedParticleSystems.length; ++i)
     { modelRoot.addChild (task.loadedParticleSystems [i]); }
     for (i = 0; i < task.loadedSkeletons.length; ++i)
