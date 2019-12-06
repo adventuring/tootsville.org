@@ -44,7 +44,7 @@ Tootsville.Game.Nav.WALK_SPEED = .025;
 /**
  * The run speed of a Toot. Currently a constant.
  */
-Tootsville.Game.Nav.WALK_SPEED = .04;
+Tootsville.Game.Nav.RUN_SPEED = .04;
 
 /**
  * 
