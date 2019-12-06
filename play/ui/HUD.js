@@ -549,7 +549,10 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
  * Refresh all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
-{ const avatars = Tootsville.Tank.scene.avatars;
+{ if ( (! Tootsville.Tank.scene) ||
+       (! Tootsville.Tank.scene.avatars) )
+  { return; }
+  const avatars = Tootsville.Tank.scene.avatars;
   for (let i = 0; i < avatars.length; ++i)
   { Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]); } };
 
@@ -564,14 +567,29 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if (picked.pickedMesh == Tootsville.Tank.ground)
   { console.log ('User clicked ground at ', picked.pickedPoint);
     if (event.detail > 1) /* double or triple click */
-    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+    { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                        picked.pickedPoint); }
     else
-    { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                  picked.pickedPoint); }
     return; }
-  const pickedName = picked.pickedMesh.name || '';
+  Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh); };
+
+/**
+*
+*/
+Tootsville.UI.HUD.showPlayerCard = function (name)
+{ alert ("TODO: Show Player Card for " + name); };
+
+/**
+ *
+ */
+Tootsville.UI.HUD.clickedOnMesh = function (mesh)
+{ const pickedName = mesh.name || '';
   if (0 == pickedName.indexOf ('avatar/'))
-  { console.log ('User clicked avatar ',  picked.pickedMesh.name, picked); }
+  { console.log ('User clicked avatar ',  picked.pickedMesh.name, picked);
+    Tootsville.UI.HUD.showPlayerCard (picked.pickedMesh.name.substr (7)); }
   else
-  { console.debug ('User clicked mesh ', picked.pickedMesh.name, picked); } };
+  { console.debug ('User clicked mesh ', picked.pickedMesh.name, picked);
+    if (mesh.parent)
+    { Tootsville.UI.HUD.clickedOnMesh (mesh.parent); } } };
