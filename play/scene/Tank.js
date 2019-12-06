@@ -298,3 +298,38 @@ Tootsville.Tank.start3DReal = function ()
                                      (ev) => { Tootsville.Tank.engine.resize (); }); } );
 
   return true; };
+
+
+// 
+
+
+/**
+ * Find the child mesh with the greatest volume.
+ *
+ * If there are no children, returns the parent mesh. Otherwise. always returns a child. Uses the radius of the bounding sphere as a proxy for volume computations.
+ */
+Tootsville.Tank.getLargestChildMesh = function (object)
+{ const children = object.getChildMeshes ();
+  if (0 == children.length) { return object; }
+  let largest = null;
+  let largestSize = 0;
+  for (let i = 0; i < children.length; ++i)
+  { let child = children[i];
+    let radius = child.getBoundingInfo().boundingSphere.radiusWorld;
+    if (radius > largestSize)
+    { largest = child; } }
+  if (! largest)
+  { return object; }
+  return largest; };
+
+Tootsville.Tank.playerAvatar = function ()
+{ return Tootsville.Tank.scene.avatars [ Tootsville.character.name ]; };
+
+Tootsville.Tank.updateCamera = function ()
+{ if  ((! Tootsville.Tank.camera) ||
+       (! Tootsville.Tank.scene) ||
+       (! Tootsville.Tank.scene.avatars))
+  { return; }
+    Tootsville.Tank.CameraManager.updateCamera (Tootsville.Tank.camera,
+                                                Tootsville.Tank.playerAvatar (),
+                                                Tootsville.Tank.CameraManager.ZOOM_MODE_GAME); };
