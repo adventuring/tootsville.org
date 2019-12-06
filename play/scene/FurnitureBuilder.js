@@ -35,12 +35,13 @@ if (!('FurnitureBuilder' in Tootsville)) { Tootsville.FurnitureBuilder = { itemT
 if (!('itemTemplates' in Tootsville.FurnitureBuilder))
 { Tootsville.FurnitureBuilder.itemTemplates = {}; }
 
+/**
+ *
+ */
 Tootsville.FurnitureBuilder.colorize = function (item, model, scene, finish)
-{ const baseMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
-                                                     scene);
+{ const baseMaterial = new BABYLON.StandardMaterial (item.baseColor, scene);
   baseMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (item.baseColor));
-  const altMaterial = new BABYLON.StandardMaterial (avatar.padColor,
-                                                    scene);
+  const altMaterial = new BABYLON.StandardMaterial (item.padColor, scene);
   altMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (item.altColor));
   const meshes = model.getChildMeshes ();
   for (let i = 0; i < meshes.length; ++i)
@@ -56,40 +57,54 @@ Tootsville.FurnitureBuilder.colorize = function (item, model, scene, finish)
       const light = new BABYLON.PointLight (
           item.template.name + " " + item.uuid + ' Light', mesh.position.clone (), scene);
       mesh.addChild (light); }
-  if (finish) { finish (model); } };
+    if (finish) { finish (model); } } };
 
-Tootsville.FurnitureBuilder.enablePhysics = function (avatar, object, scene)
-{ let skinMesh = object.getChildMeshes ().filter( mesh => mesh.name.indexOf ('Base') >= 0 )[0];
-  if (!(skinMesh))
-  { skinMesh = object.getChildMeshes ()[ 0 ];
-    return; }
-  skinMesh.physicsImpostor =
-  new BABYLON.PhysicsImpostor (skinMesh,
+/**
+ *
+ */
+Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
+{ let largestChild = Tootsville.Tank.getLargestChildMesh (object);
+  largestChild.physicsImpostor =
+  new BABYLON.PhysicsImpostor (largestChild,
                                BABYLON.PhysicsImpostor.BoxImpostor,
                                { mass: 6000, restitution: .05 },
                                scene);
-  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== skinMesh);
+  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== largestChild);
   for (let i = 0; i < otherMeshes.length; ++i)
   { otherMeshes [i].physicsImpostor =
     new BABYLON.PhysicsImpostor (otherMeshes [i],
                                  BABYLON.PhysicsImpostor.NoImpostor,
-                                 { mass: item.template.weight / object.getChildMeshes ().length, restitution: 0 },
+                                 { mass: 10, restitution: 0 },
                                  scene); }
   object.physicsImpostor =
-    new BABYLON.PhysicsImpostor (object,
-                                 BABYLON.PhysicsImpostor.NoImpostor,
-                                 { mass: item.template.weight, restitution: 0 },
-                                 scene); }; };
+  new BABYLON.PhysicsImpostor (object,
+                               BABYLON.PhysicsImpostor.NoImpostor,
+                               { mass: 6000, restitution: .05 },
+                               scene); };
 
+/**
+ *
+ */
+Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
+{ if (!('items' in scene)) { scene.items = {}; }
+  scene.items [item.uuid] = Object.assign ({}, item);
+  scene.items [item.uuid].model = model; };
+
+/**
+ *
+ */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building " + item.template.name + " " + item.uuid);
   if (item.avatarScaling)
   { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
-  try {Tootsville.FurnitureBuilder.rememberAvatar (item, model, scene); } catch (e) { console.error (e); }
+  try {Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enablePhysics (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); } catch (e) { console.error (e); } };
 
+/**
+ *
+ */
 Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
 { let assetsManager = scene.assetManager;
   if (! assetsManager)
@@ -116,7 +131,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +
                    task.loadedSkeletons.length + " skeletons.");
-    Tootsville.FurnitureBuilder.build2 (avatar, modelRoot, scene, finish); };
+    Tootsville.FurnitureBuilder.build2 (item, modelRoot, scene, finish); };
   assetsManager.load (); };
 
 /**
@@ -128,4 +143,3 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  */
 Tootsville.FurnitureBuilder.build = function (item, scene, finish)
 { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); };
-
