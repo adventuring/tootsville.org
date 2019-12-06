@@ -60,7 +60,16 @@ Tootsville.FurnitureBuilder.colorize = function (item, model, scene, finish)
     if (finish) { finish (model); } } };
 
 /**
- *
+ * Enable the object to cast shadows in the scene
+ */
+Tootsville.FurnitureBuilder.enableShadows = function (object, scene)
+{ if (Tootsville.Tank.shadowGenerator)
+  { /* Tootsville.Tank.shadowGenerator.addShadowCaster (object); */
+      Tootsville.Tank.shadowGenerator.getShadowMap ().renderList.push (
+          Tootsville.Tank.getLargestChildMesh (object)); }; };
+
+/**
+ * Enable physics on the furniture item.
  */
 Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
 { let largestChild = Tootsville.Tank.getLargestChildMesh (object);
@@ -83,7 +92,7 @@ Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
                                scene); };
 
 /**
- *
+ * Stash a reference to the item it the scene.items object.
  */
 Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
 { if (!('items' in scene)) { scene.items = {}; }
@@ -91,19 +100,20 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
   scene.items [item.uuid].model = model; };
 
 /**
- *
+ * Finish construction  of the object  after it  has been loaded  by the
+ * asset manager.
  */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building " + item.template.name + " " + item.uuid);
   if (item.avatarScaling)
   { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
-  try {Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enablePhysics (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); } catch (e) { console.error (e); } };
 
 /**
- *
+ * Load an item template avatar from the assets server.
  */
 Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
 { let assetsManager = scene.assetManager;
