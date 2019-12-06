@@ -85,10 +85,11 @@ Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
 Tootsville.SkyBuilder.setSun = function ()
 { if (Tootsville.SkyBuilder.sun)
   { Tootsville.error ("Sun already exists"); return; }
-  const sun = BABYLON.Mesh.CreateSphere ("The Sun", { segments: 10, diameter: 1 }, Tootsville.Tank.scene);
+  const sun = BABYLON.Mesh.CreateSphere ("The Sun", 6, 400, Tootsville.Tank.scene);
   const sunFire = new BABYLON.StandardMaterial("Nuclear Fire", Tootsville.Tank.scene);
   sunFire.emissiveColor = new BABYLON.Color3(1,.90,.95);
   sunFire.disableLighting = true;
+  sun.isPickable = false;
   sun.material = sunFire;
   sun.position.x = Tootsville.SkyBuilder.sunX ();
   sun.position.y = Tootsville.SkyBuilder.sunY ();
@@ -125,28 +126,45 @@ Tootsville.SkyBuilder.setPlanet = function ()
  * question's identity is passed in.
  */
 Tootsville.SkyBuilder.setMoon = function (whichMoon)
-{};
+{ let moon;
+  let moonColor;
+    if ('MOON' == whichMoon)
+  { moon = BABYLON.Mesh.CreateSphere ("The Moon", 6, 300, Tootsville.Tank.scene);
+    moonColor = new BABYLON.Color3 (1, .90, .95); }
+  else if ('OTHM' == whichMoon)
+  { moon = BABYLON.Mesh.CreateSphere ("The Other Moon", 6, 250, Tootsville.Tank.scene);
+    moonColor = new BABYLON.Color3 (1, .90, .95); }
+  else
+  { moon = BABYLON.Mesh.CreateSphere ("The Pink Moon", 6, 200, Tootsville.Tank.scene);
+      moonColor = new BABYLON.Color3 (1, .7, .7); }
+  const moonCheese = new BABYLON.StandardMaterial("Moon Cheese " + whichMoon, Tootsville.Tank.scene);
+  moonCheese.emissiveColor = moonColor;
+  moonCheese.disableLighting = true;
+  moon.material = moonCheese;
+  moon.isPickable = false;
+  return moon;
+};
 
 /**
  * Position      The      Moon      relative     to      the      viewer.
  * See `Tootsville.SkyBuilder.setMoon'.
  */
 Tootsville.SkyBuilder.setTheMoon = function ()
-{ Tootsville.SkyBuilder.setMoon ('MOON'); };
+{ Tootsville.SkyBuilder.moon = Tootsville.SkyBuilder.setMoon ('MOON'); };
 
 /**
  * Position    The     Other    Moon    relative    to     the    viewer.
  * See `Tootsville.SkyBuilder.setMoon'.
  */
 Tootsville.SkyBuilder.setTheOtherMoon = function ()
-{ Tootsville.SkyBuilder.setMoon ('OTHM'); };
+{ Tootsville.SkyBuilder.otherMoon = Tootsville.SkyBuilder.setMoon ('OTHM'); };
 
 /**
  * Position    The     Pink    Moon    relative    to     the    viewer.
  * See `Tootsville.SkyBuilder.setMoon'.
  */
 Tootsville.SkyBuilder.setThePinkMoon = function ()
-{  Tootsville.SkyBuilder.setMoon ('PINK'); };
+{  Tootsville.SkyBuilder.pinkMoon = Tootsville.SkyBuilder.setMoon ('PINK'); };
 
 /**
  * Set up  clouds above the  terrain based on  the map from  the server.
@@ -178,6 +196,17 @@ Tootsville.SkyBuilder.sunY = function ()
 Tootsville.SkyBuilder.sunX = function ()
 { const time = Tootsville.decodeTime ();
   return (Math.cos((((time.hour+time.min/60) / 18)*2*Math.PI - Math.PI/2)))/2 * 2000; };
+
+
+Tootsville.SkyBuilder.moonΘ = function (period)
+{ const time = Tootsville.decodeTime ();
+  // FIXME
+  return ((((time.hour+time.min/60) / 18 * period)*2*Math.PI - Math.PI/2)); };
+
+Tootsville.SkyBuilder.updateMoon = function (model, period)
+{ const θ = Tootsville.SkyBuilder.moonΘ (period);
+  model.position.x = Math.sin (θ) /2 * 1900;
+  model.position.y = Math.cos (θ) /2 * 1900; };
 
 /**
  * Build the  sky for the current  environment. Reads the sky  values at
@@ -250,7 +279,11 @@ Tootsville.SkyBuilder.update = function (world)
     fill.diffuse = new BABYLON.Color3(.5, .5, .5);
     fill.specular = new BABYLON.Color3(.75, .75, .75);
     fill.groundColor = new BABYLON.Color3(.2, .2, .2);}
-  Tootsville.SkyBuilder.sunLight.direction = Tootsville.SkyBuilder.sun.position.negate (); };
+  Tootsville.SkyBuilder.sunLight.direction = Tootsville.SkyBuilder.sun.position.negate ();
+  Tootsville.SkyBuilder.updateMoon (Tootsville.SkyBuilder.moon, 30);
+  Tootsville.SkyBuilder.updateMoon (Tootsville.SkyBuilder.otherMoon, 40); // FIXME
+  Tootsville.SkyBuilder.updateMoon (Tootsville.SkyBuilder.pinkMoon, 50); // FIXME
+};
 
 /**
  * Fetch sky data from the game server
