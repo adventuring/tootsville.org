@@ -548,4 +548,7 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
  * Refresh all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
-{};
+{ const avatars = Tootsville.Tank.scene.avatars;
+  for (let i = 0; i < avatars.length; ++i)
+  { Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]); } };
+
