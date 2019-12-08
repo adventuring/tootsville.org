@@ -309,7 +309,7 @@ Tootsville.Login.endLoginMusic = function ()
 { Tootsville.UI.setBackgroundMusic ("bensound-smile"); };
 
 /**
- *
+ * Login has completed; clean up and set up for the game.
  */
 Tootsville.Login.loginDone = function (reply)
 { Tootsville.trace ("loginDone", reply);
@@ -318,6 +318,9 @@ Tootsville.Login.loginDone = function (reply)
   Tootsville.characterUUID = reply.toot.uuid;
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
+  Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
+                                                                   username: Tootsville.character && Tootsville.character.name,
+                                           email: Tootsville.player && Tootsville.player.eMail }}});
   Tootsville.Tank.start3D ();
   document.title = reply.toot.name + " in Tootsville";
   Tootsville.UI.HUD.refreshHUD (); };
