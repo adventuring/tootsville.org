@@ -44,21 +44,24 @@ Tootsville.UI.HUD.talkBoxOpenP = true;
 Tootsville.UI.HUD.getOpenPanel = function ()
 { var panels = document.querySelectorAll ('.hud-panel');
   if (! panels) { return null; }
-  for (var i = 0; i < panels.length; i++)
-  { var panel = panels[i];
+  for (let i = 0; i < panels.length; i++)
+  { let panel = panels[i];
     if (panel.style.opacity > .5)
     { return panel; } }
-  return null;};
+  return null; };
 
 /**
  * Close (hide) the active HUD panel.
  */
+/*
+ * FIXME Bug #26 --- closing the Paperdoll panel crashes the game
+ */
 Tootsville.UI.HUD.closePanel = function ()
-{ var foundAny = false;
-  for (var panelPopup = Tootsville.UI.HUD.getOpenPanel ();
+{ let foundAny = false;
+  for (let panelPopup = Tootsville.UI.HUD.getOpenPanel ();
        panelPopup;
        panelPopup = Tootsville.UI.HUD.getOpenPanel ())
-  { var panelID = panelPopup.id;
+  { let panelID = panelPopup.id;
     if (panelID == 'paperdoll')
     { Tootsville.UI.HUD.returnPaperdollMini (); }
     else
@@ -458,16 +461,16 @@ Tootsville.UI.HUD.toggleTalkLoud = function (event)
 
 /**
  * Toggle visibility of the Expressions selector for the Talk Box.
-*
-* TODO
+ *
+ * TODO
  */
 Tootsville.UI.HUD.toggleTalkExpression = function (event)
 { event.preventDefault (); };
 
 /**
  * Toggle visibility of the Emoji selector for the Talk Box.
-* 
-* TODO
+ * 
+ * TODO
  */
 Tootsville.UI.HUD.toggleTalkEmoji = function (event)
 { event.preventDefault (); };
@@ -557,7 +560,6 @@ Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
   const avatars = Tootsville.Tank.scene.avatars;
   for (let i = 0; i < avatars.length; ++i)
   { Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]); } };
-
 
 /**
  * Convert an event on the HUD or CANVAS object into a 3D event as appropriate.

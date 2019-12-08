@@ -36,8 +36,9 @@ if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
 
 /**
  * Someone (maybe us) has spoken, so put up a speech balloon.
- *
- * FIXME: when replacing an existing balloon, remove it first.
+ */
+/*
+ * FIXME Bug  #24: when replacing an existing balloon, remove it first.
  */
 Tootsville.Game.Speech.say = function (words, extraClass, speaker)
 { if (!speaker) { speaker = Tootsville.character.name; }
