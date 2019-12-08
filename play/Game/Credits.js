@@ -1,6 +1,6 @@
-
-/* @license 
- * play/game/credits.js is part of Tootsville
+/* -*- js2 -*- */
+/**@license 
+ * play/Game/Credits.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018, 2019,
  * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -27,7 +27,6 @@
  *
  * USA
  */
-if (!('Tootsville' in window)) { Tootsville = {  }; }
 
 /**
 * The credits for the game as a string.
@@ -37,7 +36,7 @@ if (!('Tootsville' in window)) { Tootsville = {  }; }
 * some efforts to ensure that there  is scrolling or other affordance in
 * place to accomodate a very long message.
 */
-Tootsville.credits = function ()
+Tootsville.Game.credits = function ()
 { console.log ("Tootsville V was brought to you by:\n\n" +
                "Chief Engineer: Bruce-Robert Pocock\n\n" +
                "Additional support:\n" +
@@ -46,5 +45,5 @@ Tootsville.credits = function ()
                "Mariaelisa Greenwood\n" +
                "Levi Mc Call\n" +
                "Gian Ratnapala\n" +
+               "Zephyr Salz\n" +
                "\nAnd all our Tootsville supporters!\n\n"); };
-

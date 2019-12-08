@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/game/Speech.js is part of Tootsville
+ * play/Game/Speech.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -35,21 +35,30 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {Speech: {}}; }
 if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
 
 /**
+ * Someone (maybe us) has spoken, so put up a speech balloon.
  *
+ * FIXME: when replacing an existing balloon, remove it first.
  */
-Tootsville.Game.Speech.say = function (words, extraClass)
-{ const balloon = document.createElement ('DIV');
+Tootsville.Game.Speech.say = function (words, extraClass, speaker)
+{ if (!speaker) { speaker = Tootsville.character.name; }
+  const balloon = document.createElement ('DIV');
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
   balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100;
-  const avatar = Tootsville.Tank.scene.avatars [Tootsville.character.name];
+  const avatar = Tootsville.Tank.scene.avatars [speaker];
   avatar.speech = balloon;
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
 
+/**
+ * The time has passed; remove a speech balloon.
+ */
 Tootsville.Game.Speech.removeSpeech = function (balloon)
 { balloon.parentNode.removeChild (balloon); };
 
+/**
+ * Update speech baloons, expiring any that have aged out.
+ */
 Tootsville.Game.Speech.updateSpeech = function ()
 { if ( (!Tootsville.Tank.scene) || (!Tootsville.Tank.scene.avatars) ) { return; }
   const avatars = Object.values(Tootsville.Tank.scene.avatars);

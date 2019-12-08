@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/game/gatekeeper.js is part of Tootsville
+ * play/Game/Gatekeeper.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,7 +31,6 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = {Game: {Gatekeeper: {}}}; }
 if (!('Game' in Tootsville)) { Tootsville.Game = {Gatekeeper: {}}; }
 if (!('Gatekeeper' in Tootsville.Game)) { Tootsville.Game.Gatekeeper = {}; }
 

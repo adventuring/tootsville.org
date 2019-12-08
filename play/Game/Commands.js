@@ -1,6 +1,6 @@
 /* -*- js2 -*- */
-/* @license 
- * play/game/commands.js is part of Tootsville
+/**@license 
+ * play/Game/Commands.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018, 2019,
  * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -43,7 +43,6 @@
  * d is the d: element of the command 
 */
 
-if (!('Tootsville' in window)) { Tootsville = { Game: { Commands: {}}}; };
 if (!('Game' in Tootsville)) { Tootsville.Game = { Commands: {}}; };
 if (!('Commands' in Tootsville.Game)) { Tootsville.Game.Commands = {}; };
 

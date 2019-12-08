@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/scene/scene-builder.js is part of Tootsville
+ * play/Scene/SceneBuilder.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).

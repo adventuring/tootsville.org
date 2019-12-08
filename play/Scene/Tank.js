@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/scene/tank.js is part of Tootsville
+ * play/Scene/Tank.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -254,7 +254,7 @@ Tootsville.Tank.loadUISounds = function ()
     "https://jumbo.tootsville.org/Assets/Voices/parrot-squawk.wav",
     Tootsville.Tank.scene,
     function ()
-    { Tootsville.Parrot.squawk = squawk; }); };
+    { Tootsville.Gossip.Parrot.squawk = squawk; }); };
 
 /**
  * Start  the 3D  engine, after  doing any  necessary preparatory  work.

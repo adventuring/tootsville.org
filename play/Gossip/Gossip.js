@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/gossip/gossip.js is part of Tootsville
+ * play/Gossip/Gossip.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,8 +31,8 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = {Gossip: { peers: [], iceServers: {} } }; }
 if (!('Gossip' in Tootsville)) { Tootsville.Gossip = { peers: [], iceServers: {} }; }
+
 if (!('peers' in Tootsville.Gossip)) { Tootsville.Gossip.peers = [];}
 if (!('iceServers' in Tootsville.Gossip)) { Tootsville.Gossip.iceServers = {}; };
 
@@ -272,7 +272,7 @@ Tootsville.Gossip.getICE = function ()
   ( response => { Tootsville.Gossip.iceServers = response;
                   Tootsville.Gossip.ensureConnected ().then
                   ( Tootsville.Gossip.sendLogOK ); },
-    error => { Tootsville.Parrot.say (
+    error => { Tootsville.Gossip.Parrot.say (
         "Squawk! Trouble getting connection servers",
         "I'm not able to get connection servers needed to join the game. Are you online?" );
                Tootsville.UI.HUD.refreshHUD (); } ); };
