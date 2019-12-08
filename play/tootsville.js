@@ -68,12 +68,6 @@ else
     play: 'http://localhost:5002',
     game: 'http://localhost:5000' }; }
 
-window.addEventListener('Tootsville/Login', function (ev)
-                        { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
-                                                                   username: Tootsville.character && Tootsville.character.name,
-                                                                   email: Tootsville.player && Tootsville.player.eMail }}}); },
-                        false);
-
 window.loadWatchdog1 = setTimeout(() => {
     if (Tootsville.UI.slowLoadingWatchdog)
         Tootsville.UI.slowLoadingWatchdog();
