@@ -1,51 +1,51 @@
 
-play/tootsville.js
+play/Tootsville.js
 
-play/util.js
+play/Util.js
 
-play/analytics.js
-play/rollbar.js
+play/Analytics.js
+play/Rollbar.js
 
-play/colors.js
-play/time.js
+play/Colors.js
+play/Time.js
 
-play/gossip/Parrot.js
-play/gossip/Gossip.js
+play/Gossip/Parrot.js
+play/Gossip/Gossip.js
 
-play/login/Login.js
+play/Login/Login.js
 
 play/lib/adapter.js/adapter.js
 
-play/game/wardrobe.js
-play/game/commands.js
-play/game/gatekeeper.js
-play/game/Tools.js
-play/game/Game.js
-play/game/Speech.js
-play/game/Nav.js
+play/Game/Wardrobe.js
+play/Game/Commands.js
+play/Game/Gatekeeper.js
+play/Game/Tools.js
+play/Game/Game.js
+play/Game/Speech.js
+play/Game/Nav.js
 
-play/ui/connect.js
-play/ui/gamepad-layouts.js
-play/ui/gamepad.js
-play/ui/HUD.js
-play/ui/ui.js
-play/ui/music.js
-play/ui/fullscreen-polyfill.js
-play/ui/audio-control.js
-play/ui/keys.js
+play/UI/Connect.js
+play/UI/GamepadLayouts.js
+play/UI/Gamepad.js
+play/UI/HUD.js
+play/UI/UI.js
+play/UI/Music.js
+play/UI/FullscreenPolyfill.js
+play/UI/AudioControl.js
+play/UI/Keys.js
 
-play/ui/commands.js
+play/UI/Commands.js
 
-play/scene/AvatarBuilder.js
-play/scene/FurnitureBuilder.js
-play/scene/GroundBuilder.js
-play/scene/SceneBuilder.js
-play/scene/SkyBuilder.js
-play/scene/CameraManager.js
+play/Scene/AvatarBuilder.js
+play/Scene/FurnitureBuilder.js
+play/Scene/GroundBuilder.js
+play/Scene/SceneBuilder.js
+play/Scene/SkyBuilder.js
+play/Scene/CameraManager.js
 
-play/scene/AvatarViewer.js
-play/scene/Tank.js
+play/Scene/AvatarViewer.js
+play/Scene/Tank.js
 
-play/game/stop-watchdogs.js
+play/Game/StopWatchdogs.js
 
-play/game/start.js
+play/Game/Start.js
