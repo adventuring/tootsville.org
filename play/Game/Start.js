@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/game/start.js is part of Tootsville
+ * play/Game/Start.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -38,10 +38,13 @@ window.onGoogleYoloLoad = function ()
 { Tootsville.Login.startSignIn ();
   Tootsville.Login.googleYoloSignIn (); };
 
+if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
+
 /**
- * 
+ * Start up the game systems, end the loader phase, and start up the login
+ * process. This is the main "entry point" for the game.
  */
-Tootsville.bootstrap = function ()
+Tootsville.Game.bootstrap = function ()
 {
     setTimeout (function () {
         document.getElementById ('control-panel-icon').style.width = '7vw';
@@ -74,5 +77,5 @@ Tootsville.bootstrap = function ()
 };
 
 
-window.addEventListener ('load', Tootsville.bootstrap);
+window.addEventListener ('load', Tootsville.Game.bootstrap);
 

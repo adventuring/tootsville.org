@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/gossip/parrot.js is part of Tootsville
+ * play/Gossip/Parrot.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,35 +31,35 @@
  *
  */
 
-if (!("Parrot" in Tootsville))
-{ Tootsville.Parrot = {}; }
+if (!("Game" in Tootsville)) { Tootsville.Game = { Parrot: {} }; }
+if (!("Parrot" in Tootsville.Game)) { Tootsville.Game.Parrot = {}; }
 
 /**
  *
  */
-Tootsville.Parrot.show = function (reallyp)
+Tootsville.Gossip.Parrot.show = function (reallyp)
 { var parrot = document.getElementById('parrot');
   parrot.style.opacity = (reallyp ? 100 : 0);
   document.getElementById('parrot-image').style.left = (reallyp ? 0 : '-500px');
   if (reallyp)
   { parrot.style.display = 'block';
     parrot.style.zIndex = 2000;
-    if (Tootsville.Parrot.squawk)
-    {Tootsville.Parrot.squawk.play (); } }
+    if (Tootsville.Gossip.Parrot.squawk)
+    {Tootsville.Gossip.Parrot.squawk.play (); } }
   else
   { setTimeout(() => { parrot.style.display = 'none'; }, 1000 ); }};
 
 /**
  *
  */
-Tootsville.Parrot.done = function ()
+Tootsville.Gossip.Parrot.done = function ()
 { return new Promise
-  ( (finish) => { Tootsville.Parrot.show (false); finish (); } ); };
+  ( (finish) => { Tootsville.Gossip.Parrot.show (false); finish (); } ); };
 
 /**
  *
  */
-Tootsville.Parrot.say = function (title, message)
+Tootsville.Gossip.Parrot.say = function (title, message)
 { return new Promise
   ( (finish) =>
     { var reply = document.getElementById('parrot-reply');
@@ -69,7 +69,7 @@ Tootsville.Parrot.say = function (title, message)
       buttonBox.setAttribute ('class', 'button-box');
       var okButton = document.createElement('BUTTON');
       okButton.innerText = ' O.K. ';
-      okButton.onclick = () => { Tootsville.Parrot.done().then(() => {finish ()}); };
+      okButton.onclick = () => { Tootsville.Gossip.Parrot.done().then(() => {finish ()}); };
       buttonBox.append (okButton);
       reply.append (buttonBox);
       reply.style.display = 'block';
@@ -77,12 +77,12 @@ Tootsville.Parrot.say = function (title, message)
       speech.style.display = 'none';
       speech.innerHTML = '<h2>' + title + '</h2>' + message;
       speech.style.display = 'block';
-      Tootsville.Parrot.show(true); });};
+      Tootsville.Gossip.Parrot.show(true); });};
 
 /**
  *
  */
-Tootsville.Parrot.ask = function (title, message, replies)
+Tootsville.Gossip.Parrot.ask = function (title, message, replies)
 { return new Promise
   ( (finish) =>
     { var reply = document.getElementById ('parrot-reply');
@@ -93,7 +93,7 @@ Tootsville.Parrot.ask = function (title, message, replies)
       replies.forEach( (reply) =>
                        { var button = document.createElement ('BUTTON');
                          button.innerText = reply.text || reply.tag;
-                         button.onclick = () => { Tootsville.Parrot.done().then(function () {finish (reply.tag)}); };
+                         button.onclick = () => { Tootsville.Gossip.Parrot.done().then(function () {finish (reply.tag)}); };
                          buttonBox.append (button); });
       reply.append (buttonBox);
       reply.style.display = 'block';
@@ -101,13 +101,13 @@ Tootsville.Parrot.ask = function (title, message, replies)
       speech.style.display = 'none';
       speech.innerHTML = '<h2>' + title + '</h2>' + message;
       speech.style.display = 'block';
-      Tootsville.Parrot.show(true); }); };
+      Tootsville.Gossip.Parrot.show(true); }); };
 
 /**
  *
  */
-Tootsville.Parrot.ynP = function (title, message)
-{ return Tootsville.Parrot.ask (title, message,
+Tootsville.Gossip.Parrot.ynP = function (title, message)
+{ return Tootsville.Gossip.Parrot.ask (title, message,
                                 [  { tag: false, text: "No" },
                                    { tag: true, text: "Yes" } ]); };
 
@@ -116,7 +116,7 @@ Tootsville.Parrot.ynP = function (title, message)
 /**
  *
  */
-Tootsville.Parrot.parrotErrorText = function (body)
+Tootsville.Gossip.Parrot.parrotErrorText = function (body)
 { let code = body.error;
   let text = body.status || body.errorMessage;
   if (text)

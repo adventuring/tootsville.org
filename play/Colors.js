@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/colors.js is part of Tootsville
+ * play/Colors.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -64,6 +64,9 @@
 
     /**
      * Translate the color named @code{name} into HTML-style hex code.
+     *
+     * Strings which are not recognized as color names are
+     * expected to already be an HTML-style hex code.
      */
     window.interpretTootColor = function (name) {
         if (null == name || undefined == name)

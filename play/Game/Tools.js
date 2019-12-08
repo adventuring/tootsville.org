@@ -1,6 +1,6 @@
 /* -*- js2 -*- */
 /* @license 
- * play/game/tools.js is part of Tootsville
+ * play/Game/Tools.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018, 2019,
  * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -27,7 +27,7 @@
  *
  * USA
  */
-if (!('Tootsville' in window)) { Tootsville = {}; };
+
 if (!('Game' in Tootsville)) { Tootsville.Game = {}; };
 if (!('Tools' in Tootsville.Game)) { Tootsville.Game.Tools = {}; };
 
@@ -40,6 +40,7 @@ if (!('Tools' in Tootsville.Game)) { Tootsville.Game.Tools = {}; };
  */
 Tootsville.Game.Tools.shovel = function (x, y, z)
 { /* TODO shovel */};
+
 /**
  * Use an axe at the given coördinates.
  *
@@ -47,6 +48,7 @@ Tootsville.Game.Tools.shovel = function (x, y, z)
  */
 Tootsville.Game.Tools.axe = function (x, y, z)
 { /* TODO axe */};
+
 /**
  * Use a pickaxe at the given coördinates.
  *
@@ -54,6 +56,7 @@ Tootsville.Game.Tools.axe = function (x, y, z)
  */
 Tootsville.Game.Tools.pickaxe = function (x, y, z)
 { /* TODO pickaxe */};
+
 /**
  * Use a hammer at the given coördinates.
  *
@@ -62,6 +65,7 @@ Tootsville.Game.Tools.pickaxe = function (x, y, z)
  */
 Tootsville.Game.Tools.hammer = function (x, y, z)
 { /* TODO hammer */ };
+
 /**
  * Use a sewing kit at the given coördinates.
  *
@@ -69,6 +73,7 @@ Tootsville.Game.Tools.hammer = function (x, y, z)
  */
 Tootsville.Game.Tools.sewingKit = function (x, y, z)
 { /* TODO sewing kit */ };
+
 /**
  * Use a butterfly net at the given coördinates.
  *
@@ -76,6 +81,7 @@ Tootsville.Game.Tools.sewingKit = function (x, y, z)
  */
 Tootsville.Game.Tools.butterflyNet = function (x, y, z)
 { /* TODO butterfly net */ };
+
 /**
  * Use a fishing rod at the given coördinates.
  *
