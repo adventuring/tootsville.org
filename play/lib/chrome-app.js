@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/lib/chrome-app.js is part of Tootsville
  *

@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/game/stop-watchdogs.js is part of Tootsville
  *
@@ -32,20 +32,24 @@
  */
 
 if (!("game" in Tootsville))
-{ Tootsville.game = {}; }
+{ Tootsville.Game = {}; }
 
 /**
-*
-*/
-Tootsville.game.hideWhenGameReady = function ()
+ * Hide the loading overlay once the game is ready.
+ *
+ * Call this function when the game is ready.
+ */
+Tootsville.Game.hideWhenGameReady = function ()
 { var toHide = document.querySelectorAll('.hide-when-game-ready');
   for (var i = 0; i < toHide.length; i++)
   { toHide[i].style.display = 'none'; }};
 
 /**
-*
-*/
-Tootsville.game.stopSlowLoadingWatchdogs = function ()
+ * Stop the watchdogs for slow loading.
+ *
+ * Call this function once the loading has been completed enough.
+ */
+Tootsville.Game.stopSlowLoadingWatchdogs = function ()
 { clearTimeout(window.loadWatchdog1);
   clearTimeout(window.loadWatchdog2);
   window.loadWatchdog1 = null;

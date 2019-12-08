@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/google/log-drive.js is part of Tootsville
  *

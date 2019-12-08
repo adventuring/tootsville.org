@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/colors.js is part of Tootsville
  *
@@ -62,9 +62,12 @@
         orange: "#ff7b26"
     };
 
+    /**
+     * Translate the color named @code{name} into HTML-style hex code.
+     */
     window.interpretTootColor = function (name) {
         if (null == name || undefined == name)
         { return '#000'; }
-        return tootColorMapping[name.toLowerCase()];
+        return tootColorMapping[name.toLowerCase()] || name;
     };
 })();

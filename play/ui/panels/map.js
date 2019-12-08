@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/ui/panels/map.js is part of Tootsville
  *

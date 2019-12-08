@@ -333,6 +333,10 @@ dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 dist/play.$(clusterorg)/play/index.html: play/index.html
 	cp $< $@
 
+dist/play.$(clusterorg)/play/system-check/index.html: play/system-check/index.html
+	mkdir -p dist/play.$(clusterorg)/play/system-check/
+	cp $< $@
+
 dist/play.$(clusterorg)/play/ui/panels/control-panel.html:	$(shell ls -1 play/ui/panels/*)
 	mkdir -p dist/play.$(clusterorg)/play/ui/panels
 	cp -ar play/ui/panels/* dist/play.$(clusterorg)/play/ui/panels
@@ -349,7 +353,8 @@ dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/play/index.html \
 	dist/play.$(clusterorg)/worker.js \
 	dist/play.$(clusterorg)/.htaccess \
-	dist/play.$(clusterorg)/error/404.var
+	dist/play.$(clusterorg)/error/404.var \
+	dist/play.$(clusterorg)/play/system-check/index.html
 
 #################### deploy
 
@@ -485,10 +490,10 @@ git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.as
 
 dist/doc.texi: $(shell cat build/js.order)
 	cp build/header.texi dist/doc.texi
-	for file in $$(< build/js.order ); do \
+	for file in $$(grep -v lib/ build/js.order); do \
 		perl -e '$$b = ""; while (<>) { '\
-'if (/\/\*\*/../\*\//) { s/-\*-.*?-\*-//; s/\/?\*\*?\/?[ \t]*//; $$b = $$b . $$_ } '\
-'else { if (($$b ne "") && /(Tootsville.*)=/) '\
+'if (/\/\*\*/../\*\//) { s/-\*-.*?-\*-//; s/\/?\*[\*\/]?[ \t]*//; s/^ *//; $$b = $$b . $$_ } '\
+'else { if (($$b ne "") && /(Tootsville.*?)=/) '\
 '{ print "\n\@vskip 48pt\n\@node $$1\n\@section $$1\n\n$$b\n\n"; $$b = ""; } } }'\
 'print $$b;' < $$file >> dist/doc.texi; \
 	done

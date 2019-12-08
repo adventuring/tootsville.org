@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/ui/panels/control-panel.js is part of Tootsville
  *
@@ -36,11 +36,11 @@ if (! document.documentElement.requestFullscreen) {
     document.getElementById('fullscreen-toggle').disabled = true;
 }
 
-Tootsville.ui.setFullscreenFromNavigator();
+Tootsville.UI.setFullscreenFromNavigator();
 
 if (navigator.userAgent.indexOf("Firefox/") > 0) {
-    var ffox = document.getElementById('control-panel-get-firefox');
+    const ffox = document.getElementById('control-panel-get-firefox');
     ffox.outerHTML = '';
 }
 
-Tootsville.audio.updateVolumeUI();
+Tootsville.UI.Audio.updateVolumeUI();

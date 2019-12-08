@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- -*-web -*- -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tootsville System Check</title>
+  </head>
+  <body>
+    <h1>Tootsville System Check</h1>
+    <p>   This   will  check   your   computer's   capability  to   play
+      in Tootsville. </p>
+
+    <section>
+      <h2> Mandatory Requirements </h2>
+      <ul>
+        <li> Javascript enabled: <noscript>FAIL</noscript>
+          <script>document.write("PASS");</script> </li>
+        <li> Javascript supports ES6:
+          <script> ( () => { document.write('PASS'); } )(); </script></li>
+        <li> WebGL 3D scene support: <span id="webgl-check"></span> </li>
+        <li> WebRTC communications support:
+          <script> if (RTCPeerConnection) { document.write("PASS"); }
+           else { document.write('FAIL'); } </script></li>
+      </ul>
+      <h2> Optional Features </h2>
+      <ul>
+        <li> Audio support: TODO </li>
+        <li> Gamepad support: <script> if (GamepadEvent) { document.write('PASS'); }
+                               else { document.write('FAIL'); } </script> </li>
+      </ul>
+    </section>
+
+  </body>
+  <script>
+   window.addEventListener("load", function()
+   { var result = document.getElementById("webgl-check");
+           var canvas = document.createElement("CANVAS");
+           result.appendChild(canvas);
+           var gl = canvas.getContext("webgl");
+           if (gl && gl instanceof WebGLRenderingContext)
+           { result.innerHTML = "PASS"; }
+           else
+           { result.innerHTML = "FAIL"; } }, false);
+  </script>
+</html>

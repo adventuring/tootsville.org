@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/ui/hud.js is part of Tootsville
  *
@@ -30,11 +30,18 @@
  * USA
  *
  */
-if (! ('hud' in Tootsville.ui)) { Tootsville.ui.hud = {}; }
+if (!('UI' in Tootsville)) { Tootsville.UI = { HUD: {} }; }
+if (!('HUD' in Tootsville.UI)) { Tootsville.UI.HUD = {}; }
 
-Tootsville.ui.hud.talkBoxOpenP = true;
+/**
+ * If true, the Talk Box is open (visible).
+ */
+Tootsville.UI.HUD.talkBoxOpenP = true;
 
-Tootsville.ui.hud.getOpenPanel = function ()
+/**
+ * Get the name of the currently-visible HUD panel.
+ */
+Tootsville.UI.HUD.getOpenPanel = function ()
 { var panels = document.querySelectorAll ('.hud-panel');
   if (! panels) { return null; }
   for (var i = 0; i < panels.length; i++)
@@ -43,14 +50,17 @@ Tootsville.ui.hud.getOpenPanel = function ()
     { return panel; } }
   return null;};
 
-Tootsville.ui.hud.closePanel = function ()
+/**
+ * Close (hide) the active HUD panel.
+ */
+Tootsville.UI.HUD.closePanel = function ()
 { var foundAny = false;
-  for (var panelPopup = Tootsville.ui.hud.getOpenPanel ();
+  for (var panelPopup = Tootsville.UI.HUD.getOpenPanel ();
        panelPopup;
-       panelPopup = Tootsville.ui.hud.getOpenPanel ())
+       panelPopup = Tootsville.UI.HUD.getOpenPanel ())
   { var panelID = panelPopup.id;
     if (panelID == 'paperdoll')
-    { Tootsville.ui.hud.returnPaperdollMini (); }
+    { Tootsville.UI.HUD.returnPaperdollMini (); }
     else
     { panelPopup.style.opacity = .1;
       panelPopup.style.maxHeight = '1px';
@@ -60,31 +70,40 @@ Tootsville.ui.hud.closePanel = function ()
                    1000 );
       panelPopup = null; }
     foundAny = true; }
-  if (! Tootsville.gossip.connectedP)
-  { Tootsville.login.start (); }
+  if (! Tootsville.character)
+  { Tootsville.Login.start (); }
   return foundAny; };
 
-Tootsville.ui.hud.loadScriptIntoDiv = function (src, div)
-{ Tootsville.trace ("Load JavaScript: " + src);
+/**
+ * Load a SCRIPT into a given DIV container.
+ */
+Tootsville.UI.HUD.loadScriptIntoDiv = function (src, div)
+{ console.debug ("Load JavaScript: " + src);
   var script = document.createElement ('SCRIPT');
   script.src = src;
   div.appendChild (script);
   return script; };
 
-Tootsville.ui.hud.loadHTML = function (src)
-{ Tootsville.trace ("Load HTML: " + src);
+/**
+ * Load an HTML layer into a container.
+ */
+Tootsville.UI.HUD.loadHTML = function (src)
+{ console.debug ("Load HTML: " + src);
   return new Promise (
       after =>
           { var xhr = new XMLHttpRequest; // XXX: Fetch
             xhr.onload = () => {
-                Tootsville.trace ("Got response from " + src, xhr.response);
+                console.debug ("Got response from " + src, xhr.response);
                 after (xhr.response);
             };
             xhr.open ("GET", src);
             xhr.responseType = 'document';
             xhr.send (); }); };
 
-Tootsville.ui.hud.createHUDLoaderPanel = function (panel)
+/**
+ * Create a placeholder ``loading'' pop-up for a HUD panel.
+ */
+Tootsville.UI.HUD.createHUDLoaderPanel = function (panel)
 { var div = document.getElementById (panel + "-loading");
   var hud = document.getElementById ('hud');
   if (! hud) { return; }
@@ -106,17 +125,19 @@ Tootsville.ui.hud.createHUDLoaderPanel = function (panel)
                 div.style.maxHeight = '100vh'; },
               60); };
 
-
-Tootsville.ui.hud.showHUDPanel = function (panel, div)
-{ Tootsville.trace ("Show HUD Panel " + panel, div);
+/**
+ * Show the HUD panel named in the given DIV container.
+ */
+Tootsville.UI.HUD.showHUDPanel = function (panel, div)
+{ console.debug ("Show HUD Panel " + panel, div);
   return new Promise (
       finish =>
           { if (! div)
-            { Tootsville.trace ("No DIV for " + panel + " passed in — looking for one");
+            { console.debug ("No DIV for " + panel + " passed in — looking for one");
               div = document.getElementById (panel); }
             if (div)
-            { if (Tootsville.ui.hud.getOpenPanel () != div)
-              { Tootsville.ui.hud.closePanel (); }
+            { if (Tootsville.UI.HUD.getOpenPanel () && Tootsville.UI.HUD.getOpenPanel () != div)
+              { Tootsville.UI.HUD.closePanel (); }
               div.style.opacity = 1;
               div.style.maxHeight = '100vh';
               div.style.display = 'block';
@@ -125,27 +146,31 @@ Tootsville.ui.hud.showHUDPanel = function (panel, div)
               finish ();
               return; }
             else
-            { Tootsville.trace ("DIV not loaded; calling loadHUDPanel (" + panel + ")");
-              Tootsville.ui.hud.closePanel ();
-              Tootsville.ui.hud.loadHUDPanel (panel, finish); } }); };
+            { console.debug ("DIV not loaded; calling loadHUDPanel (" + panel + ")");
+              Tootsville.UI.HUD.closePanel ();
+              Tootsville.UI.HUD.loadHUDPanel (panel, finish); } }); };
 
-Tootsville.ui.hud.loadHUDPanel = function (panelName, finish)
-{ Tootsville.trace ("Loading HUD panel: " + panelName);
+/**
+ * Load a  HUD Panel from /play/ui/panels/.  Each panel has an  HTML and
+ * a Javascript component associated with it.
+ */
+Tootsville.UI.HUD.loadHUDPanel = function (panelName, finish)
+{ console.debug ("Loading HUD panel: " + panelName);
   var panelDiv = document.getElementById (panelName);
   if (panelDiv)
-  { Tootsville.ui.hud.showHUDPanel (panelName, panelDiv);
-    Tootsville.trace ("Re-using panel: " + panelName);
+  { Tootsville.UI.HUD.showHUDPanel (panelName, panelDiv);
+    console.debug ("Re-using panel: " + panelName);
     if (finish) { finish (panelDiv); } }
   else
-  { var spinnerDiv = Tootsville.ui.hud.createHUDLoaderPanel (panelName);
-    Tootsville.ui.hud.loadHTML ("/play/ui/panels/" + panelName + ".html").
+  { var spinnerDiv = Tootsville.UI.HUD.createHUDLoaderPanel (panelName);
+    Tootsville.UI.HUD.loadHTML ("/play/ui/panels/" + panelName + ".html").
     then (
         htmlf =>
             { if (!htmlf)
               { Tootsville.error ("Failed to load: " + panelName); }
               var panelDiv = htmlf.getElementById (panelName);
               if (!panelDiv)
-              { Tootsville.parrot.say ("Pop-up problem",
+              { Tootsville.Parrot.say ("Pop-up problem",
                                        "I loaded the pop-up for " + panelName +
                                        " and got back something I couldn't use. You won't be able " +
                                        "to access that panel for now. ☹");
@@ -154,30 +179,37 @@ Tootsville.ui.hud.loadHUDPanel = function (panelName, finish)
               var hud = document.getElementById ('hud');
               var spinner = document.getElementById(panelName + '-loading');
               if (spinner)
-              { Tootsville.trace ("Loaded " + panelName + ", removing spinner ", spinner);
+              { console.debug ("Loaded " + panelName + ", removing spinner ", spinner);
                 hud.removeChild (spinner); }
-              Tootsville.trace ("Attaching " + panelName + " from ", htmlf, " as ", panelDiv);
+              console.debug ("Attaching " + panelName + " from ", htmlf, " as ", panelDiv);
               panelDiv.setAttribute("class", "hud-panel");
               hud.appendChild (panelDiv);
-              Tootsville.trace ("Showing " + panelName);
-              Tootsville.ui.hud.showHUDPanel (panelName, panelDiv);
-              Tootsville.trace ("Loading " + panelName + " JavaScript");
-              Tootsville.ui.hud.loadScriptIntoDiv ('/play/ui/panels/' + panelName + '.js',
+              console.debug ("Showing " + panelName);
+              Tootsville.UI.HUD.showHUDPanel (panelName, panelDiv);
+              console.debug ("Loading " + panelName + " JavaScript");
+              Tootsville.UI.HUD.loadScriptIntoDiv ('/play/ui/panels/' + panelName + '.js',
                                                    panelDiv);
-              if (finish) { Tootsville.trace ("Calling panel finish function", finish, panelDiv);
+              if (finish) { console.debug ("Calling panel finish function", finish, panelDiv);
                             finish (panelDiv); }
-              else { Tootsville.trace ("No finish function for " + panelName); }}); }};
+              else { console.debug ("No finish function for " + panelName); }}); }};
 
-Tootsville.ui.hud.toggleHUDPanel = function (panel)
+/**
+ * Toggle the visibility of the named HUD panel.
+ */
+Tootsville.UI.HUD.toggleHUDPanel = function (panel)
 { var div = document.getElementById (panel);
-  if (div && Tootsville.ui.hud.getOpenPanel () == div)
-  { Tootsville.ui.hud.closePanel ();
+  if (div && Tootsville.UI.HUD.getOpenPanel () == div)
+  { Tootsville.UI.HUD.closePanel ();
     return false; }
   else
-  { Tootsville.ui.hud.showHUDPanel (panel, div);
+  { Tootsville.UI.HUD.showHUDPanel (panel, div);
     return true; }};
 
-Tootsville.ui.hud.dropHUDPanels = function ()
+/**
+ * Drop all HUD panels to force  reloading them. May not always work due
+ * to caching.
+ */
+Tootsville.UI.HUD.dropHUDPanels = function ()
 { /* Only  for debugging,  but useful  to call  to force  reloading when
    * there are system changes on-the-fly. */
     var panels = document.querySelector ('.hud-panel');
@@ -185,14 +217,18 @@ Tootsville.ui.hud.dropHUDPanels = function ()
     { var panel = panels[i];
       panel.parentNode.removeChild (panel); } };
 
-Tootsville.ui.hud.beginWatchingPaperdollWindowForClose = function ()
+/**
+ * Watch the  paperdoll (large)  window for Close  events (ie,  layer is
+ * made invisible or hidden in the DOM).
+ */
+Tootsville.UI.HUD.beginWatchingPaperdollWindowForClose = function ()
 { var box = document.getElementById ('paperdoll');
 
   /* watch for hiding … */
   var boxWatcher = new MutationObserver (
       records =>
           { if ( (box.style.opacity < 1) || (box.style.display == 'none'))
-            { Tootsville.ui.hud.returnPaperdollMini (); }});
+            { Tootsville.UI.HUD.returnPaperdollMini (); }});
   boxWatcher.observe (box, { attributes: true });
 
   /* … or unloading */
@@ -201,11 +237,16 @@ Tootsville.ui.hud.beginWatchingPaperdollWindowForClose = function ()
           { for (var mutation of records)
             { for (var i = 0; i < mutation.removedNodes.length; ++i)
               { if (mutation.removedNodes[i] == box)
-                { Tootsville.ui.hud.returnPaperdollMini ();}}}});
+                { Tootsville.UI.HUD.returnPaperdollMini ();}}}});
   var hud = document.getElementById ('hud');
   boxWatcher.observe (hud, { childList: true });};
 
-Tootsville.ui.hud.positionPaperdollMini = function ()
+/**
+ * Position the paperdoll  appropriately for the stage box  in the large
+ * paperdoll   display,    or   the    mini   box   (widget)    in   the
+ * lower-right corner.
+ */
+Tootsville.UI.HUD.positionPaperdollMini = function ()
 { var mini = document.getElementById ('paperdoll-mini');
   var stage = document.getElementById ('doll-stage');
   var miniBox = mini.getBoundingClientRect ();
@@ -219,7 +260,8 @@ Tootsville.ui.hud.positionPaperdollMini = function ()
   mini.style.cursor = 'default';
   setTimeout ( () =>
                { mini.style.left = centerX + "px";
-                 mini.style.top = centerY + "px"; },
+                 mini.style.top = centerY + "px";
+                 if (mini.engine && mini.engine.resize) { mini.engine.resize (); } },
                5);
   setTimeout ( () =>
                { mini.style.top = stageBox.top + 'px';
@@ -234,79 +276,123 @@ Tootsville.ui.hud.positionPaperdollMini = function ()
 
                  mini.style.height = stageBox.height + 'px';
                  mini.style.width = stageBox.width + 'px';
-                 mini.style.borderRadius = 0; },
+                 mini.style.borderRadius = 0;
+                 mini.style.zIndex = 1500;
+                 if (mini.engine && mini.engine.resize) { mini.engine.resize (); } },
                500);};
 
-Tootsville.ui.hud.returnPaperdollMini = function ()
+/**
+ * Return the paperdoll from the large window to the icon widget.
+ */
+Tootsville.UI.HUD.returnPaperdollMini = function ()
 { var mini = document.getElementById ('paperdoll-mini');
   mini.style.top = 'unset';
   mini.style.left = 'unset';
   mini.style.height = 'unset';
   mini.style.width = 'unset';
-  setTimeout ( () => { mini.style = {}; }, 60);
-  mini.addEventListener ('click', openPaperdoll);
+  mini.style.zIndex = 'unset';
+  setTimeout ( () => { mini.style = {};
+                       if (mini.engine && mini.engine.resize) { mini.engine.resize (); } }, 60);
+  mini.addEventListener ('click', Tootsville.UI.HUD.openPaperdoll);
 };
 
-Tootsville.ui.hud.openPaperdoll = function ()
+/**
+ * Open the Paperdoll display from the paperdoll-mini widget.
+ */
+Tootsville.UI.HUD.openPaperdoll = function ()
 { document.getElementById ('paperdoll-mini').removeEventListener
-  ('click', Tootsville.ui.hud.openPaperdoll);
-  Tootsville.ui.hud.showHUDPanel ('paperdoll').
+  ('click', Tootsville.UI.HUD.openPaperdoll);
+  Tootsville.UI.HUD.showHUDPanel ('paperdoll').
   then ( () =>
-         { Tootsville.ui.hud.beginWatchingPaperdollWindowForClose ();
-           Tootsville.ui.hud.positionPaperdollMini (); }); };
+         { Tootsville.UI.HUD.beginWatchingPaperdollWindowForClose ();
+           Tootsville.UI.HUD.positionPaperdollMini (); }); };
 
-Tootsville.ui.hud.destroyHUD = function ()
+/**
+ * Destroy the HUD layer.
+ */
+Tootsville.UI.HUD.destroyHUD = function ()
 { var hud = document.getElementById ('hud');
   if (hud) { hud.parentNode.removeChild (hud); }};
 
-Tootsville.ui.hud.openTalkBox = function ()
-{ Tootsville.ui.hud.talkBoxOpenP = true;
+/**
+ * Open (reveal) the Talk Box.
+ */
+Tootsville.UI.HUD.openTalkBox = function ()
+{ Tootsville.UI.HUD.talkBoxOpenP = true;
   document.getElementById ('talk-box').removeEventListener
-  ('click', Tootsville.ui.hud.openTalkBox);
+  ('click', Tootsville.UI.HUD.openTalkBox);
   document.getElementById ('talk-box').style.bottom = 0;};
 
-Tootsville.ui.hud.closeTalkBox = function ()
-{ Tootsville.ui.hud.talkBoxOpenP = false;
+/**
+ * Close (hide) the Talk Box
+ */
+Tootsville.UI.HUD.closeTalkBox = function ()
+{ Tootsville.UI.HUD.talkBoxOpenP = false;
   document.getElementById ('talk-box').addEventListener
-  ('click', Tootsville.ui.hud.openTalkBox);
+  ('click', Tootsville.UI.HUD.openTalkBox);
   document.getElementById ('talk-box').style.bottom = '-2.25rem';};
 
-Tootsville.ui.hud.toggleTalkBox = function ()
-{ if (Tootsville.ui.hud.talkBoxOpenP)
-  { Tootsville.ui.hud.closeTalkBox (); }
+/**
+ * Toggle visibility of the Talk Box
+ */
+Tootsville.UI.HUD.toggleTalkBox = function ()
+{ if (Tootsville.UI.HUD.talkBoxOpenP)
+  { Tootsville.UI.HUD.closeTalkBox (); }
   else
-  { Tootsville.ui.hud.openTalkBox (); }};
+  { Tootsville.UI.HUD.openTalkBox (); }};
 
-Tootsville.ui.hud.refreshEquipment = function ()
+/**
+ * Ensure that the paperdoll is up-to-date
+ */
+Tootsville.UI.HUD.refreshPaperdoll = function ()
+{ const paperdoll = document.getElementById ('paperdoll-mini');
+  if (!(Tootsville.util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
+  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll);
+    paperdoll.avatar = Object.assign({}, Tootsville.character); } };
+
+/**
+ * Refresh the display of the active equipment item.
+ */
+Tootsville.UI.HUD.refreshEquipment = function ()
 { if (null == Tootsville.player || null == Tootsville.player.activeItem)
   { document.getElementById ('active-item-box').style.opacity = 0; }
   else
-  { Tootsville.trace ("TODO: active item box"); }
+  { console.debug ("TODO: active item box"); }
   if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
   { document.getElementById ('inactive-item-box').style.opacity = 0; }
   else
-  { Tootsville.trace ("TODO: inactive item box"); }};
+  { console.debug ("TODO: inactive item box"); }};
 
-Tootsville.ui.hud.switchActiveItem = function ()
+/**
+ * Switch the active item with the secondary item.
+ */
+Tootsville.UI.HUD.switchActiveItem = function ()
 { if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
   { return; }
   var prior = Tootsville.player.activeItem;
   Tootsville.wardrobe.doff (Tootsville.player.activeItem);
   Tootsville.wardrobe.don (Tootsville.player.inactiveItem);
   Tootsville.wardrobe.don2 (prior);
-  Tootsville.trace ("TODO: cool rotate-and-swap animation between the two item boxes");
-  Tootsville.ui.hud.refreshEquipment ();
+  console.debug ("TODO: cool rotate-and-swap animation between the two item boxes");
+  Tootsville.UI.HUD.refreshEquipment ();
 };
 
-Tootsville.ui.hud.refreshTalkStatus = function ()
-{ if (Tootsville.gossip.connectedP ())
+/**
+ * Refresh the status of the Talk Box (disconnected, sensitive, or regular).
+ */
+Tootsville.UI.HUD.refreshTalkStatus = function ()
+{ if (Tootsville.Gossip.connectedP ())
   { document.getElementById ('talk-box').className = 'talk-connected';
     document.getElementById ('talk-speak').placeholder = "Let's make some noise!"; }
   else
   { document.getElementById ('talk-box').className = 'talk-disconnected';
     document.getElementById ('talk-speak').placeholder = 'disconnected'; }};
 
-Tootsville.ui.hud.refreshWallet = function ()
+/**
+ * Refresh  the wallet  display, both  in the  HUD and  (if loaded)  the
+ * Wallet app in Tootnix.
+ */
+Tootsville.UI.HUD.refreshWallet = function ()
 { if (! Tootsville.character)
   { Tootsville.character = { peanuts: -1, fairyDust: -1 }; }
   const walletAppPeanuts = document.getElementById ('wallet-show-peanuts');
@@ -339,24 +425,52 @@ Tootsville.ui.hud.refreshWallet = function ()
         walletAppFairyDustCount.innerHTML = ''; } }
   return true; };
 
-Tootsville.ui.hud.refreshHUD = function ()
-{ Tootsville.ui.hud.refreshEquipment ();
-  Tootsville.ui.hud.refreshTalkStatus ();
-  Tootsville.ui.hud.refreshWallet (); };
+/**
+ * Refresh HUD  elements that are set  by server events (other  than the
+ * clock), such as equipment, talk status, and wallet readouts.
+ */
+Tootsville.UI.HUD.refreshHUD = function ()
+{ Tootsville.UI.HUD.refreshEquipment ();
+  Tootsville.UI.HUD.refreshTalkStatus ();
+  Tootsville.UI.HUD.refreshWallet ();
+  Tootsville.UI.HUD.refreshPaperdoll (); };
 
-Tootsville.ui.hud.toggleTalkLoud = function ()
+/**
+ * Toggle visibility of the Loudness selector for the Talk Box.
+ */
+Tootsville.UI.HUD.toggleTalkLoud = function ()
 { };
 
-Tootsville.ui.hud.toggleTalkExpression = function ()
+/**
+ * Toggle visibility of the Expressions selector for the Talk Box.
+*
+* TODO
+ */
+Tootsville.UI.HUD.toggleTalkExpression = function ()
 { };
 
-Tootsville.ui.hud.toggleTalkEmoji = function ()
+/**
+ * Toggle visibility of the Emoji selector for the Talk Box.
+* 
+* TODO
+ */
+Tootsville.UI.HUD.toggleTalkEmoji = function ()
 { };
 
-Tootsville.ui.hud.connectTalkBox = function ()
+/**
+ * Connect events for the Talk box widgets at the bottom of the display.
+ */
+Tootsville.UI.HUD.connectTalkBox = function ()
 { document.getElementById ("talk-loud-selector").addEventListener
-  ("click", Tootsville.ui.hud.toggleTalkLoud);};
+  ("click", Tootsville.UI.HUD.toggleTalkLoud);};
 { document.getElementById ("talk-expression").addEventListener
-  ("click", Tootsville.ui.hud.toggleTalkExpression);};
+  ("click", Tootsville.UI.HUD.toggleTalkExpression);};
 { document.getElementById ("talk-emoji").addEventListener
-  ("click", Tootsville.ui.hud.toggleTalkEmoji);};
+  ("click", Tootsville.UI.HUD.toggleTalkEmoji);};
+
+/**
+ * Set up the HUD layer and start housekeeping
+ */
+Tootsville.UI.HUD.initHUD = function ()
+{ setInterval (Tootsville.UI.HUD.refreshHUD (), 250);
+  Tootsville.UI.HUD.connectTalkBox (); };

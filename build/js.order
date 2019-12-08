@@ -4,38 +4,43 @@ play/tootsville.js
 play/util.js
 
 play/analytics.js
-
 play/rollbar.js
 
 play/colors.js
-
 play/time.js
 
-play/gossip/parrot.js
-play/gossip/gossip.js
+play/gossip/Parrot.js
+play/gossip/Gossip.js
 
-play/login/login.js
+play/login/Login.js
 
 play/lib/adapter.js/adapter.js
 
 play/game/wardrobe.js
 play/game/commands.js
 play/game/gatekeeper.js
+play/game/Tools.js
 
 play/ui/connect.js
 play/ui/gamepad-layouts.js
 play/ui/gamepad.js
-play/ui/hud.js
-play/ui/fit-steps.js
+play/ui/HUD.js
 play/ui/ui.js
 play/ui/music.js
 play/ui/fullscreen-polyfill.js
 play/ui/audio-control.js
 play/ui/keys.js
+
 play/ui/commands.js
 
-play/scene/scene.js
-play/scene/avatar.js
+play/scene/AvatarBuilder.js
+play/scene/FurnitureBuilder.js
+play/scene/GroundBuilder.js
+play/scene/SceneBuilder.js
+play/scene/SkyBuilder.js
+
+play/scene/AvatarViewer.js
+play/scene/Tank.js
 
 play/game/stop-watchdogs.js
 

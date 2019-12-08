@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/util.js is part of Tootsville
  *
@@ -32,6 +32,10 @@
  */
 if (!("util" in Tootsville)) { Tootsville.util = {}; }
 
+/**
+ * Ensure that @code{hostName} is a  valid hostname for the game cluster
+ * we're in.
+ */
 Tootsville.util.assertValidHostName = function (hostName)
 { if ("http" == hostName || "https" == hostName)
   { Tootsville.error ("Landed here with http/s as a hostName"); }
@@ -41,6 +45,22 @@ Tootsville.util.assertValidHostName = function (hostName)
   { return "https://tootsbook.com"; }
   return Tootsville.host["game"]; };
 
+/**
+ * The main REST client.
+ *
+ * @table @code
+ * @item method
+ * GET, PUT, or POST
+ * @item uri
+ * The URI to access under the game host.
+ * @item body
+ * A JSON body for a PUT or POST
+ * @item headers
+ * An object which maps to additional headers to be set on the request.
+ * X-Infinity-Auth will be set when logged in; Accept and Content-Type will be
+ * defaulted to application/json if not set.
+ * @end table
+ */
 Tootsville.util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
   let origURI = uri;
@@ -52,14 +72,14 @@ Tootsville.util.rest = function (method, uri, body, headers)
   if (!headers) { headers = {}; }
   if (! ('Accept' in headers))
   { headers['Accept'] = 'application/json;encoding=utf-8'; }
-  if (Tootsville.login.firebaseAuth)
-  { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.login.firebaseAuth; }
+  if (Tootsville.Login.firebaseAuth)
+  { headers['X-Infinity-Auth'] = 'auth/Infinity/Alef/5.0 firebase ' + Tootsville.Login.firebaseAuth; }
   let opts = { method: method };
   if (body && (! ('Content-Type' in headers)))
   { headers['Content-Type'] = 'application/json;charset=utf-8';
     opts.body = JSON.stringify(body); }
   opts.headers = headers;
-  Tootsville.trace ('REST: ' + method + ' ' + uri, opts);
+  console.debug ('REST: ' + method + ' ' + uri, opts);
   return fetch (uri, opts).then(
       response =>
           { if (response.ok)
@@ -73,9 +93,9 @@ Tootsville.util.rest = function (method, uri, body, headers)
               { return { error: response.status, response: response }; }
               response.json ().then (
                   json =>
-                      { return Tootsville.parrot.ask (
+                      { return Tootsville.Parrot.ask (
                           "Uh-oh! Server trouble!",
-                          Tootsville.parrot.parrotErrorText(json),
+                          Tootsville.Parrot.parrotErrorText(json),
                           [{ tag: 'retry', text: "Retry the network operation" }]).then
                         (() =>
                          { console.log ("User-initiated retry for " + origURI);
@@ -83,7 +103,7 @@ Tootsville.util.rest = function (method, uri, body, headers)
             return null; },
       error =>
           { Tootsville.warn("Fetch error ", error);
-            Tootsville.parrot.ask (
+            Tootsville.Parrot.ask (
                 "Uh-oh! Network trouble!",
                 "<P>I got a network error: <TT>" + error + "</TT> <SMALL>from <TT>" +
                     uri.replace('/', '/&shy;') +
@@ -104,10 +124,33 @@ Tootsville.util.loadScript = function (src)
 
 //
 
+/**
+ * Check for the game REST server. 
+ * 
+ * Calls @url{https://game.tootsville.org/meta-game/ping}  and complains
+ * to the player if it can't be reached.
+ */
 Tootsville.util.ensureServersReachable = function ()
 { Tootsville.util.rest ('GET', 'meta-game/ping').then
   ( (response) => { Tootsville.trace ("Ping replied", response); },
-    (error) => { Tootsville.parrot.say (
+    (error) => { Tootsville.Parrot.say (
         "Squawk! I don't see any servers!",
-        "I'm not able to reach any of the Tootsville game servers. "+
+        "I'm not able to reach any of the Tootsville.Game servers. "+
             "This probably means you won't be able to sign in." ); } ); };
+
+/**
+ * Check for value equality of two objects
+ */
+Tootsville.util.equalP = function (a, b)
+{ if (!((a instanceof Object) && (b instanceof Object)))
+  { return false; }
+  const aProps = Object.getOwnPropertyNames(a);
+  const bProps = Object.getOwnPropertyNames(b);
+  if (aProps.length != bProps.length)
+  { return false; }
+  for (var i = 0; i < aProps.length; ++i)
+  { var propName = aProps[i];
+    if (a[propName] !== b[propName])
+    { return false; } }
+  return true; };
+

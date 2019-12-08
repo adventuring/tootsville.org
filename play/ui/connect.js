@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/ui/connect.js is part of Tootsville
  *
@@ -33,11 +33,11 @@
 
 (function () {
      var clickHandlers = {
-         'control-panel-icon': () => { Tootsville.ui.hud.toggleHUDPanel('control-panel'); },
-         'toolbox-mobile-phone': () => { Tootsville.ui.hud.showHUDPanel('mobile'); },
-         'toolbox-contacts': () => { Tootsville.ui.hud.showHUDPanel('contacts'); },
-         'paperdoll-mini': () => Tootsville.ui.hud.openPaperdoll,
-         'troubleshooting-icon': () => { Tootsville.ui.hud.toggleHUDPanel('troubleshooting'); }
+         'control-panel-icon': () => { Tootsville.UI.HUD.toggleHUDPanel('control-panel'); },
+         'toolbox-mobile-phone': () => { Tootsville.UI.HUD.showHUDPanel('mobile'); },
+         'toolbox-contacts': () => { Tootsville.UI.HUD.showHUDPanel('contacts'); },
+         'paperdoll-mini': () => Tootsville.UI.HUD.openPaperdoll,
+         'troubleshooting-icon': () => { Tootsville.UI.HUD.toggleHUDPanel('troubleshooting'); }
      };
      for (var id in clickHandlers) {
          document.getElementById(id).addEventListener('click', clickHandlers[id]);

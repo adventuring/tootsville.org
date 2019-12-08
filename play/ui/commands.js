@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/ui/commands.js is part of Tootsville
  *
@@ -30,67 +30,80 @@
  * USA
  *
  */
-if ( (!('ui' in Tootsville)) ||
-     (!('keys' in Tootsville.ui)) ||
-     (!('hud' in Tootsville.ui)))
+if ( (!('UI' in Tootsville)) ||
+     (!('Keys' in Tootsville.UI)) ||
+     (!('HUD' in Tootsville.UI)))
 { throw new Error("Can't map without keys and HUD"); }
 
 /**
  *
  */
-Tootsville.ui.commands =
-    { 'beginning-of-line': Tootsville.ui.keys.beginningOfLine,
-      'end-of-line': Tootsville.ui.keys.endOfLine,
-      'backward-char': Tootsville.ui.keys.backwardChar,
-      'forward-char': Tootsville.ui.keys.forwardChar,
-      'prefix-C-c': Tootsville.ui.keys.prefixCc,
-      'prefix-C-x': Tootsville.ui.keys.prefixCx,
-      'delete-char': Tootsville.ui.keys.deleteChar,
-      'delete-backward-char': Tootsville.ui.keys.deleteBackwardChar,
-      'keyboard-quit': Tootsville.ui.keys.keyboardQuit,
-      'help': Tootsville.ui.keys.help,
-      'kill-line': Tootsville.ui.keys.killLine,
-      'next-history-line': Tootsville.ui.keys.nextHistoryLine,
-      'prior-history-line': Tootsville.ui.keys.priorHistoryLine,
-      'isearch': Tootsville.ui.keys.isearch,
-      'isearch-backward': Tootsville.ui.keys.isearchBackward,
-      'transpose-chars': Tootsville.ui.keys.transposeChars,
-      'kill-region': Tootsville.ui.keys.killRegion,
-      'yank': Tootsville.ui.keys.yank,
-      'speak-line': Tootsville.ui.keys.speakLine,
-      'begin-speaking': Tootsville.ui.keys.beginSpeaking,
-      'begin-whispering': Tootsville.ui.keys.beginWhispering,
-      'begin-shouting': Tootsville.ui.keys.beginShouting,
-      'clear-hud': Tootsville.ui.hud.clearHUD,
-      'control-panel': Tootsville.ui.hud.showControlPanel,
-      'toggle-control-panel': Tootsville.ui.hud.toggleControlPanel,
-      'contacts': Tootsville.ui.hud.showContacts,
-      'mobile': Tootsville.ui.hud.showMobile,
-      'camera': Tootsville.ui.hud.showCamera,
-      'open-talk': Tootsville.ui.openTalkBox,
-      'toggle-talk': Tootsville.ui.toggleTalkBox,
-      'close-talk': Tootsville.ui.closeTalkBox,
-      'text-entry': Tootsville.ui.keys.textEntry,
-      'backward-word': Tootsville.ui.keys.backwardWord,
-      'forward-word': Tootsville.ui.keys.forwardWord,
-      'capitalize-word': Tootsville.ui.keys.capitalizeWord,
-      'upcase-word': Tootsville.ui.keys.upcaseWord,
-      'downcase-word': Tootsville.ui.keys.downcaseWord,
-      'backward-sentence': Tootsville.ui.keys.backwardSentence,
-      'forward-sentence': Tootsville.ui.keys.forwardSentence,
-      'select-all': Tootsville.ui.keys.selectAll,
-      'kill-sentence': Tootsville.ui.keys.killSentence,
-      'kill-word': Tootsville.ui.keys.killWord,
-      'transpose-words': Tootsville.ui.keys.transposeWords,
-      'kill-ring-save': Tootsville.ui.keys.killRingSave,
-      'execute-extended-command': Tootsville.ui.keys.executeExtendedCommand,
-      'yank-pop': Tootsville.ui.keys.yankPop,
-      'insert-char': Tootsville.ui.keys.insertChar
+Tootsville.UI.commands =
+    { 'beginning-of-line': Tootsville.UI.Keys.beginningOfLine,
+      'end-of-line': Tootsville.UI.Keys.endOfLine,
+      'backward-char': Tootsville.UI.Keys.backwardChar,
+      'forward-char': Tootsville.UI.Keys.forwardChar,
+      'arrow-left': Tootsville.UI.Keys.arrowLeft,
+      'arrow-right': Tootsville.UI.Keys.arrowRight,
+      'arrow-up': Tootsville.UI.Keys.arrowUp,
+      'arrow-down': Tootsville.UI.Keys.arrowDown,
+      'prefix-C-c': Tootsville.UI.Keys.prefixCc,
+      'prefix-C-x': Tootsville.UI.Keys.prefixCx,
+      'delete-char': Tootsville.UI.Keys.deleteChar,
+      'delete-backward-char': Tootsville.UI.Keys.deleteBackwardChar,
+      'keyboard-quit': Tootsville.UI.Keys.keyboardQuit,
+      'help': Tootsville.UI.Keys.help,
+      'kill-line': Tootsville.UI.Keys.killLine,
+      'next-history-line': Tootsville.UI.Keys.nextHistoryLine,
+      'prior-history-line': Tootsville.UI.Keys.priorHistoryLine,
+      'isearch': Tootsville.UI.Keys.isearch,
+      'isearch-backward': Tootsville.UI.Keys.isearchBackward,
+      'transpose-chars': Tootsville.UI.Keys.transposeChars,
+      'kill-region': Tootsville.UI.Keys.killRegion,
+      'yank': Tootsville.UI.Keys.yank,
+      'speak-line': Tootsville.UI.Keys.speakLine,
+      'begin-speaking': Tootsville.UI.Keys.beginSpeaking,
+      'begin-whispering': Tootsville.UI.Keys.beginWhispering,
+      'begin-shouting': Tootsville.UI.Keys.beginShouting,
+      'clear-hud': Tootsville.UI.HUD.clearHUD,
+      'control-panel': Tootsville.UI.HUD.showControlPanel,
+      'toggle-control-panel': Tootsville.UI.HUD.toggleControlPanel,
+      'contacts': Tootsville.UI.HUD.showContacts,
+      'mobile': Tootsville.UI.HUD.showMobile,
+      'camera': Tootsville.UI.HUD.showCamera,
+      'open-talk': Tootsville.UI.openTalkBox,
+      'toggle-talk': Tootsville.UI.toggleTalkBox,
+      'close-talk': Tootsville.UI.closeTalkBox,
+      'text-entry': Tootsville.UI.Keys.textEntry,
+      'backward-word': Tootsville.UI.Keys.backwardWord,
+      'forward-word': Tootsville.UI.Keys.forwardWord,
+      'capitalize-word': Tootsville.UI.Keys.capitalizeWord,
+      'upcase-word': Tootsville.UI.Keys.upcaseWord,
+      'downcase-word': Tootsville.UI.Keys.downcaseWord,
+      'backward-sentence': Tootsville.UI.Keys.backwardSentence,
+      'forward-sentence': Tootsville.UI.Keys.forwardSentence,
+      'select-all': Tootsville.UI.Keys.selectAll,
+      'kill-sentence': Tootsville.UI.Keys.killSentence,
+      'kill-word': Tootsville.UI.Keys.killWord,
+      'transpose-words': Tootsville.UI.Keys.transposeWords,
+      'kill-ring-save': Tootsville.UI.Keys.killRingSave,
+      'execute-extended-command': Tootsville.UI.Keys.executeExtendedCommand,
+      'yank-pop': Tootsville.UI.Keys.yankPop,
+      'insert-char': Tootsville.UI.Keys.insertChar,
+      'reset-login': Tootsville.Login.quit
     };
 
 /**
  *
  */
-Tootsville.ui.runCommand = function (command, event)
-{ var cmd = Tootsville.ui.commands[ command ];
-  if (cmd) { (cmd)(event); } };
+Tootsville.UI.runCommand = function (command, event)
+{ var cmd = Tootsville.UI.commands[ command ];
+  if (cmd)
+  { (cmd)(event);
+    /* Beat up browsers trying to steal our keystrokes */
+    event.preventDefault ();
+    event.stopImmediatePropagation ();
+    event.cancelBubble = true; }
+  else if (undefined == cmd)
+  { return; }
+  else { console.warn ("No such command as " + command); }  };

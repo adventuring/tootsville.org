@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/ui/panels/contacts.js is part of Tootsville
+ * ./play/scene/scene-builder.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -29,4 +29,14 @@
  *
  * USA
  *
- *//**/
+ */
+
+if (!('SceneBuilder' in Tootsville)) { Tootsville.SceneBuilder = {}; }
+
+/**
+ * Place furniture as found in the current scene.
+ *
+ * Affects Tootsville.Tank.scene
+ */
+Tootsville.SceneBuilder.build = function (x, y, z)
+{};

@@ -1,6 +1,6 @@
 /* -*- js2 -*-*/
 
-/*@license
+/**@license
  *
  * ./play/time.js is part of Tootsville
  *
@@ -33,8 +33,39 @@
 
 if (!("Tootsville" in window)) { window.Tootsville = {}; }
 
+/**
+ * The difference between Universal time and Unix time.
+ */
 Tootsville.universalTimeOffset = ((((new Date()).valueOf()/1000) + 2208988800) - (performance.now()/1000));
 
+/**
+ * Decode the current time as a Tootsville year, month, day, hour, &c.
+ *
+ * The returned object has the following fields
+ *
+ * @itemize
+ * @item
+ * year
+ * @item
+ * month
+ * @item
+ * day (of month)
+ * @item 
+ * hour
+ * @item
+ * min
+ * @item
+ * sec
+ * @item
+ * julian (day of year)
+ * @item
+ * weekday
+ * @item
+ * otherMonthDay
+ * @item
+ * pinkMonthDay
+ * @end itemize
+ */
 Tootsville.decodeTime = function ()
 { var universalTime = performance.now()/1000 + Tootsville.universalTimeOffset;
   var year = Math.floor(universalTime/23328000)-10;
@@ -49,9 +80,11 @@ Tootsville.decodeTime = function ()
   var pinkMonthDay = 1+(29+julian)%53;
   return { year: year, month: month, day: day, hour: hour, min: min, sec: sec,
            julian: julian, weekday: weekday, otherMonthDay: otherMonthDay,
-           pinkMonthDay: pinkMonthDay };
-};
+           pinkMonthDay: pinkMonthDay }; };
 
+/**
+ * Update the displayed clock on the screen.
+ */
 Tootsville.updateClock = function ()
 { var now = Tootsville.decodeTime();
   document.querySelectorAll('.tootsville-time').forEach(
@@ -74,5 +107,4 @@ Tootsville.updateClock = function ()
         ([0, "Sirenia", "Dugon", "Inunguis", "Manatus",
           "Hydrodamalis", "Senecalensis", "Pygmaeus", "Luxodonta",
           "Elephas", "Procavia", "Dendrohyrax", "Tethytheria"])[now.month] +
-        ', ' + now.year;
-      }); };
+        ', ' + now.year; }); };

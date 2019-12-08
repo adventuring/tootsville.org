@@ -36,20 +36,20 @@
     <div id="control-panel">
 
       <section class="mobile-only">
-        <button onclick="Tootsville.ui.hud.closePanel()">Close</button>
+        <button onclick="Tootsville.UI.HUD.closePanel()">Close</button>
         <hr>
       </section>
 
       <!-- Volume controls and Mute -->
       <div id="control-panel-volume">
         <i id="mute-icon" class="fas fa-fw fa-volume-off"
-           onclick="Tootsville.audio.volumeMute()"></i>
+           onclick="Tootsville.UI.Audio.volumeMute()"></i>
         &nbsp;
-        <i class="fas fa-volume-down fa-fw" onclick="Tootsville.audio.volumeDown()"></i>
+        <i class="fas fa-volume-down fa-fw" onclick="Tootsville.UI.Audio.volumeDown()"></i>
         <input type="range" id="volume-slider" min="0" max="100"
                value="50" disabled
-               step="10" onchange="Tootsville.audio.setVolume(this.value)">
-        <i class="fas fa-volume-up fa-fw" onclick="Tootsville.audio.volumeUp()"></i>
+               step="10" onchange="Tootsville.UI.Audio.setVolume(this.value)">
+        <i class="fas fa-volume-up fa-fw" onclick="Tootsville.UI.Audio.volumeUp()"></i>
       </div>
 
       <hr>
@@ -58,26 +58,26 @@
 
       <div>
         <input type="checkbox" id="fullscreen-toggle"
-               onChange="Tootsville.ui.hud.closePanel();Tootsville.ui.setFullscreen(this.checked);">
+               onChange="Tootsville.UI.HUD.closePanel();Tootsville.UI.setFullscreen(this.checked);">
         <label id="control-panel-fullscreen" for="fullscreen-toggle">
           Fullscreen
         </label>
       </div>
       <div id="control-panel-gamepad"
-           onclick="Tootsville.ui.hud.showHUDPanel('gamepad')">
+           onclick="Tootsville.UI.HUD.showHUDPanel('gamepad')">
         <i class="fas fa-gamepad"></i>
         Gamepad
       </div>
 
       <!-- Help -->
 
-      <div id="control-panel-help" onclick="Tootsville.ui.hud.showHUDPanel('help');">
+      <div id="control-panel-help" onclick="Tootsville.UI.HUD.showHUDPanel('help');">
         <i class="fas fa-life-ring fa-fw"></i>
         Help
       </div>
 
       <div id="control-panel-get-firefox"
-           onclick="Tootsville.ui.hud.closePanel();window.open('https://getfirefox.com/','get-firefox')">
+           onclick="Tootsville.UI.HUD.closePanel();window.open('https://getfirefox.com/','get-firefox')">
         <a href="https://getfirefox.com/" target="get-firefox">
           <i class="fab fa-firefox fa-fw"></i> Get Firefox
           <i class="fas fa-window-restore footnote-marker"></i>
@@ -88,7 +88,7 @@
 
       <hr>
 
-      <div id="control-panel-sign-out" onclick="Tootsville.ui.hud.closePanel();Tootsville.ui.signOut()">
+      <div id="control-panel-sign-out" onclick="Tootsville.UI.HUD.closePanel();Tootsville.UI.signOut()">
         <i class="fas fa-sign-out-alt fa-fw"></i>
         Quit or Change Players
       </div>
