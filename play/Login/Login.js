@@ -318,9 +318,10 @@ Tootsville.Login.loginDone = function (reply)
   Tootsville.characterUUID = reply.toot.uuid;
   Tootsville.character = reply.toot;
   Tootsville.player = reply.player;
-  Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
-                                                                   username: Tootsville.character && Tootsville.character.name,
-                                           email: Tootsville.player && Tootsville.player.eMail }}});
+  if ('Rollbar' in window)
+  { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
+                                             username: Tootsville.character && Tootsville.character.name,
+                                             email: Tootsville.player && Tootsville.player.eMail }}}); }
   Tootsville.Tank.start3D ();
   document.title = reply.toot.name + " in Tootsville";
   Tootsville.UI.HUD.refreshHUD (); };
