@@ -31,7 +31,7 @@
  *
  */
 
-if (!('Tank' in Tootsville)) { Tootsville.Tank = { VectorTextureBuilder: {} } };
+if (!('Tank' in Tootsville)) { Tootsville.Tank = { VectorTextureBuilder: {} }; };
 if (!('VectorTextureBuilder' in Tootsville.Tank)) { Tootsville.Tank.VectorTextureBuilder = {}; };
 
 
@@ -41,8 +41,8 @@ Tootsville.Tank.VectorTextureBuilder.build = function (svgData, name)
   const svgBase64 = 'data:image/svg+xml;base64,' + window.btoa (svgString);
   const svgTexture = BABYLON.Texture.LoadFromDataString ('data', svgBase64, Tootsville.Tank.scene);
   const svgMaterial = new BABYLON.PBRMaterial (name, Tootsville.Tank.scene);
-  const svgMaterial.albedoTexture = svgTexture;
-  return svgMaterial; }
+  svgMaterial.albedoTexture = svgTexture;
+  return svgMaterial; };
 
 Tootsville.Tank.VectorTextureBuilder.buildPattern = function (patternName, baseColor, patternColor)
-{ console.error ("VectorTextureBuilder.buildPattern is not written yet"); /* TODO */ }
+{ console.error ("VectorTextureBuilder.buildPattern is not written yet"); /* TODO */ };
