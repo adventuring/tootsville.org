@@ -55,7 +55,8 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
                     startTime: Tootsville.Game.now + Tootsville.Game.lag,
                     speed: Tootsville.Game.Nav.WALK_SPEED,
                     walkΔ: destinationPoint.subtract (avatar.model.position) };
-  avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z); };
+  avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z);
+  if (avatar.facing > 2*Math.PI) { avatar.facing -= 2 * Math.PI; } };
 
 /**
 *
@@ -95,9 +96,7 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
  *
  */
 Tootsville.Game.Nav.updateFacing = function (avatar)
-{ return;
-
-  // This makes him spastic … FIXME #25
+{ // This makes him spastic … FIXME #25
   let δRotation = avatar.model.rotationQuaternion.y - avatar.facing;
   if (δRotation >= Math.PI)
   { δRotation -= Math.PI * 2; }
