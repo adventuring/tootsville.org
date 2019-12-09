@@ -113,7 +113,7 @@ Tootsville.Gossip.createConnection = function ()
  * See the server documentation of `DEFINFINITY' for a description of the
  * Infinity Mode protocols.
  *
- * Commands are handled via the Tootsville.Game.gatekeeper handlers.
+ * Commands are handled via the Tootsville.Game.Gatekeeper handlers.
  */
 Tootsville.Gossip.gatekeeperAccept = function (peer, event)
 { let gram = event.data;
