@@ -31,11 +31,11 @@
  *
  */
 
-if (!("Game" in Tootsville)) { Tootsville.Game = { Parrot: {} }; }
-if (!("Parrot" in Tootsville.Game)) { Tootsville.Game.Parrot = {}; }
+if (!('Gossip' in Tootsville)) { Tootsville.Gossip = { Parrot: {} }; }
+if (!("Parrot" in Tootsville.Gossip)) { Tootsville.Gossip.Parrot = {}; }
 
 /**
- *
+ * Show or hide the parrot (based on reallyp flag).
  */
 Tootsville.Gossip.Parrot.show = function (reallyp)
 { var parrot = document.getElementById('parrot');
@@ -57,7 +57,7 @@ Tootsville.Gossip.Parrot.done = function ()
   ( (finish) => { Tootsville.Gossip.Parrot.show (false); finish (); } ); };
 
 /**
- *
+ * Give a message from the Gossip Parrot with an OK button.
  */
 Tootsville.Gossip.Parrot.say = function (title, message)
 { return new Promise
@@ -80,7 +80,10 @@ Tootsville.Gossip.Parrot.say = function (title, message)
       Tootsville.Gossip.Parrot.show(true); });};
 
 /**
+ * Ask  a question from the Gossip Parrot with multiple replies possible.
  *
+ * TODO:  Document  the  format  in   which  replies  are  submitted  to
+ * this function.
  */
 Tootsville.Gossip.Parrot.ask = function (title, message, replies)
 { return new Promise
@@ -104,7 +107,7 @@ Tootsville.Gossip.Parrot.ask = function (title, message, replies)
       Tootsville.Gossip.Parrot.show(true); }); };
 
 /**
- *
+ * Ask a yes-or-no question from the Gossip Parrot.
  */
 Tootsville.Gossip.Parrot.ynP = function (title, message)
 { return Tootsville.Gossip.Parrot.ask (title, message,
@@ -114,7 +117,9 @@ Tootsville.Gossip.Parrot.ynP = function (title, message)
 
 // 
 /**
+ * Get the text which the Gossip Parrot should use to present an HTTP error.
  *
+ * TODO: document the input format.
  */
 Tootsville.Gossip.Parrot.parrotErrorText = function (body)
 { let code = body.error;
