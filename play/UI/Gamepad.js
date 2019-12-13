@@ -95,34 +95,66 @@ Tootsville.UI.Gamepad.ROTATION_SPEED = .05;
 /**
 *
 */
-Tootsville.UI.Gamepad.forwardPoint = function (amount)
-{ const horizon = new BABYLON.Vector3 (Math.cos (Tootsville.Tank.playerAvatar ().facing) * amount * 500,
-                                       0,
-                                       Math.sin (Tootsville.Tank.playerAvatar ().facing) * amount * 500);
-  // console.debug ("horizon", horizon);
-  return horizon; };
-
-/**
-*
-*/
 Tootsville.UI.Gamepad.axisUpdate = function (controllerIndex)
-{ Tootsville.Tank.playerAvatar ().facing += (Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [0] *
-                                             Tootsville.UI.Gamepad.ROTATION_SPEED);
-  Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.playerAvatar (),
-                                   Tootsville.UI.Gamepad.forwardPoint (
-                                       Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [1])); };
+{ const leftRight = Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [0];
+  const forwardBack = - Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [1];
+  if (Math.abs (leftRight) > .1 || Math.abs (forwardBack) > .1)
+  { Tootsville.Tank.playerAvatar ().facing = Math.atan2 (leftRight, forwardBack) - Math.PI / 2;
+    if (Tootsville.Tank.playerAvatar ().facing < 0)
+    { Tootsville.Tank.playerAvatar ().facing += 2 * Math.PI; }
+    Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.playerAvatar (),
+                                     new BABYLON.Vector3 (
+                                         Tootsville.Tank.playerAvatar ().model.position.x + leftRight * 1000,
+                                         0,
+                                         Tootsville.Tank.playerAvatar ().model.position.z + forwardBack * 1000));
+    Tootsville.Game.Nav.gamepadMovementP = true; }
+  else if (Tootsville.Game.Nav.gamepadMovementP)
+  { Tootsville.Tank.playerAvatar ().course = null; } };
 
 /**
 *
 */
-Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex)
-{ console.log ("button event on controller " + controllerIndex + " button " + buttonIndex); };
+Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex, value)
+{ if (value > .5)
+  { switch (buttonIndex)
+    { case 0: // Y
+      break; 
+
+      case 1: // B
+      break;
+
+      case 2: // A
+      Tootsville.UI.HUD.switchActiveItem ();
+      break;
+
+      case 3: // X
+      Tootsville.UI.HUD.toggleTalkBox ();
+      break;
+
+      case 8: // -
+      Tootsville.UI.HUD.toggleHUDPanel ('mobile');
+      break;
+
+      case 9: // +
+      Tootsville.UI.HUD.openPaperdoll ();
+      break;
+
+      case 10: // L stick click
+      Tootsville.Tank.playerAvatar ().facing = new BABYLON.Vector3 (0, 0, 0);
+      break;
+
+      default:
+      console.debug ("Unmapped button ", buttonIndex); }; } };
 
 /**
  * Update gamepad status.
  */
 Tootsville.UI.Gamepad.updateStatus = function ()
-{ const gamepads = navigator.getGamepads();
+{const gamepads = (navigator.getGamepads
+                  ? navigator.getGamepads ()
+                  : (navigator.webkitGetGamepads
+                     ? navigator.webkitGetGamepads ()
+                     : []));
   if (! gamepads) { return; }
   for (let j = 0; j < gamepads.length; ++j)
   { let controller = gamepads[j];
@@ -135,18 +167,18 @@ Tootsville.UI.Gamepad.updateStatus = function ()
       { val = val.value; }
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
       { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
-        Tootsville.UI.Gamepad.buttonEvent (j, i); }}
+        Tootsville.UI.Gamepad.buttonEvent (j, i, val); }}
     for (let i = 0; i < controller.axes.length; i ++)
     { let val = controller.axes [i];
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
-      { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val; }}
-      Tootsville.UI.Gamepad.axisUpdate (j); }}};
+      { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
+        Tootsville.UI.Gamepad.axisUpdate (j); }}}}};
 
 /**
  * Scan gamepads for updates
  */
 Tootsville.UI.Gamepad.scanGamepads = function ()
-{ var gamepads = (navigator.getGamepads
+{ const gamepads = (navigator.getGamepads
                   ? navigator.getGamepads ()
                   : (navigator.webkitGetGamepads
                      ? navigator.webkitGetGamepads ()

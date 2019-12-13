@@ -56,7 +56,8 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
                     speed: Tootsville.Game.Nav.WALK_SPEED,
                     walkΔ: destinationPoint.subtract (avatar.model.position) };
   avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z);
-  if (avatar.facing > 2*Math.PI) { avatar.facing -= 2 * Math.PI; } };
+  if (avatar.facing > 2*Math.PI) { avatar.facing -= 2 * Math.PI; }
+  Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
 *
