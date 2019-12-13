@@ -72,8 +72,7 @@ Tootsville.UI.Gamepad.addGamepad = function (gamepad)
   { Tootsville.UI.Gamepad.controllerState [gamepad.index].buttons [i] = null; }
   for (i = 0; i < gamepad.axes.length; ++i)
   { Tootsville.UI.Gamepad.controllerState [gamepad.index].axes [i] = 0; }
-  Tootsville.trace ("New gamepad detected", gamepad);
-  window.requestAnimationFrame (Tootsville.UI.Gamepad.updateStatus); };
+  Tootsville.trace ("New gamepad detected", gamepad); };
 
 /**
  * Event handler for gamepad disconnections.
@@ -98,8 +97,13 @@ Tootsville.UI.Gamepad.axisEvent = function (controllerIndex, axisIndex)
  * Update gamepad status.
  */
 Tootsville.UI.Gamepad.updateStatus = function ()
-{ for (let j = 0; j < Tootsville.UI.Gamepad.controllers.length; ++j)
-  { let controller = Tootsville.UI.Gamepad.controllers [j];
+{ const gamepads = navigator.getGamepads();
+  if (! gamepads) { return; }
+  for (let j = 0; j < gamepads.length; ++j)
+  { let controller = gamepads[j];
+    if (controller)
+    { if (! Tootsville.UI.Gamepad.controllerState [j])
+      { Tootsville.UI.Gamepad.controllerState [j] = { buttons: [], axes: [] }; }
     for (let i = 0; i < controller.buttons.length; ++i)
     { let val = controller.buttons [i];
       if (typeof (val) == "object")
@@ -107,12 +111,11 @@ Tootsville.UI.Gamepad.updateStatus = function ()
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
       { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
         Tootsville.UI.Gamepad.buttonEvent (j, i); }}
-    for (i = 0; i < controller.axes.length; i ++)
-    { val = controller.axes [i];
+    for (let i = 0; i < controller.axes.length; i ++)
+    { let val = controller.axes [i];
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
       { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
-        Tootsville.UI.Gamepad.axisEvent (j, i); }}}
-  window.requestAnimationFrame (Tootsville.UI.Gamepad.updateStatus); };
+        Tootsville.UI.Gamepad.axisEvent (j, i); }}}}};
 
 /**
  * Scan gamepads for updates
