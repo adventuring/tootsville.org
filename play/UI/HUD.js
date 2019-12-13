@@ -494,10 +494,9 @@ Tootsville.UI.HUD.initHUD = function ()
 
 /**
  * Refresh one 2D name tag  attachment object.
-*
-* These attachments  are used  for avatar  labels, speech  balloons, &c.
-* and need to  be refreshd to keep  in sync with the  underlying 3D scene
-* from time to time.
+ *
+ * These  attachments need  to  be refreshed  to keep  in  sync with  the
+ * underlying 3D scene from time to time.
  */
 Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
@@ -517,6 +516,9 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
 
 /**
  * Refresh one 2D speech attachment object.
+ *
+ * These  attachments need  to  be refreshed  to keep  in  sync with  the
+ * underlying 3D scene from time to time.
  */
 Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
