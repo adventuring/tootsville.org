@@ -300,7 +300,7 @@ Tootsville.UI.HUD.returnPaperdollMini = function ()
  * Open the Paperdoll display from the paperdoll-mini widget.
  */
 Tootsville.UI.HUD.openPaperdoll = function (event)
-{ event.preventDefault ();
+{ if (event) { event.preventDefault (); }
   document.getElementById ('paperdoll-mini').removeEventListener
   ('click', Tootsville.UI.HUD.openPaperdoll);
   Tootsville.UI.HUD.showHUDPanel ('paperdoll').
