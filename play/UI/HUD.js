@@ -384,9 +384,9 @@ Tootsville.UI.HUD.switchActiveItem = function ()
 { if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
   { return; }
   var prior = Tootsville.player.activeItem;
-  Tootsville.wardrobe.doff (Tootsville.player.activeItem);
+  if (prior) { Tootsville.wardrobe.doff (prior); }
   Tootsville.wardrobe.don (Tootsville.player.inactiveItem);
-  Tootsville.wardrobe.don2 (prior);
+  if (prior) { Tootsville.wardrobe.don2 (prior); }
   console.debug ("TODO: cool rotate-and-swap animation between the two item boxes");
   Tootsville.UI.HUD.refreshEquipment ();
 };
