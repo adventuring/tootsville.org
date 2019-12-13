@@ -120,10 +120,7 @@ Tootsville.Game.Nav.updateFacing = function (avatar)
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (! avatar.model) { return; }
-  if (! avatar.model.rotationQuaternion) {
-      // WtH?
-      avatar.model.rotationQuaternion = new BABYLON.Quaternion (0, avatar.facing, 0, 0); }
-  if (Math.abs (avatar.model.rotationQuaternion.y - avatar.facing) > .01)
+  if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
   { Tootsville.Game.Nav.updateFacing (avatar); }
   if (avatar.course)
   { let done = Tootsville.Game.Nav.updateWalk (avatar, avatar.course);
