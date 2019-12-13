@@ -566,6 +566,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if (! picked.pickedMesh) { return; }
   if (picked.pickedMesh == Tootsville.Tank.ground)
   { console.log ('User clicked ground at ', picked.pickedPoint);
+    picked.pickedPoint.y = 0; /* For some reason we get about ±1 usually */
     if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                        picked.pickedPoint); }

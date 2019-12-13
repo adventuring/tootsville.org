@@ -76,7 +76,7 @@ Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
   largestChild.physicsImpostor =
   new BABYLON.PhysicsImpostor (largestChild,
                                BABYLON.PhysicsImpostor.BoxImpostor,
-                               { mass: 6000, restitution: .05 },
+                               { mass: item.template.weight, restitution: .05 },
                                scene);
   const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== largestChild);
   for (let i = 0; i < otherMeshes.length; ++i)
@@ -88,7 +88,7 @@ Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
   object.physicsImpostor =
   new BABYLON.PhysicsImpostor (object,
                                BABYLON.PhysicsImpostor.NoImpostor,
-                               { mass: 6000, restitution: .05 },
+                               { mass: item.template.weight, restitution: .05 },
                                scene); };
 
 /**
@@ -107,6 +107,7 @@ Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building " + item.template.name + " " + item.uuid);
   if (item.avatarScaling)
   { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
+  model.checkCollisions = true;
   try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enablePhysics (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }

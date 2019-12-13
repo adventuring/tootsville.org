@@ -78,38 +78,45 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
   { course.endTime = Tootsville.Game.lag * 2 + course.startTime + course.walkΔ.length () / course.speed; }
   if (course.endTime < Tootsville.Game.now) { return true; }
 
-  const position = course.startPoint.
+  const goalPosition = course.startPoint.
         add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
                                  / (course.endTime - course.startTime)));
 
-  if (isNaN(position.x) || isNaN(position.y) || isNaN(position.z))
-  { console.error ("Course fail, ", avatar.course, " yields ", position);
+  if (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z))
+  { console.error ("Course fail, ", avatar.course, " yields ", goalPosition);
     return true; }
 
-  avatar.model.moveWithCollisions (position.subtract (avatar.model.position));
+  // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
+  //                                                        avatar.model.getWorldMatrix () );
+  const step = goalPosition.subtract (avatar.model.position);
+  const direction = BABYLON.Vector3.Normalize (step) ;
+  // (forward.substract (avatar.model.position));
+  const length = step.length; // BABYLON.Vector3.Distance (step);
+  const ray = new BABYLON.Ray (avatar.model.position, direction, length);
+  const hit = Tootsville.Tank.scene.pickWithRay (ray);
+  if (hit.pickedMesh)
+  { avatar.course = null; return true; }
+  
+  avatar.model.position = goalPosition;
   
   Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatar);
 
   return false; };
 
 /**
- *
+ * Update the avatar's facing direction to match desired direction.
  */
 Tootsville.Game.Nav.updateFacing = function (avatar)
-{ // This makes him spastic … FIXME #25
-  let δRotation = avatar.model.rotationQuaternion.y - avatar.facing;
+{ avatar.model.rotationQuaternion = undefined;
+  let δRotation = avatar.model.rotation.y - avatar.facing;
   if (δRotation >= Math.PI)
-  { δRotation -= Math.PI * 2; }
+  { δRotation -= 2 * Math.PI; }
   else if (δRotation <= -Math.PI)
-  { δRotation += Math.PI * 2; }
-  let rotationSpeed = Math.abs(δRotation/8);
-  if (δRotation > 0)
-  { avatar.model.rotate(BABYLON.Axis.Y, -rotationSpeed); }
-  else
-  { avatar.model.rotate(BABYLON.Axis.Y, rotationSpeed); } };
+  { δRotation += 2 * Math.PI; }
+  avatar.model.rotation.y -= δRotation / 8; };
 
 /**
- *
+ * Update avatar's rotation & position.
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (! avatar.model) { return; }
@@ -123,7 +130,7 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
     if (done) { delete avatar['course']; } } };
 
 /**
- *
+ * Update the position & rotation of every avatar
  */
 Tootsville.Game.Nav.updateAvatars = function ()
 { if ((!Tootsville.Tank.scene) || (!Tootsville.Tank.scene.avatars)) { return; }

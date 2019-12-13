@@ -33,7 +33,10 @@
 
 if (!('UI' in Tootsville)) {Tootsville.UI={};}
 
-/** */
+/**
+ * Turns a  string without  HTML into a  paragraph, one  containing HTML
+ * markup into a DIV.
+ */
 Tootsville.UI.makeDivOrParagraph = function (text)
 { var element;
   if (text.indexOf('<') >= 0)
@@ -47,7 +50,10 @@ Tootsville.UI.makeDivOrParagraph = function (text)
 Tootsville.UI.makeIDFromTitle = function (title)
 { return 'elt-' + title.replace(/[^a-zA-Z0-9]+/, '-'); };
 
-/** */
+/**
+ * Make  a basic  dialog  box  with a  title,  text,  accept and  cancel
+ * buttons. and call resvolve function with user input later.
+ */
 Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
 { var dialog = document.createElement('DIALOG');
   dialog.id = Tootsville.UI.makeIDFromTitle(title);
@@ -76,7 +82,13 @@ Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
   dialog.appendChild(buttons);
   return dialog; };
 
-/** */
+/**
+ * Present a nice UI box to confirm whether to do something or not.
+ *
+ * The title and text are displayed.  The ``accept'' text is displayed on
+ * one  button;  the negative  button  will  read ``Cancel''  unless  the
+ * ``accept'' text reads ``Yes,'' in which case it will read ``No.''
+ */
 Tootsville.UI.confirmPretty = function (title,text,accept)
 { var hud = document.getElementById('hud');
   return new Promise(resolve => {
@@ -84,14 +96,20 @@ Tootsville.UI.confirmPretty = function (title,text,accept)
       if ('Yes' == accept) { cancel = 'No'; }
       hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
-/** */
+/**
+ * Quit without prompting
+ */
 Tootsville.UI.forceQuit = function ()
 { Tootsville.Login.quit(); };
 
-/** */
+/**
+ * Request the user's confirmation to quit (or not)
+ */
 Tootsville.UI.quit = function () { Tootsville.UI.signOut (); };
 
-/** */
+/**
+ * Request the user's confirmation to quit (or not)
+ */
 Tootsville.UI.signOut = function ()
 { Tootsville.UI.confirmPretty(
     "Quit?",
@@ -101,26 +119,35 @@ Tootsville.UI.signOut = function ()
     { if (reallyP)
       { Tootsville.Login.quit(); }}); };
 
-/** */
+/**
+ * Set the Fullscreen control panel toggle based on the current state of
+ * the navigator.
+ */
 Tootsville.UI.setFullscreenFromNavigator = function ()
 { var fullscreenCheck = document.getElementById('fullscreen-toggle');
   if (fullscreenCheck)
   { fullscreenCheck.checked = !! (document.fullscreenElement); }};
 
-/** */
+/**
+ * Sot fullscreen or windowed mode.
+ */
 Tootsville.UI.setFullscreen = function (really)
 { if (really)
   { document.documentElement.requestFullscreen(); }
   else
   { document.exitFullscreen(); }};
 
-/** */
+/**
+ * Toggle between fullscreen and windowed mode
+ */
 Tootsville.UI.toggleFullscreen = function ()
 { Tootsville.UI.setFullscreen( ! (document.fullscreenElement) );
   if (Tootsville.Tank.engine)
   { setTimeout ( () => { Tootsville.Tank.engine.resize (); }, 1000); } };
 
-/** */
+/**
+ *
+ */
 Tootsville.UI.onFirstClick = function ()
 { window.removeEventListener('click', Tootsville.UI.onFirstClick);
   console.log ('noticed a first click');
@@ -129,7 +156,9 @@ Tootsville.UI.onFirstClick = function ()
       ev.returnValue = confirmationMessage;  /* Gecko, Trident, Chrome 34+ */
       return confirmationMessage; /* Gecko, WebKit, Chrome <34 */ }); };
 
-/** */
+/**
+ * Put up a warning about slow loading.
+ */
 Tootsville.UI.slowLoadingWatchdog = function ()
 { Tootsville.UI.confirmPretty
   ( "Slow Loading?",
@@ -141,6 +170,11 @@ Tootsville.UI.slowLoadingWatchdog = function ()
     { if (! waitP)
       { document.location = 'https://wiki.tootsville.org/wikiki/PlayNotLoading'; } }); };
 
+/**
+ * Walk one step in any direction. 
+ *
+ * For keyboard or gamepad inputs.
+ */
 Tootsville.UI.takeOneStep = function (δx, δz)
 { const avatar = Tootsville.Tank.scene.avatars [Tootsville.character.name];
   const model = avatar.model;
@@ -151,7 +185,7 @@ Tootsville.UI.takeOneStep = function (δx, δz)
 };
 
 /** 
- *
+ * Speak whatever is in the chat entry box.
  */
 Tootsville.UI.say = function (words)
 { if ("" != words)

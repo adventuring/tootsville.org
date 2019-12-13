@@ -122,7 +122,7 @@ Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
   // TODO set scaling
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
+  // try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); } };
 
