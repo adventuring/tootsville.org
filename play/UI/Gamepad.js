@@ -90,18 +90,33 @@ Tootsville.UI.Gamepad.removeGamepad = function (gamepad)
 /**
 *
 */
-Tootsville.UI.Gamepad.axisEvent = function (controllerIndex, axisIndex)
-{ if (0 == axisIndex || 1 == axisIndex)
-  { Tootsville.UI.takeOneStep (
-      Tootsville.UI.GamePad.controllerState [controllerIndex].axes [0],
-      Tootsville.UI.GamePad.controllerState [controllerIndex].axes [1]); } };
+Tootsville.UI.Gamepad.ROTATION_SPEED = .05;
+
+/**
+*
+*/
+Tootsville.UI.Gamepad.forwardPoint = function (amount)
+{ const horizon = new BABYLON.Vector3 (Math.cos (Tootsville.Tank.playerAvatar ().facing) * amount * 500,
+                                       0,
+                                       Math.sin (Tootsville.Tank.playerAvatar ().facing) * amount * 500);
+  // console.debug ("horizon", horizon);
+  return horizon; };
+
+/**
+*
+*/
+Tootsville.UI.Gamepad.axisUpdate = function (controllerIndex)
+{ Tootsville.Tank.playerAvatar ().facing += (Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [0] *
+                                             Tootsville.UI.Gamepad.ROTATION_SPEED);
+  Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.playerAvatar (),
+                                   Tootsville.UI.Gamepad.forwardPoint (
+                                       Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [1])); };
 
 /**
 *
 */
 Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex)
 { console.log ("button event on controller " + controllerIndex + " button " + buttonIndex); };
-
 
 /**
  * Update gamepad status.
@@ -124,8 +139,8 @@ Tootsville.UI.Gamepad.updateStatus = function ()
     for (let i = 0; i < controller.axes.length; i ++)
     { let val = controller.axes [i];
       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
-      { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
-        Tootsville.UI.Gamepad.axisEvent (j, i); }}}}};
+      { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val; }}
+      Tootsville.UI.Gamepad.axisUpdate (j); }}};
 
 /**
  * Scan gamepads for updates
