@@ -87,11 +87,21 @@ Tootsville.UI.Gamepad.removeGamepad = function (gamepad)
 { delete Tootsville.UI.Gamepad.controllers [gamepad.index];
   delete Tootsville.UI.Gamepad.controllerState [gamepad.index]; };
 
+/**
+*
+*/
 Tootsville.UI.Gamepad.axisEvent = function (controllerIndex, axisIndex)
 { if (0 == axisIndex || 1 == axisIndex)
   { Tootsville.UI.takeOneStep (
       Tootsville.UI.GamePad.controllerState [controllerIndex].axes [0],
       Tootsville.UI.GamePad.controllerState [controllerIndex].axes [1]); } };
+
+/**
+*
+*/
+Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex)
+{ console.log ("button event on controller " + controllerIndex + " button " + buttonIndex); };
+
 
 /**
  * Update gamepad status.
