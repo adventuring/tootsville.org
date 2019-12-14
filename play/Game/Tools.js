@@ -34,9 +34,11 @@ if (!('Tools' in Tootsville.Game)) { Tootsville.Game.Tools = {}; };
 /**
  * Use a shovel at the given coördinates.
  *
- * A shovel creates a hole, and may reveal any hidden object buried there.
+ * A shovel creates a hole, and may reveal any hidden object buried
+ * there.
  *
- * Using a shovel can also fill a hole, hiding any objects in the hole.
+ * Using a shovel can also fill a hole, hiding any objects in the
+ * hole.
  */
 Tootsville.Game.Tools.shovel = function (x, y, z)
 { /* TODO shovel */};
@@ -58,12 +60,12 @@ Tootsville.Game.Tools.pickaxe = function (x, y, z)
 { /* TODO pickaxe */};
 
 /**
- * Use a hammer at the given coördinates.
+ * Use a wrench at the given coördinates.
  *
- * Given     some    building     materials,    combine     them    into
- * a constructed object.
+ * Given some building materials, combine them into a constructed
+ * object.
  */
-Tootsville.Game.Tools.hammer = function (x, y, z)
+Tootsville.Game.Tools.wrench = function (x, y, z)
 { /* TODO hammer */ };
 
 /**
