@@ -386,7 +386,7 @@ Tootsville.UI.HUD.refreshEquipment = function ()
 Tootsville.UI.HUD.switchActiveItem = function ()
 { if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
   { return; }
-  var prior = Tootsville.player.activeItem;
+  let prior = Tootsville.player.activeItem;
   if (prior) { Tootsville.wardrobe.doff (prior); }
   Tootsville.wardrobe.don (Tootsville.player.inactiveItem);
   if (prior) { Tootsville.wardrobe.don2 (prior); }
@@ -569,8 +569,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
   if (picked.pickedMesh == Tootsville.Tank.ground)
-  { picked.pickedPoint.y = 0; /* For some reason we get about ±1 usually */
-    if (event.detail > 1) /* double or triple click */
+  { if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                        picked.pickedPoint); }
     else
