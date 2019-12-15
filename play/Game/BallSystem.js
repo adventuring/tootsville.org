@@ -35,7 +35,7 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { BallSystem: {} }; }
 if (!('BallSystem' in Tootsville.Game)) { Tootsville.Game.BallSystem = {}; }
 
 /**
- * Update the position of all missles
+ * Update the position of all balls
  */
 Tootsville.Game.BallSystem.updateBalls = function ()
 { /* TODO */ };
