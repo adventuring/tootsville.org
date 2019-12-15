@@ -34,11 +34,18 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = { MissileSystem: {} }; }
 if (!('MissileSystem' in Tootsville.Game)) { Tootsville.Game.MissileSystem = {}; }
 
+if (!('allMissiles' in Tootsville.Game.MissileSystem))
+{ Tootsville.Game.MissileSystem.allMissiles = []; }
+
 /**
- * Update the position of all missles
+ * Update the position of all missiles
  */
 Tootsville.Game.MissileSystem.updateMissiles = function ()
-{ /* TODO */ };
+{ for (let i = 0; i < Tootsville.Game.MissileSystem.allMissiles.length; ++i)
+  { const missile = Tootsville.Game.MissileSystem.allMissiles [i];
+    if (missile.course)
+    { let finish = Tootsville.Game.Nav.moveEntityOnCourse (missile, missile.course);
+      if (finish) { delete missile['course']; } } } };
 
 /**
  * Simulate the passage of Δt time (in seconds)
