@@ -303,7 +303,7 @@ Tootsville.UI.HUD.returnPaperdollMini = function ()
  * Open the Paperdoll display from the paperdoll-mini widget.
  */
 Tootsville.UI.HUD.openPaperdoll = function (event)
-{ event.preventDefault ();
+{ if (event) { event.preventDefault (); }
   document.getElementById ('paperdoll-mini').removeEventListener
   ('click', Tootsville.UI.HUD.openPaperdoll);
   Tootsville.UI.HUD.showHUDPanel ('paperdoll').
@@ -386,10 +386,10 @@ Tootsville.UI.HUD.refreshEquipment = function ()
 Tootsville.UI.HUD.switchActiveItem = function ()
 { if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
   { return; }
-  var prior = Tootsville.player.activeItem;
-  Tootsville.wardrobe.doff (Tootsville.player.activeItem);
+  let prior = Tootsville.player.activeItem;
+  if (prior) { Tootsville.wardrobe.doff (prior); }
   Tootsville.wardrobe.don (Tootsville.player.inactiveItem);
-  Tootsville.wardrobe.don2 (prior);
+  if (prior) { Tootsville.wardrobe.don2 (prior); }
   console.debug ("TODO: cool rotate-and-swap animation between the two item boxes");
   Tootsville.UI.HUD.refreshEquipment ();
 };
@@ -496,11 +496,10 @@ Tootsville.UI.HUD.initHUD = function ()
   Tootsville.UI.HUD.connectTalkBox (); };
 
 /**
- * Refresh one 2D attachment object.
+ * Refresh one 2D name tag  attachment object.
  *
- * These attachments  are used  for avatar  labels, speech  balloons, &c.
- * and need to  be refreshd to keep  in sync with the  underlying 3D scene
- * from time to time.
+ * These  attachments need  to  be refreshed  to keep  in  sync with  the
+ * underlying 3D scene from time to time.
  */
 Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
@@ -519,7 +518,10 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
   nameTag.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
- * Refresh the position of a speech balloon.
+ * Refresh one 2D speech attachment object.
+ *
+ * These  attachments need  to  be refreshed  to keep  in  sync with  the
+ * underlying 3D scene from time to time.
  */
 Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
@@ -567,8 +569,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
   if (picked.pickedMesh == Tootsville.Tank.ground)
-  { console.log ('User clicked ground at ', picked.pickedPoint);
-    if (event.detail > 1) /* double or triple click */
+  { if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                        picked.pickedPoint); }
     else
