@@ -34,11 +34,18 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = { BallSystem: {} }; }
 if (!('BallSystem' in Tootsville.Game)) { Tootsville.Game.BallSystem = {}; }
 
+if (!('allBalls' in Tootsville.Game.BallSystem))
+{ Tootsville.Game.BallSystem.allBalls = []; }
+
 /**
  * Update the position of all balls
  */
 Tootsville.Game.BallSystem.updateBalls = function ()
-{ /* TODO */ };
+{ for (let i = 0; i < Tootsville.Game.BallSystem.allBalls.length; ++i)
+  { const ball = Tootsville.Game.BallSystem.allBalls [i];
+    if (ball.course)
+    { let finish = Tootsville.Game.Nav.moveEntityOnCourse (ball, ball.course);
+      if (finish) { delete ball['course']; } } } };
 
 /**
  * Simulate the passage of Δt time (in seconds)
