@@ -594,7 +594,7 @@ Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
   if (0 == pickedName.indexOf ('avatar/'))
   { Tootsville.UI.HUD.showPlayerCard (mesh.name.substr (7)); }
   else if (0 == pickedName.indexOf ('item/'))
-  { Tootsville.Game.clickedOnItem (mesh.name, picked); }
+  { Tootsville.UI.clickedOnItem (mesh.name, picked); }
   else
   { console.debug ('User clicked mesh ', mesh.name, picked);
     if (mesh.parent)

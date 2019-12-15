@@ -190,3 +190,32 @@ Tootsville.UI.takeOneStep = function (δx, δz)
 Tootsville.UI.say = function (words)
 { if ("" != words)
   { Tootsville.Game.Speech.say (words); } };
+
+/**
+ *
+ */
+Tootsville.UI.interact = function (entity)
+{ if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
+ /* TODO */ };
+
+/**
+ * Discover the nearest entity within ``arms' reach'' of the player's facing direction.
+ *
+ * This is for e.g. game pad or keyboard inputs. 
+ */
+Tootsville.UI.findAdjacentEntity = function ()
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.useActiveItem = function (entity)
+{ if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
+  /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.clickedOnItem = function (meshName, picked)
+{ /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
+};

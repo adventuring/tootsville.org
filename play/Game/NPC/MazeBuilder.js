@@ -35,3 +35,20 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { MazeBuilder: {} } }; }
 if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { MazeBuilder: {} }; }
 if (!('MazeBuilder' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.MazeBuilder = {}; }
 
+/**
+ * Update an NPC on the 50Hz game clock, if necessary.
+ */
+Tootsville.Game.NPC.MazeBuilder.updateNPC = function (npc)
+{ /* TODO */ };
+
+/**
+ * Fast-forward the NPC for Δt seconds.
+ */
+Tootsville.Game.NPC.MazeBuilder.fastForward = function (npc)
+{ /* TODO */ };
+
+/**
+ * Register an NPC as a Maze Builder
+ */
+Tootsville.Game.NPC.MazeBuilder.register = function (npc)
+{ /* TODO */ };
