@@ -2,7 +2,7 @@
 
 /**@license
  *
- * play/Game/MissileSystem.js is part of Tootsville
+ * play/Game/BallSystem.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,17 +31,17 @@
  *
  */
 
-if (!('Game' in Tootsville)) { Tootsville.Game = { MissileSystem: {} }; }
-if (!('MissileSystem' in Tootsville.Game)) { Tootsville.Game.MissileSystem = {}; }
+if (!('Game' in Tootsville)) { Tootsville.Game = { BallSystem: {} }; }
+if (!('BallSystem' in Tootsville.Game)) { Tootsville.Game.BallSystem = {}; }
 
 /**
  * Update the position of all missles
  */
-Tootsville.Game.MissileSystem.updateMissiles = function ()
+Tootsville.Game.BallSystem.updateBalls = function ()
 { /* TODO */ };
 
 /**
  * Simulate the passage of Δt time (in seconds)
  */
-Tootsville.Game.MissileSystem.fastForward = function (δT)
+Tootsville.Game.BallSystem.fastForward = function (δT)
 { /* TODO */ };
