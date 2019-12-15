@@ -85,7 +85,7 @@ Tootsville.AvatarBuilder.enableShadows = function (object, scene)
  */
 Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
 { if (!('avatars' in scene)) { scene.avatars = {}; }
-  scene.avatars [avatar.name] = Object.assign ({}, avatar);
+  scene.avatars [avatar.name] = Object.assign ((scene.avatars [avatar.name] || {}), avatar);
   scene.avatars [avatar.name].model = object; };
 
 /**
