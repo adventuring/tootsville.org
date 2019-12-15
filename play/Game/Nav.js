@@ -75,44 +75,47 @@ Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
  *
  */
 Tootsville.Game.Nav.collisionP = function (model, start, end)
-{ /* FIXME, extract from updateWalk */
+{ /* FIXME, extract from moveEntityOnCourse */
     return false; };
 
 /**
- *
+ * Move an entity  along a course, until its movement  is interrupted by
+ * colliding with something else.
  *
  * returns true when the course has been completed
  */
-Tootsville.Game.Nav.updateWalk = function (avatar, course)
+Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
 { if (course.startTime > Tootsville.Game.now) { return false; }
   if (! course.walkΔ)
   { course.walkΔ = course.endPoint.substract (course.startPoint); }
   if (! course.endTime)
   { course.endTime = Tootsville.Game.lag * 2 + course.startTime + course.walkΔ.length () / course.speed; }
   if (course.endTime < Tootsville.Game.now) { return true; }
+  if (!entity.model) { return true; }
 
   const goalPosition = course.startPoint.
         add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
                                  / (course.endTime - course.startTime)));
 
   if (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z))
-  { console.error ("Course fail, ", avatar.course, " yields ", goalPosition);
+  { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
     return true; }
 
  const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
-                                                        avatar.model.getWorldMatrix () );
-  const step = forward.subtract (avatar.model.position);
- // goalPosition.subtract (avatar.model.position);
+                                                        entity.model.getWorldMatrix () );
+  const step = forward.subtract (entity.model.position);
+ // goalPosition.subtract (entity.model.position);
   const direction = BABYLON.Vector3.Normalize (step) ;
   const length = 1; // step.length
-  const ray = new BABYLON.Ray (avatar.model.position, direction, length);
+  const ray = new BABYLON.Ray (entity.model.position, direction, length);
   const hit = Tootsville.Tank.scene.pickWithRay (ray);
   if (hit.pickedMesh)
-  { avatar.course = null; return true; }
+  { entity.course = null; return true; }
   
-  avatar.model.position = goalPosition;
+  entity.model.position = goalPosition;
   
-  Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatar);
+  if (entity.nameTag || entity.speech)
+  { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
 
   return false; };
 
@@ -136,7 +139,7 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
   if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
   { Tootsville.Game.Nav.updateFacing (avatar); }
   if (avatar.course)
-  { let done = Tootsville.Game.Nav.updateWalk (avatar, avatar.course);
+  { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
     if (done) { delete avatar['course']; } } };
 
 /**
