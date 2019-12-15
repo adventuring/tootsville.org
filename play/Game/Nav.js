@@ -47,7 +47,12 @@ Tootsville.Game.Nav.WALK_SPEED = .025;
 Tootsville.Game.Nav.RUN_SPEED = .04;
 
 /**
- * 
+ * Set   the  course   for  the   given  avatar   to  lead   toward  the
+ * given destinationPoint.
+ *
+ * TODO Allow directing a vehicle when mounted as its driver.
+ *
+ * TODO Restrict movement when riding a vehicle.
  */
 Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
 { avatar.course = { startPoint: avatar.model.position,
@@ -65,6 +70,13 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
 Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
 { Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint);
   avatar.course.speed = Tootsville.Game.Nav.RUN_SPEED; };
+
+/**
+ *
+ */
+Tootsville.Game.Nav.collisionP = function (model, start, end)
+{ /* FIXME, extract from updateWalk */
+    return false; };
 
 /**
  *

@@ -35,3 +35,22 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { Doodle: {} } }; }
 if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { Doodle: {} }; }
 if (!('Doodle' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.Doodle = {}; }
 
+
+/**
+ * Update an NPC on the 50Hz game clock, if necessary.
+ */
+Tootsville.Game.NPC.Doodle.updateNPC = function (npc)
+{ /* TODO */ };
+
+/**
+ * Fast-forward the NPC for Δt seconds.
+ */
+Tootsville.Game.NPC.Doodle.fastForward = function (npc)
+{ /* TODO */ };
+
+/**
+ * Register an NPC as Doodle
+ */
+Tootsville.Game.NPC.Doodle.register = function (npc)
+{ /* TODO */ };
+

@@ -33,3 +33,21 @@
 
 if (!('Game' in Tootsville)) { Tootsville.Game = { GrowthSystem: {} }; }
 if (!('GrowthSystem' in Tootsville.Game)) { Tootsville.Game.GrowthSystem = {}; }
+
+/**
+ * Register an entity that can grow.
+ */
+Tootsville.Game.GrowthSystem.register = function (entity)
+{ /* TODO */ };
+
+/**
+ * Update the growth of all eligible entities
+ */
+Tootsville.Game.GrowthSystem.updateGrowth = function ()
+{ /* TODO */ };
+
+/**
+ * Simulate the passage of Δt time (in seconds)
+ */
+Tootsville.Game.GrowthSystem.fastForward = function (δT)
+{ /* TODO */ };

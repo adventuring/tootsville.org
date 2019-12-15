@@ -33,3 +33,37 @@
 
 if (!('Game' in Tootsville)) { Tootsville.Game = { GravitySystem: {} }; }
 if (!('GravitySystem' in Tootsville.Game)) { Tootsville.Game.GravitySystem = {}; }
+
+if (!('entities' in Tootsville.Game.GravitySystem))
+{ Tootsville.Game.GravitySystem.entities = []; }
+
+
+/**
+ * Makes an entity's model subject to gravity.
+ */
+Tootsville.Game.GravitySystem.register = function (entity)
+{ Tootsville.Game.GravitySystem.entities.add (entity); };
+
+/**
+ *
+ */
+Tootsville.Game.GravitySystem.updateEntityGravity = function (entity)
+{ const position = entity.model.position;
+  let downward = entity.model.position;
+  downward.y += 9.8/50;
+  const collisionP = Tootsville.Nav.collisionP (entity.model, position, downward);
+  if (!collisionP)
+  { entity.model.position = downward; } };
+
+/**
+ *
+ */
+Tootsville.Game.GravitySystem.updateGravity = function ()
+{ Tootsville.Game.GravitySystem.entities.forEach (Tootsville.Game.GravitySystem.updateEntityGravity);
+};
+
+/**
+ * Simulate the passage of Δt time (in seconds)
+ */
+Tootsville.Game.GravitySystem.fastForward = function (δT)
+{ /* TODO */ };

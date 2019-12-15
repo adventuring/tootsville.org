@@ -35,3 +35,21 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { TrolleyDriver: {} } };
 if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { TrolleyDriver: {} }; }
 if (!('TrolleyDriver' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.TrolleyDriver = {}; }
 
+
+/**
+ * Update an NPC on the 50Hz game clock, if necessary.
+ */
+Tootsville.Game.NPC.TrolleyDriver.updateNPC = function (npc)
+{ /* TODO */ };
+
+/**
+ * Fast-forward the NPC for Δt seconds.
+ */
+Tootsville.Game.NPC.TrolleyDriver.fastForward = function (npc)
+{ /* TODO */ };
+
+/**
+ * Register an NPC as a Trolley Driver
+ */
+Tootsville.Game.NPC.TrolleyDriver.register = function (npc)
+{ /* TODO */ };

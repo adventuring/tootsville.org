@@ -118,9 +118,11 @@ Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex, valu
 { if (value > .5)
   { switch (buttonIndex)
     { case 0: // Y
+      Tootsville.UI.interact (null);
       break; 
 
       case 1: // B
+      Tootsville.UI.useActiveItem (null);
       break;
 
       case 2: // A

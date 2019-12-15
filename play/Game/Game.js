@@ -45,18 +45,39 @@ Tootsville.Game.interestingPoint = function (point)
            &&
            (Math.abs (Tootsville.activity.z - point.z) < 1000) ); };
 
-
+/**
+ * How much lag are we accommodating?
+ */
 Tootsville.Game.lag = 100;
 
 /**
-*
+* Update everything that operates on the 50Hz Game Tick clock.
 */
 Tootsville.Game.update = function ()
 { Tootsville.Game.now = (new Date).getTime ();
   Tootsville.Game.Nav.updateAvatars ();
   Tootsville.Game.Speech.updateSpeech ();
-  Tootsville.UI.Gamepad.updateStatus (); };
+  Tootsville.UI.Gamepad.updateStatus ();
+  Tootsville.Game.GravitySystem.updateGravity ();
+  Tootsville.Game.GrowthSystem.updateGrowth ();
+  Tootsville.Game.MissileSystem.updateMissiles ();
+  Tootsville.Game.NPCSystem.updateNPCs ();
+  Tootsville.Game.VehicleRidingSystem.updateRidingVehicles (); };
 
+/**
+ * When burgeoning a region, fast-forward system effects to the present.
+ */
+Tootsville.Game.fastForward = function (sinceTime)
+{ Tootsville.Game.now = (new Date).getTime ();
+  const δT = (Tootsville.Game.now - sinceTime) / 1000;
+  Tootsville.Game.GravitySystem.fastForward (δT);
+  Tootsville.Game.GrowthSystem.fastForward (δT);
+  Tootsville.Game.MissileSystem.fastForward (δT);
+  Tootsville.Game.NPCSystem.fastForward (δT); };
+
+/**
+ * Respond to a click on an item (furniture)
+ */
 Tootsville.Game.clickedOnItem = function (itemNameString, pickedEvent)
 { console.debug ("Clicked on item ", itemNameString. pickedEvent); };
 

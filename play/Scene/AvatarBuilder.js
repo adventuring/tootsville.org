@@ -124,7 +124,10 @@ Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
   try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
   // try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); } };
+  try { Tootsville.Game.GravitySystem.register (avatar, model); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); }
+  if (avatar.npc)
+  { try { Tootsville.Game.NPCSystem.register (avatar); } catch (e) { console.error (e); } } };
 
 /**
  * Load the base avatar model from Jumbo.

@@ -35,3 +35,21 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { Fetcher: {} } }; }
 if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { Fetcher: {} }; }
 if (!('Fetcher' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.Fetcher = {}; }
 
+
+/**
+ * Update an NPC on the 50Hz game clock, if necessary.
+ */
+Tootsville.Game.NPC.Fetcher.updateNPC = function (npc)
+{ /* TODO */ };
+
+/**
+ * Fast-forward the NPC for Δt seconds.
+ */
+Tootsville.Game.NPC.Fetcher.fastForward = function (npc)
+{ /* TODO */ };
+
+/**
+ * Register an NPC as a Fetcher
+ */
+Tootsville.Game.NPC.Fetcher.register = function (npc)
+{ /* TODO */ };
