@@ -87,12 +87,12 @@ Tootsville.Game.Nav.updateWalk = function (avatar, course)
   { console.error ("Course fail, ", avatar.course, " yields ", goalPosition);
     return true; }
 
-  // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
-  //                                                        avatar.model.getWorldMatrix () );
-  const step = goalPosition.subtract (avatar.model.position);
+ const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
+                                                        avatar.model.getWorldMatrix () );
+  const step = forward.subtract (avatar.model.position);
+ // goalPosition.subtract (avatar.model.position);
   const direction = BABYLON.Vector3.Normalize (step) ;
-  // (forward.substract (avatar.model.position));
-  const length = step.length; // BABYLON.Vector3.Distance (step);
+  const length = 1; // step.length
   const ray = new BABYLON.Ray (avatar.model.position, direction, length);
   const hit = Tootsville.Tank.scene.pickWithRay (ray);
   if (hit.pickedMesh)
