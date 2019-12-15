@@ -2,7 +2,7 @@
 
 /**@license
  *
- * play/Game/NPC/Collector.js is part of Tootsville
+ * play/Game/NPC/Sleeper.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,24 +31,26 @@
  *
  */
 
-if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { Collector: {} } }; }
-if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { Collector: {} }; }
-if (!('Collector' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.Collector = {}; }
+if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { Sleeper: {} } }; }
+if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { Sleeper: {} }; }
+if (!('Sleeper' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.Sleeper = {}; }
 
 /**
  * Update an NPC on the 50Hz game clock, if necessary.
  */
-Tootsville.Game.NPC.Collector.updateNPC = function (npc)
+Tootsville.Game.NPC.Sleeper.updateNPC = function (npc)
 { /* TODO */ };
 
 /**
  * Fast-forward the NPC for Δt seconds.
  */
-Tootsville.Game.NPC.Collector.fastForward = function (npc)
+Tootsville.Game.NPC.Sleeper.fastForward = function (npc)
 { /* TODO */ };
 
 /**
- * Register an NPC as a Collector
+ * Register an NPC as a Sleeper.
+ *
+ * Attributes: The time range during which the character wants to sleep. For most characters 
  */
-Tootsville.Game.NPC.Collector.register = function (npc)
+Tootsville.Game.NPC.Sleeper.register = function (npc)
 { /* TODO */ };

@@ -2,7 +2,7 @@
 
 /**@license
  *
- * play/Game/NPC/Collector.js is part of Tootsville
+ * play/Game/NPC/Waiter.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,24 +31,24 @@
  *
  */
 
-if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { Collector: {} } }; }
-if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { Collector: {} }; }
-if (!('Collector' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.Collector = {}; }
+if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { Waiter: {} } }; }
+if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { Waiter: {} }; }
+if (!('Waiter' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.Waiter = {}; }
 
 /**
  * Update an NPC on the 50Hz game clock, if necessary.
  */
-Tootsville.Game.NPC.Collector.updateNPC = function (npc)
+Tootsville.Game.NPC.Waiter.updateNPC = function (npc)
 { /* TODO */ };
 
 /**
  * Fast-forward the NPC for Δt seconds.
  */
-Tootsville.Game.NPC.Collector.fastForward = function (npc)
+Tootsville.Game.NPC.Waiter.fastForward = function (npc)
 { /* TODO */ };
 
 /**
- * Register an NPC as a Collector
+ * Register an NPC as a Waiter
  */
-Tootsville.Game.NPC.Collector.register = function (npc)
+Tootsville.Game.NPC.Waiter.register = function (npc)
 { /* TODO */ };

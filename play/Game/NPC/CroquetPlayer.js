@@ -35,3 +35,21 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { NPC: { CroquetPlayer: {} } };
 if (!('NPC' in Tootsville.Game)) { Tootsville.Game.NPC = { CroquetPlayer: {} }; }
 if (!('CroquetPlayer' in Tootsville.Game.NPC)) { Tootsville.Game.NPC.CroquetPlayer = {}; }
 
+
+/**
+ * Update an NPC on the 50Hz game clock, if necessary.
+ */
+Tootsville.Game.NPC.CroquetPlayer.updateNPC = function (npc)
+{ /* TODO */ };
+
+/**
+ * Fast-forward the NPC for Δt seconds.
+ */
+Tootsville.Game.NPC.CroquetPlayer.fastForward = function (npc)
+{ /* TODO */ };
+
+/**
+ * Register an NPC as a Croquet Player
+ */
+Tootsville.Game.NPC.CroquetPlayer.register = function (npc)
+{ /* TODO */ };

@@ -80,4 +80,18 @@ Tootsville.Game.NPCSystem.updateNPC = function (npc)
  */
 Tootsville.Game.NPCSystem.updateNPCs = function ()
 { for (let i = 0; i < Tootsville.Game.NPCSystem.npcs.length; ++i)
-  { Tootsville.Game.NPCSystem.updateNPC (Tootsville.Game.NPCSystem.npcs [i]; } };
+  { Tootsville.Game.NPCSystem.updateNPC (Tootsville.Game.NPCSystem.npcs [i]); } };
+
+/**
+ * Simulate the passage of Δt time (in seconds)
+ */
+Tootsville.Game.NPCSystem.fastForward = function (δT)
+{ /* TODO */ };
+
+/**
+ * Register an NPC
+ */
+Tootsville.Game.NPCSystem.register = function (avatar)
+{ const components = avatar.npc.keys;
+  for (let i = 0; i < components.length; ++i)
+  { Tootsville.Game.NPC [components [i]].register (avatar); } };
