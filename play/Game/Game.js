@@ -61,8 +61,7 @@ Tootsville.Game.update = function ()
   Tootsville.Game.GravitySystem.updateGravity ();
   Tootsville.Game.GrowthSystem.updateGrowth ();
   Tootsville.Game.MissileSystem.updateMissiles ();
-  Tootsville.Game.NPCSystem.updateNPCs ();
-  Tootsville.Game.VehicleRidingSystem.updateRidingVehicles (); };
+  Tootsville.Game.NPCSystem.updateNPCs (); };
 
 /**
  * When burgeoning a region, fast-forward system effects to the present.
