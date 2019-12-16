@@ -37,6 +37,21 @@ if (!('BallSystem' in Tootsville.Game)) { Tootsville.Game.BallSystem = {}; }
 if (!('allBalls' in Tootsville.Game.BallSystem))
 { Tootsville.Game.BallSystem.allBalls = []; }
 
+
+/**
+ *
+ */
+Tootsville.Game.BallSystem.register = function (entity, course)
+{ entity.course = course;
+  Tootsville.Game.BallSystem.allBalls [ Tootsville.Game.BallSystem.allBalls.length ] = entity; };
+
+/**
+ *
+ */
+Tootsville.Game.BallSystem.remove = function (entity)
+{ const index = Tootsville.Game.BallSystem.allBalls.indexOf (entity);
+  if (index >= 0) { Tootsville.Game.BallSystem.allBalls.splice (index, 1); } };
+
 /**
  * Update the position of all balls
  */
