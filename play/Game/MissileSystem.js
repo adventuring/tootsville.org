@@ -42,7 +42,7 @@ if (!('allMissiles' in Tootsville.Game.MissileSystem))
  */
 Tootsville.Game.MissileSystem.register = function (entity, course)
 { entity.course = course;
-  Tootsville.Game.MissileSystem.allMissiles [ Tootsville.Game.MissileSystem.allMissiles.length ] = entity; };
+  Tootsville.Game.MissileSystem.allMissiles.push (entity); };
 
 /**
  *

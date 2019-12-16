@@ -43,7 +43,7 @@ if (!('allBalls' in Tootsville.Game.BallSystem))
  */
 Tootsville.Game.BallSystem.register = function (entity, course)
 { entity.course = course;
-  Tootsville.Game.BallSystem.allBalls [ Tootsville.Game.BallSystem.allBalls.length ] = entity; };
+  Tootsville.Game.BallSystem.allBalls.push (entity); };
 
 /**
  *
@@ -60,7 +60,8 @@ Tootsville.Game.BallSystem.updateBalls = function ()
   { const ball = Tootsville.Game.BallSystem.allBalls [i];
     if (ball.course)
     { let finish = Tootsville.Game.Nav.moveEntityOnCourse (ball, ball.course);
-      if (finish) { delete ball['course']; } } } };
+      if (finish) { /* TODO: bounce if lateral energy remains */ }
+      else { /* TODO: reduce speed by friction */ } } } };
 
 /**
  * Simulate the passage of Δt time (in seconds)
