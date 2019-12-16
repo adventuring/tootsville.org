@@ -75,8 +75,13 @@ Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
  *
  */
 Tootsville.Game.Nav.collisionP = function (model, start, end)
-{ /* FIXME, extract from moveEntityOnCourse */
-    return false; };
+{  // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
+   //                                                      model.getWorldMatrix () );
+  const step = end.subtract (start);
+  const direction = BABYLON.Vector3.Normalize (step) ;
+  const ray = new BABYLON.Ray (start, direction, step.length);
+  const hit = Tootsville.Tank.scene.pickWithRay (ray);
+    return hit.pickedMesh; };
 
 /**
  * Move an entity  along a course, until its movement  is interrupted by
@@ -101,15 +106,9 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
   { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
     return true; }
 
- const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
-                                                        entity.model.getWorldMatrix () );
-  const step = forward.subtract (entity.model.position);
- // goalPosition.subtract (entity.model.position);
-  const direction = BABYLON.Vector3.Normalize (step) ;
-  const length = 1; // step.length
-  const ray = new BABYLON.Ray (entity.model.position, direction, length);
-  const hit = Tootsville.Tank.scene.pickWithRay (ray);
-  if (hit.pickedMesh)
+   // goalPosition.subtract (entity.model.position);
+  const hit = Tootsville.Game.Nav.collisionP (entity.model, entity.model.position, goalPosition);
+  if (hit)
   { entity.course = null; return true; }
   
   entity.model.position = goalPosition;
