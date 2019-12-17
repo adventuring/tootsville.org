@@ -58,7 +58,7 @@ Tootsville.Game.update = function ()
   Tootsville.Game.Nav.updateAvatars ();
   Tootsville.Game.Speech.updateSpeech ();
   Tootsville.UI.Gamepad.updateStatus ();
-  Tootsville.Game.BallSystem.updateMissiles ();
+  Tootsville.Game.BallSystem.updateBalls ();
   Tootsville.Game.GravitySystem.updateGravity ();
   Tootsville.Game.GrowthSystem.updateGrowth ();
   Tootsville.Game.MissileSystem.updateMissiles ();

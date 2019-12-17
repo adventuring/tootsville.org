@@ -28,6 +28,8 @@
  * USA
  */
 
+if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
+
 /**
 * The credits for the game as a string.
 *

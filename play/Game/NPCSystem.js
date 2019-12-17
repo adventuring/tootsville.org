@@ -33,6 +33,7 @@
 
 if (!('Game' in Tootsville)) { Tootsville.Game = { NPCSystem: {} }; }
 if (!('NPCSystem' in Tootsville.Game)) { Tootsville.Game.NPCSystem = {}; }
+if (!('npcs' in Tootsville.Game.NPCSystem)) { Tootsville.Game.NPCSystem.npcs = []; }
 
 /**
  * NPCSystem initializer.

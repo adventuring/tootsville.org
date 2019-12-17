@@ -37,7 +37,7 @@ if (!('Interact' in Tootsville.Game)) { Tootsville.Game.Interact = {}; }
 Tootsville.Game.Interact.typeName = [ 'Nil', 'Interact', 'Push', 'Pull', 'Wish', 'Shaddow', 'Fire', 'Frost', 'Water', 'Wind', 'Impact', 'Stepped' ];
 
 for (let i = 0; i < Tootsville.Game.Interact.typeName.length; ++i)
-{ Tootsville.Game.Interact ["TYPE_" + typeName.toUpperCase ()] = i; }
+{ Tootsville.Game.Interact ["TYPE_" + Tootsville.Game.Interact.typeName [i].toUpperCase ()] = i; }
 
 Tootsville.Game.Interact.handleInteraction = function (agent, target, interactionType, interactionForce)
 { const handler = target [ 'on' + Tootsville.Game.Interact.typeName [interactionType] ];
@@ -46,6 +46,8 @@ Tootsville.Game.Interact.handleInteraction = function (agent, target, interactio
   const defaultHandler = Tootsville.Game.Interact.defaultHandler [Tootsville.Game.Interact.typeName [interactionType]];
   if (defaultHandler)
   { defaultHandler (target, agent, interactionForce); } };
+
+if (!('defaultHandler' in Tootsville.Game.Interact)) { Tootsville.Game.Interact.defaultHandler = {}; }
 
 Tootsville.Game.Interact.defaultHandler.Push = function (target, agent, force)
 { if (target.mass && agent.mass && target.mass < agent.mass)

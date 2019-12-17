@@ -51,7 +51,8 @@
      characterUUID: null,
      privateKey: null,
      audio: { volume: 80,
-              savedVolume: 80 } };
+              savedVolume: 80 },
+     UI: {} };
 
 if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||
