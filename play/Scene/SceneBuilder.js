@@ -38,11 +38,7 @@ Tootsville.SceneBuilder.makeBallPit = function (scene)
    { let sphere = BABYLON.Mesh.CreateSphere("sphere" * i, 4, 2 + 10 * i / 100, scene);
      sphere.position.x = Math.sin (i);
      sphere.position.y = 8 * i;
-     sphere.position.z = Math.cos (i);
-    sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere,
-                                                         BABYLON.PhysicsImpostor.SphereImpostor,
-                                                         { mass: 1, restitution: 0.1 },
-                                                         scene); } };
+     sphere.position.z = Math.cos (i); } };
 
 /**
  * Place furniture as found in the current scene.

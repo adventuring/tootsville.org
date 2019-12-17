@@ -89,31 +89,7 @@ Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
   scene.avatars [avatar.name].model = object; };
 
 /**
- * Create a physics impostor for the object
- */
-Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
-{ let largestChild = Tootsville.Tank.getLargestChildMesh (object);
-  largestChild.physicsImpostor =
-  new BABYLON.PhysicsImpostor (largestChild,
-                               BABYLON.PhysicsImpostor.BoxImpostor,
-                               { mass: 6000, restitution: .05 },
-                               scene);
-  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== largestChild);
-  for (let i = 0; i < otherMeshes.length; ++i)
-  { otherMeshes [i].physicsImpostor =
-    new BABYLON.PhysicsImpostor (otherMeshes [i],
-                                 BABYLON.PhysicsImpostor.NoImpostor,
-                                 { mass: 10, restitution: 0 },
-                                 scene); }
-  object.physicsImpostor =
-  new BABYLON.PhysicsImpostor (object,
-                               BABYLON.PhysicsImpostor.NoImpostor,
-                               { mass: 6000, restitution: .05 },
-                               scene); };
-
-
-/**
- * Actually build the (cloned meshes) avatar.
+ * Actually build the avatar.
  *
  * Don't call this directly, call `Tootsville.AvatarBuilder.build'.
  */
@@ -122,7 +98,6 @@ Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
   // TODO set scaling
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
-  // try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.Game.GravitySystem.register (avatar, model); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); }

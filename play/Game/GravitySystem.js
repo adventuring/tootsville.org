@@ -42,7 +42,10 @@ if (!('entities' in Tootsville.Game.GravitySystem))
  * Makes an entity's model subject to gravity.
  */
 Tootsville.Game.GravitySystem.register = function (entity)
-{ Tootsville.Game.GravitySystem.entities.add (entity); };
+{ if (!(entity.model))
+  { console.warn ("Can't apply gravity to entity without model", entity);
+    return; }
+  Tootsville.Game.GravitySystem.entities.push (entity); };
 
 /**
  *

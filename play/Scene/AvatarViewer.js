@@ -104,14 +104,11 @@ Tootsville.AvatarViewer.startRendering = function (canvas) {
 */
 Tootsville.AvatarViewer.createViewerReally = function (toot, canvas)
 { Tootsville.AvatarViewer.createScene (canvas);
-  canvas.physics = new BABYLON.AmmoJSPlugin (true);
-  canvas.scene.enablePhysics (BABYLON.Vector3.Zero, canvas.physics);
   Tootsville.AvatarViewer.createCamera (canvas, toot.name);
   Tootsville.AvatarViewer.createLight (canvas);
   Tootsville.AvatarBuilder.build (toot, canvas.scene);
   if ('avatars' in canvas.scene)
-  { canvas.scene.avatars [toot.name].physicsImpostor.mass = 0;
-    canvas.scene.avatars [toot.name].position = BABYLON.Vector3.Zero ();}
+  { canvas.scene.avatars [toot.name].position = BABYLON.Vector3.Zero ();}
   setTimeout (() => { canvas.scene.render (); }, 1); };
 
 /**

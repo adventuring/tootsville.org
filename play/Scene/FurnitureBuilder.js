@@ -69,29 +69,6 @@ Tootsville.FurnitureBuilder.enableShadows = function (object, scene)
           Tootsville.Tank.getLargestChildMesh (object)); }; };
 
 /**
- * Create a physics impostor for the object
- */
-Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
-{ let largestChild = Tootsville.Tank.getLargestChildMesh (object);
-  largestChild.physicsImpostor =
-  new BABYLON.PhysicsImpostor (largestChild,
-                               BABYLON.PhysicsImpostor.BoxImpostor,
-                               { mass: item.template.weight, restitution: .05 },
-                               scene);
-  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== largestChild);
-  for (let i = 0; i < otherMeshes.length; ++i)
-  { otherMeshes [i].physicsImpostor =
-    new BABYLON.PhysicsImpostor (otherMeshes [i],
-                                 BABYLON.PhysicsImpostor.NoImpostor,
-                                 { mass: 10, restitution: 0 },
-                                 scene); }
-  object.physicsImpostor =
-  new BABYLON.PhysicsImpostor (object,
-                               BABYLON.PhysicsImpostor.NoImpostor,
-                               { mass: item.template.weight, restitution: .05 },
-                               scene); };
-
-/**
  * Stash a reference to the item it the scene.items object.
  */
 Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
@@ -109,7 +86,6 @@ Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
   { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
   model.checkCollisions = true;
   try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
-  // try { Tootsville.FurnitureBuilder.enablePhysics (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); } catch (e) { console.error (e); }
   if (item.growth)
