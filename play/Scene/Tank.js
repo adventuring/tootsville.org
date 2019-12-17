@@ -126,6 +126,7 @@ Tootsville.Tank.initScene = function ()
 { console.log ("Initializing the Babylon Scene");
   Tootsville.Tank.scene = new BABYLON.Scene (Tootsville.Tank.engine);
   Tootsville.Tank.scene.registerAfterRender (Tootsville.Tank.afterRender);
+  Tootsville.Tank.scene.collisionsEnabled = true;
   return Tootsville.Tank.scene; };
 
 

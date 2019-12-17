@@ -51,6 +51,7 @@ Tootsville.Tank.CameraManager.updateCamera = function (camera, avatar, zoomMode)
  */
 Tootsville.Tank.CameraManager.positionCameraForAvatarViewer = function (camera, avatar)
 { console.error ("Unimplemented: positionCameraForAvatarViewer"); };
+
 /**
  * Position the camera to have the avatar about ¼ the screen width.
  */

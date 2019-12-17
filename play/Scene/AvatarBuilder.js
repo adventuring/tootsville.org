@@ -85,7 +85,7 @@ Tootsville.AvatarBuilder.enableShadows = function (object, scene)
  */
 Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
 { if (!('avatars' in scene)) { scene.avatars = {}; }
-  scene.avatars [avatar.name] = Object.assign ({}, avatar);
+  scene.avatars [avatar.name] = Object.assign ((scene.avatars [avatar.name] || {}), avatar);
   scene.avatars [avatar.name].model = object; };
 
 /**
@@ -122,7 +122,7 @@ Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
   // TODO set scaling
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
+  // try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); } };
 
