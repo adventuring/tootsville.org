@@ -58,6 +58,7 @@ Tootsville.Game.update = function ()
   Tootsville.Game.Nav.updateAvatars ();
   Tootsville.Game.Speech.updateSpeech ();
   Tootsville.UI.Gamepad.updateStatus ();
+  Tootsville.Game.BallSystem.updateBalls ();
   Tootsville.Game.GravitySystem.updateGravity ();
   Tootsville.Game.GrowthSystem.updateGrowth ();
   Tootsville.Game.MissileSystem.updateMissiles ();
@@ -69,6 +70,7 @@ Tootsville.Game.update = function ()
 Tootsville.Game.fastForward = function (sinceTime)
 { Tootsville.Game.now = (new Date).getTime ();
   const δT = (Tootsville.Game.now - sinceTime) / 1000;
+  Tootsville.Game.BallSystem.fastForward (δT);
   Tootsville.Game.GravitySystem.fastForward (δT);
   Tootsville.Game.GrowthSystem.fastForward (δT);
   Tootsville.Game.MissileSystem.fastForward (δT);
@@ -80,3 +82,5 @@ Tootsville.Game.fastForward = function (sinceTime)
 Tootsville.Game.clickedOnItem = function (itemNameString, pickedEvent)
 { console.debug ("Clicked on item ", itemNameString. pickedEvent); };
 
+Tootsville.Game.pivotItemTemplate = function (entity)
+{ /* TODO */ };

@@ -34,16 +34,29 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = {Interact: {}}; }
 if (!('Interact' in Tootsville.Game)) { Tootsville.Game.Interact = {}; }
 
-Tootsville.Game.Interact.TYPE_INTERACT = 1;
-Tootsville.Game.Interact.TYPE_PUSH = 2;
-Tootsville.Game.Interact.TYPE_PULL = 3;
-Tootsville.Game.Interact.TYPE_WISH = 4;
-Tootsville.Game.Interact.TYPE_SHADDOW = 5;
-Tootsville.Game.Interact.TYPE_FIRE = 6;
-Tootsville.Game.Interact.TYPE_FROST = 7;
-Tootsville.Game.Interact.TYPE_WATER = 8;
-Tootsville.Game.Interact.TYPE_WIND = 9;
+Tootsville.Game.Interact.typeName = [ 'Nil', 'Interact', 'Push', 'Pull', 'Wish', 'Shaddow', 'Fire', 'Frost', 'Water', 'Wind', 'Impact', 'Stepped' ];
 
-Tootsville.Game.Interact.handleInteraction = function (avatar, entity, interactionType)
-{ if (avatar == Tootsville.Tank.playerAvatar ())
-  {} };
+for (let i = 0; i < Tootsville.Game.Interact.typeName.length; ++i)
+{ Tootsville.Game.Interact ["TYPE_" + Tootsville.Game.Interact.typeName [i].toUpperCase ()] = i; }
+
+Tootsville.Game.Interact.handleInteraction = function (agent, target, interactionType, interactionForce)
+{ const handler = target [ 'on' + Tootsville.Game.Interact.typeName [interactionType] ];
+  if (handler)
+  { handler(target, agent, interactionType, interactionForce); }
+  const defaultHandler = Tootsville.Game.Interact.defaultHandler [Tootsville.Game.Interact.typeName [interactionType]];
+  if (defaultHandler)
+  { defaultHandler (target, agent, interactionForce); } };
+
+if (!('defaultHandler' in Tootsville.Game.Interact)) { Tootsville.Game.Interact.defaultHandler = {}; }
+
+Tootsville.Game.Interact.defaultHandler.Push = function (target, agent, force)
+{ if (target.mass && agent.mass && target.mass < agent.mass)
+  { const movement = BABYLON.Vector3.Normalize (agent.model.position.subtract (target.model.position));
+    Tootsville.Game.Nav.slideObject (target, movement);
+    Tootsville.Game.Nav.slideObject (agent, movement); } };
+
+Tootsville.Game.Interact.defaultHandler.Pull = function (target, agent, force)
+{ if (target.mass && agent.mass && target.mass < agent.mass)
+  { const movement = BABYLON.Vector3.Normalize (target.model.position.subtract (agent.model.position));
+    Tootsville.Game.Nav.slideObject (target, movement);
+    Tootsville.Game.Nav.slideObject (agent, target.position); } };

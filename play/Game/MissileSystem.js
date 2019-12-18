@@ -33,3 +33,38 @@
 
 if (!('Game' in Tootsville)) { Tootsville.Game = { MissileSystem: {} }; }
 if (!('MissileSystem' in Tootsville.Game)) { Tootsville.Game.MissileSystem = {}; }
+
+if (!('allMissiles' in Tootsville.Game.MissileSystem))
+{ Tootsville.Game.MissileSystem.allMissiles = []; }
+
+/**
+ *
+ */
+Tootsville.Game.MissileSystem.register = function (entity, course)
+{ entity.course = course;
+  Tootsville.Game.MissileSystem.allMissiles.push (entity); };
+
+/**
+ *
+ */
+Tootsville.Game.MissileSystem.remove = function (entity)
+{ const index = Tootsville.Game.MissileSystem.allMissiles.indexOf (entity);
+  if (index >= 0) { Tootsville.Game.MissileSystem.allMissiles.splice (index, 1); } };
+
+/**
+ * Update the position of all missiles
+ */
+Tootsville.Game.MissileSystem.updateMissiles = function ()
+{ for (let i = 0; i < Tootsville.Game.MissileSystem.allMissiles.length; ++i)
+  { const missile = Tootsville.Game.MissileSystem.allMissiles [i];
+    if (missile.course)
+    { let finish = Tootsville.Game.Nav.moveEntityOnCourse (missile, missile.course);
+      if (finish) { delete missile['course'];
+                    Tootsville.Game.GravitySystem.register (missile);
+                    Tootsville.Game.MissileSystem.remove (missile); } } } };
+
+/**
+ * Simulate the passage of Δt time (in seconds)
+ */
+Tootsville.Game.MissileSystem.fastForward = function (δT)
+{ /* TODO */ };

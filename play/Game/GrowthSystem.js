@@ -34,17 +34,44 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = { GrowthSystem: {} }; }
 if (!('GrowthSystem' in Tootsville.Game)) { Tootsville.Game.GrowthSystem = {}; }
 
+if (!('allGrowing' in Tootsville.Game.GrowthSystem))
+{ Tootsville.Game.GrowthSystem.allGrowing = []; }
+
 /**
  * Register an entity that can grow.
  */
 Tootsville.Game.GrowthSystem.register = function (entity)
-{ /* TODO */ };
+{ Tootsville.Game.GrowthSystem.allGrowing.push (entity); };
+
+/**
+ *
+ */
+Tootsville.Game.GrowthSystem.remove = function (entity)
+{ const index = Tootsville.Game.GrowthSystem.allGrowing.indexOf (entity);
+  if (index >= 0) { Tootsville.Game.GrowthSystem.allGrowing.splice (index, 1); } };
+
+/**
+ *
+ */
+Tootsville.Game.GrowthSystem.evolve = function (entity)
+{ entity.growth.growthTimer = 0;
+  Tootsville.Game.pivotItemTemplate (entity, entity.growth.nextEvolutionTemplate);
+  };
+
+/**
+ *
+ */
+Tootsville.Game.GrowthSystem.grow = function (entity)
+{ entity.growth.growthTimer += 1/50;
+  if (entity.growth.growthTimer > entity.growth.nextEvolutionTime)
+  { Tootsville.Game.GrowthSystem.evolve (entity); } };
 
 /**
  * Update the growth of all eligible entities
  */
 Tootsville.Game.GrowthSystem.updateGrowth = function ()
-{ /* TODO */ };
+{ for (let i = 0; i < Tootsville.Game.GrowthSystem.allGrowing.length; ++i)
+  { Toosville.Game.GrowthSystem.grow (Tootsville.Game.GrowthSystem.allGrowing [i]); } };
 
 /**
  * Simulate the passage of Δt time (in seconds)

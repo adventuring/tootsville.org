@@ -2,7 +2,7 @@
 
 /**@license
  *
- * play/Game/GravitySystem.js is part of Tootsville
+ * play/Game/BallSystem.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,42 +31,40 @@
  *
  */
 
-if (!('Game' in Tootsville)) { Tootsville.Game = { GravitySystem: {} }; }
-if (!('GravitySystem' in Tootsville.Game)) { Tootsville.Game.GravitySystem = {}; }
+if (!('Game' in Tootsville)) { Tootsville.Game = { BallSystem: {} }; }
+if (!('BallSystem' in Tootsville.Game)) { Tootsville.Game.BallSystem = {}; }
 
-if (!('entities' in Tootsville.Game.GravitySystem))
-{ Tootsville.Game.GravitySystem.entities = []; }
+if (!('allBalls' in Tootsville.Game.BallSystem))
+{ Tootsville.Game.BallSystem.allBalls = []; }
 
-
-/**
- * Makes an entity's model subject to gravity.
- */
-Tootsville.Game.GravitySystem.register = function (entity)
-{ if (!(entity.model))
-  { console.warn ("Can't apply gravity to entity without model", entity);
-    return; }
-  Tootsville.Game.GravitySystem.entities.push (entity); };
 
 /**
  *
  */
-Tootsville.Game.GravitySystem.updateEntityGravity = function (entity)
-{ const position = entity.model.position;
-  let downward = entity.model.position;
-  downward.y += 9.8/50;
-  const collisionP = Tootsville.Nav.collisionP (entity.model, position, downward);
-  if (!collisionP)
-  { entity.model.position = downward; } };
+Tootsville.Game.BallSystem.register = function (entity, course)
+{ entity.course = course;
+  Tootsville.Game.BallSystem.allBalls.push (entity); };
 
 /**
  *
  */
-Tootsville.Game.GravitySystem.updateGravity = function ()
-{ Tootsville.Game.GravitySystem.entities.forEach (Tootsville.Game.GravitySystem.updateEntityGravity);
-};
+Tootsville.Game.BallSystem.remove = function (entity)
+{ const index = Tootsville.Game.BallSystem.allBalls.indexOf (entity);
+  if (index >= 0) { Tootsville.Game.BallSystem.allBalls.splice (index, 1); } };
+
+/**
+ * Update the position of all balls
+ */
+Tootsville.Game.BallSystem.updateBalls = function ()
+{ for (let i = 0; i < Tootsville.Game.BallSystem.allBalls.length; ++i)
+  { const ball = Tootsville.Game.BallSystem.allBalls [i];
+    if (ball.course)
+    { let finish = Tootsville.Game.Nav.moveEntityOnCourse (ball, ball.course);
+      if (finish) { /* TODO: bounce if lateral energy remains */ }
+      else { /* TODO: reduce speed by friction */ } } } };
 
 /**
  * Simulate the passage of Δt time (in seconds)
  */
-Tootsville.Game.GravitySystem.fastForward = function (δT)
+Tootsville.Game.BallSystem.fastForward = function (δT)
 { /* TODO */ };
