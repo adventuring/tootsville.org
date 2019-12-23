@@ -363,7 +363,8 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
                                      paperdoll.scene, () =>
                                      { paperdoll.avatar = Object.assign({}, Tootsville.character);
                                        paperdoll.scene.render (); });
-    /* XXX These probably belong in some kind of watcher for wardrobe changes, but for now this works. */
+    /* XXX These  probably belong in  some kind of watcher  for wardrobe
+     * changes, but for now this works. */
   Tootsville.AvatarBuilder.update (Tootsville.character, Tootsville.Tank.scene.avatars [Tootsville.character.name].model,
                                    Tootsville.Tank.scene, () => {}); } };
 
