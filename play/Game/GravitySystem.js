@@ -43,8 +43,7 @@ if (!('entities' in Tootsville.Game.GravitySystem))
  */
 Tootsville.Game.GravitySystem.register = function (entity)
 { if (!(entity.model))
-  { console.warn ("Can't apply gravity to entity without model", entity);
-    return; }
+  { throw new Exception ("Can't apply gravity to entity without model"); }
   Tootsville.Game.GravitySystem.entities.push (entity); };
 
 /**
@@ -54,7 +53,7 @@ Tootsville.Game.GravitySystem.updateEntityGravity = function (entity)
 { const position = entity.model.position;
   let downward = entity.model.position;
   downward.y += 9.8/50;
-  const collisionP = Tootsville.Nav.collisionP (entity.model, position, downward);
+  const collisionP = Tootsville.Game.Nav.collisionP (entity.model, position, downward);
   if (!collisionP)
   { entity.model.position = downward; } };
 
