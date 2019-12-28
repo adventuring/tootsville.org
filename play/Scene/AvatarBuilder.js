@@ -97,12 +97,14 @@ Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
 { console.debug ("Building " + avatar.avatar + " " + avatar.userName);
   // TODO set scaling
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
+  let a = scene.avatars [avatar.name];
+  if (!a) { return; }
+  try { Tootsville.AvatarBuilder.addNameTag (a, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.Game.GravitySystem.register (avatar, model); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); }
+  try { Tootsville.Game.GravitySystem.register (a, model); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.colorize (a, model, scene, finish); } catch (e) { console.error (e); }
   if (avatar.npc)
-  { try { Tootsville.Game.NPCSystem.register (avatar); } catch (e) { console.error (e); } } };
+  { try { Tootsville.Game.NPCSystem.register (a); } catch (e) { console.error (e); } } };
 
 /**
  * Load the base avatar model from Jumbo.
