@@ -52,7 +52,7 @@ Tootsville.Game.GravitySystem.register = function (entity)
 Tootsville.Game.GravitySystem.updateEntityGravity = function (entity)
 { const position = entity.model.position;
   let downward = entity.model.position;
-  downward.y += 9.8/50;
+  downward.y -= 9.8/50;
   const collisionP = Tootsville.Game.Nav.collisionP (entity.model, position, downward);
   if (!collisionP)
   { entity.model.position = downward; } };
