@@ -4,7 +4,7 @@
  *
  * ./play/ui/gamepad.js is part of Tootsville
  *
- * Copyright  © 2018,2019  The Corporation  for Inter-World  Tourism and
+ * Copyright  © 2018-2020  The Corporation  for Inter-World  Tourism and
  * Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
