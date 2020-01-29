@@ -307,6 +307,10 @@ dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.css dist/play.$(clusterorg)/play/
 
+dist/play.$(clusterorg)/favicon.png:	www/favicon.png
+	mkdir -p dist/play.$(clusterorg)/play/
+	cp www/favicon.{ico,png,gif} dist/play.$(clusterorg)/
+
 dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp dist/play/play.css.map dist/play.$(clusterorg)/play/
@@ -353,6 +357,7 @@ dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/play/index.html \
 	dist/play.$(clusterorg)/worker.js \
 	dist/play.$(clusterorg)/.htaccess \
+	dist/play.$(clusterorg)/favicon.png \
 	dist/play.$(clusterorg)/error/404.var \
 	dist/play.$(clusterorg)/play/system-check/index.html
 
