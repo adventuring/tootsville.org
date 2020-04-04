@@ -104,6 +104,7 @@ Tootsville.Gossip.createConnection = function ()
                                    peer.connection.localDescription);
                  Tootsville.Util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
                      next => { console.debug ("⁂", next);
+                               if (null == next) { Tootsville.Gossip.createConnection (); }
                                Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }); });
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
@@ -141,12 +142,13 @@ Tootsville.Gossip.closeInfinityMode = function (peer, event)
  * Ensure that we have at least 5 gossip network connections.
  */
 Tootsville.Gossip.ensureConnected = function (success)
-{ let length = Tootsville.Gossip.peers.length;
-  if (length > 4)
-  { Tootsville.warn ("Gossipnet already connected at " + length + " points");
-    success (); } else
-  { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
-    Tootsville.Gossip.connect (success); } };
+{ return new Promise ( () =>
+                       { let length = Tootsville.Gossip.peers.length;
+                         if (length > 4)
+                         { Tootsville.warn ("Gossipnet already connected at " + length + " points");
+                           success (); } else
+                         { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
+                           Tootsville.Gossip.connect (success); } } ); };
 
 
 /**

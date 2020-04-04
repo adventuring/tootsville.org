@@ -567,9 +567,10 @@ Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
  */
 Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
 { const picked = Tootsville.Tank.scene.pick (event.clientX, event.clientY);
+  console.log ("Click at ", event.clientX + ", " + event.clientY, " hit ", picked);
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
-  if (picked.pickedMesh == Tootsville.Tank.ground)
+  if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
   { if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                        picked.pickedPoint); }
@@ -591,6 +592,8 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
  */
 Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
 { const pickedName = mesh.name || '';
+  if ('ground' == pickedName)
+  { console.error ("Click on ground went to clickedOnMesh"); }
   if (0 == pickedName.indexOf ('avatar/'))
   { Tootsville.UI.HUD.showPlayerCard (mesh.name.substr (7)); }
   else if (0 == pickedName.indexOf ('item/'))

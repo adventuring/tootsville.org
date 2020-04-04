@@ -43,7 +43,7 @@ if (!('GroundBuilder' in Tootsville)) { Tootsville.GroundBuilder = {}; }
 Tootsville.GroundBuilder.initGroundPlane = function ()
 { const ground =
         BABYLON.Mesh.CreateGround ('ground',
-                                   2000, 2000, 10,
+                                   2000, 2000, 0,
                                    Tootsville.Tank.scene);
   ground.material = new BABYLON.StandardMaterial ('ground',
                                                   Tootsville.Tank.scene);
@@ -62,4 +62,4 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
 Tootsville.GroundBuilder.build = function (x, y, z)
 {
     /* TODO — get terrain data and build heightmap */
-    const ground = Tootsville.GroundBuilder.initGroundPlane (); };
+    Tootsville.GroundBuilder.initGroundPlane (); };

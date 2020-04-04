@@ -81,7 +81,7 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
  * asset manager.
  */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
-{ console.debug ("Building " + item.template.name + " " + item.uuid);
+{ console.debug ("Building furniture " + item.template.name + " " + item.uuid);
   if (item.avatarScaling)
   { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
   model.checkCollisions = true;
@@ -132,8 +132,9 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  *
  */
 Tootsville.FurnitureBuilder.build = function (item, scene, finish)
-{ if (scene.items && scene.items [item.uuid] && scene.items [item.uuid].model)
-  { Tootsville.FurnitureBuilder.update (item. scene.items [item.uuid].model, scene, finish); }
+{ if (!scene) { console.error ("Cannot build furniture without a scene"); return; }
+  if (scene.items && scene.items [item.uuid] && ('model' in scene.items [item.uuid]))
+  { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else
  { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };
 

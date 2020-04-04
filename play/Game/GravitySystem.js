@@ -52,7 +52,7 @@ Tootsville.Game.GravitySystem.register = function (entity)
 Tootsville.Game.GravitySystem.updateEntityGravity = function (entity)
 { const position = entity.model.position;
   let downward = entity.model.position;
-  downward.y -= 9.8/50;
+  downward.y = Math.max(0, downward.y - 9.8/50);
   const collisionP = Tootsville.Game.Nav.collisionP (entity.model, position, downward);
   if (!collisionP)
   { entity.model.position = downward; } };
@@ -61,8 +61,8 @@ Tootsville.Game.GravitySystem.updateEntityGravity = function (entity)
  *
  */
 Tootsville.Game.GravitySystem.updateGravity = function ()
-{ Tootsville.Game.GravitySystem.entities.forEach (Tootsville.Game.GravitySystem.updateEntityGravity);
-};
+{ for (let i = 0; i < Tootsville.Game.GravitySystem.entities.length; ++i)
+  { Tootsville.Game.GravitySystem.updateEntityGravity (Tootsville.Game.GravitySystem.entities [i]); } };
 
 /**
  * Simulate the passage of Δt time (in seconds)

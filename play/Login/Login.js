@@ -127,8 +127,7 @@ Tootsville.Login.createTootListItem2 = function (li, toot)
   li.appendChild (canvas);
   /* Create AvatarViewer asynchronously */
   setTimeout ( () => { console.debug ("Drawing avatar " + toot.name + " in a canvas");
-                       Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas);
-                       canvas.scene.render (); },
+                       Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas); },
                10 );
   li.innerHTML += '<SPAN CLASS="toot-name">' +
   toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
