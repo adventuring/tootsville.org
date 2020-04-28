@@ -219,7 +219,7 @@ Tootsville.Tank.prepareFor3D = function ()
         { if ("BABYLON" in window)
           { finish (); }
           else
-          { Tootsville.Util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
+          { Tootsville.Util.loadScript ('https://preview.babylonjs.com/babylon.js'
                                         /*'https://cdn.babylonjs.com/babylon.js'*/).then (
                                             Tootsville.Tank.prepareFor3D); }}); };
 
