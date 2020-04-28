@@ -4,7 +4,7 @@
  *
  * play/Scene/AvatarViewer.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -49,7 +49,8 @@ Tootsville.AvatarViewer.getAvatar = function (character)
  * Create a scene to contain the Avatar Viewer
  */
 Tootsville.AvatarViewer.createScene = function (canvas)
-{ canvas.engine = new BABYLON.Engine (canvas, true, { preserveDrawingBuffer: true, stencil: true });
+{ canvas.engine = new BABYLON.Engine (canvas, true, { preserveDrawingBuffer: true, stencil: true,
+                                                      height: 256, width: 256 } );
   canvas.scene = new BABYLON.Scene (canvas.engine);
   canvas.scene.clearColor = new BABYLON.Color3.FromHexString (interpretTootColor ('periwinkle')); };
 
@@ -112,7 +113,7 @@ Tootsville.AvatarViewer.createViewerReally = function (toot, canvas)
   { canvas.scene.avatars [toot.name].position = BABYLON.Vector3.Zero ();}
   canvas.scene.render ();
   BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
-                                  Tootsville.AvatarViewer.acceptScreenshot,
+                                  data => { Tootsville.AvatarViewer.acceptScreenshot (data);},
                                   'image/png'); };
 
 /**

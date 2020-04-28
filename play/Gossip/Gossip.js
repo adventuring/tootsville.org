@@ -4,7 +4,7 @@
  *
  * play/Gossip/Gossip.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018,2019   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -105,7 +105,7 @@ Tootsville.Gossip.createConnection = function ()
                  Tootsville.Util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
                      next => { console.debug ("⁂", next);
                                if (null == next) { Tootsville.Gossip.createConnection (); }
-                               Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }); });
+                               else { Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }}); });
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**
