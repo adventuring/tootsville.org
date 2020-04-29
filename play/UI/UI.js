@@ -189,7 +189,8 @@ Tootsville.UI.takeOneStep = function (δx, δz)
  */
 Tootsville.UI.say = function (words)
 { if ("" != words)
-  { Tootsville.Game.Speech.say (words); } };
+  { Tootsville.Game.Speech.say (words);
+    Tootsville.Gossip.send ("say", words); } };
 
 /**
  *

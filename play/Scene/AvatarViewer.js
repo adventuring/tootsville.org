@@ -88,16 +88,6 @@ Tootsville.AvatarViewer.startRendering = function (canvas) {
     window.addEventListener ('resize', canvas.engine.resize);
 };
 
-Tootsville.AvatarViewer.acceptScreenshot = function (data)
-{ canvas.engine.dispose ();
-  canvas.engine = null;
-  canvas.scene = null;
-  canvas.camera = null;
-  canvas.light = null;
-  canvas.getContext('2d').drawImage (data,
-                                     0, 0, 256, 256,
-                                     0, 0, canvas.width, canvas.height); };
-
 /**
  * Render the AvatarViewer scene only once.
  * 
@@ -113,7 +103,15 @@ Tootsville.AvatarViewer.createViewerReally = function (toot, canvas)
   { canvas.scene.avatars [toot.name].position = BABYLON.Vector3.Zero ();}
   canvas.scene.render ();
   BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
-                                  data => { Tootsville.AvatarViewer.acceptScreenshot (data);},
+                                  (data) =>
+                                  { canvas.engine.dispose ();
+                                    canvas.engine = null;
+                                    canvas.scene = null;
+                                    canvas.camera = null;
+                                    canvas.light = null;
+                                    canvas.getContext('2d').drawImage (data,
+                                                                       0, 0, 256, 256,
+                                                                       0, 0, canvas.width, canvas.height); },
                                   'image/png'); };
 
 /**
