@@ -378,9 +378,10 @@ Tootsville.UI.Keys.selectAll = function (event)
  *
  */
 Tootsville.UI.Keys.speakLine = function (event)
-{ Tootsville.UI.say (Tootsville.UI.talkSpeak.value);
-  console.info ("Speaking: «" + Tootsville.UI.talkSpeak.value + "»");
-  Tootsville.UI.talkSpeak.value = ''; };
+{ let el = document.getElementById ('talk-speak');
+  Tootsville.UI.say (el.value);
+  console.info ("Speaking: «" + el.value + "»");
+  el.value = ''; };
 
 /**
  *

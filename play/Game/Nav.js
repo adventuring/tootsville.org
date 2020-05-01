@@ -136,8 +136,16 @@ Tootsville.Game.Nav.updateFacing = function (avatar)
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (! avatar.model) { return; }
+  if (Tootsville.Login.toots [ avatar.name ])
+  { Tootsville.Login.toots [ avatar.name ] = avatar;
+    Tootsville.Login.populateTootsList (); };
+  if (avatar.uuid == Tootsville.characterUUID)
+  { Tootsville.character = avatar; }
   if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
   { Tootsville.Game.Nav.updateFacing (avatar); }
+  if (! Tootsville.Tank.scene.avatars )
+  { Tootsville.Tank.scene.avatars = {}; }
+  Tootsville.Tank.scene.avatars [ avatar.name ] = avatar;
   if (avatar.course)
   { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
     if (done) { delete avatar['course']; } } };

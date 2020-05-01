@@ -41,7 +41,8 @@ if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
  * FIXME Bug  #24: when replacing an existing balloon, remove it first.
  */
 Tootsville.Game.Speech.say = function (words, extraClass, speaker)
-{ if (!speaker) { speaker = Tootsville.character.name; }
+{ if (! speaker) { speaker = Tootsville.character.name; }
+  if ((! words) || (0 == words.length)) { return; }
   const balloon = document.createElement ('DIV');
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
@@ -50,6 +51,7 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
   avatar.speech = balloon;
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
+
 
 /**
  * The time has passed; remove a speech balloon.
@@ -68,3 +70,10 @@ Tootsville.Game.Speech.updateSpeech = function ()
     if (balloon && Tootsville.Game.now > balloon.endTime)
     { Tootsville.Game.Speech.removeSpeech (balloon);
       delete avatars[i]['speech']; } } };
+
+Tootsville.Game.Speech.dispatchCommand = function (commandLine)
+{ let words = commandLine.split (' ');
+  switch (words[0])
+  { case '~ua':
+    Tootsville.UI.say ("My UA is " + navigator.userAgent);
+    break; }; };

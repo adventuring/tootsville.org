@@ -47,7 +47,22 @@ if (!('Gatekeeper' in Tootsville.Game)) { Tootsville.Game.Gatekeeper = {}; }
  */
 Tootsville.Game.Gatekeeper.logOK = function (gram)
 { let neighbor = gram.neighbor;
-  Tootsville.warn ("unhandled datagram", gram); };
+  if ( gram.status )
+  { console.log ("Logged in to servers");
+    Tootsville.Gossip.ensureKeyPair ();
+    if ('none' != document.getElementById ('sign-in').style.display)
+    { Tootsville.Login.switchTootsView (); }
+    if (gram.greet) { console.info ("Greeting", gram.greet); }
+    if (gram.auth) { console.log ("Authentication", gram.auth); }
+    if (gram.motd && ! ( Tootsville.seen.motd ) )
+    { Tootsville.Gossip.Parrot.say ("Message of the Day", gram.motd);
+      Tootsville.seen.motd = true; } }  else
+  { Tootsville.Gossip.Parrot.say ("Error from login", gram.error + " due to " + gram.auth +
+                                  " This will prevent you from playing. " +
+                                  "Contact support if you don't understand.");
+    Tootsville.Util.WebSocket.close ();
+    Tootsville.Util.connectWebSocket (); }
+  if (neighbor) { Tootsville.warn ("logOK not handled for peer connections", gram); } };
 
 /**
  * Receive a  list of avatar  info that describes  an area of  the world.
@@ -153,6 +168,12 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
   let stores = gram.stores;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
+Tootsville.Game.Gatekeeper.pub = function (gram)
+{ if (gram.id == Tootsville.characterUUID)
+  { Tootsville.Game.Speech.say (gram.t); }
+  else
+  { Tootsville.Game.Speech.say (gram.t, gram.x, gram.u); } };
+
 /**
  * No longer used.
  */
@@ -165,12 +186,15 @@ Tootsville.Game.Gatekeeper.purchase = function (gram)
 
 /**
  * No longer handled by ∞ mode protocols; now, fetched directly from the
- * game server over REST API.
+ * game server over REST API. FIXME not necessarily true
  */
 Tootsville.Game.Gatekeeper.inventory = function (gram)
 { let inv = gram.inv;
   let type = gram.type;
-  Tootsville.warn ("ancient datagram now ignored", gram);};
+  Tootsville.warn ("unhandled datagram", gram);};
+
+Tootsville.Game.Gatekeeper.ping = function (gram)
+{ console.info ("Received Ping-Pong"); };
 
 /**
  * No longer used.
@@ -368,7 +392,6 @@ Tootsville.Game.Gatekeeper.admin = function (gram)
 { let title = gram.title;
   let message = gram.message;
   let label = gram.label;
-  // FIXME call to parrot ⋯
   Tootsville.Gossip.parrot.say (title, message, label); };
 
 /**
@@ -417,3 +440,20 @@ Tootsville.Game.Gatekeeper.forceMove = function (gram)
  */
 Tootsville.Game.Gatekeeper.reportBug = function (gram)
 { Tootsville.warn ("unhandled datagram", gram); };
+
+Tootsville.Game.Gatekeeper.tootList = function (gram)
+{ if (0 == gram.toots.length)
+  { Tootsville.Login.startCharacterCreation (); }
+  else
+  { Tootsville.Login.saveTootsList (gram.toots);
+    Tootsville.Login.populateTootsList (); }};
+
+
+Tootsville.Game.Gatekeeper.playWith = function (gram)
+{ if (gram.status)
+  { Tootsville.characterUUID = gram.uuid;
+    Tootsville.character = { name: gram.playWith };
+    Tootsville.player = gram.player;
+    Tootsville.Tank.start3D ();}
+  else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
+      

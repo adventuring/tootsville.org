@@ -85,26 +85,8 @@ Tootsville.Login.settingsP = false;
 /**
  * Query the server for my characters after user has signed in.
  */
-Tootsville.Login.serverQueryCharacters = function ()
-{ Tootsville.trace ("serverQueryCharacters");
-  return new Promise (
-      (finish, reject) =>
-          { Tootsville.Util.rest ('GET', 'users/me/toots').
-            then (
-                response =>
-                    { Tootsville.trace ("response from serverQueryCharacters", response);
-                      if (undefined == response || !('toots' in response) || 0 == response.toots.length)
-                      { reject (); } else
-                      { finish (response.toots); } },
-                error =>
-                    { Tootsville.Gossip.Parrot.ask ("Can't get Toots list",
-                                             "I can't get a list of your Toots. Maybe there are network problems?",
-                                             [{ tag: "retry",
-                                                text: "Try Again" }]).
-                      then (
-                          () => { Tootsville.trace("serverQueryCharacters retry");
-                                  Tootsville.Login.serverQueryCharacters ().then (finish, reject); });
-                      Tootsville.error ("Can't retrieve Toots list", error);} ); }); };
+Tootsville.Login.loadTootsList = function ()
+{ Tootsville.Util.infinity ("tootList"); };
 
 /**
  * The set of Toot characters available to the player.
@@ -121,16 +103,17 @@ Tootsville.Login.createTootListItem2 = function (li, toot)
 { li.innerHTML = '';
   li ['data-toot'] = toot;
   li.className = 'toot';
-  const canvas = document.createElement ('CANVAS');
-  canvas.width = 96;
-  canvas.height = 96;
-  li.appendChild (canvas);
-  /* Create AvatarViewer asynchronously */
-  setTimeout ( () => { console.debug ("Drawing avatar " + toot.name + " in a canvas");
-                       Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas); },
-               10 );
+  if (toot.avatar && false /* XXX */ )
+  { const canvas = document.createElement ('CANVAS');
+    canvas.width = 96;
+    canvas.height = 96;
+    li.appendChild (canvas);
+    /* Create AvatarViewer asynchronously */
+    setTimeout ( () => { console.debug ("Drawing avatar " + toot.name + " in a canvas");
+                         Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas); },
+                 10 ); }
   li.innerHTML += '<SPAN CLASS="toot-name">' +
-  toot.name + '</SPAN><SPAN CLASS="note">' + toot.note + '</SPAN>';
+  toot.name + '</SPAN><SPAN CLASS="note">' + (toot.note || "") + '</SPAN>';
   Tootsville.Login.addChildFlag (li); };
 
 /**
@@ -159,11 +142,15 @@ Tootsville.Login.tootsList = null;
  */
 Tootsville.Login.saveTootsList = function (list)
 { Tootsville.Login.tootsList = list;
+  let numberedToots = {};
   for (let i = 0; i < list.length; ++i)
-  { let tootName = list [i];
-    Tootsville.Util.rest ('GET', 'users/me/toots/' + tootName).
-    then (toot => { Tootsville.Login.toots [tootName] = toot;
-                    Tootsville.Login.populateTootsList ();}); } };
+  { numberedToots [ i ] = list [ i ];
+    Tootsville.Login.toots [list [i] ] = {name: list [i]}; };
+  Tootsville.Util.infinityAwaits ("finger", "finger", numberedToots).
+  then (tootInfos => {
+      for (let j = 0; j < tootInfos.length; ++j)
+      { Tootsville.Login.toots [tootInfos [ j ].name] = tootInfos [ j ].name; };
+      Tootsville.Login.populateTootsList ();}); };
 
 /**
  *
@@ -207,18 +194,6 @@ Tootsville.Login.startCharacterCreation = function ()
 /**
  *
  */
-Tootsville.Login.loadTootsList = function ()
-{ Tootsville.trace("loadTootsList");
-  Tootsville.Login.serverQueryCharacters ().then
-  ( list => { Tootsville.Login.saveTootsList (list);
-              Tootsville.Login.populateTootsList ();
-              Tootsville.Gossip.getICE ();},
-    () => { Tootsville.Login.startCharacterCreation ();
-            Tootsville.Gossip.getICE (); }); };
-
-/**
- *
- */
 Tootsville.Login.dimUnpickedCharacters = function (picked)
 { var allItems = document.querySelectorAll ('#toots-list li');
   for (var i = 0; i < allItems.length; i++)
@@ -230,8 +205,7 @@ Tootsville.Login.dimUnpickedCharacters = function (picked)
  *
  */
 Tootsville.Login.doRealLogin = function (name)
-{ Tootsville.Login.serverLinkTokenToCharacter (name).
-  then (Tootsville.Tank.startSimulation); };
+{ Tootsville.Login.serverLinkTokenToCharacter (name); };
 
 /**
  *
@@ -287,17 +261,18 @@ Tootsville.Login.fillGoogleUserInfo = function ()
  *
  */
 Tootsville.Login.switchTootsView = function ()
-{ Tootsville.Login.loadTootsList ();
-  Tootsville.Login.fillGoogleUserInfo ();
+{ Tootsville.Login.fillGoogleUserInfo ();
   document.getElementById ('pick-toot').style.display = 'block';
   document.getElementById ('sign-in').style.display = 'none';
-  document.getElementById ('login-warm-up').style.display = 'none'; };
+  document.getElementById ('login-warm-up').style.display = 'none';
+  Tootsville.Login.loadTootsList (); };
 
 /**
  *
  */
 Tootsville.Login.startSignIn = function ()
-{ document.getElementById ('sign-in').style.display = 'block';
+{ document.getElementById ('login').style.display = 'block';
+  document.getElementById ('sign-in').style.display = 'block';
   document.getElementById ('login-warm-up').style.display = 'none';
   document.getElementById ('pick-toot').style.display = 'none'; };
 
@@ -310,38 +285,32 @@ Tootsville.Login.endLoginMusic = function ()
 /**
  * Login has completed; clean up and set up for the game.
  */
-Tootsville.Login.loginDone = function (reply)
-{ Tootsville.trace ("loginDone", reply);
+Tootsville.Login.loginDone = function ()
+{ Tootsville.trace ("loginDone");
   Tootsville.Login.endLoginMusic ();
   Tootsville.UI.HUD.closePanel ();
-  Tootsville.characterUUID = reply.toot.uuid;
-  Tootsville.character = reply.toot;
-  Tootsville.player = reply.player;
   if ('Rollbar' in window)
-  { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.id,
+  { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.uuid,
                                              username: Tootsville.character && Tootsville.character.name,
                                              email: Tootsville.player && Tootsville.player.eMail }}}); }
-  Tootsville.Tank.start3D ();
-  document.title = reply.toot.name + " in Tootsville";
+  document.title = Tootsville.character.name + " in Tootsville";
   Tootsville.UI.HUD.refreshHUD (); };
 
 /**
- *
+ * Choose a CHARACTER to play as.
  */
 Tootsville.Login.serverLinkTokenToCharacter = function (character)
-{ return Tootsville.Util.rest ('POST', 'users/me/play-with/' + character).then(
-    Tootsville.Login.loginDone,
-    error => { alert (character + " can't play right now. " + error); }); };
+{ Tootsville.Util.infinity ("playWith", { character: character }); };
 
 /**
- *
+ * Remove the Child flag from a LI
  */
 Tootsville.Login.removeChildFlag = function (li)
 { var child = li.querySelector ('.child');
   if (child) { li.removeChild (child); } };
 
 /**
- * Finds  the  list  item  representing   a  named  Toot  in  the  login
+ * Finds  the list  item representing  a Toot  named NAME  in the  login
  * selection list.
  */
 Tootsville.Login.findLIForToot = function (name)
@@ -352,13 +321,13 @@ Tootsville.Login.findLIForToot = function (name)
   throw new Error ("Altered a non-existent Toot"); };
 
 /**
- *
+ * Determines whether STRING might be a valid Child Code.
  */
 Tootsville.Login.validChildCode = function (string)
 { return (string.match (/^[a-z]{4,6}$/)) ? string : false; };
 
 /**
- *
+ * Set NAME to be a Child Toot.
  */
 Tootsville.Login.enableChildMode = function (name)
 { let li = this.findLIForToot (name);
@@ -450,7 +419,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
           //   scopes:
           //   [ 'public_profile', 'email', 'user_likes' ] },
           // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-          firebase.auth.TwitterAuthProvider.PROVIDER_ID
+          firebase.auth.TwitterAuthProvider.PROVIDER_ID,
           /* Twitter does not support scopes. */,
           /* Yahoo! is a generic OAuth source and should work like this … */
           { provider: "yahoo.com",
@@ -465,6 +434,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
 Tootsville.Login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in", result);
   Tootsville.Login.storeCredentialInfo (result);
+  Tootsville.Util.connectWebSocket ();
   return false; };
 
 /**
@@ -487,6 +457,8 @@ Tootsville.Login.storeCredentialInfo = function (result)
   firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
   then (function (idToken)
         { Tootsville.Login.firebaseAuth = idToken;
+          Tootsville.Gossip.ensureKeyPair ();
+          Tootsville.Stream.connectWebSocket ();
           Tootsville.Login.switchTootsView(); }).
   catch (function(error) {
       // Handle error TODO

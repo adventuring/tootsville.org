@@ -251,6 +251,7 @@ Tootsville.Tank.start3DReal = function ()
       () =>
           { console.log ("3D libraries loaded");
             Tootsville.Tank.createScene ();
+            Tootsville.Login.loginDone ();
             console.log ("Created test scene; starting rendering loop");
             setTimeout ( () => { Tootsville.Tank.initOTSCamera ();
                                  Tootsville.Tank.scene.activeCamera = Tootsville.Tank.camera; }, 100);
