@@ -352,7 +352,8 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
  */
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
-  if (Tootsville.character.avatar && (! paperdoll.scene) )
+  return false; /* TODO */
+  if (Tootsville.character.avatar )
   { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
   if ( (! Tootsville.character) ||
        (! paperdoll.scene) ||
@@ -573,7 +574,8 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
   { if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
-                                       picked.pickedPoint); }
+                                 picked.pickedPoint);
+      return;}
     else
     { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
                                  picked.pickedPoint); }

@@ -184,13 +184,6 @@ Tootsville.UI.takeOneStep = function (δx, δz)
                                                         model.position.z + δz));
 };
 
-/** 
- * Speak whatever is in the chat entry box.
- */
-Tootsville.UI.say = function (words)
-{ if ("" != words)
-  { Tootsville.Game.Speech.say (words); } };
-
 /**
  *
  */
@@ -220,9 +213,11 @@ Tootsville.UI.clickedOnItem = function (meshName, picked)
 { /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
 };
 
-Tootsville.UI.talkSpeak = function (speech)
+/**
+*
+*/
+Tootsville.UI.say = function (speech)
 { if ("~" == speech.charAt (0))
   { Tootsville.Game.Speech.dispatchCommand (speech); }
   else
-  { Tootsville.UI.say (speech);
-    Tootsville.Gossip.broadcast ("speak", { speech: speech }); } };
+  { Tootsville.Gossip.send ("speak", { speech: speech }); } };

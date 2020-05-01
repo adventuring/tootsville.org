@@ -57,7 +57,8 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
  * The time has passed; remove a speech balloon.
  */
 Tootsville.Game.Speech.removeSpeech = function (balloon)
-{ balloon.parentNode.removeChild (balloon); };
+{ if (balloon && balloon.parentNode)
+  { balloon.parentNode.removeChild (balloon); } };
 
 /**
  * Update speech baloons, expiring any that have aged out.

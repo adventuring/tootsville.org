@@ -70,10 +70,26 @@ Tootsville.Game.Gatekeeper.logOK = function (gram)
  */
 Tootsville.Game.Gatekeeper.avatars = function (gram)
 { let world = gram.inRoom;
-  let avatars = gram.avatars;
-  if (world == Tootsville.activity.world)
-  { for (let i = 0; i < avatars.length; ++i)
-    { Tootsville.Game.updateAvatar (avatars [i].userName, avatars [i].avatar); } } };
+  let avatars = Object.values (gram.avatars);
+  console.log ("Received info on " + avatars.length + " avatars");
+  for (let i = 0; i < avatars.length; ++i)
+  { let avatar = avatars [ i ];
+    console.log ("Got avatar info for " + avatar.name);
+    if (Tootsville.Login.toots [ avatar.name ])
+    { console.log (avatar.name + " is one of my Toots");
+      Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.Login.toots [ avatar.name ], avatar);
+      Tootsville.Login.populateTootsList (); };
+    if (avatar.uuid == Tootsville.characterUUID)
+    { console.log (avatar.name + " is myself");
+      Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.character, avatar);
+      if (! Tootsville.character.model)
+      { Tootsville.Tank.initPlayerToot (); }}
+    if (Tootsville.Tank.scene && Tootsville.Tank.scene.avatars)
+    { let orig = Tootsville.Tank.scene.avatars [ avatar.name ];
+      if (orig)
+      { Tootsville.Game.Nav.mergeAvatarInfo (orig, avatar);
+        Tootsville.Tank.updateAvatarFor (avatar.name); }
+      else { console.warn ("Unsolicited avatar info for " + avatar.name); } } } };
 
 /**
  * No longer used.
@@ -168,9 +184,12 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
   let stores = gram.stores;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
+/**
+ * Public message (speech)
+ */
 Tootsville.Game.Gatekeeper.pub = function (gram)
 { if (gram.id == Tootsville.characterUUID)
-  { Tootsville.Game.Speech.say (gram.t); }
+  { Tootsville.Game.Speech.say (gram.t, gram.x); }
   else
   { Tootsville.Game.Speech.say (gram.t, gram.x, gram.u); } };
 
@@ -392,7 +411,7 @@ Tootsville.Game.Gatekeeper.admin = function (gram)
 { let title = gram.title;
   let message = gram.message;
   let label = gram.label;
-  Tootsville.Gossip.parrot.say (title, message, label); };
+  Tootsville.Gossip.Parrot.say (title, message, label); };
 
 /**
  * Received acknowledgement of the server's time.
@@ -448,12 +467,50 @@ Tootsville.Game.Gatekeeper.tootList = function (gram)
   { Tootsville.Login.saveTootsList (gram.toots);
     Tootsville.Login.populateTootsList (); }};
 
-
+/**
+ *
+ */
 Tootsville.Game.Gatekeeper.playWith = function (gram)
 { if (gram.status)
   { Tootsville.characterUUID = gram.uuid;
-    Tootsville.character = { name: gram.playWith };
+    if ( (! Tootsville.character) ||
+         Tootsville.character.uuid != gram.uuid )
+    { Tootsville.character = Tootsville.Login.toots [  gram.playWith ]; }
     Tootsville.player = gram.player;
     Tootsville.Tank.start3D ();}
   else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
       
+/**
+ *
+ */
+Tootsville.Game.Gatekeeper.joinOK = function (gram)
+{ if (gram.status)
+  { if (gram.uLs == Tootsville.characterUUID)
+    { console.log ("I have joined " + gram.r); }
+    else
+    { console.log (gram.uLs + " has joined " + gram.r);
+      if (Tootsville.Tank.scene.avatars)
+      { if (! Tootsville.Tank.scene.avatars [ gram.uLs ])
+        { Tootsville.Tank.scene.avatars [ gram.uLs ] =
+          { name: gram.uLs }; }
+        Tootsville.Util.infinity ("finger",
+                                  { 0: gram.uLs }); } } } };
+/**
+*
+*/
+Tootsville.Game.Gatekeeper.wtl = function (gram)
+{ if (gram.status)
+  { let avatar = Tootsville.Tank.scene.avatars [ gram.n ];
+    if (! (avatar && avatar.uuid == gram.u))
+    { console.warn ("UUID mismatch, not walking the line", gram);
+      return; }
+    avatar.course = gram.course;
+    avatar.facing = gram.facing; } };
+      
+Tootsville.Game.Gatekeeper.bye = function (gram)
+{ let avatar = Tootsville.Tank.scene.avatars [ gram.n ];
+  if (! (avatar && avatar.uuid == gram.u))
+  { console.warn ("UUID mismatch, not destroying avatar. may be a zombie", gram);
+    return; }
+  Tootsville.Tank.destroyAvatar (avatar); }
+  

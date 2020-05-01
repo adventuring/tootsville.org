@@ -204,6 +204,7 @@ Tootsville.Gossip.openInfinityMode = function (peer, event)
 Tootsville.Gossip.send = function (c, d, r, a, v)
 { let packet = Tootsville.Gossip.createPacket (c, d, r || '$World', a, v);
   /* TODO: Routing */
+  Tootsville.Util.stream (packet);
   for (let i = 0; i < Tootsville.Gossip.peers.length; ++i)
   { if ((! v)
         || (! (v.includes (Tootsville.Gossip.peers[ i ].uuid))))

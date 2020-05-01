@@ -54,22 +54,22 @@ Tootsville.Game.Nav.RUN_SPEED = .04;
  *
  * TODO Restrict movement when riding a vehicle.
  */
-Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint)
+Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
 { avatar.course = { startPoint: avatar.model.position,
                     endPoint: destinationPoint,
                     startTime: Tootsville.Game.now + Tootsville.Game.lag,
-                    speed: Tootsville.Game.Nav.WALK_SPEED,
+                    speed: speed || Tootsville.Game.Nav.WALK_SPEED,
                     walkΔ: destinationPoint.subtract (avatar.model.position) };
   avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z);
   if (avatar.facing > 2*Math.PI) { avatar.facing -= 2 * Math.PI; }
+  Tootsville.infinity ("wtl", { course: avatar.course, facing: avatar.facing });
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
 *
 */
 Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
-{ Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint);
-  avatar.course.speed = Tootsville.Game.Nav.RUN_SPEED; };
+{ Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint, Tootsville.Game.Nav.RUN_SPEED);};
 
 /**
  *
@@ -135,20 +135,23 @@ Tootsville.Game.Nav.updateFacing = function (avatar)
  * Update avatar's rotation & position.
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
-{ if (! avatar.model) { return; }
-  if (Tootsville.Login.toots [ avatar.name ])
-  { Tootsville.Login.toots [ avatar.name ] = avatar;
-    Tootsville.Login.populateTootsList (); };
-  if (avatar.uuid == Tootsville.characterUUID)
-  { Tootsville.character = avatar; }
-  if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
-  { Tootsville.Game.Nav.updateFacing (avatar); }
-  if (! Tootsville.Tank.scene.avatars )
-  { Tootsville.Tank.scene.avatars = {}; }
-  Tootsville.Tank.scene.avatars [ avatar.name ] = avatar;
-  if (avatar.course)
-  { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
-    if (done) { delete avatar['course']; } } };
+{ if (Tootsville.Tank.scene)
+  { if (! Tootsville.Tank.scene.avatars )
+    { Tootsville.Tank.scene.avatars = {}; }
+    if (avatar.model)
+    { if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
+      { Tootsville.Game.Nav.updateFacing (avatar); } }
+    if (avatar.course)
+    { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
+      if (done) { delete avatar['course']; } } } };
+
+/**
+ *
+ */
+Tootsville.Game.Nav.mergeAvatarInfo = function (into, from)
+{ for (let key in from)
+  { if (from.hasOwnProperty (key))
+    { into [ key ] = from [ key ] ; } } };
 
 /**
  * Update the position & rotation of every avatar

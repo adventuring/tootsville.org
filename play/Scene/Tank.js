@@ -158,15 +158,27 @@ Tootsville.Tank.init3DEngine = function ()
  * We know that it, at least, will always exist.
  */
 Tootsville.Tank.initPlayerToot = function ()
-{ if ( (! (Tootsville.character))
-       ||
-       (! (Tootsville.character.avatar)) ) { Tootsville.Login.start ();
-                                             return;}
+{ if (! Tootsville.character)
+  { Tootsville.Login.start ();
+    return;}
+  if (! Tootsville.character.avatar)
+  { Tootsville.Util.infinity ("finger", { 0: Tootsville.character.name });
+      return; }
   Tootsville.AvatarBuilder.build (
       Tootsville.character, Tootsville.Tank.scene// ,
       // model => { Tootsville.Tank.camera.lockedTarget = model; }
   ); };
 
+/**
+*
+*/
+Tootsville.Tank.updateAvatarFor = function (avatarName)
+{ let avatar = Tootsville.Tank.scene.avatars [ avatarName ];
+  if (! avatar && avatar.avatarClass) { return; }
+  if (avatar.model)
+  { console.warn ("TODO Not updating avatar with new info"); }
+  else { console.log ("Adding avatar for " + avatarName);
+         Tootsville.AvatarBuilder.build (avatar, Tootsville.Tank.scene); } };
 
 /**
  * Create the  text scene with ground  plane and the player's  Toot with
@@ -305,3 +317,11 @@ Tootsville.Tank.updateCamera = function ()
     Tootsville.Tank.CameraManager.updateCamera (Tootsville.Tank.camera,
                                                 playerAvatar,
                                                 Tootsville.Tank.CameraManager.ZOOM_MODE_GAME); };
+
+/**
+*
+*/
+Tootsville.Tank.destroyAvatar = function (avatar)
+{ delete Tootsville.Tank.scene.avatars [ avatar.name ];
+  if (avatar.model)
+  { avatar.model.destroy (); } };
