@@ -136,8 +136,8 @@ Tootsville.Game.Nav.updateFacing = function (avatar)
  */
 Tootsville.Game.Nav.updateAvatar = function (avatar)
 { if (Tootsville.Tank.scene)
-  { if (! Tootsville.Tank.scene.avatars )
-    { Tootsville.Tank.scene.avatars = {}; }
+  { if (! Tootsville.Tank.avatars )
+    { Tootsville.Tank.avatars = {}; }
     if (avatar.model)
     { if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
       { Tootsville.Game.Nav.updateFacing (avatar); } }
@@ -157,8 +157,8 @@ Tootsville.Game.Nav.mergeAvatarInfo = function (into, from)
  * Update the position & rotation of every avatar
  */
 Tootsville.Game.Nav.updateAvatars = function ()
-{ if ((!Tootsville.Tank.scene) || (!Tootsville.Tank.scene.avatars)) { return; }
-  const avatars = Object.values(Tootsville.Tank.scene.avatars);
+{ if ((!Tootsville.Tank.scene) || (!Tootsville.Tank.avatars)) { return; }
+  const avatars = Object.values(Tootsville.Tank.avatars);
   for (let i = 0; i < avatars.length; ++i)
   { try { Tootsville.Game.Nav.updateAvatar (avatars [i]); } catch (e) { console.error (e); } } };
 

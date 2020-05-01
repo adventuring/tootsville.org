@@ -173,7 +173,7 @@ Tootsville.Tank.initPlayerToot = function ()
 *
 */
 Tootsville.Tank.updateAvatarFor = function (avatarName)
-{ let avatar = Tootsville.Tank.scene.avatars [ avatarName ];
+{ let avatar = Tootsville.Tank.avatars [ avatarName ];
   if (! avatar && avatar.avatarClass) { return; }
   if (avatar.model)
   { console.warn ("TODO Not updating avatar with new info"); }
@@ -302,9 +302,9 @@ Tootsville.Tank.getLargestChildMesh = function (object)
  */
 Tootsville.Tank.playerAvatar = function ()
 { if ( (! Tootsville.Tank.scene) ||
-       (! Tootsville.Tank.scene.avatars) )
+       (! Tootsville.Tank.avatars) )
   { return null; }
-  return Tootsville.Tank.scene.avatars [ Tootsville.character.name ]; };
+  return Tootsville.Tank.avatars [ Tootsville.character.name ]; };
 
 /**
  * Reposition the camera as needed.
@@ -322,6 +322,6 @@ Tootsville.Tank.updateCamera = function ()
 *
 */
 Tootsville.Tank.destroyAvatar = function (avatar)
-{ delete Tootsville.Tank.scene.avatars [ avatar.name ];
+{ delete Tootsville.Tank.avatars [ avatar.name ];
   if (avatar.model)
   { avatar.model.destroy (); } };

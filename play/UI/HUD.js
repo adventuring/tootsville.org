@@ -366,7 +366,7 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
                                        paperdoll.scene.render (); });
     /* XXX These  probably belong in  some kind of watcher  for wardrobe
      * changes, but for now this works. */
-  Tootsville.AvatarBuilder.update (Tootsville.character, Tootsville.Tank.scene.avatars [Tootsville.character.name].model,
+  Tootsville.AvatarBuilder.update (Tootsville.character, Tootsville.Tank.avatars [Tootsville.character.name].model,
                                    Tootsville.Tank.scene, () => {}); } };
 
 /**
@@ -557,9 +557,9 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
 { if ( (! Tootsville.Tank.scene) ||
-       (! Tootsville.Tank.scene.avatars) )
+       (! Tootsville.Tank.avatars) )
   { return; }
-  const avatars = Tootsville.Tank.scene.avatars;
+  const avatars = Tootsville.Tank.avatars;
   for (let i = 0; i < avatars.length; ++i)
   { Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]); } };
 
@@ -573,11 +573,11 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if (! picked.pickedMesh) { return; }
   if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
   { if (event.detail > 1) /* double or triple click */
-    { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+    { Tootsville.Game.Nav.runTo (Tootsville.Tank.avatars [Tootsville.character.name],
                                  picked.pickedPoint);
       return;}
     else
-    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
+    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.avatars [Tootsville.character.name],
                                  picked.pickedPoint); }
     return; }
   Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh, picked); };

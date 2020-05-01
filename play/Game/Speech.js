@@ -47,7 +47,7 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
   balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100;
-  const avatar = Tootsville.Tank.scene.avatars [speaker];
+  const avatar = Tootsville.Tank.avatars [speaker];
   avatar.speech = balloon;
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
@@ -64,8 +64,8 @@ Tootsville.Game.Speech.removeSpeech = function (balloon)
  * Update speech baloons, expiring any that have aged out.
  */
 Tootsville.Game.Speech.updateSpeech = function ()
-{ if ( (!Tootsville.Tank.scene) || (!Tootsville.Tank.scene.avatars) ) { return; }
-  const avatars = Object.values(Tootsville.Tank.scene.avatars);
+{ if ( (!Tootsville.Tank.scene) || (!Tootsville.Tank.avatars) ) { return; }
+  const avatars = Object.values(Tootsville.Tank.avatars);
   for (let i = 0; i < avatars.length; ++i)
   { let balloon = avatars [i].speech;
     if (balloon && Tootsville.Game.now > balloon.endTime)

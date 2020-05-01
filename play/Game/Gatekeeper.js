@@ -84,8 +84,8 @@ Tootsville.Game.Gatekeeper.avatars = function (gram)
       Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.character, avatar);
       if (! Tootsville.character.model)
       { Tootsville.Tank.initPlayerToot (); }}
-    if (Tootsville.Tank.scene && Tootsville.Tank.scene.avatars)
-    { let orig = Tootsville.Tank.scene.avatars [ avatar.name ];
+    if (Tootsville.Tank.scene && Tootsville.Tank.avatars)
+    { let orig = Tootsville.Tank.avatars [ avatar.name ];
       if (orig)
       { Tootsville.Game.Nav.mergeAvatarInfo (orig, avatar);
         Tootsville.Tank.updateAvatarFor (avatar.name); }
@@ -489,9 +489,9 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
     { console.log ("I have joined " + gram.r); }
     else
     { console.log (gram.uLs + " has joined " + gram.r);
-      if (Tootsville.Tank.scene.avatars)
-      { if (! Tootsville.Tank.scene.avatars [ gram.uLs ])
-        { Tootsville.Tank.scene.avatars [ gram.uLs ] =
+      if (Tootsville.Tank.avatars)
+      { if (! Tootsville.Tank.avatars [ gram.uLs ])
+        { Tootsville.Tank.avatars [ gram.uLs ] =
           { name: gram.uLs }; }
         Tootsville.Util.infinity ("finger",
                                   { 0: gram.uLs }); } } } };
@@ -500,7 +500,7 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
 */
 Tootsville.Game.Gatekeeper.wtl = function (gram)
 { if (gram.status)
-  { let avatar = Tootsville.Tank.scene.avatars [ gram.n ];
+  { let avatar = Tootsville.Tank.avatars [ gram.n ];
     if (! (avatar && avatar.uuid == gram.u))
     { console.warn ("UUID mismatch, not walking the line", gram);
       return; }
@@ -508,7 +508,7 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     avatar.facing = gram.facing; } };
       
 Tootsville.Game.Gatekeeper.bye = function (gram)
-{ let avatar = Tootsville.Tank.scene.avatars [ gram.n ];
+{ let avatar = Tootsville.Tank.avatars [ gram.n ];
   if (! (avatar && avatar.uuid == gram.u))
   { console.warn ("UUID mismatch, not destroying avatar. may be a zombie", gram);
     return; }
