@@ -176,7 +176,7 @@ Tootsville.UI.slowLoadingWatchdog = function ()
  * For keyboard or gamepad inputs.
  */
 Tootsville.UI.takeOneStep = function (δx, δz)
-{ const avatar = Tootsville.Tank.avatars [Tootsville.character.name];
+{ const avatar = Tootsville.Tank.avatars [Tootsville.character];
   const model = avatar.model;
   Tootsville.Game.Nav.walkTheLine (avatar,
                                    new BABYLON.Vector3 (model.position.x + δx,

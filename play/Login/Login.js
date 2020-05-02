@@ -290,10 +290,10 @@ Tootsville.Login.loginDone = function ()
   Tootsville.Login.endLoginMusic ();
   Tootsville.UI.HUD.closePanel ();
   if ('Rollbar' in window)
-  { Rollbar.configure({ payload: { person: { id: Tootsville.player && Tootsville.player.uuid,
-                                             username: Tootsville.character && Tootsville.character.name,
+  { Rollbar.configure({ payload: { person: { id: Tootsville.characterUUID,
+                                             username: Tootsville.character,
                                              email: Tootsville.player && Tootsville.player.eMail }}}); }
-  document.title = Tootsville.character.name + " in Tootsville";
+  document.title = Tootsville.character + " in Tootsville";
   Tootsville.UI.HUD.refreshHUD (); };
 
 /**

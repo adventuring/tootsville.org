@@ -79,17 +79,14 @@ Tootsville.Game.Gatekeeper.avatars = function (gram)
     { console.log (avatar.name + " is one of my Toots");
       Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.Login.toots [ avatar.name ], avatar);
       Tootsville.Login.populateTootsList (); };
-    if (avatar.uuid == Tootsville.characterUUID)
-    { console.log (avatar.name + " is myself");
-      Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.character, avatar);
-      if (! Tootsville.character.model)
-      { Tootsville.Tank.initPlayerToot (); }}
-    if (Tootsville.Tank.scene && Tootsville.Tank.avatars)
-    { let orig = Tootsville.Tank.avatars [ avatar.name ];
-      if (orig)
-      { Tootsville.Game.Nav.mergeAvatarInfo (orig, avatar);
-        Tootsville.Tank.updateAvatarFor (avatar.name); }
-      else { console.warn ("Unsolicited avatar info for " + avatar.name); } } } };
+     // if (! Tootsville.character.model)
+     //  { Tootsville.Tank.initPlayerToot (); }}
+    const orig = Tootsville.Tank.avatars [ avatar.name ];
+    if (orig)
+    { Tootsville.Game.Nav.mergeAvatarInfo (orig, avatar);
+      Tootsville.Tank.updateAvatarFor (avatar.name); }
+    else { console.warn ("New avatar info for " + avatar.name);
+           Tootsville.Tank.avatars [ avatar.name ] = avatar; } } };
 
 /**
  * No longer used.
@@ -473,11 +470,9 @@ Tootsville.Game.Gatekeeper.tootList = function (gram)
 Tootsville.Game.Gatekeeper.playWith = function (gram)
 { if (gram.status)
   { Tootsville.characterUUID = gram.uuid;
-    if ( (! Tootsville.character) ||
-         Tootsville.character.uuid != gram.uuid )
-    { Tootsville.character = Tootsville.Login.toots [  gram.playWith ]; }
+    Tootsville.character = gram.playWith;
     Tootsville.player = gram.player;
-    Tootsville.Tank.start3D ();}
+    Tootsville.Tank.start3D (); }
   else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
       
 /**

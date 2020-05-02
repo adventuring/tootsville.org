@@ -41,13 +41,17 @@ if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
  * FIXME Bug  #24: when replacing an existing balloon, remove it first.
  */
 Tootsville.Game.Speech.say = function (words, extraClass, speaker)
-{ if (! speaker) { speaker = Tootsville.character.name; }
+{ if (! speaker) { speaker = Tootsville.character; }
   if ((! words) || (0 == words.length)) { return; }
   const balloon = document.createElement ('DIV');
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
-  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100;
+  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100; 
   const avatar = Tootsville.Tank.avatars [speaker];
+  if (! avatar)
+  { console.warn ("Surprised to hear from " + speaker);
+    Tootsville.Util.infinity ("finger", { talkie: speaker });
+    return; }
   avatar.speech = balloon;
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };

@@ -55,14 +55,19 @@ Tootsville.Game.Nav.RUN_SPEED = .04;
  * TODO Restrict movement when riding a vehicle.
  */
 Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
-{ avatar.course = { startPoint: avatar.model.position,
+{ if (! avatar) { console.warn ("nobody can't walk"); return; }
+  if (! avatar.model) { console.warn ("you need a body to walk");
+                        Tootsville.Tank.updateAvatarFor (avatar.name); }
+  if (! avatar.model) { console.warn ("No AvatarBuilder body made");
+                        return; }
+  avatar.course = { startPoint: avatar.model.position,
                     endPoint: destinationPoint,
                     startTime: Tootsville.Game.now + Tootsville.Game.lag,
                     speed: speed || Tootsville.Game.Nav.WALK_SPEED,
                     walkΔ: destinationPoint.subtract (avatar.model.position) };
   avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z);
   if (avatar.facing > 2*Math.PI) { avatar.facing -= 2 * Math.PI; }
-  Tootsville.infinity ("wtl", { course: avatar.course, facing: avatar.facing });
+  Tootsville.Util.infinity ("wtl", { course: avatar.course, facing: avatar.facing });
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
@@ -92,8 +97,16 @@ Tootsville.Game.Nav.collisionP = function (model, start, end)
  */
 Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
 { if (course.startTime > Tootsville.Game.now) { return false; }
-  if (! course.walkΔ)
-  { course.walkΔ = course.endPoint.substract (course.startPoint); }
+  if (! course.endPoint) { return true; }
+  if (! course.endPoint.subtract)
+  { course.endPoint = new BABYLON.Vector3 (course.endPoint.x,
+                                           course.endPoint.y,
+                                           course.endPoint.z);
+    course.startPoint = new BABYLON.Vector3 (course.startPoint.x,
+                                           course.startPoint.y,
+                                           course.startPoint.z); }
+  if (! (course.walkΔ && course.walkΔ.subtract))
+  { course.walkΔ = course.endPoint.subtract (course.startPoint); }
   if (! course.endTime)
   { course.endTime = Tootsville.Game.lag * 2 + course.startTime + course.walkΔ.length () / course.speed; }
   if (course.endTime < Tootsville.Game.now) { return true; }

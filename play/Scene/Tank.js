@@ -31,7 +31,8 @@
  *
  */
 
-if (! ("Tank" in Tootsville)) { Tootsville.Tank = {}; }
+if (! ("Tank" in Tootsville)) { Tootsville.Tank = { avatars: {} }; }
+if (! ("avatars" in Tootsville.Tank)) { Tootsville.Tank.avatars = {}; }
 
 /**
  * Indicates whether the 2D overlay attachments need updating.
@@ -161,11 +162,11 @@ Tootsville.Tank.initPlayerToot = function ()
 { if (! Tootsville.character)
   { Tootsville.Login.start ();
     return;}
-  if (! Tootsville.character.avatar)
+  if (! Tootsville.Tank.avatars [ Tootsville.character ])
   { Tootsville.Util.infinity ("finger", { 0: Tootsville.character.name });
       return; }
   Tootsville.AvatarBuilder.build (
-      Tootsville.character, Tootsville.Tank.scene// ,
+      Tootsville.Tank.avatars [ Tootsville.character ], Tootsville.Tank.scene// ,
       // model => { Tootsville.Tank.camera.lockedTarget = model; }
   ); };
 
@@ -174,11 +175,11 @@ Tootsville.Tank.initPlayerToot = function ()
 */
 Tootsville.Tank.updateAvatarFor = function (avatarName)
 { let avatar = Tootsville.Tank.avatars [ avatarName ];
-  if (! avatar && avatar.avatarClass) { return; }
-  if (avatar.model)
-  { console.warn ("TODO Not updating avatar with new info"); }
-  else { console.log ("Adding avatar for " + avatarName);
-         Tootsville.AvatarBuilder.build (avatar, Tootsville.Tank.scene); } };
+  if (! (avatar && avatar.avatarClass)) { console.warn ("Can't build avatar without info for " + avatarName);
+                                          Tootsville.Util.infinity ("finger", { updateAvatar: avatarName });
+                                          return; }
+  if (Tootsville.Tank.scene)
+  { Tootsville.AvatarBuilder.build (avatar, Tootsville.Tank.scene); } };
 
 /**
  * Create the  text scene with ground  plane and the player's  Toot with
@@ -304,7 +305,7 @@ Tootsville.Tank.playerAvatar = function ()
 { if ( (! Tootsville.Tank.scene) ||
        (! Tootsville.Tank.avatars) )
   { return null; }
-  return Tootsville.Tank.avatars [ Tootsville.character.name ]; };
+  return Tootsville.Tank.avatars [ Tootsville.character ]; };
 
 /**
  * Reposition the camera as needed.
@@ -325,3 +326,17 @@ Tootsville.Tank.destroyAvatar = function (avatar)
 { delete Tootsville.Tank.avatars [ avatar.name ];
   if (avatar.model)
   { avatar.model.destroy (); } };
+
+/**
+*
+*/
+Tootsville.Tank.findAvatar = function (avatarName)
+{ if (Tootsville.Tank.avatars [ avatarName ])
+  { return Tootsville.Tank.avatars [ avatarName ]; }
+  if (! Tootsville.Tank.scene)
+  { return null; }
+  for (let i = 0; i < Tootsville.Tank.scene.meshes; ++i)
+  { if (Tootsville.Tank.scene.meshes [ i ].name == "avatar/" + avatarName)
+    { return Tootsville.Tank.scene.meshes [ i ]; } }
+  return null; };
+

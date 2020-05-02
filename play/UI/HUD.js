@@ -353,20 +353,22 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
   return false; /* TODO */
-  if (Tootsville.character.avatar )
-  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
+  if (Tootsville.Tank.avatars [ Tootsville.character ] )
+  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.Tank.avatars [ Tootsville.character ],
+                                                  paperdoll); }
   if ( (! Tootsville.character) ||
        (! paperdoll.scene) ||
        (! paperdoll.scene.avatars) ||
        (! Tootsville.Tank.scene) ) { return; }
-  if (!(Tootsville.Util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
-  { Tootsville.AvatarBuilder.update (Tootsville.character, paperdoll.scene.avatars [Tootsville.character.name].model,
+  if (!(Tootsville.Util.equalP (Tootsville.Tank.avatars [ Tootsville.character ], paperdoll.avatar))) /* _.isEqual would be better TODO */
+  { Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [ Tootsville.character ], paperdoll.scene.TODO,
                                      paperdoll.scene, () =>
                                      { paperdoll.avatar = Object.assign({}, Tootsville.character);
                                        paperdoll.scene.render (); });
     /* XXX These  probably belong in  some kind of watcher  for wardrobe
      * changes, but for now this works. */
-  Tootsville.AvatarBuilder.update (Tootsville.character, Tootsville.Tank.avatars [Tootsville.character.name].model,
+    Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [Tootsville.character],
+                                     Tootsville.Tank.avatars [Tootsville.character].model,
                                    Tootsville.Tank.scene, () => {}); } };
 
 /**
@@ -412,16 +414,18 @@ Tootsville.UI.HUD.refreshTalkStatus = function ()
  * Wallet app in Tootnix.
  */
 Tootsville.UI.HUD.refreshWallet = function ()
-{ if (! Tootsville.character)
-  { Tootsville.character = { peanuts: -1, fairyDust: -1 }; }
+{ if (! Tootsville.character) { return; }
+  if (! Tootsville.Tank.avatars [ Tootsville.character ] )
+  { console.warn ("No avatar info for " + Tootsville.character);
+    Tootsville.Tank.avatars [ Tootsville.character ] = { peanuts: -1, fairyDust: -1 }; }
   const walletAppPeanuts = document.getElementById ('wallet-show-peanuts');
   const walletAppPeanutCount = document.getElementById ('wallet-show-peanuts-count');
-  if (0 < Tootsville.character.peanuts)
-  { document.getElementById ('wallet-peanuts-display').innerHTML = Tootsville.character.peanuts;
+  if (0 < Tootsville.Tank.avatars [ Tootsville.character ].peanuts)
+  { document.getElementById ('wallet-peanuts-display').innerHTML = Tootsville.Tank.avatars [ Tootsville.character ] .peanuts;
     document.getElementById ('wallet-peanuts-icon').style.opacity = 1;
     if (walletAppPeanuts) {
         walletAppPeanuts.style.opacity = 1;
-        walletAppPeanutCount.innerHTML = Tootsville.character.peanuts; } }
+        walletAppPeanutCount.innerHTML =Tootsville.Tank.avatars [ Tootsville.character ] .peanuts; } }
   else
   { document.getElementById ('wallet-peanuts-display').innerHTML = '';
     document.getElementById ('wallet-peanuts-icon').style.opacity = 0;
@@ -430,12 +434,12 @@ Tootsville.UI.HUD.refreshWallet = function ()
         walletAppPeanutCount.innerHTML = ''; } }
   const walletAppFairyDust = document.getElementById ('wallet-show-fairy-dust');
   const walletAppFairyDustCount = document.getElementById ('wallet-show-fairy-dust-count');
-  if (0 < Tootsville.character.fairyDust)
-  { document.getElementById ('wallet-fairy-dust-display').innerHTML = Tootsville.character.fairyDust;
+  if (0 < Tootsville.Tank.avatars [ Tootsville.character ] .fairyDust)
+  { document.getElementById ('wallet-fairy-dust-display').innerHTML = Tootsville.Tank.avatars [ Tootsville.character ] .fairyDust;
     document.getElementById ('wallet-fairy-dust-icon').style.opacity = 1;
     if (walletAppFairyDust) {
         walletAppFairyDust.style.opacity = 1;
-        walletAppFairyDustCount.innerHTML = Tootsville.character.peanuts; } }
+        walletAppFairyDustCount.innerHTML =Tootsville.Tank.avatars [ Tootsville.character ] .peanuts; } }
   else
   { document.getElementById ('wallet-fairy-dust-display').innerHTML = '';
     document.getElementById ('wallet-fairy-dust-icon').style.opacity = 0;
@@ -573,12 +577,10 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   if (! picked.pickedMesh) { return; }
   if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
   { if (event.detail > 1) /* double or triple click */
-    { Tootsville.Game.Nav.runTo (Tootsville.Tank.avatars [Tootsville.character.name],
-                                 picked.pickedPoint);
+    { Tootsville.Game.Nav.runTo (Tootsville.Tank.avatars [ Tootsville.character ], picked.pickedPoint);
       return;}
     else
-    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.avatars [Tootsville.character.name],
-                                 picked.pickedPoint); }
+    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.avatars [ Tootsville.character ], picked.pickedPoint); }
     return; }
   Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh, picked); };
 
@@ -586,7 +588,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
 *
 */
 Tootsville.UI.HUD.showPlayerCard = function (name)
-{ if (name == Tootsville.character.name) { return; }
+{ if (name == Tootsville.character) { return; }
   alert ("TODO: Show Player Card for " + name); };
 
 /**
