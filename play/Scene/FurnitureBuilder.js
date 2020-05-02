@@ -69,29 +69,6 @@ Tootsville.FurnitureBuilder.enableShadows = function (object, scene)
           Tootsville.Tank.getLargestChildMesh (object)); }; };
 
 /**
- * Create a physics impostor for the object
- */
-Tootsville.FurnitureBuilder.enablePhysics = function (item, object, scene)
-{ let largestChild = Tootsville.Tank.getLargestChildMesh (object);
-  largestChild.physicsImpostor =
-  new BABYLON.PhysicsImpostor (largestChild,
-                               BABYLON.PhysicsImpostor.BoxImpostor,
-                               { mass: item.template.weight, restitution: .05 },
-                               scene);
-  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== largestChild);
-  for (let i = 0; i < otherMeshes.length; ++i)
-  { otherMeshes [i].physicsImpostor =
-    new BABYLON.PhysicsImpostor (otherMeshes [i],
-                                 BABYLON.PhysicsImpostor.NoImpostor,
-                                 { mass: 10, restitution: 0 },
-                                 scene); }
-  object.physicsImpostor =
-  new BABYLON.PhysicsImpostor (object,
-                               BABYLON.PhysicsImpostor.NoImpostor,
-                               { mass: item.template.weight, restitution: .05 },
-                               scene); };
-
-/**
  * Stash a reference to the item it the scene.items object.
  */
 Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
@@ -104,14 +81,16 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
  * asset manager.
  */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
-{ console.debug ("Building " + item.template.name + " " + item.uuid);
+{ console.debug ("Building furniture " + item.template.name + " " + item.uuid);
   if (item.avatarScaling)
   { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
   model.checkCollisions = true;
   try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.FurnitureBuilder.enablePhysics (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); } catch (e) { console.error (e); } };
+  try { Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); } catch (e) { console.error (e); }
+  if (item.growth)
+  { try { Tootsville.Game.GrowthSystem.register (item); } catch (e) { console.error (e); } }
+};
 
 /**
  * Load an item template avatar from the assets server.
@@ -153,8 +132,9 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  *
  */
 Tootsville.FurnitureBuilder.build = function (item, scene, finish)
-{ if (scene.items && scene.items [item.uuid] && scene.items [item.uuid].model)
-  { Tootsville.FurnitureBuilder.update (item. scene.items [item.uuid].model, scene, finish); }
+{ if (!scene) { console.error ("Cannot build furniture without a scene"); return; }
+  if (scene.items && scene.items [item.uuid] && ('model' in scene.items [item.uuid]))
+  { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else
  { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };
 

@@ -43,17 +43,13 @@ if (!('GroundBuilder' in Tootsville)) { Tootsville.GroundBuilder = {}; }
 Tootsville.GroundBuilder.initGroundPlane = function ()
 { const ground =
         BABYLON.Mesh.CreateGround ('ground',
-                                   2000, 2000, 10,
+                                   2000, 2000, 0,
                                    Tootsville.Tank.scene);
   ground.material = new BABYLON.StandardMaterial ('ground',
                                                   Tootsville.Tank.scene);
   ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
   ground.material.specularColor = new BABYLON.Color3.FromHexString (interpretTootColor ('spring-green'));
   ground.receiveShadows = true;
-  ground.physicsImpostor =  new BABYLON.PhysicsImpostor (ground,
-                                                         BABYLON.PhysicsImpostor.BoxImpostor,
-                                                         { mass: 0, friction: .5, restitution: 3 },
-                                                         Tootsville.Tank.scene);
   ground.checkCollisions = true;
   Tootsville.Tank.ground = ground;
   return ground; };
@@ -66,4 +62,4 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
 Tootsville.GroundBuilder.build = function (x, y, z)
 {
     /* TODO — get terrain data and build heightmap */
-    const ground = Tootsville.GroundBuilder.initGroundPlane (); };
+    Tootsville.GroundBuilder.initGroundPlane (); };

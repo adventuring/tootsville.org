@@ -51,7 +51,9 @@
      characterUUID: null,
      privateKey: null,
      audio: { volume: 80,
-              savedVolume: 80 } };
+              savedVolume: 80 },
+     UI: {},
+     seen: {} };
 
 if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||
@@ -63,10 +65,11 @@ if (('test.tootsville.org' == Tootsville.cluster) ||
   document.domain = Tootsville.cluster; }
 else
 { Tootsville.cluster = 'local';
+  let host = location.hostname;
   Tootsville.host =
-  { www: 'http://localhost:5001',
-    play: 'http://localhost:5002',
-    game: 'http://localhost:5000' }; }
+  { www: 'http://' + host + ':5001',
+    play: 'http://' + host + ':5002',
+    game: 'http://' + host + ':5000' }; }
 
 window.loadWatchdog1 = setTimeout(() => {
     if (Tootsville.UI.slowLoadingWatchdog)

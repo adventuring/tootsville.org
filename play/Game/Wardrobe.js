@@ -168,7 +168,7 @@ Tootsville.Game.Wardrobe.proposeExchange = function(tradePartner, offerItems, de
     return { exchange: {
         offers: [
             {
-                from: Tootsville.character.name,
+                from: Tootsville.character,
                 items: Array.map(offerItems, Tootsville.Item.publicInfo)
             },
             {

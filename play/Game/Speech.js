@@ -36,34 +36,49 @@ if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
 
 /**
  * Someone (maybe us) has spoken, so put up a speech balloon.
- *
- * FIXME: when replacing an existing balloon, remove it first.
+ */
+/*
+ * FIXME Bug  #24: when replacing an existing balloon, remove it first.
  */
 Tootsville.Game.Speech.say = function (words, extraClass, speaker)
-{ if (!speaker) { speaker = Tootsville.character.name; }
+{ if (! speaker) { speaker = Tootsville.character; }
+  if ((! words) || (0 == words.length)) { return; }
   const balloon = document.createElement ('DIV');
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
-  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100;
-  const avatar = Tootsville.Tank.scene.avatars [speaker];
+  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100; 
+  const avatar = Tootsville.Tank.avatars [speaker];
+  if (! avatar)
+  { console.warn ("Surprised to hear from " + speaker);
+    Tootsville.Util.infinity ("finger", { talkie: speaker });
+    return; }
   avatar.speech = balloon;
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
+
 
 /**
  * The time has passed; remove a speech balloon.
  */
 Tootsville.Game.Speech.removeSpeech = function (balloon)
-{ balloon.parentNode.removeChild (balloon); };
+{ if (balloon && balloon.parentNode)
+  { balloon.parentNode.removeChild (balloon); } };
 
 /**
  * Update speech baloons, expiring any that have aged out.
  */
 Tootsville.Game.Speech.updateSpeech = function ()
-{ if ( (!Tootsville.Tank.scene) || (!Tootsville.Tank.scene.avatars) ) { return; }
-  const avatars = Object.values(Tootsville.Tank.scene.avatars);
+{ if ( (!Tootsville.Tank.scene) || (!Tootsville.Tank.avatars) ) { return; }
+  const avatars = Object.values(Tootsville.Tank.avatars);
   for (let i = 0; i < avatars.length; ++i)
   { let balloon = avatars [i].speech;
     if (balloon && Tootsville.Game.now > balloon.endTime)
     { Tootsville.Game.Speech.removeSpeech (balloon);
       delete avatars[i]['speech']; } } };
+
+Tootsville.Game.Speech.dispatchCommand = function (commandLine)
+{ let words = commandLine.split (' ');
+  switch (words[0])
+  { case '~ua':
+    Tootsville.UI.say ("My UA is " + navigator.userAgent);
+    break; }; };

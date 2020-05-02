@@ -38,7 +38,8 @@ if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
  * Colorize an Avatar and apply their pattern
  */
 Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
-{ const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
+{ if (! model) { return; }
+  const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
                                                      scene);
   skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
   /* TODO apply pattern texture map to the skin */
@@ -67,7 +68,7 @@ Tootsville.AvatarBuilder.addNameTag = function (avatar, model, scene)
   nameTag.innerHTML = avatar.userName; /* Note this may start with ◆ */
   nameTag.className = 'name-tag';
   document.getElementById('hud').append (nameTag);
-  scene.avatars [avatar.name].nameTag = nameTag;
+  Tootsville.Tank.findAvatar (avatar.name).nameTag = nameTag;
   Tootsville.UI.HUD.refreshNameTagAttachment (model, nameTag); };
 
 
@@ -84,47 +85,35 @@ Tootsville.AvatarBuilder.enableShadows = function (object, scene)
  * Add the avatar to the global list of avatars in the scene
  */
 Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
-{ if (!('avatars' in scene)) { scene.avatars = {}; }
-  scene.avatars [avatar.name] = Object.assign ((scene.avatars [avatar.name] || {}), avatar);
-  scene.avatars [avatar.name].model = object; };
+{ if (Tootsville.Tank.avatars [ avatar.name ].model)
+  { console.error ("Already remembered a model for avatar " + avatar.name);
+    object.destroy ();
+    return; }
+    Tootsville.Tank.avatars [ avatar.name ] = Object.assign ((Tootsville.Tank.avatars [avatar.name] || {}), avatar);
+  console.log ("Remembering model ", object, " for avatar ", avatar.name);
+  Tootsville.Tank.avatars [avatar.name].model = object; };
 
 /**
- * Create a physics impostor for the object
- */
-Tootsville.AvatarBuilder.enablePhysics = function (avatar, object, scene)
-{ let largestChild = Tootsville.Tank.getLargestChildMesh (object);
-  largestChild.physicsImpostor =
-  new BABYLON.PhysicsImpostor (largestChild,
-                               BABYLON.PhysicsImpostor.BoxImpostor,
-                               { mass: 6000, restitution: .05 },
-                               scene);
-  const otherMeshes = object.getChildMeshes().filter (mesh => mesh !== largestChild);
-  for (let i = 0; i < otherMeshes.length; ++i)
-  { otherMeshes [i].physicsImpostor =
-    new BABYLON.PhysicsImpostor (otherMeshes [i],
-                                 BABYLON.PhysicsImpostor.NoImpostor,
-                                 { mass: 10, restitution: 0 },
-                                 scene); }
-  object.physicsImpostor =
-  new BABYLON.PhysicsImpostor (object,
-                               BABYLON.PhysicsImpostor.NoImpostor,
-                               { mass: 6000, restitution: .05 },
-                               scene); };
-
-
-/**
- * Actually build the (cloned meshes) avatar.
+ * Actually build the avatar.
  *
  * Don't call this directly, call `Tootsville.AvatarBuilder.build'.
  */
 Tootsville.AvatarBuilder.build2 = function (avatar, model, scene, finish)
 { console.debug ("Building " + avatar.avatar + " " + avatar.userName);
+  let existing = Tootsville.Tank.findAvatar (avatar.name);
+  if (existing.model)
+  { console.warn ("Canceling AvatarBuilder.build2 for " + avatar.userName + " because found one existing");
+    return; }
   // TODO set scaling
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.addNameTag (avatar, model, scene); } catch (e) { console.error (e); }
-  // try { Tootsville.AvatarBuilder.enablePhysics (avatar, model, scene); } catch (e) { console.error (e); }
+  let a = Tootsville.Tank.avatars [avatar.name];
+  if (!a) { return; }
+  try { Tootsville.AvatarBuilder.addNameTag (a, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.AvatarBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
-  try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); } };
+  try { Tootsville.Game.GravitySystem.register (a, model); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.colorize (a, model, scene, finish); } catch (e) { console.error (e); }
+  if (avatar.npc)
+  { try { Tootsville.Game.NPCSystem.register (a); } catch (e) { console.error (e); } } };
 
 /**
  * Load the base avatar model from Jumbo.
@@ -160,9 +149,10 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
  *
  */
 Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
-{ try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); }
+{ console.log ("Update avatar " + avatar.name + " as ", avatar, " model ", model);
+  try { Tootsville.AvatarBuilder.colorize (avatar, model, scene, finish); } catch (e) { console.error (e); }
   try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
-  finish (model); };
+  if (finish) { finish (model); } };
 
 /**
  * Build an avatar based upon the description passed in.
@@ -173,8 +163,14 @@ Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
  * A duplicate of an existing avatar will not be created, but it may be updated.
  */
 Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
-{ if (scene.avatars && scene.avatars [avatar.name] && scene.avatars [avatar.name].model)
-  { Tootsville.AvatarBuilder.update (avatar, scene.avatars [avatar.name].model, scene, finish); }
-  else
-  { Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); } };
+{ if (Tootsville.Tank.avatars && Tootsville.Tank.avatars [avatar.name] && Tootsville.Tank.avatars [avatar.name].model)
+  { Tootsville.AvatarBuilder.update (avatar, Tootsville.Tank.avatars [avatar.name].model, scene, finish);
+    return; }
+  let existing = Tootsville.Tank.findAvatar (avatar.name);
+  if (existing.model)
+  { console.warn ("Found forgotten avatar model for " + avatar.name);
+    Tootsville.Tank.avatars [ avatar.name ].model = existing.model;
+    Tootsville.AvatarBuilder.update (avatar, Tootsville.Tank.avatars [avatar.name].model, scene, finish);
+    return; }
+ Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };
 

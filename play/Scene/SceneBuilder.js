@@ -38,11 +38,7 @@ Tootsville.SceneBuilder.makeBallPit = function (scene)
    { let sphere = BABYLON.Mesh.CreateSphere("sphere" * i, 4, 2 + 10 * i / 100, scene);
      sphere.position.x = Math.sin (i);
      sphere.position.y = 8 * i;
-     sphere.position.z = Math.cos (i);
-    sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere,
-                                                         BABYLON.PhysicsImpostor.SphereImpostor,
-                                                         { mass: 1, restitution: 0.1 },
-                                                         scene); } };
+     sphere.position.z = Math.cos (i); } };
 
 /**
  * Place furniture as found in the current scene.
@@ -54,15 +50,15 @@ Tootsville.SceneBuilder.build = function (x, y, z)
   Tootsville.FurnitureBuilder.build (
       { uuid: 'fountain1',
         template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 0 },
-        baseColor: 'periwinkle', altColor: 'yellow', position: { x: 25, y: 0, z: -25 }, facing: 0 },
+        baseColor: 'periwinkle', altColor: 'yellow', position: { x: -10, y: 0, z: -50 }, facing: 0 },
       scene);
   Tootsville.FurnitureBuilder.build (
       { uuid: 'fountain2',
         template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 0 },
-        baseColor: 'periwinkle', altColor: 'yellow', position: { x: 25, y: 0, z: 25 }, facing: Math.PI * 2/3 },
+        baseColor: 'periwinkle', altColor: 'yellow', position: { x: 50, y: 0, z: 50 }, facing: Math.PI * 2/3 },
       scene);
   Tootsville.FurnitureBuilder.build (
       { uuid: 'fountain3',
         template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 0 },
-        baseColor: 'periwinkle', altColor: 'yellow', position: { x: -25, y: 0, z: -25 }, facing: Math.PI * 4/3 },
+        baseColor: 'periwinkle', altColor: 'yellow', position: { x: -10, y: 0, z: 50 }, facing: Math.PI * 4/3 },
       scene); };

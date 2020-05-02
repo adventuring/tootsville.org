@@ -15,3 +15,5 @@ time
 tree
 uglify-js
 inotify-tools
+nodejs-request
+jsr-305

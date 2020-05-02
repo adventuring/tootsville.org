@@ -44,21 +44,24 @@ Tootsville.UI.HUD.talkBoxOpenP = true;
 Tootsville.UI.HUD.getOpenPanel = function ()
 { var panels = document.querySelectorAll ('.hud-panel');
   if (! panels) { return null; }
-  for (var i = 0; i < panels.length; i++)
-  { var panel = panels[i];
+  for (let i = 0; i < panels.length; i++)
+  { let panel = panels[i];
     if (panel.style.opacity > .5)
     { return panel; } }
-  return null;};
+  return null; };
 
 /**
  * Close (hide) the active HUD panel.
  */
+/*
+ * FIXME Bug #26 --- closing the Paperdoll panel crashes the game
+ */
 Tootsville.UI.HUD.closePanel = function ()
-{ var foundAny = false;
-  for (var panelPopup = Tootsville.UI.HUD.getOpenPanel ();
+{ let foundAny = false;
+  for (let panelPopup = Tootsville.UI.HUD.getOpenPanel ();
        panelPopup;
        panelPopup = Tootsville.UI.HUD.getOpenPanel ())
-  { var panelID = panelPopup.id;
+  { let panelID = panelPopup.id;
     if (panelID == 'paperdoll')
     { Tootsville.UI.HUD.returnPaperdollMini (); }
     else
@@ -349,19 +352,23 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
  */
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
-  if (Tootsville.character.avatar && (! paperdoll.scene) )
-  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.character, paperdoll); }
+  return false; /* TODO */
+  if (Tootsville.Tank.avatars [ Tootsville.character ] )
+  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.Tank.avatars [ Tootsville.character ],
+                                                  paperdoll); }
   if ( (! Tootsville.character) ||
        (! paperdoll.scene) ||
        (! paperdoll.scene.avatars) ||
        (! Tootsville.Tank.scene) ) { return; }
-  if (!(Tootsville.Util.equalP (Tootsville.character, paperdoll.avatar))) /* _.isEqual would be better TODO */
-  { Tootsville.AvatarBuilder.update (Tootsville.character, paperdoll.scene.avatars [Tootsville.character.name].model,
+  if (!(Tootsville.Util.equalP (Tootsville.Tank.avatars [ Tootsville.character ], paperdoll.avatar))) /* _.isEqual would be better TODO */
+  { Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [ Tootsville.character ], paperdoll.scene.TODO,
                                      paperdoll.scene, () =>
                                      { paperdoll.avatar = Object.assign({}, Tootsville.character);
                                        paperdoll.scene.render (); });
-    /* XXX These probably belong in some kind of watcher for wardrobe changes, but for now this works. */
-  Tootsville.AvatarBuilder.update (Tootsville.character, Tootsville.Tank.scene.avatars [Tootsville.character.name].model,
+    /* XXX These  probably belong in  some kind of watcher  for wardrobe
+     * changes, but for now this works. */
+    Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [Tootsville.character],
+                                     Tootsville.Tank.avatars [Tootsville.character].model,
                                    Tootsville.Tank.scene, () => {}); } };
 
 /**
@@ -383,7 +390,7 @@ Tootsville.UI.HUD.refreshEquipment = function ()
 Tootsville.UI.HUD.switchActiveItem = function ()
 { if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
   { return; }
-  var prior = Tootsville.player.activeItem;
+  let prior = Tootsville.player.activeItem;
   if (prior) { Tootsville.wardrobe.doff (prior); }
   Tootsville.wardrobe.don (Tootsville.player.inactiveItem);
   if (prior) { Tootsville.wardrobe.don2 (prior); }
@@ -407,16 +414,18 @@ Tootsville.UI.HUD.refreshTalkStatus = function ()
  * Wallet app in Tootnix.
  */
 Tootsville.UI.HUD.refreshWallet = function ()
-{ if (! Tootsville.character)
-  { Tootsville.character = { peanuts: -1, fairyDust: -1 }; }
+{ if (! Tootsville.character) { return; }
+  if (! Tootsville.Tank.avatars [ Tootsville.character ] )
+  { console.warn ("No avatar info for " + Tootsville.character);
+    Tootsville.Tank.avatars [ Tootsville.character ] = { peanuts: -1, fairyDust: -1 }; }
   const walletAppPeanuts = document.getElementById ('wallet-show-peanuts');
   const walletAppPeanutCount = document.getElementById ('wallet-show-peanuts-count');
-  if (0 < Tootsville.character.peanuts)
-  { document.getElementById ('wallet-peanuts-display').innerHTML = Tootsville.character.peanuts;
+  if (0 < Tootsville.Tank.avatars [ Tootsville.character ].peanuts)
+  { document.getElementById ('wallet-peanuts-display').innerHTML = Tootsville.Tank.avatars [ Tootsville.character ] .peanuts;
     document.getElementById ('wallet-peanuts-icon').style.opacity = 1;
     if (walletAppPeanuts) {
         walletAppPeanuts.style.opacity = 1;
-        walletAppPeanutCount.innerHTML = Tootsville.character.peanuts; } }
+        walletAppPeanutCount.innerHTML =Tootsville.Tank.avatars [ Tootsville.character ] .peanuts; } }
   else
   { document.getElementById ('wallet-peanuts-display').innerHTML = '';
     document.getElementById ('wallet-peanuts-icon').style.opacity = 0;
@@ -425,12 +434,12 @@ Tootsville.UI.HUD.refreshWallet = function ()
         walletAppPeanutCount.innerHTML = ''; } }
   const walletAppFairyDust = document.getElementById ('wallet-show-fairy-dust');
   const walletAppFairyDustCount = document.getElementById ('wallet-show-fairy-dust-count');
-  if (0 < Tootsville.character.fairyDust)
-  { document.getElementById ('wallet-fairy-dust-display').innerHTML = Tootsville.character.fairyDust;
+  if (0 < Tootsville.Tank.avatars [ Tootsville.character ] .fairyDust)
+  { document.getElementById ('wallet-fairy-dust-display').innerHTML = Tootsville.Tank.avatars [ Tootsville.character ] .fairyDust;
     document.getElementById ('wallet-fairy-dust-icon').style.opacity = 1;
     if (walletAppFairyDust) {
         walletAppFairyDust.style.opacity = 1;
-        walletAppFairyDustCount.innerHTML = Tootsville.character.peanuts; } }
+        walletAppFairyDustCount.innerHTML =Tootsville.Tank.avatars [ Tootsville.character ] .peanuts; } }
   else
   { document.getElementById ('wallet-fairy-dust-display').innerHTML = '';
     document.getElementById ('wallet-fairy-dust-icon').style.opacity = 0;
@@ -458,16 +467,16 @@ Tootsville.UI.HUD.toggleTalkLoud = function (event)
 
 /**
  * Toggle visibility of the Expressions selector for the Talk Box.
-*
-* TODO
+ *
+ * TODO
  */
 Tootsville.UI.HUD.toggleTalkExpression = function (event)
 { event.preventDefault (); };
 
 /**
  * Toggle visibility of the Emoji selector for the Talk Box.
-* 
-* TODO
+ * 
+ * TODO
  */
 Tootsville.UI.HUD.toggleTalkEmoji = function (event)
 { event.preventDefault (); };
@@ -552,28 +561,26 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
 { if ( (! Tootsville.Tank.scene) ||
-       (! Tootsville.Tank.scene.avatars) )
+       (! Tootsville.Tank.avatars) )
   { return; }
-  const avatars = Tootsville.Tank.scene.avatars;
+  const avatars = Tootsville.Tank.avatars;
   for (let i = 0; i < avatars.length; ++i)
   { Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]); } };
-
 
 /**
  * Convert an event on the HUD or CANVAS object into a 3D event as appropriate.
  */
 Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
 { const picked = Tootsville.Tank.scene.pick (event.clientX, event.clientY);
+  console.log ("Click at ", event.clientX + ", " + event.clientY, " hit ", picked);
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
-  if (picked.pickedMesh == Tootsville.Tank.ground)
-  { picked.pickedPoint.y = 0; /* For some reason we get about ±1 usually */
-    if (event.detail > 1) /* double or triple click */
-    { Tootsville.Game.Nav.runTo (Tootsville.Tank.scene.avatars [Tootsville.character.name],
-                                       picked.pickedPoint); }
+  if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
+  { if (event.detail > 1) /* double or triple click */
+    { Tootsville.Game.Nav.runTo (Tootsville.Tank.avatars [ Tootsville.character ], picked.pickedPoint);
+      return;}
     else
-    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.scene.avatars [Tootsville.character.name],
-                                 picked.pickedPoint); }
+    { Tootsville.Game.Nav.walkTheLine (Tootsville.Tank.avatars [ Tootsville.character ], picked.pickedPoint); }
     return; }
   Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh, picked); };
 
@@ -581,7 +588,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
 *
 */
 Tootsville.UI.HUD.showPlayerCard = function (name)
-{ if (name == Tootsville.character.name) { return; }
+{ if (name == Tootsville.character) { return; }
   alert ("TODO: Show Player Card for " + name); };
 
 /**
@@ -589,10 +596,12 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
  */
 Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
 { const pickedName = mesh.name || '';
+  if ('ground' == pickedName)
+  { console.error ("Click on ground went to clickedOnMesh"); }
   if (0 == pickedName.indexOf ('avatar/'))
   { Tootsville.UI.HUD.showPlayerCard (mesh.name.substr (7)); }
   else if (0 == pickedName.indexOf ('item/'))
-  { Tootsville.Game.clickedOnItem (mesh.name, picked); }
+  { Tootsville.UI.clickedOnItem (mesh.name, picked); }
   else
   { console.debug ('User clicked mesh ', mesh.name, picked);
     if (mesh.parent)

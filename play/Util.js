@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/util.js is part of Tootsville
+ * ./play/Util.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -30,7 +30,7 @@
  * USA
  *
  */
-if (!("util" in Tootsville)) { Tootsville.Util = {}; }
+if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
 
 /**
  * Ensure that @code{hostName} is a  valid hostname for the game cluster

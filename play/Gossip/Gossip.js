@@ -104,7 +104,8 @@ Tootsville.Gossip.createConnection = function ()
                                    peer.connection.localDescription);
                  Tootsville.Util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
                      next => { console.debug ("⁂", next);
-                               Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }); });
+                               if (null == next) { Tootsville.Gossip.createConnection (); }
+                               else { Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }}); });
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
 /**
@@ -113,22 +114,33 @@ Tootsville.Gossip.createConnection = function ()
  * See the server documentation of `DEFINFINITY' for a description of the
  * Infinity Mode protocols.
  *
- * Commands are handled via the Tootsville.Game.gatekeeper handlers.
+ * Commands are handled via the Tootsville.Game.Gatekeeper handlers.
  */
 Tootsville.Gossip.gatekeeperAccept = function (peer, event)
 { let gram = event.data;
   if (gram.c && Tootsville.Game.Commands [ gram.c ])
   { Tootsville.Game.Commands [ gram.c ] (gram.d, gram.u, gram.r); }
-  else if (gram.from && Tootsville.Game.gatekeeper [ gram.from ])
-  { Tootsville.Game.gatekeeper [ gram.from ] (gram); }
+  else if (gram.from && Tootsville.Game.Gatekeeper [ gram.from ])
+  { Tootsville.Game.Gatekeeper [ gram.from ] (gram);
+    if (Tootsville.Gossip.eavesdroppers [ gram.from ])
+    { for (let i = 0; i < Tootsville.Gossip.eavesdroppers [ gram.from ].length; ++i)
+      { Tootsville.Gossip.eavesdroppers [ gram.from ].pop ()(gram); } } }
   else if (gram.seq)
   { for (let i = 0; i < gram.seq.length; ++i)
     { Tootsville.Gossip.gatekeeperAccept (peer, { data: gram.seq [i] }); } }
   else if (gram._cmd && gram._cmd == 'logOK')
-  { Tootsville.Game.gatekeeper.logOK (gram); }
+  { Tootsville.Game.Gatekeeper.logOK (gram); }
   else
   { Tootsville.warn ("Unknown datagram type received", gram); }
   /* TODO: echo routing */ };
+
+Tootsville.Gossip.eavesdroppers = {};
+
+Tootsville.Gossip.eavesdrop = function (fromType, callback) {
+    if (! Tootsville.Gossip.eavesdroppers [ fromType ])
+    { Tootsville.Gossip.eavesdroppers [ fromType ] = []; }
+    Tootsville.Gossip.eavesdroppers [ fromType ].push (callback);
+};
 
 /**
  * Remove a gossip PEER connection
@@ -141,12 +153,15 @@ Tootsville.Gossip.closeInfinityMode = function (peer, event)
  * Ensure that we have at least 5 gossip network connections.
  */
 Tootsville.Gossip.ensureConnected = function (success)
-{ let length = Tootsville.Gossip.peers.length;
-  if (length > 4)
-  { Tootsville.warn ("Gossipnet already connected at " + length + " points");
-    success (); } else
-  { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
-    Tootsville.Gossip.connect (success); } };
+{ return new Promise ( () => { return false; } );;
+  /* ↑ Disabled for now. */
+  return new Promise ( () =>
+                       { let length = Tootsville.Gossip.peers.length;
+                         if (length > 4)
+                         { Tootsville.warn ("Gossipnet already connected at " + length + " points");
+                           success (); } else
+                         { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
+                           Tootsville.Gossip.connect (success); } } ); };
 
 
 /**
@@ -189,6 +204,7 @@ Tootsville.Gossip.openInfinityMode = function (peer, event)
 Tootsville.Gossip.send = function (c, d, r, a, v)
 { let packet = Tootsville.Gossip.createPacket (c, d, r || '$World', a, v);
   /* TODO: Routing */
+  Tootsville.Util.stream (packet);
   for (let i = 0; i < Tootsville.Gossip.peers.length; ++i)
   { if ((! v)
         || (! (v.includes (Tootsville.Gossip.peers[ i ].uuid))))
@@ -240,13 +256,17 @@ Tootsville.Gossip.createPacket = function (c, d, r)
   packet [ ((c == 'logOK') ? '_cmd'
             : (c.substring (0,1) == ':') ? 'from'
             : 'c') ] = (c.substring (0,1) == ':') ? c.substring(1) : c;
-  return JSON.stringify (packet); };
+  return packet; };
 
 /**
  * Send a logOK message to the gossip net.
  */
 Tootsville.Gossip.sendLogOK = function ()
 { Tootsville.Gossip.sendPacket ('logOK', { neighbor: Tootsville.characterUUID }); };
+
+Tootsville.Gossip.connectToServer = function () {
+    Tootsville.Util.connectWebSocket ();
+};
 
 /**
  * Connect to the global gossip network.
@@ -255,6 +275,7 @@ Tootsville.Gossip.sendLogOK = function ()
  */
 Tootsville.Gossip.connect = function (success)
 { Tootsville.Gossip.ensureKeyPair ();
+  Tootsville.Gossip.connectToServer ();
   Tootsville.Gossip.createConnection ();
   Tootsville.Gossip.getOffer (success); };
 
@@ -262,7 +283,9 @@ Tootsville.Gossip.connect = function (success)
  * Are we connected to the global gossip network (at all)?
  */
 Tootsville.Gossip.connectedP = function ()
-{ return Tootsville.Gossip.peers.length > 0; };
+{ return ( (Tootsville.Gossip.peers.length > 0) ||
+           (Tootsville.Util.WebSocket &&
+            Tootsville.Util.WebSocket.readyState == WebSocket.OPEN) ); };
 
 /**
  * Obtain ICE server info from the game server.

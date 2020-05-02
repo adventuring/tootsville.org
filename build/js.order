@@ -2,6 +2,7 @@
 play/Tootsville.js
 
 play/Util.js
+play/Stream.js
 
 play/Analytics.js
 play/Rollbar.js
@@ -16,6 +17,7 @@ play/Login/Login.js
 
 play/lib/adapter.js/adapter.js
 
+play/Game/Credits.js
 play/Game/Wardrobe.js
 play/Game/Commands.js
 play/Game/Gatekeeper.js
@@ -23,6 +25,24 @@ play/Game/Tools.js
 play/Game/Game.js
 play/Game/Speech.js
 play/Game/Nav.js
+play/Game/Interact.js
+
+play/Game/BallSystem.js
+play/Game/GravitySystem.js
+play/Game/GrowthSystem.js
+play/Game/MissileSystem.js
+play/Game/NPCSystem.js
+
+play/Game/NPC/Collector.js
+play/Game/NPC/Cook.js
+play/Game/NPC/CroquetPlayer.js
+play/Game/NPC/Doodle.js
+play/Game/NPC/Fetcher.js
+play/Game/NPC/JobWorker.js
+play/Game/NPC/MazeBuilder.js
+play/Game/NPC/Sleeper.js
+play/Game/NPC/TrolleyDriver.js
+play/Game/NPC/Waiter.js
 
 play/UI/Connect.js
 play/UI/GamepadLayouts.js

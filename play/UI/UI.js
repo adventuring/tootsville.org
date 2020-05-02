@@ -176,7 +176,7 @@ Tootsville.UI.slowLoadingWatchdog = function ()
  * For keyboard or gamepad inputs.
  */
 Tootsville.UI.takeOneStep = function (δx, δz)
-{ const avatar = Tootsville.Tank.scene.avatars [Tootsville.character.name];
+{ const avatar = Tootsville.Tank.avatars [Tootsville.character];
   const model = avatar.model;
   Tootsville.Game.Nav.walkTheLine (avatar,
                                    new BABYLON.Vector3 (model.position.x + δx,
@@ -184,9 +184,40 @@ Tootsville.UI.takeOneStep = function (δx, δz)
                                                         model.position.z + δz));
 };
 
-/** 
- * Speak whatever is in the chat entry box.
+/**
+ *
  */
-Tootsville.UI.say = function (words)
-{ if ("" != words)
-  { Tootsville.Game.Speech.say (words); } };
+Tootsville.UI.interact = function (entity)
+{ if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
+ /* TODO */ };
+
+/**
+ * Discover the nearest entity within ``arms' reach'' of the player's facing direction.
+ *
+ * This is for e.g. game pad or keyboard inputs. 
+ */
+Tootsville.UI.findAdjacentEntity = function ()
+{ /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.useActiveItem = function (entity)
+{ if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
+  /* TODO */ };
+
+/**
+ *
+ */
+Tootsville.UI.clickedOnItem = function (meshName, picked)
+{ /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
+};
+
+/**
+*
+*/
+Tootsville.UI.say = function (speech)
+{ if ("~" == speech.charAt (0))
+  { Tootsville.Game.Speech.dispatchCommand (speech); }
+  else
+  { Tootsville.Gossip.send ("speak", { speech: speech }); } };

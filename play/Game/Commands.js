@@ -2,7 +2,7 @@
 /**@license 
  * play/Game/Commands.js is part of Tootsville
  *
- * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2020
+ * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2020,
  * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software: you can redistribute it and/or modify
