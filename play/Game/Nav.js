@@ -73,6 +73,24 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
 /**
 *
 */
+Tootsville.Game.Nav.sendWTL = function ()
+{ let avatar = Tootsville.Tank.avatars [ Tootsville.characterUUID ];
+  let course = undefined; let facing = undefined;
+  if (avatar)
+  { course = avatar.course; facing = avatar.facing;
+    if (! (course))
+    { course = { startPoint: avatar.position, endPoint: avatar.position,
+                 startTime: Tootsville.Game.now + Tootsville.game.lag,
+                 speed: .1 }; } }
+  if (! (facing))
+  { facing = 0; }
+  if (! (course))
+  { console.warn ("No course for sendWTL"); return; }
+  Tootsville.Util.infinity ("wtl", { course: course, facing: facing } ); };
+
+/**
+*
+*/
 Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
 { Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint, Tootsville.Game.Nav.RUN_SPEED);};
 
@@ -153,10 +171,12 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
     { Tootsville.Tank.avatars = {}; }
     if (avatar.model)
     { if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
-      { Tootsville.Game.Nav.updateFacing (avatar); } }
-    if (avatar.course)
-    { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
-      if (done) { delete avatar['course']; } } } };
+      { Tootsville.Game.Nav.updateFacing (avatar); }
+      if (avatar.course)
+      { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
+        if (done) { delete avatar['course'];
+                    if (avatar.name == Tootsville.character)
+                    { Tootsville.Game.Nav.sendWTL (); }}}}}};
 
 /**
  *

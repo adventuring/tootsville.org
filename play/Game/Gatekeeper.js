@@ -474,13 +474,21 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
     Tootsville.player = gram.player;
     Tootsville.Tank.start3D (); }
   else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
-      
+
+/**
+*
+*/
+Tootsville.Game.Gatekeeper.newScript = function (gram)
+{ if (gram.status && gram.script)
+  { Tootsville.Util.loadScript (gram.script); } };
+
 /**
  *
  */
 Tootsville.Game.Gatekeeper.joinOK = function (gram)
 { if (gram.status)
-  { if (gram.uLs == Tootsville.characterUUID)
+  { Tootsville.Game.Nav.sendWTL ();
+    if (gram.uLs == Tootsville.characterUUID)
     { console.log ("I have joined " + gram.r); }
     else
     { console.log (gram.uLs + " has joined " + gram.r);
