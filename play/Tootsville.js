@@ -61,7 +61,7 @@ if (('test.tootsville.org' == Tootsville.cluster) ||
 { Tootsville.host =
   { www: 'https://www.' + Tootsville.cluster,
     play: 'https://play.' + Tootsville.cluster,
-    game: 'https://game.' + Tootsville.cluster.replace('.org','.net') };
+    game: 'https://game1.' + Tootsville.cluster.replace('.org','.net') + ":5000" };
   document.domain = Tootsville.cluster; }
 else
 { Tootsville.cluster = 'local';
