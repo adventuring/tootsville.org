@@ -38,13 +38,13 @@ Tootsville.inform = function (event, details)
 { console.info.apply(console, arguments);
   // ga('send', arguments[0], Array.prototype.join(arguments.splice(1), "\n"));
   if (('Rollbar' in window) && Rollbar.info)
-  { Rollbar.info (arguments.toSource ()); } };
+  { Rollbar.info (arguments); } };
 
 Tootsville.warn = function (message)
 { console.warn.apply(console, arguments);
   ga('send', 'warning', Array.prototype.join(arguments, "\n"));
   if (('Rollbar' in window) && Rollbar.warn)
-  { Rollbar.warn (arguments.toSource ()); } };
+  { Rollbar.warn (arguments); } };
 
 Tootsville.error = function (message)
 { console.error.apply(console, arguments);
