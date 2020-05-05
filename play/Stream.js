@@ -32,7 +32,6 @@
  */
 if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
 
-
 Tootsville.Util.checkStream = function () {
     if (Tootsville.Util.WebSocket)
     { if (Tootsville.Util.WebSocket.readyState == WebSocket.OPEN)
@@ -51,7 +50,7 @@ Tootsville.Util.connectWebSocket = function () {
         uri = uri.replace (":5000", ":5004");
     }
     console.log ("Connecting WebSocket to " + uri);
-    Tootsville.Util.WebSocket = new WebSocket (uri);
+    Tootsville.Util.WebSocket = new WebSocket (uri); 
     Tootsville.Util.WebSocket.onopen = (event) => { Tootsville.Util.openWebSocket (event); }
     Tootsville.Util.WebSocket.onclose = (event) => { Tootsville.Util.closeWebSocket (event); }
     Tootsville.Util.WebSocket.onmessage = (event) => { Tootsville.Util.messageFromWebSocket (event); }
@@ -82,9 +81,12 @@ Tootsville.Util.messageFromWebSocket = function (event)
   console.debug ("Received data from " + data.from, data);
   Tootsville.Gossip.gatekeeperAccept (null, { data: data } ); };
 
-Tootsville.Util.errorFromWebSocket = function (event) {
-    console.warn ("WebSocket error", event);
-};
+Tootsville.Util.errorFromWebSocket = function (event)
+{ console.warn ("WebSocket error", event);
+  Tootsville.Gossip.Parrot.say ("Connection Problem",
+                                "WebSocket connection problem: " + event.type +
+                                " connecting to " + event.target.url +
+                                ". Are you online?"); };
 
 /**
 * Submit an Infinity Mode command to  the servers or peers, but wait for
