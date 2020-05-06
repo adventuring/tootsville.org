@@ -58,9 +58,8 @@ Tootsville.UI.HUD.getOpenPanel = function ()
  */
 Tootsville.UI.HUD.closePanel = function ()
 { let foundAny = false;
-  for (let panelPopup = Tootsville.UI.HUD.getOpenPanel ();
-       panelPopup;
-       panelPopup = Tootsville.UI.HUD.getOpenPanel ())
+  let panelPopup = Tootsville.UI.HUD.getOpenPanel ();
+  if (panelPopup)
   { let panelID = panelPopup.id;
     if (panelID == 'paperdoll')
     { Tootsville.UI.HUD.returnPaperdollMini (); }

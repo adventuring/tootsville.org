@@ -509,11 +509,28 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
       return; }
     avatar.course = gram.course;
     avatar.facing = gram.facing; } };
-      
+
+/**
+*
+*/
 Tootsville.Game.Gatekeeper.bye = function (gram)
 { let avatar = Tootsville.Tank.avatars [ gram.n ];
   if (! (avatar && avatar.uuid == gram.u))
   { console.warn ("UUID mismatch, not destroying avatar. may be a zombie", gram);
     return; }
-  Tootsville.Tank.destroyAvatar (avatar); }
-  
+  Tootsville.Tank.destroyAvatar (avatar); };
+
+/**
+*
+*/
+Tootsville.Game.Gatekeeper.c = function (gram)
+{ if (gram.status)
+  { console.info ("Command processor reports success", gram); }
+  else
+  { console.warn ("Command processor reports error", gram); } };
+
+/**
+*
+*/
+Tootsville.Game.Gatekeeper.goToWeb = function (gram)
+{ if (gram.status) { window.location = gram.url; } };

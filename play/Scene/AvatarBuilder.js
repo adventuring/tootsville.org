@@ -87,7 +87,7 @@ Tootsville.AvatarBuilder.enableShadows = function (object, scene)
 Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
 { if (Tootsville.Tank.avatars [ avatar.name ].model)
   { console.error ("Already remembered a model for avatar " + avatar.name);
-    object.destroy ();
+    object.dispose ();
     return; }
     Tootsville.Tank.avatars [ avatar.name ] = Object.assign ((Tootsville.Tank.avatars [avatar.name] || {}), avatar);
   console.log ("Remembering model ", object, " for avatar ", avatar.name);
@@ -123,6 +123,9 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
   if (! assetsManager)
   { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
   assetsManager.useDefaultLoadingScreen = false;
+  if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
+  { console.warn ("Almost re-loaded avatar model for " + avatar.name);
+    return; /* XXX finish? */ }
   var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".babylon");

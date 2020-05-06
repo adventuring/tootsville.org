@@ -118,6 +118,7 @@ Tootsville.Gossip.createConnection = function ()
  */
 Tootsville.Gossip.gatekeeperAccept = function (peer, event)
 { let gram = event.data;
+  console.debug ("Received ", gram, " from " + (peer || 'host'));
   if (gram.c && Tootsville.Game.Commands [ gram.c ])
   { Tootsville.Game.Commands [ gram.c ] (gram.d, gram.u, gram.r); }
   else if (gram.from && Tootsville.Game.Gatekeeper [ gram.from ])

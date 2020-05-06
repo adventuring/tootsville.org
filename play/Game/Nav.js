@@ -60,6 +60,10 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
                         Tootsville.Tank.updateAvatarFor (avatar.name); }
   if (! avatar.model) { console.warn ("No AvatarBuilder body made");
                         return; }
+  if (! avatar.model.position) { console.warn ("No avatar.model.position");
+                                 return; }
+  if (! destinationPoint) { console.warn ("Nowhere to go");
+                            return; }
   avatar.course = { startPoint: avatar.model.position,
                     endPoint: destinationPoint,
                     startTime: Tootsville.Game.now + Tootsville.Game.lag,
@@ -67,30 +71,30 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
                     walkΔ: destinationPoint.subtract (avatar.model.position) };
   avatar.facing = Math.PI + Math.atan2 (avatar.course.walkΔ.x, avatar.course.walkΔ.z);
   if (avatar.facing > 2*Math.PI) { avatar.facing -= 2 * Math.PI; }
-  Tootsville.Util.infinity ("wtl", { course: avatar.course, facing: avatar.facing });
+  Tootsville.Game.Nav.sendWTL ();
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
 *
 */
 Tootsville.Game.Nav.sendWTL = function ()
-{ let avatar = Tootsville.Tank.avatars [ Tootsville.characterUUID ];
+{ let avatar = Tootsville.Tank.avatars [ Tootsville.character ];
   let course = undefined; let facing = undefined;
   if (avatar)
   { course = avatar.course; facing = avatar.facing;
     if (! (course))
     { course = { startPoint: avatar.position, endPoint: avatar.position,
-                 startTime: Tootsville.Game.now + Tootsville.game.lag,
+                 startTime: Tootsville.Game.now + Tootsville.Game.lag,
                  speed: .1 }; } }
   if (! (facing))
   { facing = 0; }
-  if (! (course))
+  if (! (course) || ! (course.startPoint) )
   { console.warn ("No course for sendWTL"); return; }
   Tootsville.Util.infinity ("wtl", { course: course, facing: facing } ); };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
 { Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint, Tootsville.Game.Nav.RUN_SPEED);};
 
