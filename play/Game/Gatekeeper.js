@@ -457,12 +457,17 @@ Tootsville.Game.Gatekeeper.forceMove = function (gram)
 Tootsville.Game.Gatekeeper.reportBug = function (gram)
 { Tootsville.warn ("unhandled datagram", gram); };
 
+/**
+ * Receive a list of Toots from the server. 
+ * 
+ * When ``status'' is false, the user has no Toots.
+ */
 Tootsville.Game.Gatekeeper.tootList = function (gram)
-{ if (0 == gram.toots.length)
-  { Tootsville.Login.startCharacterCreation (); }
-  else
+{ if (gram.status)
   { Tootsville.Login.saveTootsList (gram.toots);
-    Tootsville.Login.populateTootsList (); }};
+    Tootsville.Login.populateTootsList (); }
+  else
+  { Tootsville.Login.startCharacterCreation (); } };
 
 /**
  *
@@ -489,15 +494,14 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
 { if (gram.status)
   { Tootsville.Game.Nav.sendWTL ();
     if (gram.uLs == Tootsville.characterUUID)
-    { console.log ("I have joined " + gram.r); }
+    { console.log ("I have joined " + gram.r);
+      Tootsville.Util.infinity ("getRoomVars"); }
     else
-    { console.log (gram.uLs + " has joined " + gram.r);
+    { console.log (gram.n + " has joined " + gram.r);
       if (Tootsville.Tank.avatars)
-      { if (! Tootsville.Tank.avatars [ gram.uLs ])
-        { Tootsville.Tank.avatars [ gram.uLs ] =
-          { name: gram.uLs }; }
-        Tootsville.Util.infinity ("finger",
-                                  { 0: gram.uLs }); } } } };
+      { if (! Tootsville.Tank.avatars [ gram.n ])
+        { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }
+        Tootsville.Util.infinity ("finger", { 0: gram.n }); } } } };
 /**
 *
 */
