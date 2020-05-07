@@ -171,7 +171,7 @@ Tootsville.UI.slowLoadingWatchdog = function ()
       { document.location = 'https://wiki.tootsville.org/wikiki/PlayNotLoading'; } }); };
 
 /**
- * Walk one step in any direction. 
+ * Walk one step in any direction.
  *
  * For keyboard or gamepad inputs.
  */
@@ -189,12 +189,12 @@ Tootsville.UI.takeOneStep = function (δx, δz)
  */
 Tootsville.UI.interact = function (entity)
 { if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
- /* TODO */ };
+  /* TODO */ };
 
 /**
  * Discover the nearest entity within ``arms' reach'' of the player's facing direction.
  *
- * This is for e.g. game pad or keyboard inputs. 
+ * This is for e.g. game pad or keyboard inputs.
  */
 Tootsville.UI.findAdjacentEntity = function ()
 { /* TODO */ };
@@ -214,8 +214,8 @@ Tootsville.UI.clickedOnItem = function (meshName, picked)
 };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.say = function (speech)
 { if ("~" == speech.charAt (0))
   { Tootsville.Game.Speech.dispatchCommand (speech); }

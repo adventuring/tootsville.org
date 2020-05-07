@@ -33,7 +33,7 @@
 
 if (!('SkyBuilder' in Tootsville)) { Tootsville.SkyBuilder = {}; }
 
-/** 
+/**
  * The first layer of the sky is the ambient light of the scene, and the
  * color  of   the  sky  itself.   This  is  based  entirely   upon  the
  * sun position.
@@ -102,7 +102,7 @@ Tootsville.SkyBuilder.setSun = function ()
 
   const fill = new BABYLON.HemisphericLight("Fill Light", new BABYLON.Vector3(-1, 1, 0), Tootsville.Tank.scene);
   Tootsville.SkyBuilder.fillLight = fill;
-  
+
   const shadowGenerator = new BABYLON.ShadowGenerator (1024, sunLight);
   // /* TODO  adjust  shadow attributes  in  space  due to  no  atmospheric
   //  * scattering effects */
@@ -129,7 +129,7 @@ Tootsville.SkyBuilder.setPlanet = function ()
 Tootsville.SkyBuilder.setMoon = function (whichMoon)
 { let moon;
   let moonColor;
-    if ('MOON' == whichMoon)
+  if ('MOON' == whichMoon)
   { moon = BABYLON.Mesh.CreateSphere ("The Moon", 6, 300, Tootsville.Tank.scene);
     moonColor = new BABYLON.Color3 (1, .90, .95); }
   else if ('OTHM' == whichMoon)
@@ -137,7 +137,7 @@ Tootsville.SkyBuilder.setMoon = function (whichMoon)
     moonColor = new BABYLON.Color3 (1, .90, .95); }
   else
   { moon = BABYLON.Mesh.CreateSphere ("The Pink Moon", 6, 200, Tootsville.Tank.scene);
-      moonColor = new BABYLON.Color3 (1, .7, .7); }
+    moonColor = new BABYLON.Color3 (1, .7, .7); }
   const moonCheese = new BABYLON.StandardMaterial("Moon Cheese " + whichMoon, Tootsville.Tank.scene);
   moonCheese.emissiveColor = moonColor;
   moonCheese.disableLighting = true;
@@ -293,3 +293,16 @@ Tootsville.SkyBuilder.update = function (world)
  */
 Tootsville.SkyBuilder.updateSkyData = function ()
 {};
+
+/**
+ *
+ */
+Tootsville.SkyBuilder.buildMatchingSky = function (sky)
+{ console.warn ("unimplemented, not matching sky", sky); };
+
+
+/**
+ *
+ */
+Tootsville.SkyBuilder.buildMatchingWeather = function (weather)
+{ console.warn ("unimplemented, not matching weather", weather); };

@@ -50,7 +50,7 @@ Tootsville.universalTimeOffset = ((((new Date()).valueOf()/1000) + 2208988800) -
  * month
  * @item
  * day (of month)
- * @item 
+ * @item
  * hour
  * @item
  * min

@@ -1,5 +1,5 @@
 /* -*- js2 -*- */
-/**@license 
+/**@license
  * play/Game/Commands.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2020,
@@ -40,8 +40,8 @@
  *
  * u is a user UUID
  *
- * d is the d: element of the command 
-*/
+ * d is the d: element of the command
+ */
 
 if (!('Game' in Tootsville)) { Tootsville.Game = { Commands: {}}; };
 if (!('Commands' in Tootsville.Game)) { Tootsville.Game.Commands = {}; };
@@ -142,9 +142,9 @@ Tootsville.Game.Commands.gameAction = function (d, u, r)
 
 /**
  * Get the apple to get into, or out of, $Eden
- * 
+ *
  * No longer needed
- * 
+ *
  * See `INFINITY-GET-APPLE'
  */
 Tootsville.Game.Commands.getApple = function (d, u, r)
@@ -312,7 +312,7 @@ Tootsville.Game.Commands.go = function (d, u, r)
 /**
  *
  *
- *Creates room  named user/user's name/room  ... 
+ *Creates room  named user/user's name/room  ...
  *
  * See `INFINITY-INIT-USER-ROOM'
  */
@@ -322,7 +322,7 @@ Tootsville.Game.Commands.initUserRoom = function (d, u, r)
 
 
 /**
- * Join a room. 
+ * Join a room.
  *
  * See `INFINITY-JOIN'
  *
@@ -402,7 +402,7 @@ Tootsville.Game.Commands.removeFromList = function (d, u, r)
     /* TODO */ };
 
 
-/** 
+/**
  * This method allows  the client  to “phone home”  to report
  * a bug.
  *
@@ -452,7 +452,7 @@ Tootsville.Game.Commands.sendOutOfBandMessage = function (d, u, r)
  */
 Tootsville.Game.Commands.serverTime = function (d, u, r)
 { let serverTime = d.serverTime;
-    /* TODO */ };
+  /* TODO */ };
 
 
 /**
@@ -483,7 +483,7 @@ Tootsville.Game.Commands.spawnZone = function (d, u, r)
  */
 Tootsville.Game.Commands.speak = function (d, u, r)
 { let speech = d.speech;
-    /* TODO */ };
+  /* TODO */ };
 
 
 /**
@@ -525,7 +525,7 @@ Tootsville.Game.Commands.useEquipment = function (d, u, r)
  *
  * @subsection Gossipnet only
  *
- * This command is valid on the Gossipnet, but does not have a 
+ * This command is valid on the Gossipnet, but does not have a
  * REST equivalent.
  */
 Tootsville.Game.Commands.walk = function (d, u, r)

@@ -43,16 +43,16 @@ Tootsville.UI.Audio.volumeUp = function ()
 /**
  * Lower the volume by 10%, down to a minumum of 0.
  */
-Tootsville.UI.Audio.volumeDown = function () 
+Tootsville.UI.Audio.volumeDown = function ()
 { Tootsville.UI.Audio.setVolume(Math.max(0, (Tootsville.UI.Audio.currentVolume - 10)));};
 
 /**
  * Temporarily mute or unmute the volume.
  */
-Tootsville.UI.Audio.volumeMute = function () 
-{ if (Tootsville.UI.Audio.currentVolume < 9) 
+Tootsville.UI.Audio.volumeMute = function ()
+{ if (Tootsville.UI.Audio.currentVolume < 9)
   { Tootsville.UI.Audio.setVolume(Tootsville.UI.Audio.savedVolume); }
-  else 
+  else
   { Tootsville.UI.Audio.savedVolume = Tootsville.UI.Audio.currentVolume;
     Tootsville.UI.Audio.setVolume(0); } };
 
@@ -66,7 +66,7 @@ Tootsville.UI.Audio.updateVolumeUI = function ()
 /**
  * Set the volume to ``newVolume''%
  */
-Tootsville.UI.Audio.setVolume = function (newVolume) 
+Tootsville.UI.Audio.setVolume = function (newVolume)
 { Tootsville.UI.Audio.currentVolume = newVolume;
   const allAudio = document.getElementsByTagName ('AUDIO');
   for (var i = 0; i < allAudio.length; ++i)
@@ -77,19 +77,19 @@ Tootsville.UI.Audio.setVolume = function (newVolume)
 /**
  * Update the volume slider in the control panel.
  */
-Tootsville.UI.Audio.updateVolumeSlider = function() 
+Tootsville.UI.Audio.updateVolumeSlider = function()
 { var slider = document.getElementById('volume-slider');
-  if (slider) 
+  if (slider)
   { slider.value = Tootsville.UI.Audio.currentVolume;
     slider.disabled = false; } };
 
 /**
  * Update the volume Mute indicator in the control panel
  */
-Tootsville.UI.Audio.updateVolumeMuteIcon = function() 
+Tootsville.UI.Audio.updateVolumeMuteIcon = function()
 { var muteIcon = document.getElementById('mute-icon');
-  if (Tootsville.UI.Audio.currentVolume < 9) 
-  { muteIcon.style.color = 'red'; } else 
+  if (Tootsville.UI.Audio.currentVolume < 9)
+  { muteIcon.style.color = 'red'; } else
   { muteIcon.style.color = 'black'; } };
 
 /**
@@ -102,7 +102,7 @@ Tootsville.UI.Audio.context = new (window.AudioContext || window.webkitAudioCont
  */
 Tootsville.UI.Audio.gainNode = Tootsville.UI.Audio.context.createGain();
 
-// if (navigator.mediaDevices.getUserMedia) 
+// if (navigator.mediaDevices.getUserMedia)
 // { navigator.mediaDevices.getUserMedia (
 //     // constraints - only audio needed for this app
 //     { audio: true },
@@ -115,8 +115,7 @@ Tootsville.UI.Audio.gainNode = Tootsville.UI.Audio.context.createGain();
 //     // Error callback
 //     err =>
 //         { Tootsville.error('getUserMedia error occured: ' + err); }
-// ); } else 
+// ); } else
 // { Tootsville.warn('getUserMedia not supported on your browser!');
 //   // XXX hide volume controls
 // }
-

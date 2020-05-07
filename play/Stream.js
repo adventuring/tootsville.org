@@ -53,7 +53,7 @@ Tootsville.Util.connectWebSocket = function () {
         uri = uri.replace (":5000", ":5004");
     }
     console.log ("Connecting WebSocket to " + uri);
-    Tootsville.Util.WebSocket = new WebSocket (uri); 
+    Tootsville.Util.WebSocket = new WebSocket (uri);
     Tootsville.Util.WebSocket.onopen = (event) => { Tootsville.Util.openWebSocket (event); }
     Tootsville.Util.WebSocket.onclose = (event) => { Tootsville.Util.closeWebSocket (event); }
     Tootsville.Util.WebSocket.onmessage = (event) => { Tootsville.Util.messageFromWebSocket (event); }
@@ -90,11 +90,11 @@ Tootsville.Util.errorFromWebSocket = function (event)
                                 ". Are you online?"); };
 
 /**
-* Submit an Infinity Mode command to  the servers or peers, but wait for
-* the next reply  of the given type for a  Promised call-back. Note that
-* the Gatekeeper still gets a chance to handle any returned values, this
-* just registers a Promise to listen for the reply.
-*/
+ * Submit an Infinity Mode command to  the servers or peers, but wait for
+ * the next reply  of the given type for a  Promised call-back. Note that
+ * the Gatekeeper still gets a chance to handle any returned values, this
+ * just registers a Promise to listen for the reply.
+ */
 Tootsville.Util.infinityAwaits = function (command, fromType, params) {
     return new Promise ( resolve => {
         Tootsville.Gossip.eavesdrop (fromType || command, (data) => {

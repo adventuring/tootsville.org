@@ -53,4 +53,3 @@ Tootsville.Game.NPC.Doodle.fastForward = function (npc)
  */
 Tootsville.Game.NPC.Doodle.register = function (npc)
 { /* TODO */ };
-

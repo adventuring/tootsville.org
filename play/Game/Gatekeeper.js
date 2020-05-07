@@ -77,16 +77,14 @@ Tootsville.Game.Gatekeeper.avatars = function (gram)
     console.log ("Got avatar info for " + avatar.name);
     if (Tootsville.Login.toots [ avatar.name ])
     { console.log (avatar.name + " is one of my Toots");
-      Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.Login.toots [ avatar.name ], avatar);
+      Tootsville.Game.Nav.mergeObjects (Tootsville.Login.toots [ avatar.name ], avatar);
       Tootsville.Login.populateTootsList (); };
-    // if (! Tootsville.character.model)
-    //  { Tootsville.Tank.initPlayerToot (); }}
     const orig = Tootsville.Tank.avatars [ avatar.name ];
     if (orig)
-    { Tootsville.Game.Nav.mergeAvatarInfo (orig, avatar);
-      Tootsville.Tank.updateAvatarFor (avatar.name); }
+    { Tootsville.Game.Nav.mergeObjects (orig, avatar); }
     else { console.warn ("New avatar info for " + avatar.name);
-           Tootsville.Tank.avatars [ avatar.name ] = avatar; } } };
+           Tootsville.Tank.avatars [ avatar.name ] = avatar; }
+    Tootsville.Tank.updateAvatarFor (avatar.name);} };
 
 /**
  * No longer used.
@@ -514,6 +512,7 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
       if (Tootsville.Tank.avatars)
       { if (! Tootsville.Tank.avatars [ gram.n ])
         { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}}};
+
 /**
  *
  */
@@ -546,10 +545,11 @@ Tootsville.Game.Gatekeeper.c = function (gram)
   { console.warn ("Command processor reports error", gram); } };
 
 /**
- *
+ * This  packet  instructs  the  user  to  leave  the  game  and  go  to
+ * a different web site.
  */
 Tootsville.Game.Gatekeeper.goToWeb = function (gram)
-{ if (gram.status) { window.location = gram.url; } };
+{ if (gram.status) { document.location = gram.url; } };
 
 /**
  * If the server sees no activity for a long time, it'll send an Are You
@@ -565,4 +565,17 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
  */
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
-  { console.log ("Received room vars (TODO process)", rv); } };
+  { if (gram.s)
+      if (gram.f) {}
+    if (gram.w)
+        for (let key in gram)
+    { if ('s' == key) { Tootsville.SkyBuilder.buildMatchingSky (gram.s); }
+      else if ('w' == key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.w); }
+      else if ('f' == key) {}
+      else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram [ key ]); }
+      else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram [ key ]); }
+      else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram [ key ]); }
+      else if (key.startsWith ('text')) { Tootsville.SceneBuilder.addText (gram [ key ]); }
+      else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (gram [ key ]); }
+      else
+      { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}}};

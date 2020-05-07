@@ -125,8 +125,8 @@ Tootsville.Util.loadScript = function (src)
 //
 
 /**
- * Check for the game REST server. 
- * 
+ * Check for the game REST server.
+ *
  * Calls @url{https://game.tootsville.org/meta-game/ping}  and complains
  * to the player if it can't be reached.
  */
@@ -153,4 +153,3 @@ Tootsville.Util.equalP = function (a, b)
     if (a[propName] !== b[propName])
     { return false; } }
   return true; };
-

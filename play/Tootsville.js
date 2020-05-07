@@ -36,25 +36,27 @@
  * located, to  avoid potential  namespace conflicts with  other, loaded
  * Javascript modules.
  */
- var Tootsville = {
-     /* Cluster name is hostname minus leading "play" */
-     cluster: document.location.host.split('.').splice(1).join('.'),
-     lag: 50, /* arbitrary lag value until they compute one */
-     Worlds:
-     { CHOR: { Gravity: 9.81 },
-       MOON: { Gravity: 0.32 },
-       OTHM: { Gravity: 0.12 },
-       PINK: { Gravity: 0.08 } },
-     character: null,
-     player: null,
-     activity: { world: 'CHOR', x: 0, y: 0, z: 0,
-                 facing: 0, action: 'stand' },
-     characterUUID: null,
-     privateKey: null,
-     audio: { volume: 80,
-              savedVolume: 80 },
-     UI: {},
-     seen: {} };
+var Tootsville = {
+    /* Cluster name is hostname minus leading "play" */
+    cluster: document.location.host.split('.').splice(1).join('.'),
+    Worlds:
+    { CHOR: { Gravity: 9.81 },
+      MOON: { Gravity: 0.32 },
+      OTHM: { Gravity: 0.12 },
+      PINK: { Gravity: 0.08 } },
+    Game:
+    { lag: 50, /* arbitrary lag value until they compute one */
+    },
+    character: null,
+    player: null,
+    activity: { world: 'CHOR', x: 0, y: 0, z: 0,
+                facing: 0, action: 'stand' },
+    characterUUID: null,
+    privateKey: null,
+    audio: { volume: 80,
+             savedVolume: 80 },
+    UI: {},
+    seen: {} };
 
 if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||

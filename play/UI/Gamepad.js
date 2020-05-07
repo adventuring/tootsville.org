@@ -88,13 +88,13 @@ Tootsville.UI.Gamepad.removeGamepad = function (gamepad)
   delete Tootsville.UI.Gamepad.controllerState [gamepad.index]; };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Gamepad.ROTATION_SPEED = .05;
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Gamepad.axisUpdate = function (controllerIndex)
 { const leftRight = Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [0];
   const forwardBack = - Tootsville.UI.Gamepad.controllerState [controllerIndex].axes [1];
@@ -112,14 +112,14 @@ Tootsville.UI.Gamepad.axisUpdate = function (controllerIndex)
   { Tootsville.Tank.playerAvatar ().course = null; } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex, value)
 { if (value > .5)
   { switch (buttonIndex)
     { case 0: // Y
       Tootsville.UI.interact (null);
-      break; 
+      break;
 
       case 1: // B
       Tootsville.UI.useActiveItem (null);
@@ -153,38 +153,38 @@ Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex, valu
  */
 Tootsville.UI.Gamepad.updateStatus = function ()
 {const gamepads = (navigator.getGamepads
-                  ? navigator.getGamepads ()
-                  : (navigator.webkitGetGamepads
-                     ? navigator.webkitGetGamepads ()
-                     : []));
-  if (! gamepads) { return; }
-  for (let j = 0; j < gamepads.length; ++j)
-  { let controller = gamepads[j];
-    if (controller)
-    { if (! Tootsville.UI.Gamepad.controllerState [j])
-      { Tootsville.UI.Gamepad.controllerState [j] = { buttons: [], axes: [] }; }
-    for (let i = 0; i < controller.buttons.length; ++i)
-    { let val = controller.buttons [i];
-      if (typeof (val) == "object")
-      { val = val.value; }
-      if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
-      { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
-        Tootsville.UI.Gamepad.buttonEvent (j, i, val); }}
-    for (let i = 0; i < controller.axes.length; i ++)
-    { let val = controller.axes [i];
-      if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
-      { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
-        Tootsville.UI.Gamepad.axisUpdate (j); }}}}};
+                   ? navigator.getGamepads ()
+                   : (navigator.webkitGetGamepads
+                      ? navigator.webkitGetGamepads ()
+                      : []));
+ if (! gamepads) { return; }
+ for (let j = 0; j < gamepads.length; ++j)
+ { let controller = gamepads[j];
+   if (controller)
+   { if (! Tootsville.UI.Gamepad.controllerState [j])
+     { Tootsville.UI.Gamepad.controllerState [j] = { buttons: [], axes: [] }; }
+     for (let i = 0; i < controller.buttons.length; ++i)
+     { let val = controller.buttons [i];
+       if (typeof (val) == "object")
+       { val = val.value; }
+       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
+       { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
+         Tootsville.UI.Gamepad.buttonEvent (j, i, val); }}
+     for (let i = 0; i < controller.axes.length; i ++)
+     { let val = controller.axes [i];
+       if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].axes [i] - val) > 0.01)
+       { Tootsville.UI.Gamepad.controllerState [j].axes [i] = val;
+         Tootsville.UI.Gamepad.axisUpdate (j); }}}}};
 
 /**
  * Scan gamepads for updates
  */
 Tootsville.UI.Gamepad.scanGamepads = function ()
 { const gamepads = (navigator.getGamepads
-                  ? navigator.getGamepads ()
-                  : (navigator.webkitGetGamepads
-                     ? navigator.webkitGetGamepads ()
-                     : []));
+                    ? navigator.getGamepads ()
+                    : (navigator.webkitGetGamepads
+                       ? navigator.webkitGetGamepads ()
+                       : []));
   for (var i = 0; i < gamepads.length; i++)
   { if (gamepads [i])
     { if (! (gamepads [i].index in controllers))

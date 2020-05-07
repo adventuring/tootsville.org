@@ -191,14 +191,14 @@ Tootsville.Gossip.openInfinityMode = function (peer, event)
  *
  * @table @code
  * @item c
- * is the command;  
+ * is the command;
  * @item d
- * is the command's data (if any);  
+ * is the command's data (if any);
  * @item r
- * is the target Recipient (originally  Room), which  defaults to  '$World', 
- * @item a 
- *  is the author   (default  self),   and 
- * @item  v 
+ * is the target Recipient (originally  Room), which  defaults to  '$World',
+ * @item a
+ *  is the author   (default  self),   and
+ * @item  v
  *  (via),   if  present,   prevents
  * rebroadcasting the packet to the original sender. V (via) is expected
  * to be null, or an array of UUIDs.
@@ -227,7 +227,7 @@ Tootsville.Gossip.signPacket = function (c, d, r)
 { let payload = JSON.stringify ({ c: c, d: d, r: r });
   let signature = forge.rsa.encrypt (
       forge.sha256.create ().start ().update (payload).digest ().data,
-       Tootsville.Gossip.keyPair.privateKey ); };
+      Tootsville.Gossip.keyPair.privateKey ); };
 
 /**
  * Create and sign a packet.
@@ -239,7 +239,7 @@ Tootsville.Gossip.signPacket = function (c, d, r)
  * which case  the command will be  a reply packet with  @code{from}; or
  * any other string, in which case it's treated as a @code{c} command.
  * @item d
- * Data for the command. 
+ * Data for the command.
  * @item r
  * Optional recipient UUID (or default @code{$World})
  * @end table
@@ -247,7 +247,7 @@ Tootsville.Gossip.signPacket = function (c, d, r)
  * Automatically   adds  @code{a}   for  author,   @code{u}  for   user,
  * and @code{s} signature.
  *
- * Returns a JSON string of the signed packet. 
+ * Returns a JSON string of the signed packet.
  */
 Tootsville.Gossip.createPacket = function (c, d, r)
 { let packet = (( c == 'logOK' ) || ( c.substring (0, 1) == ':' ))

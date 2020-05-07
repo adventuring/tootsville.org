@@ -174,10 +174,10 @@ Tootsville.Login.generateNewToot = function ()
  */
 Tootsville.Login.startCharacterCreation = function ()
 { Tootsville.Gossip.Parrot.say ("Let's get started!",
-                         "<p>Let's create your Toot character.</p>" +
-                         "<p>This takes about a minute. I'll create a new " +
-                         "Toot character for you. You can change the name, colors, or " +
-                         "pattern to be what you like. </p>").
+                                "<p>Let's create your Toot character.</p>" +
+                                "<p>This takes about a minute. I'll create a new " +
+                                "Toot character for you. You can change the name, colors, or " +
+                                "pattern to be what you like. </p>").
   then(Tootsville.Login.generateNewToot); };
 
 /**
@@ -203,9 +203,9 @@ Tootsville.Login.playWithCharacter = function (name)
 { let li = this.findLIForToot (name);
   if (li ['data-toot'].childP)
   { Tootsville.Gossip.Parrot.ask ("That's a Child Toot",
-                           "Are you sure you want to sign in with a Child account?",
-                           [{ tag: "yes", text: "Sign In" },
-                            { tag: "no", text: "Cancel" }]).
+                                  "Are you sure you want to sign in with a Child account?",
+                                  [{ tag: "yes", text: "Sign In" },
+                                   { tag: "no", text: "Cancel" }]).
     then (answer => { if ('yes' == answer)
                       { this.doRealLogin (name); }
                       else
@@ -425,8 +425,8 @@ Tootsville.Login.acceptSignedIn = function(result)
   return false; };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Login.finishSignIn = function (idToken)
 { console.log ("Finishing sign-in");
   Tootsville.Login.firebaseAuth = idToken;
@@ -483,7 +483,7 @@ Tootsville.Login.quit = function ()
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
-  /* XXX there should be a more elegant route than this */ 
+  /* XXX there should be a more elegant route than this */
   document.location = 'https://Tootsville.org/';
   firebase.auth().signOut().then(Tootsville.Login.start); };
 

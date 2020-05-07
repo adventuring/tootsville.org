@@ -49,7 +49,7 @@ Tootsville.Game.bootstrap = function ()
     setTimeout (function () {
         document.getElementById ('control-panel-icon').style.width = '7vw';
     }, 1000);
-    
+
     console.info ("\n\n\n This version of Tootsville is Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
 
     window.addEventListener ('click', Tootsville.UI.onFirstClick);
@@ -62,7 +62,7 @@ Tootsville.Game.bootstrap = function ()
     Tootsville.Login.start ();
 
     Tootsville.UI.setBackgroundMusic ("bensound-adventure");
-    
+
     Tootsville.UI.HUD.initHUD ();
     setInterval (Tootsville.updateClock, 250);
 
@@ -71,11 +71,10 @@ Tootsville.Game.bootstrap = function ()
     document.addEventListener('keydown', Tootsville.UI.Keys.onKeyDown);
 
     Tootsville.Tank.prepareFor3D ();
-    
+
     Tootsville.Util.ensureServersReachable ();
 
 };
 
 
 window.addEventListener ('load', Tootsville.Game.bootstrap);
-

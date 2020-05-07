@@ -55,7 +55,7 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
   return ground; };
 
 /**
- * Build the ground plane (terrain map) for the scene at x, y, z. 
+ * Build the ground plane (terrain map) for the scene at x, y, z.
  *
  * Affects Tootsville.Tank.scene.
  */

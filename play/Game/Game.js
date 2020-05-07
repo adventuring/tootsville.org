@@ -34,10 +34,10 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
 
 /**
-* Is   the   `point'   near   to  the   center   of   current   activity
-* `Tootsville.activity' to be of interest to us? If the point is too far
-* away, we may not care about it.
-*/
+ * Is   the   `point'   near   to  the   center   of   current   activity
+ * `Tootsville.activity' to be of interest to us? If the point is too far
+ * away, we may not care about it.
+ */
 Tootsville.Game.interestingPoint = function (point)
 { return ( (Math.abs (Tootsville.activity.x - point.x) < 1000)
            &&
@@ -51,8 +51,8 @@ Tootsville.Game.interestingPoint = function (point)
 Tootsville.Game.lag = 100;
 
 /**
-* Update everything that operates on the 50Hz Game Tick clock.
-*/
+ * Update everything that operates on the 50Hz Game Tick clock.
+ */
 Tootsville.Game.update = function ()
 { Tootsville.Game.now = (new Date).getTime ();
   Tootsville.Game.Nav.updateAvatars ();

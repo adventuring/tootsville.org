@@ -1,5 +1,5 @@
 /* -*- js2 -*- */
-/* @license 
+/* @license
  * play/Game/Tools.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2020,

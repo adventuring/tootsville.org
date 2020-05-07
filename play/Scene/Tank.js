@@ -164,15 +164,15 @@ Tootsville.Tank.initPlayerToot = function ()
     return;}
   if (! Tootsville.Tank.avatars [ Tootsville.character ])
   { Tootsville.Util.infinity ("finger", { 0: Tootsville.character.name });
-      return; }
+    return; }
   Tootsville.AvatarBuilder.build (
       Tootsville.Tank.avatars [ Tootsville.character ], Tootsville.Tank.scene// ,
       // model => { Tootsville.Tank.camera.lockedTarget = model; }
   ); };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Tank.updateAvatarFor = function (avatarName)
 { let avatar = Tootsville.Tank.avatars [ avatarName ];
   if (! (avatar && avatar.avatarClass)) { console.warn ("Can't build avatar without info for " + avatarName);
@@ -204,7 +204,7 @@ Tootsville.Tank.createScene = function ()
 
   /* Make emissive objects glow */
   new BABYLON.GlowLayer("glow", Tootsville.Tank.scene);
-  
+
   console.log ("Initialized scene is now", Tootsville.Tank.scene);
   return Tootsville.Tank.scene; };
 
@@ -315,21 +315,21 @@ Tootsville.Tank.updateCamera = function ()
   if  ((! Tootsville.Tank.camera) ||
        (! playerAvatar))
   { return; }
-    Tootsville.Tank.CameraManager.updateCamera (Tootsville.Tank.camera,
-                                                playerAvatar,
-                                                Tootsville.Tank.CameraManager.ZOOM_MODE_GAME); };
+  Tootsville.Tank.CameraManager.updateCamera (Tootsville.Tank.camera,
+                                              playerAvatar,
+                                              Tootsville.Tank.CameraManager.ZOOM_MODE_GAME); };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Tank.destroyAvatar = function (avatar)
 { delete Tootsville.Tank.avatars [ avatar.name ];
   if (avatar.model)
   { avatar.model.destroy (); } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Tank.findAvatar = function (avatarName)
 { if (Tootsville.Tank.avatars [ avatarName ])
   { return Tootsville.Tank.avatars [ avatarName ]; }
@@ -339,4 +339,3 @@ Tootsville.Tank.findAvatar = function (avatarName)
   { if (Tootsville.Tank.scene.meshes [ i ].name == "avatar/" + avatarName)
     { return Tootsville.Tank.scene.meshes [ i ]; } }
   return null; };
-

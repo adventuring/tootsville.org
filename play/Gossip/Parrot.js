@@ -111,8 +111,8 @@ Tootsville.Gossip.Parrot.ask = function (title, message, replies)
  */
 Tootsville.Gossip.Parrot.ynP = function (title, message)
 { return Tootsville.Gossip.Parrot.ask (title, message,
-                                [  { tag: false, text: "No" },
-                                   { tag: true, text: "Yes" } ]); };
+                                       [  { tag: false, text: "No" },
+                                          { tag: true, text: "Yes" } ]); };
 
 
 // 

@@ -56,7 +56,7 @@ Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
             mesh.name.indexOf ('Skin') >= 0 ? skinMaterial :
             mesh.name.indexOf ('Pad') >= 0 ? padMaterial :
             eyeMaterial ); }
-  // console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName); 
+  // console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName);
   if (finish) { finish (model); } };
 
 /**
@@ -87,9 +87,10 @@ Tootsville.AvatarBuilder.enableShadows = function (object, scene)
 Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
 { if (Tootsville.Tank.avatars [ avatar.name ].model)
   { console.error ("Already remembered a model for avatar " + avatar.name);
-    object.dispose ();
+    if (Tootsville.Tank.avatars [ avatar.name ].model != object)
+    { object.dispose (); }
     return; }
-    Tootsville.Tank.avatars [ avatar.name ] = Object.assign ((Tootsville.Tank.avatars [avatar.name] || {}), avatar);
+  Tootsville.Tank.avatars [ avatar.name ] = Object.assign ((Tootsville.Tank.avatars [avatar.name] || {}), avatar);
   console.log ("Remembering model ", object, " for avatar ", avatar.name);
   Tootsville.Tank.avatars [avatar.name].model = object; };
 
@@ -175,5 +176,4 @@ Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
     Tootsville.Tank.avatars [ avatar.name ].model = existing.model;
     Tootsville.AvatarBuilder.update (avatar, Tootsville.Tank.avatars [avatar.name].model, scene, finish);
     return; }
- Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };
-
+  Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };

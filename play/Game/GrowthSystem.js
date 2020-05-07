@@ -56,7 +56,7 @@ Tootsville.Game.GrowthSystem.remove = function (entity)
 Tootsville.Game.GrowthSystem.evolve = function (entity)
 { entity.growth.growthTimer = 0;
   Tootsville.Game.pivotItemTemplate (entity, entity.growth.nextEvolutionTemplate);
-  };
+};
 
 /**
  *

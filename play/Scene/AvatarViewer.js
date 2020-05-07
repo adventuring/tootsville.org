@@ -90,7 +90,7 @@ Tootsville.AvatarViewer.startRendering = function (canvas) {
 
 /**
  * Render the AvatarViewer scene only once.
- * 
+ *
  * Then, grab a screenshot of it and put that into the canvas instead to
  * free up the WebGL context.
  */
@@ -116,7 +116,7 @@ Tootsville.AvatarViewer.createViewerReally = function (toot, canvas)
 
 /**
  * Create a stand-alone Avatar Viewer in a CANVAS.
- * 
+ *
  * Create a 3D  viewer with a single  avatar in it, out  of an arbitrary
  * CANVAS element. Creates a Babylon 3D scene with just the avatar.
  *
@@ -130,7 +130,6 @@ Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
 { if (! canvas) { return; }
   if (toot.charAt) // is a string
   { Tootsville.AvatarViewer.getAvatar (toot).then (t2 =>
-                                              { Tootsville.AvatarViewer.createViewerInCanvas (t2, canvas); });
+                                                   { Tootsville.AvatarViewer.createViewerInCanvas (t2, canvas); });
     return; }
   Tootsville.Tank.prepareFor3D ().then ( () => { Tootsville.AvatarViewer.createViewerReally (toot, canvas); } ); };
-

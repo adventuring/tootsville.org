@@ -1,5 +1,5 @@
 /* -*- js2 -*- */
-/**@license 
+/**@license
  * play/Game/Credits.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2020,
@@ -31,13 +31,13 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
 
 /**
-* The credits for the game as a string.
-*
-* Suitable  for an  ``about this  game'' dialog  box, credits  crawl, or
-* other presentation. This  is expected to run long, over  time, so take
-* some efforts to ensure that there  is scrolling or other affordance in
-* place to accomodate a very long message.
-*/
+ * The credits for the game as a string.
+ *
+ * Suitable  for an  ``about this  game'' dialog  box, credits  crawl, or
+ * other presentation. This  is expected to run long, over  time, so take
+ * some efforts to ensure that there  is scrolling or other affordance in
+ * place to accomodate a very long message.
+ */
 Tootsville.Game.credits = function ()
 { console.log ("Tootsville V was brought to you by:\n\n" +
                "Chief Engineer: Bruce-Robert Pocock\n\n" +

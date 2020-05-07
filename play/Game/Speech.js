@@ -46,8 +46,8 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
   const balloon = document.createElement ('DIV');
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
-  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100; 
-  const avatar = Tootsville.Tank.avatars [speaker];
+  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100;
+  const avatar = Tootsville.Tank.avatars [ speaker ];
   if (! avatar)
   { console.warn ("Surprised to hear from " + speaker);
     Tootsville.Util.infinity ("finger", { talkie: speaker });
@@ -80,7 +80,7 @@ Tootsville.Game.Speech.updateSpeech = function ()
 
 /**
  * Dispatch local ~ commands.
- * 
+ *
  * @table @code
  * @item ~ua
  * Displays the user agent information
@@ -92,13 +92,13 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
 { let words = commandLine.split (' ');
   switch (words[0])
   { case '~ua':
-    Tootsville.UI.say ("My UA is " + navigator.userAgent);
+    Tootsville.Game.Speech.say ("My UA is " + navigator.userAgent);
     return;
     case "~ping":
     Tootsville.Util.infinity ("ping");
     return;
     case '~lag':
-    Tootsville.UI.say ("My lag is " + Tootsville.lag / 1000 + "s");
+    Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s");
     return;
     default:
-    Tootsville.UI.say ("I don't recognize " + words[0] + " as a magic word."); }; };
+    Tootsville.Game.Speech.say ("I don't recognize " + words[0] + " as a magic word."); }; };

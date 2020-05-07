@@ -136,5 +136,4 @@ Tootsville.FurnitureBuilder.build = function (item, scene, finish)
   if (scene.items && scene.items [item.uuid] && ('model' in scene.items [item.uuid]))
   { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else
- { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };
-
+  { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };

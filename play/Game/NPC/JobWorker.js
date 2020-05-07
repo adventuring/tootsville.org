@@ -53,4 +53,3 @@ Tootsville.Game.NPC.JobWorker.fastForward = function (npc)
  */
 Tootsville.Game.NPC.JobWorker.register = function (npc)
 { /* TODO */ };
-

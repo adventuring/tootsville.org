@@ -75,8 +75,8 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Nav.sendWTL = function ()
 { let avatar = Tootsville.Tank.avatars [ Tootsville.character ];
   let course = undefined; let facing = undefined;
@@ -127,15 +127,15 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
                                            course.endPoint.y,
                                            course.endPoint.z);
     course.startPoint = new BABYLON.Vector3 (course.startPoint.x,
-                                           course.startPoint.y,
-                                           course.startPoint.z); }
+                                             course.startPoint.y,
+                                             course.startPoint.z); }
   if (! (course.walkΔ && course.walkΔ.subtract))
   { course.walkΔ = course.endPoint.subtract (course.startPoint); }
   if (! course.endTime)
   { course.endTime = course.startTime + course.walkΔ.length () / course.speed; }
   if (course.endTime < Tootsville.Game.now)
   { console.debug (entity.name + " done walking, time is up");
-      return true; }
+    return true; }
   if (!entity.model)
   { console.debug (entity.name + " not gonna walk, no model present");
     return true; }
@@ -148,15 +148,15 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
   { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
     return true; }
 
-   // goalPosition.subtract (entity.model.position);
+  // goalPosition.subtract (entity.model.position);
   const hit = Tootsville.Game.Nav.collisionP (entity.model, entity.model.position, goalPosition);
   if (hit && "ground" != hit.name)
   { entity.course = null;
     console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
     return true; }
-  
+
   entity.model.position = goalPosition;
-  
+
   if (entity.nameTag || entity.speech)
   { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
 
@@ -194,7 +194,7 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
 /**
  *
  */
-Tootsville.Game.Nav.mergeAvatarInfo = function (into, from)
+Tootsville.Game.Nav.mergeObjects = function (into, from)
 { for (let key in from)
   { if (from.hasOwnProperty (key))
     { into [ key ] = from [ key ] ; } } };
@@ -207,4 +207,3 @@ Tootsville.Game.Nav.updateAvatars = function ()
   const avatars = Object.values(Tootsville.Tank.avatars);
   for (let i = 0; i < avatars.length; ++i)
   { try { Tootsville.Game.Nav.updateAvatar (avatars [i]); } catch (e) { console.error (e); } } };
-

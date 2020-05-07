@@ -63,3 +63,33 @@ Tootsville.SceneBuilder.build = function (x, y, z)
   //       baseColor: 'periwinkle', altColor: 'yellow', position: { x: -10, y: 0, z: 50 }, facing: Math.PI * 4/3 },
   //     scene);
 };
+
+/**
+ *
+ */
+Tootsville.SceneBuilder.addItem1  = function (item)
+{ console.warn ("Unimplemented: Not adding item₁ ", item); };
+
+/**
+ *
+ */
+Tootsville.SceneBuilder.addItem2  = function (item)
+{ console.warn ("Unimplemented: Not adding item₂ ", item); };
+
+/**
+ *
+ */
+Tootsville.SceneBuilder.addFurn  = function (item)
+{ console.warn ("Unimplemented: Not adding old furniture ", item); };
+
+/**
+ *
+ */
+Tootsville.SceneBuilder.addText  = function (item)
+{ console.warn ("Unimplemented: Not adding text ", item); };
+
+/**
+ *
+ */
+Tootsville.SceneBuilder.addPlace  = function (item)
+{ console.warn ("Unimplemented: Not adding place ", item); };

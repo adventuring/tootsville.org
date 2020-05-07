@@ -224,15 +224,15 @@ Tootsville.UI.NewToot.afterCreate = function (reply)
   { switch (reply.error)
     { case 400:
       Tootsville.Gossip.Parrot.say ("Program trouble!",
-                             "Something in the game program running on your computer did not work correctly, and the server could not understand our request.");
+                                    "Something in the game program running on your computer did not work correctly, and the server could not understand our request.");
       break;;
       case 409:
       Tootsville.Gossip.Parrot.say ("Name already taken",
-                             "There is already another Toot with that name.");
+                                    "There is already another Toot with that name.");
       break;;
       case 422:
       Tootsville.Gossip.Parrot.say ("Pattern or color conflict",
-                             "The pattern or color combination you chose is not available. Perhaps you can change colors or patterns?");
+                                    "The pattern or color combination you chose is not available. Perhaps you can change colors or patterns?");
       break;;
     }; } };
 
@@ -328,4 +328,3 @@ Tootsville.UI.NewToot.createColorPicker = function (name, button)
   buttonBox.appendChild (okButton);
   picker.appendChild (buttonBox);
   document.getElementById ('hud').appendChild (picker); };
-  

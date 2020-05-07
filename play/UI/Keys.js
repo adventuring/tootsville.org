@@ -182,7 +182,7 @@ Tootsville.UI.Keys.backwardChar = function (event)
 
 /**
  * Move the cursor back to the previous sentence start.
- * 
+ *
  * Sentences are defined  to be delimited by  period, exclamation point,
  * or question mark.
  */
@@ -422,8 +422,8 @@ Tootsville.UI.Keys.yankPop = function (event)
 { /* TODO */ };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Keys.arrowLeft = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { Tootsville.UI.Keys.backwardChar (event); }
@@ -431,8 +431,8 @@ Tootsville.UI.Keys.arrowLeft = function (event)
   { Tootsville.UI.takeOneStep (-1, 0); } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Keys.arrowRight = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { Tootsville.UI.Keys.forwardChar (event); }
@@ -440,8 +440,8 @@ Tootsville.UI.Keys.arrowRight = function (event)
   { Tootsville.UI.takeOneStep (1, 0); } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Keys.arrowUp = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { /* retype last line */ }
@@ -449,11 +449,10 @@ Tootsville.UI.Keys.arrowUp = function (event)
   { Tootsville.UI.takeOneStep (0, 1); } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.Keys.arrowDown = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
   { Tootsville.UI.Keys.killLine (); }
   else
   { Tootsville.UI.takeOneStep (0, -1); } };
-

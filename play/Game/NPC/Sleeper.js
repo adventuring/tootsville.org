@@ -50,7 +50,7 @@ Tootsville.Game.NPC.Sleeper.fastForward = function (npc)
 /**
  * Register an NPC as a Sleeper.
  *
- * Attributes: The time range during which the character wants to sleep. For most characters 
+ * Attributes: The time range during which the character wants to sleep. For most characters
  */
 Tootsville.Game.NPC.Sleeper.register = function (npc)
 { /* TODO */ };

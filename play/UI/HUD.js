@@ -173,9 +173,9 @@ Tootsville.UI.HUD.loadHUDPanel = function (panelName, finish)
               var panelDiv = htmlf.getElementById (panelName);
               if (!panelDiv)
               { Tootsville.Gossip.Parrot.say ("Pop-up problem",
-                                       "I loaded the pop-up for " + panelName +
-                                       " and got back something I couldn't use. You won't be able " +
-                                       "to access that panel for now. ☹");
+                                              "I loaded the pop-up for " + panelName +
+                                              " and got back something I couldn't use. You won't be able " +
+                                              "to access that panel for now. ☹");
                 Tootsville.error ("No DIV <DIV ID=\"" + panelName +
                                   "\"> in HTML fragment " + panelName); }
               var hud = document.getElementById ('hud');
@@ -368,7 +368,7 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
      * changes, but for now this works. */
     Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [Tootsville.character],
                                      Tootsville.Tank.avatars [Tootsville.character].model,
-                                   Tootsville.Tank.scene, () => {}); } };
+                                     Tootsville.Tank.scene, () => {}); } };
 
 /**
  * Refresh the display of the active equipment item.
@@ -474,7 +474,7 @@ Tootsville.UI.HUD.toggleTalkExpression = function (event)
 
 /**
  * Toggle visibility of the Emoji selector for the Talk Box.
- * 
+ *
  * TODO
  */
 Tootsville.UI.HUD.toggleTalkEmoji = function (event)
@@ -486,11 +486,11 @@ Tootsville.UI.HUD.toggleTalkEmoji = function (event)
 Tootsville.UI.HUD.connectTalkBox = function ()
 { document.getElementById ("talk-loud-selector").addEventListener
   ("click", Tootsville.UI.HUD.toggleTalkLoud);
- document.getElementById ("talk-expression").addEventListener
+  document.getElementById ("talk-expression").addEventListener
   ("click", Tootsville.UI.HUD.toggleTalkExpression);
- document.getElementById ("talk-emoji").addEventListener
+  document.getElementById ("talk-emoji").addEventListener
   ("click", Tootsville.UI.HUD.toggleTalkEmoji);
-   document.getElementById ("talk-speak-button").addEventListener
+  document.getElementById ("talk-speak-button").addEventListener
   ("click", Tootsville.UI.Keys.speakLine); };
 
 /**
@@ -510,15 +510,15 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
   const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
   const abs = BABYLON.Vector3.Project (
-    model.getAbsolutePosition (),
-    BABYLON.Matrix.IdentityReadOnly,
-    Tootsville.Tank.scene.getTransformMatrix (),
-    Tootsville.Tank.camera.viewport.toGlobal (
-        renderWidth, renderHeight)).divide (
-            {x: renderWidth, y: renderHeight, z: 1}).multiply (
-                {x: document.getElementById('tootsville3d').offsetWidth,
-                 y: document.getElementById('tootsville3d').offsetHeight,
-                 z: 1});
+      model.getAbsolutePosition (),
+      BABYLON.Matrix.IdentityReadOnly,
+      Tootsville.Tank.scene.getTransformMatrix (),
+      Tootsville.Tank.camera.viewport.toGlobal (
+          renderWidth, renderHeight)).divide (
+              {x: renderWidth, y: renderHeight, z: 1}).multiply (
+                  {x: document.getElementById('tootsville3d').offsetWidth,
+                   y: document.getElementById('tootsville3d').offsetHeight,
+                   z: 1});
   nameTag.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
   nameTag.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
@@ -530,24 +530,24 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
  */
 Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
-  const renderHeight = Tootsville.Tank.engine.getRenderHeight ();  
+  const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
   const abs = BABYLON.Vector3.Project (
-    model.getAbsolutePosition (),
-    BABYLON.Matrix.IdentityReadOnly,
-    Tootsville.Tank.scene.getTransformMatrix (),
-    Tootsville.Tank.camera.viewport.toGlobal (
-        renderWidth, renderHeight)).divide (
-            {x: renderWidth, y: renderHeight, z: 1}).multiply (
-                {x: document.getElementById('tootsville3d').offsetWidth,
-                 y: document.getElementById('tootsville3d').offsetHeight,
-                 z: 1});
+      model.getAbsolutePosition (),
+      BABYLON.Matrix.IdentityReadOnly,
+      Tootsville.Tank.scene.getTransformMatrix (),
+      Tootsville.Tank.camera.viewport.toGlobal (
+          renderWidth, renderHeight)).divide (
+              {x: renderWidth, y: renderHeight, z: 1}).multiply (
+                  {x: document.getElementById('tootsville3d').offsetWidth,
+                   y: document.getElementById('tootsville3d').offsetHeight,
+                   z: 1});
   /* Shitty Z index guesswork here. XXX Get the Toot's actual height. */
   const adjust = (1000 - Math.abs (model.position.z - Tootsville.Tank.camera.position.z) ) / 2000 * renderHeight / 2.5;
   speechBubble.style.top = Math.max (30, Math.min (abs.y - adjust, window.innerHeight - 30)) + 'px';
   speechBubble.style.left = Math.max (30, Math.min (abs.x, window.innerWidth - 30)) + 'px'; };
 
 /**
- * Refresh the 2D attachments for one avatar. 
+ * Refresh the 2D attachments for one avatar.
  */
 Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
 { if (avatar.nameTag)
@@ -584,8 +584,8 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   Tootsville.UI.HUD.clickedOnMesh (picked.pickedMesh, picked); };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.UI.HUD.showPlayerCard = function (name)
 { if (name == Tootsville.character) { return; }
   alert ("TODO: Show Player Card for " + name); };

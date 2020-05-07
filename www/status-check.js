@@ -11,5 +11,3 @@ function reallyCheckServer (uri)
           { document.getElementById("check-" + uri).innerHTML = "<FONT COLOR='red'> NO GO </FONT>"; } } ).
   catch (
       () => { document.getElementById("check-" + uri).innerHTML = "<FONT COLOR='red'> FAIL </FONT>"; } );; }
-          
-          
