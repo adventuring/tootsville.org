@@ -39,6 +39,7 @@
  var Tootsville = {
      /* Cluster name is hostname minus leading "play" */
      cluster: document.location.host.split('.').splice(1).join('.'),
+     lag: 50, /* arbitrary lag value until they compute one */
      Worlds:
      { CHOR: { Gravity: 9.81 },
        MOON: { Gravity: 0.32 },

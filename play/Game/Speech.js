@@ -52,6 +52,8 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
   { console.warn ("Surprised to hear from " + speaker);
     Tootsville.Util.infinity ("finger", { talkie: speaker });
     return; }
+  if (avatar.speech)
+  { avatar.speech.parentNode.removeChild (avatar.speech); }
   avatar.speech = balloon;
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
@@ -76,9 +78,27 @@ Tootsville.Game.Speech.updateSpeech = function ()
     { Tootsville.Game.Speech.removeSpeech (balloon);
       delete avatars[i]['speech']; } } };
 
+/**
+ * Dispatch local ~ commands.
+ * 
+ * @table @code
+ * @item ~ua
+ * Displays the user agent information
+ * @item ~lag
+ * Provides the user's estimated lag in msec
+ * @end table
+ */
 Tootsville.Game.Speech.dispatchCommand = function (commandLine)
 { let words = commandLine.split (' ');
   switch (words[0])
   { case '~ua':
     Tootsville.UI.say ("My UA is " + navigator.userAgent);
-    break; }; };
+    return;
+    case "~ping":
+    Tootsville.Util.infinity ("ping");
+    return;
+    case '~lag':
+    Tootsville.UI.say ("My lag is " + Tootsville.lag / 1000 + "s");
+    return;
+    default:
+    Tootsville.UI.say ("I don't recognize " + words[0] + " as a magic word."); }; };
