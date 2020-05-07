@@ -43,7 +43,8 @@ Tootsville.Login.overlay = function ()
  * Start the login process
  */
 Tootsville.Login.start = function ()
-{ if (document.getElementById ("login") && document.getElementById ("login").style.display == "block")
+{ if (document.getElementById ("login") &&
+      document.getElementById ("login").style.display == "block")
   { Tootsville.trace ("Restarting login…");
     Tootsville.Login.startSignIn();
     return; }
@@ -119,38 +120,25 @@ Tootsville.Login.createTootListItem2 = function (li, toot)
 /**
  *
  */
-Tootsville.Login.createTootListItem = function (tootName)
+Tootsville.Login.createTootListItem = function (toot)
 { var li = document.createElement ('LI');
   if (! Tootsville.Login.settingsP)
   { li.onclick = function () { Tootsville.Login.pickCharacter (li); }; }
-  if (Tootsville.Login.toots [tootName])
-  { Tootsville.Login.createTootListItem2 (li, Tootsville.Login.toots[tootName]); }
-  else
-  { li.innerHTML = '<SPAN CLASS="toot-name">' +
-    tootName + '</SPAN><I CLASS="fas fa-spin fa-spinner"></I>';
-    li.className = 'toot';
-    li ['data-toot'] = { name: tootName, childP: false, readyP: false }; }
+  Tootsville.Login.createTootListItem2 (li, toot);
   return li; };
 
 /**
  *
  */
-Tootsville.Login.tootsList = null;
+Tootsville.Login.toots = {};
 
 /**
  *
  */
 Tootsville.Login.saveTootsList = function (list)
-{ Tootsville.Login.tootsList = list;
-  let numberedToots = {};
-  for (let i = 0; i < list.length; ++i)
-  { numberedToots [ i ] = list [ i ];
-    Tootsville.Login.toots [list [i] ] = {name: list [i]}; };
-  Tootsville.Util.infinityAwaits ("finger", "finger", numberedToots).
-  then (tootInfos => {
-      for (let j = 0; j < tootInfos.length; ++j)
-      { Tootsville.Login.toots [tootInfos [ j ].name] = tootInfos [ j ].name; };
-      Tootsville.Login.populateTootsList ();}); };
+{ for (let i = 0; i < list.length; ++i)
+  { Tootsville.Login.toots [ list [ i ].name ] = list [ i ];}
+  Tootsville.Login.populateTootsList (); };
 
 /**
  *
@@ -165,9 +153,9 @@ Tootsville.Login.setSensitiveP = function ()
 Tootsville.Login.populateTootsList = function ()
 { Tootsville.Login.clearTootsList ();
   Tootsville.Login.setSensitiveP ();
-  for (var i = 0; i < Tootsville.Login.tootsList.length; ++i)
-  { var toot = Tootsville.Login.tootsList [i];
-    var li = Tootsville.Login.createTootListItem (toot);
+  for (let name in Tootsville.Login.toots)
+  { let toot = Tootsville.Login.toots [name];
+    let li = Tootsville.Login.createTootListItem (toot);
     document.getElementById ('toots-list').appendChild (li); };
   if (Tootsville.Login.settingsP)
   { Tootsville.Login.childSettings (); }
@@ -178,7 +166,8 @@ Tootsville.Login.populateTootsList = function ()
  *
  */
 Tootsville.Login.generateNewToot = function ()
-{ Tootsville.UI.HUD.showHUDPanel('new-toot'); };
+{ Tootsville.character = "$new toot";
+  Tootsville.UI.HUD.showHUDPanel('new-toot'); };
 
 /**
  *
@@ -264,8 +253,7 @@ Tootsville.Login.switchTootsView = function ()
 { Tootsville.Login.fillGoogleUserInfo ();
   document.getElementById ('pick-toot').style.display = 'block';
   document.getElementById ('sign-in').style.display = 'none';
-  document.getElementById ('login-warm-up').style.display = 'none';
-  Tootsville.Login.loadTootsList (); };
+  document.getElementById ('login-warm-up').style.display = 'none'; };
 
 /**
  *
@@ -432,10 +420,19 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
  *
  */
 Tootsville.Login.acceptSignedIn = function(result)
-{ Tootsville.trace ("User signed in", result);
+{ Tootsville.trace ("User signed in");
   Tootsville.Login.storeCredentialInfo (result);
-  Tootsville.Util.connectWebSocket ();
   return false; };
+
+/**
+*
+*/
+Tootsville.Login.finishSignIn = function (idToken)
+{ console.log ("Finishing sign-in");
+  Tootsville.Login.firebaseAuth = idToken;
+  Tootsville.Gossip.ensureKeyPair ();
+  Tootsville.Util.connectWebSocket ();
+  Tootsville.Login.switchTootsView(); };
 
 /**
  *
@@ -455,13 +452,10 @@ Tootsville.Login.storeCredentialInfo = function (result)
    * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
 
   firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
-  then (function (idToken)
-        { Tootsville.Login.firebaseAuth = idToken;
-          Tootsville.Gossip.ensureKeyPair ();
-          Tootsville.Stream.connectWebSocket ();
-          Tootsville.Login.switchTootsView(); }).
+  then ((id) => { Tootsville.Login.finishSignIn (id); }).
   catch (function(error) {
       // Handle error TODO
+      console.error ("Error from Firebase?", error);
   });
 
   Tootsville.Login.accessToken = cred.accessToken;
@@ -489,6 +483,8 @@ Tootsville.Login.quit = function ()
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
+  /* XXX there should be a more elegant route than this */ 
+  document.location = 'https://Tootsville.org/';
   firebase.auth().signOut().then(Tootsville.Login.start); };
 
 /**

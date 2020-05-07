@@ -403,7 +403,7 @@ Tootsville.UI.HUD.switchActiveItem = function ()
 Tootsville.UI.HUD.refreshTalkStatus = function ()
 { if (Tootsville.Gossip.connectedP ())
   { document.getElementById ('talk-box').className = 'talk-connected';
-    document.getElementById ('talk-speak').placeholder = "Let's make some noise!"; }
+    document.getElementById ('talk-speak').placeholder = "Press TAB to talk"; }
   else
   { document.getElementById ('talk-box').className = 'talk-disconnected';
     document.getElementById ('talk-speak').placeholder = 'disconnected'; }};

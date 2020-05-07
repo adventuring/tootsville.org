@@ -79,8 +79,8 @@ Tootsville.Game.Gatekeeper.avatars = function (gram)
     { console.log (avatar.name + " is one of my Toots");
       Tootsville.Game.Nav.mergeAvatarInfo (Tootsville.Login.toots [ avatar.name ], avatar);
       Tootsville.Login.populateTootsList (); };
-     // if (! Tootsville.character.model)
-     //  { Tootsville.Tank.initPlayerToot (); }}
+    // if (! Tootsville.character.model)
+    //  { Tootsville.Tank.initPlayerToot (); }}
     const orig = Tootsville.Tank.avatars [ avatar.name ];
     if (orig)
     { Tootsville.Game.Nav.mergeAvatarInfo (orig, avatar);
@@ -114,7 +114,7 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
   let successP = gram.status;
   Tootsville.warn ("unhandled datagram", gram); };
 
-/** 
+/**
  * Used to be used for minigame scores; no longer needed.
  */
 Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
@@ -154,16 +154,16 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
  */
 Tootsville.Game.Gatekeeper.beam = function (gram)
 { let world = gram.room;
-      let x = gram.x;
-      let y = gram.y;
-      let z = gram.z;
-      Tootsville.warn ("unhandled datagram", gram);};
+  let x = gram.x;
+  let y = gram.y;
+  let z = gram.z;
+  Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Player has received money (peanuts) or fairy dust.
  */
 Tootsville.Game.Gatekeeper.earning = function (gram)
-{     
+{
     Tootsville.warn ("unhandled datagram", gram);};
 
 /**
@@ -210,7 +210,14 @@ Tootsville.Game.Gatekeeper.inventory = function (gram)
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.Game.Gatekeeper.ping = function (gram)
-{ console.info ("Received Ping-Pong"); };
+{ if (gram.ping == 'ping')
+  { Tootsville.Util.infinity ("ping"); }
+  else if (gram.ping == 'pong')
+  { if (gram.pingStarted)
+    { Tootsville.Game.lag = Tootsville.Game.now - gram.pingStarted;
+      console.info ("Received Ping-Pong with " + Tootsville.Game.lag + " lag"); }
+    else
+    { console.info ("Received Ping-Pong without lag info"); } } };
 
 /**
  * No longer used.
@@ -326,7 +333,7 @@ Tootsville.Game.Gatekeeper.postman = function (gram)
 
 /**
  * The user's buddy list and ignore list.
- * 
+ *
  * @table @code
  * @item buddyList
  * @item ignoreList
@@ -337,10 +344,16 @@ Tootsville.Game.Gatekeeper.getUserLists = function (gram)
   let ignored = gram.ignoreList || [];
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ *
+ */
 Tootsville.Game.Gatekeeper.buddyList = function (gram)
 { let notice = gram.notice;
   Tootsville.warn ("unhandled datagram", gram);};
 
+/**
+ *
+ */
 Tootsville.Game.Gatekeeper.buddyRequest = function (gram)
 { let sender = gram.sender;
   let signature = gram.sign;
@@ -458,19 +471,19 @@ Tootsville.Game.Gatekeeper.reportBug = function (gram)
 { Tootsville.warn ("unhandled datagram", gram); };
 
 /**
- * Receive a list of Toots from the server. 
- * 
+ * Receive a list of Toots from the server.
+ *
  * When ``status'' is false, the user has no Toots.
  */
 Tootsville.Game.Gatekeeper.tootList = function (gram)
 { if (gram.status)
-  { Tootsville.Login.saveTootsList (gram.toots);
-    Tootsville.Login.populateTootsList (); }
+  { Tootsville.Login.saveTootsList (gram.toots); }
   else
   { Tootsville.Login.startCharacterCreation (); } };
 
 /**
- *
+ * The server has  given us ``permission'' to play as  the Toot we asked
+ * for — i.e. the second step of signing in is complete.
  */
 Tootsville.Game.Gatekeeper.playWith = function (gram)
 { if (gram.status)
@@ -481,8 +494,8 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
   else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Gatekeeper.newScript = function (gram)
 { if (gram.status && gram.script)
   { Tootsville.Util.loadScript (gram.script); } };
@@ -500,11 +513,10 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
     { console.log (gram.n + " has joined " + gram.r);
       if (Tootsville.Tank.avatars)
       { if (! Tootsville.Tank.avatars [ gram.n ])
-        { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }
-        Tootsville.Util.infinity ("finger", { 0: gram.n }); } } } };
+        { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}}};
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Gatekeeper.wtl = function (gram)
 { if (gram.status)
   { let avatar = Tootsville.Tank.avatars [ gram.n ];
@@ -515,8 +527,8 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     avatar.facing = gram.facing; } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Gatekeeper.bye = function (gram)
 { let avatar = Tootsville.Tank.avatars [ gram.n ];
   if (! (avatar && avatar.uuid == gram.u))
@@ -525,8 +537,8 @@ Tootsville.Game.Gatekeeper.bye = function (gram)
   Tootsville.Tank.destroyAvatar (avatar); };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Gatekeeper.c = function (gram)
 { if (gram.status)
   { console.info ("Command processor reports success", gram); }
@@ -534,7 +546,23 @@ Tootsville.Game.Gatekeeper.c = function (gram)
   { console.warn ("Command processor reports error", gram); } };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Gatekeeper.goToWeb = function (gram)
 { if (gram.status) { window.location = gram.url; } };
+
+/**
+ * If the server sees no activity for a long time, it'll send an Are You
+ * There (ayt)  packet to  verify that  the client  isn't just  a zombie
+ * connection. We reply with a ping to show some activity.
+ */
+Tootsville.Game.Gatekeeper.ayt = function (gram)
+{ if (gram.status)
+  { Tootsville.Util.infinity ("ping"); } };
+
+/**
+ *
+ */
+Tootsville.Game.Gatekeeper.rv = function (gram)
+{ if (gram.status)
+  { console.log ("Received room vars (TODO process)", rv); } };

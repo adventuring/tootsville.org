@@ -220,7 +220,7 @@ Tootsville.UI.NewToot.ready = function ()
  *
  */
 Tootsville.UI.NewToot.afterCreate = function (reply)
-{ if (reply.error)
+{ if (reply && reply.error)
   { switch (reply.error)
     { case 400:
       Tootsville.Gossip.Parrot.say ("Program trouble!",

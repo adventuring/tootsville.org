@@ -235,7 +235,7 @@ Tootsville.Game.Commands.getRoomList = function (d, u, r)
  *
  * See `INFINITY-GET-SERVER-TIME'
  */
-Tootsville.Game.Commands.getservertime = function (d, u, r)
+Tootsville.Game.Commands.getServerTime = function (d, u, r)
 {
     /* TODO */ };
 

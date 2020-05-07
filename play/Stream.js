@@ -35,7 +35,7 @@ if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
 Tootsville.Util.checkStream = function () {
     if (Tootsville.Util.WebSocket)
     { if (Tootsville.Util.WebSocket.readyState == WebSocket.OPEN)
-      { Tootsville.Util.infinity ("ping"); }
+      { Tootsville.Util.infinity ("ping", { pingStarted: Tootsville.Game.now } ); }
       else if (! (Tootsville.Util.WebSocket.readyState == WebSocket.CONNECTING) )
       { Tootsville.Util.connectWebSocket (); } } };
 
@@ -44,6 +44,9 @@ Tootsville.Util.connectWebSocket = function () {
          (Tootsville.Util.WebSocket.readyState == WebSocket.OPEN ||
           Tootsville.Util.WebSocket.readyState == WebSocket.CONNECTING) )
     { console.log ("WebSocket already ready already.");
+      return; }
+    if (! Tootsville.Login.firebaseAuth)
+    { console.warn ("Can't connect until authenticated");
       return; }
     let uri = Tootsville.host.game.replace("http", "ws") + "/infinity/alef-null";
     if (/:5000/.test (uri)) {
@@ -56,9 +59,7 @@ Tootsville.Util.connectWebSocket = function () {
     Tootsville.Util.WebSocket.onmessage = (event) => { Tootsville.Util.messageFromWebSocket (event); }
     Tootsville.Util.WebSocket.onerror = (event) => { Tootsville.Util.errorFromWebSocket (event); }
     if (! Tootsville.Util.checkStreamRunning)
-    { setInterval (Tootsville.Util.checkStream, 30000);
-      Tootsville.Util.checkStreamRunning = true; }
-};
+    { Tootsville.Util.checkStreamRunning = setInterval (Tootsville.Util.checkStream, 300000); } };
 
 Tootsville.Util.stream = function (json)
 { console.debug ("WebSocket stream send command " + json.c, json);
@@ -67,7 +68,7 @@ Tootsville.Util.stream = function (json)
   Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
 
 Tootsville.Util.openWebSocket = function (event) {
-    Tootsville.Util.stream ({ auth: "∞/ℵ₀",
+    Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
                               provider: "Firebase",
                               token: Tootsville.Login.firebaseAuth });
 };

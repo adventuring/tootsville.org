@@ -85,6 +85,8 @@ Tootsville.Gossip.waitForAnswer = function (peer, offer, retries, next)
 
 /**
  * Create and advertise an offer for connection.
+ *
+ * WRITEME This deserves better documentation
  */
 Tootsville.Gossip.createConnection = function ()
 { let peer = {connection: new RTCPeerConnection (
