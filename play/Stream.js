@@ -73,9 +73,10 @@ Tootsville.Util.openWebSocket = function (event) {
                               token: Tootsville.Login.firebaseAuth });
 };
 
-Tootsville.Util.closeWebSocket = function (event) {
-    console.warn ("Closing WebSocket connection", event);
-};
+Tootsville.Util.closeWebSocket = function (event)
+{ Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
+                                "The server stream connection went down. Are we off-line?").
+  then ( () => { Tootsville.Util.checkStream (); } ); };
 
 Tootsville.Util.messageFromWebSocket = function (event)
 { let data = JSON.parse (event.data);
