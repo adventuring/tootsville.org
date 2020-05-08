@@ -514,7 +514,11 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
         { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}}};
 
 /**
+ * Walk The Line
  *
+ * WRITEME
+ *
+ * See alse: `INFINITY-WTL'
  */
 Tootsville.Game.Gatekeeper.wtl = function (gram)
 { if (gram.status)
@@ -522,6 +526,8 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     if (! (avatar && avatar.uuid == gram.u))
     { console.warn ("UUID mismatch, not walking the line", gram);
       return; }
+    if (! avatar.model)
+    { Tootsville.AvatarBuilder.build (avatar); }
     avatar.course = gram.course;
     avatar.facing = gram.facing; } };
 

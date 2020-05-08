@@ -167,7 +167,9 @@ Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
  * A duplicate of an existing avatar will not be created, but it may be updated.
  */
 Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
-{ if (Tootsville.Tank.avatars && Tootsville.Tank.avatars [avatar.name] && Tootsville.Tank.avatars [avatar.name].model)
+{ if (!scene)
+  { scene = Tootsville.Tank.scene; }
+  if (Tootsville.Tank.avatars && Tootsville.Tank.avatars [avatar.name] && Tootsville.Tank.avatars [avatar.name].model)
   { Tootsville.AvatarBuilder.update (avatar, Tootsville.Tank.avatars [avatar.name].model, scene, finish);
     return; }
   let existing = Tootsville.Tank.findAvatar (avatar.name);
