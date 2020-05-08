@@ -101,9 +101,10 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
   { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
   assetsManager.useDefaultLoadingScreen = false;
   console.debug ("fixing to load item template " + item.template.name);
-  let loadTask = assetsManager.addMeshTask ("loading " + item.template.name, null,
-                                            "https://jumbo.tootsville.org/Assets/Models/5/",
-                                            item.template.avatar + ".babylon");
+  let loadTask = assetsManager.addMeshTask (
+      "loading " + item.template.name, null,
+      "https://jumbo.tootsville.org/Assets/Models/5/" + item.template.avatar + "/",
+      item.template.avatar + ".babylon");
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
     let i;
@@ -132,7 +133,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  *
  */
 Tootsville.FurnitureBuilder.build = function (item, scene, finish)
-{ if (!scene) { console.error ("Cannot build furniture without a scene"); return; }
+{ if (!scene) { scene = Tootsville.Tank.scene; }
   if (scene.items && scene.items [item.uuid] && ('model' in scene.items [item.uuid]))
   { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else

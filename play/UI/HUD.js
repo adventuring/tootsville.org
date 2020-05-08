@@ -509,6 +509,7 @@ Tootsville.UI.HUD.initHUD = function ()
 Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
   const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
+  if (! (Tootsville.Tank.camera && Tootsville.Tank.camera.viewport) ) { return; }
   const abs = BABYLON.Vector3.Project (
       model.getAbsolutePosition (),
       BABYLON.Matrix.IdentityReadOnly,

@@ -503,14 +503,27 @@ Tootsville.Game.Gatekeeper.newScript = function (gram)
  */
 Tootsville.Game.Gatekeeper.joinOK = function (gram)
 { if (gram.status)
-  { Tootsville.Game.Nav.sendWTL ();
-    if (gram.uLs == Tootsville.characterUUID)
+  { if (gram.uLs == Tootsville.characterUUID)
     { console.log ("I have joined " + gram.r);
       Tootsville.Util.infinity ("getRoomVars"); }
     else
     { console.log (gram.n + " has joined " + gram.r);
+      Tootsville.Game.Nav.sendWTL ();
       if (Tootsville.Tank.avatars)
-      { if (! Tootsville.Tank.avatars [ gram.n ])
+      { if (Tootsville.Tank.avatars [ gram.n ])
+        { if (Tootsville.Tank.avatars [ gram.n ].model.course )
+          { Tootsville.Util.infinity ("wtl4",
+                                      { u: gram.n,
+                                        course: Tootsville.Tank.avatars [ gram.n ].model.course,
+                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing }); }
+          else if ( Tootsville.Tank.avatars [ gram.n ].model.position )
+          { Tootsville.Util.infinity ("wtl4",
+                                      { u: gram.n,
+                                        course: { startPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
+                                                  endPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
+                                                  startTime: Tootsville.Game.now },
+                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing });} }
+        else
         { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}}};
 
 /**
@@ -523,7 +536,15 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
 Tootsville.Game.Gatekeeper.wtl = function (gram)
 { if (gram.status)
   { let avatar = Tootsville.Tank.avatars [ gram.n ];
-    if (! (avatar && avatar.uuid == gram.u))
+    if (! avatar)
+    { console.warn ("Unexpected WTL from surprise user " + gram.n);
+      Tootsville.Tank.avatars [ gram.n ] = { name: gram.n,
+                                             uuid: gram.u,
+                                             course: gram.course,
+                                             facing: gram.facing };
+      Tootsville.Util.infinity("finger", { walker: gram.n });
+      return; }
+    if (! (avatar.uuid == gram.u))
     { console.warn ("UUID mismatch, not walking the line", gram);
       return; }
     if (! avatar.model)
@@ -571,17 +592,17 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
  */
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
-  { if (gram.s)
-      if (gram.f) {}
-    if (gram.w)
-        for (let key in gram)
-    { if ('s' == key) { Tootsville.SkyBuilder.buildMatchingSky (gram.s); }
-      else if ('w' == key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.w); }
+  { let radians = gram.rad;
+    if (! radians)
+    { console.warn ("Non-Radian facings not supported TODO"); }
+    for (let key in gram.var)
+    { if ('s' == key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
+      else if ('w' == key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
       else if ('f' == key) {}
-      else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram [ key ]); }
-      else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram [ key ]); }
-      else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram [ key ]); }
-      else if (key.startsWith ('text')) { Tootsville.SceneBuilder.addText (gram [ key ]); }
-      else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (gram [ key ]); }
+      else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram.var [ key ]); }
+      else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram.var [ key ]); }
+      else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram.var [ key ]); }
+      else if (key.startsWith ('text')) { Tootsville.SceneBuilder.addText (gram.var [ key ]); }
+      else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (gram.var [ key ]); }
       else
       { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}}};

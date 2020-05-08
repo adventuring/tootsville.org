@@ -71,10 +71,34 @@ Tootsville.SceneBuilder.addItem1  = function (item)
 { console.warn ("Unimplemented: Not adding item₁ ", item); };
 
 /**
+ * Adds a furniture item in the ``itm2'' format
  *
+ * See `ITEM-INFO'
+ *
+ * @verbatim
+ * { uuid:
+ *  position: {  x: y: z: },
+ *  facing: radians,
+ *  baseColor: color,
+ *  altColor: color,
+ *  energy: number,
+ *  scale:  { x: y: z: },
+ *  world:  { world: lat: long: alt: },
+ *  template:
+ *  { id:
+ *  name:
+ *  description:
+ *  trade: [  Y N X  ],
+ *  avatar:
+ *  energyKind:
+ *  energyMax:
+ *  onZero:
+ *  wearSlot:
+ *  weight: } }
+ * @end verbatim
  */
 Tootsville.SceneBuilder.addItem2  = function (item)
-{ console.warn ("Unimplemented: Not adding item₂ ", item); };
+{ Tootsville.FurnitureBuilder.build (item); };
 
 /**
  *

@@ -88,9 +88,13 @@ Tootsville.Game.Nav.sendWTL = function ()
                  speed: .1 }; } }
   if (! (facing))
   { facing = 0; }
-  if (! (course) || ! (course.startPoint) )
-  { console.warn ("No course for sendWTL"); return; }
-  Tootsville.Util.infinity ("wtl", { course: course, facing: facing } ); };
+  if (course && course.startPoint )
+  { Tootsville.Util.infinity ("wtl", { course: course, facing: facing } ); }
+  else
+  { Tootsville.Util.infinity ("wtl", { course: { startPoint: avatar.model.position,
+                                                 endPoint: avatar.model.position,
+                                                 startTime: Tootsville.Game.now },
+                                       facing: facing } ); } };
 
 /**
  *
@@ -131,10 +135,11 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
                                              course.startPoint.z); }
   if (! (course.walkΔ && course.walkΔ.subtract))
   { course.walkΔ = course.endPoint.subtract (course.startPoint); }
-  if (! course.endTime)
+  if ((! (course.endTime)) || isNaN(course.endTime))
   { course.endTime = course.startTime + course.walkΔ.length () / course.speed; }
   if (course.endTime < Tootsville.Game.now)
   { console.debug (entity.name + " done walking, time is up");
+    entity.model.position = new BABYLON.Vector3 (course.endPoint.x, course.endPoint.y, course.endPoint.z);
     return true; }
   if (!entity.model)
   { console.debug (entity.name + " not gonna walk, no model present");
@@ -155,7 +160,7 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
     console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
     return true; }
 
-  entity.model.position = goalPosition;
+  entity.model.position = new BABYLON.Vector3 (goalPosition.x, goalPosition.y, goalPosition.z);
 
   if (entity.nameTag || entity.speech)
   { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
@@ -187,6 +192,8 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
       if (avatar.course)
       { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
         if (done) { console.debug (avatar.name + " finished course ", avatar.course, " at " + Tootsville.Game.now );
+                    if (avatar.course)
+                    { Tootsville.Tank.avatars [ avatar.name ].model.position = new BABYLON.Vector3 (avatar.course.endPoint.x, avatar.course.endPoint.y, avatar.course.endPoint.z); }
                     delete avatar['course'];
                     if (avatar.name == Tootsville.character)
                     { Tootsville.Game.Nav.sendWTL (); }}}}}};
