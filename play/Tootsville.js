@@ -58,6 +58,9 @@ var Tootsville = {
     UI: {},
     seen: {} };
 
+if (/\bwith-cluster=([a-z.]+)\b/i.test (window.location.hash))
+{ Tootsville.cluster = window.location.hash.match (/\bwith-cluster=([a-z.]+)\b/i) [1]; }
+
 if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||
     ('tootsville.org' == Tootsville.cluster))
