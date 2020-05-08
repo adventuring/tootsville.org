@@ -60,6 +60,8 @@ var Tootsville = {
 
 if (/\bwith-cluster=([a-z.]+)\b/i.test (window.location.hash))
 { Tootsville.cluster = window.location.hash.match (/\bwith-cluster=([a-z.]+)\b/i) [1]; }
+else
+{ document.domain = Tootsville.cluster; }
 
 if (('test.tootsville.org' == Tootsville.cluster) ||
     ('qa.tootsville.org' == Tootsville.cluster) ||
@@ -67,8 +69,7 @@ if (('test.tootsville.org' == Tootsville.cluster) ||
 { Tootsville.host =
   { www: 'https://www.' + Tootsville.cluster,
     play: 'https://play.' + Tootsville.cluster,
-    game: 'https://game1.' + Tootsville.cluster.replace('.org','.net') + ":5000" };
-  document.domain = Tootsville.cluster; }
+    game: 'https://game1.' + Tootsville.cluster.replace('.org','.net') + ":5000" }; }
 else
 { Tootsville.cluster = 'local';
   let host = location.hostname;

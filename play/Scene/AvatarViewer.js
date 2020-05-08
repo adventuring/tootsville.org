@@ -94,25 +94,26 @@ Tootsville.AvatarViewer.startRendering = function (canvas) {
  * Then, grab a screenshot of it and put that into the canvas instead to
  * free up the WebGL context.
  */
-Tootsville.AvatarViewer.createViewerReally = function (toot, canvas)
+Tootsville.AvatarViewer.createViewerReally = function (toot, canvas, container)
 { Tootsville.AvatarViewer.createScene (canvas);
   Tootsville.AvatarViewer.createCamera (canvas, toot.name);
   Tootsville.AvatarViewer.createLight (canvas);
-  Tootsville.AvatarBuilder.build (toot, canvas.scene);
-  if ('avatars' in canvas.scene)
-  { canvas.scene.avatars [toot.name].position = BABYLON.Vector3.Zero ();}
-  canvas.scene.render ();
-  BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
-                                  (data) =>
-                                  { canvas.engine.dispose ();
-                                    canvas.engine = null;
-                                    canvas.scene = null;
-                                    canvas.camera = null;
-                                    canvas.light = null;
-                                    canvas.getContext('2d').drawImage (data,
-                                                                       0, 0, 256, 256,
-                                                                       0, 0, canvas.width, canvas.height); },
-                                  'image/png'); };
+  Tootsville.AvatarBuilder.build (toot, canvas.scene, function () {
+      canvas.scene.render ();
+      BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
+                                      (data) =>
+                                      { canvas.engine.dispose ();
+                                        canvas.engine = null;
+                                        canvas.scene = null;
+                                        canvas.camera = null;
+                                        canvas.light = null;
+                                        let img = container.getElementsByTagName ('IMG')[0];
+                                    img.src = data;
+                                        img.alt = toot.name;
+                                        canvas.style.display = 'none';
+                                        console.log ("Added AvatarViewer for " + toot.name);
+                                      },
+                                      'image/png'); } ); };
 
 /**
  * Create a stand-alone Avatar Viewer in a CANVAS.
@@ -126,10 +127,13 @@ Tootsville.AvatarViewer.createViewerReally = function (toot, canvas)
  * at    `TOOT-INFO',    and    will    be    ultimately    passed    to
  * `Tootsville.AvatarBuilder.build', qv.
  */
-Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas)
+Tootsville.AvatarViewer.createViewerInCanvas = function (toot, canvas, container)
 { if (! canvas) { return; }
   if (toot.charAt) // is a string
-  { Tootsville.AvatarViewer.getAvatar (toot).then (t2 =>
-                                                   { Tootsville.AvatarViewer.createViewerInCanvas (t2, canvas); });
+  { Tootsville.AvatarViewer.getAvatar (toot).
+    then (t2 =>
+          { Tootsville.AvatarViewer.createViewerInCanvas (t2, canvas, container); });
     return; }
-  Tootsville.Tank.prepareFor3D ().then ( () => { Tootsville.AvatarViewer.createViewerReally (toot, canvas); } ); };
+  Tootsville.Tank.prepareFor3D ().
+  then ( () =>
+         { Tootsville.AvatarViewer.createViewerReally (toot, canvas, container); } ); };

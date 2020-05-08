@@ -95,37 +95,28 @@ Tootsville.Login.loadTootsList = function ()
 if (!('toots' in Tootsville.Login)) { Tootsville.Login.toots = {}; }
 
 /**
- * Actually instantiate  a decorated Toot  List Item with  avatar, note,
- * and child flag.
- *
- * This is called after Toot Info has been fetched from the server.
- */
-Tootsville.Login.createTootListItem2 = function (li, toot)
-{ li.innerHTML = '';
-  li ['data-toot'] = toot;
-  li.className = 'toot';
-  if (toot.avatar && false /* XXX */ )
-  { const canvas = document.createElement ('CANVAS');
-    canvas.width = 96;
-    canvas.height = 96;
-    li.appendChild (canvas);
-    /* Create AvatarViewer asynchronously */
-    setTimeout ( () => { console.debug ("Drawing avatar " + toot.name + " in a canvas");
-                         Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas); },
-                 10 ); }
-  li.innerHTML += '<SPAN CLASS="toot-name">' +
-  toot.name + '</SPAN><SPAN CLASS="note">' + (toot.note || "") + '</SPAN>';
-  Tootsville.Login.addChildFlag (li); };
-
-/**
  *
  */
 Tootsville.Login.createTootListItem = function (toot)
 { var li = document.createElement ('LI');
   if (! Tootsville.Login.settingsP)
   { li.onclick = function () { Tootsville.Login.pickCharacter (li); }; }
-  Tootsville.Login.createTootListItem2 (li, toot);
-  return li; };
+  li.innerHTML = '';
+  li ['data-toot'] = toot;
+  li.className = 'toot';
+  if (toot.avatar)
+  { li.innerHTML += '<IMG HEIGHT=256 WIDTH=256>';
+    const canvas = document.createElement ('CANVAS');
+    canvas.width = 256;
+    canvas.height = 256;
+    /* Create AvatarViewer asynchronously */
+    setTimeout ( () => { 
+        console.debug ("Drawing avatar " + toot.name + " in a canvas");
+        Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas, li); } ,
+                 10 ); }
+  li.innerHTML += '<SPAN CLASS="toot-name">' +
+  toot.name + '</SPAN><SPAN CLASS="note">' + (toot.note || "") + '</SPAN>'; /// FIXME innerText
+  Tootsville.Login.addChildFlag (li);return li; };
 
 /**
  *
