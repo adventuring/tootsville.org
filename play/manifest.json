@@ -2,7 +2,7 @@
     "short_name": "Tootsville",
     "name": "Tootsville",
     "description": "Build, explore, and play online in Tootsville",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "manifest_version": 2,
     "start_url": "./?utm_source=homescreen",
     "app": {
