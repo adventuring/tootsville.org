@@ -321,20 +321,12 @@ p {
 
     overflow: hidden;
 
-    /* https://stackoverflow.com/questions/35361986/css-gradient-checkerboard-pattern */
-    background-image:
-        linear-gradient(45deg, @pink 25%, transparent 25%),
-        linear-gradient(-45deg, @pink 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, @pink 75%),
-        linear-gradient(-45deg, transparent 75%, @pink 75%);
-    background-size: 1rem 1rem;
-    background-position: 0 0, 0 .5rem, .5rem -.5rem, -.5rem 0px;
     z-index: 500;
     transition: .7s ease-in-out;
 
     img {
-        height: 100%;
-        width: 100%;
+        height: 7vw;
+        width: 7vw;
     }
 }
 
@@ -691,6 +683,21 @@ h1.centered {
     z-index: 100;
     opacity: 0;
     display: none;
+
+    label {
+        font-size: 3rem;
+    }
+
+    .fa-comment-alt {
+        color: @red;
+    }
+    .fa-comment {
+        color: @green;
+    }
+    .fa-comment-dots {
+        color: @silver;
+    }
+
 }
 
 #talk-expression-menu {
@@ -818,8 +825,7 @@ h1.centered {
     #gamepads-assign {
         button {
             border-radius: 0;
-            padding: .5ex;             
+            padding: .5ex;
         }
     }
 }
-

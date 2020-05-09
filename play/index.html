@@ -169,10 +169,6 @@
         <br>
         <span class="tootsville-date"></span>
         </div>
-        <div id="toolbox-contacts">
-          <i class="fa fa-address-card fa-fw"></i>
-          Contacts
-        </div>
       </div>
 
       <div id="wallet-peanuts">
@@ -190,15 +186,21 @@
       <!-- Talk Box -->
 
       <div id="talk-loud-menu">
-        <button id="talk-loud-shout">
+        <label>
+          <input type="radio" name="talk-loud-menu-item"
+                  class="talk-loud-menu-item" id="talk-loud-shout">
           <i class="fas fa-comment-alt"></i>
-        </button>
-        <button id="talk-loud-talk">
+        </label>
+        <label>
+          <input type="radio" name="talk-loud-menu-item"
+                  class="talk-loud-menu-item"id="talk-loud-talk">
           <i class="fas fa-comment"></i>
-        </button>
-        <button id="talk-loud-whisper">
+        </label>
+        <label>
+          <input type="radio" name="talk-loud-menu-item"
+                  class="talk-loud-menu-item" id="talk-loud-whisper">
           <i class="fas fa-comment-dots"></i>
-        </button>
+        </label>
       </div>
 
       <div id="talk-expression-menu">
@@ -274,9 +276,8 @@
 
       <!-- Mini paperdoll launches inventory window -->
 
-      <div id="paperdoll-mini"
-              height="128" width="128">
-        <img height="128" width="128">
+      <div id="paperdoll-mini">
+        <img alt="">
       </div>
 
       <!-- Bug reports, troubleshooting -->

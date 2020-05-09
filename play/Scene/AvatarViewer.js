@@ -71,22 +71,10 @@ Tootsville.AvatarViewer.createCamera = function (canvas, name)
  * Create a light source for the AvatarViewer.
  */
 Tootsville.AvatarViewer.createLight = function (canvas)
-{ const light = new BABYLON.HemisphericLight (
+{ canvas.light = new BABYLON.HemisphericLight (
     'uplight',
     new BABYLON.Vector3 (0,1,0),
     canvas.scene);} ;
-
-/**
- * Begin the rendering in the viewer
- */
-Tootsville.AvatarViewer.startRendering = function (canvas) {
-    setTimeout (function ()
-                { canvas.engine.runRenderLoop ( function ()
-                                                { try { canvas.scene.render (); }
-                                                  catch (e) {} }); },
-                1);
-    window.addEventListener ('resize', canvas.engine.resize);
-};
 
 /**
  * Render the AvatarViewer scene only once.
@@ -102,13 +90,17 @@ Tootsville.AvatarViewer.createViewerReally = function (toot, canvas, container)
       canvas.scene.render ();
       BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
                                       (data) =>
-                                      { canvas.engine.dispose ();
-                                        canvas.engine = null;
-                                        canvas.scene = null;
-                                        canvas.camera = null;
-                                        canvas.light = null;
-                                        let img = container.getElementsByTagName ('IMG')[0];
-                                    img.src = data;
+                                      { setTimeout ( () => {
+                                          canvas.scene.dispose ();
+                                          canvas.camera.dispose ();
+                                          canvas.light.dispose ();
+                                          canvas.engine.dispose ();
+                                          canvas.engine = null;
+                                          canvas.scene = null;
+                                          canvas.camera = null;
+                                          canvas.light = null; }, 4);
+                                        let img = container.querySelector ('IMG');
+                                        img.src = data;
                                         img.alt = toot.name;
                                         canvas.style.display = 'none';
                                         console.log ("Added AvatarViewer for " + toot.name);

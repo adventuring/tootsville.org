@@ -34,15 +34,13 @@
 (function () {
     var clickHandlers = {
         'control-panel-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
-                                           event.preventDefault (); },
+                                           event.stopPropagation (); },
         'toolbox-mobile-phone': (event) => { Tootsville.UI.HUD.showHUDPanel('mobile');
-                                             event.preventDefault ();  },
-        'toolbox-contacts': (event) => { Tootsville.UI.HUD.showHUDPanel('contacts');
-                                         event.preventDefault ();  },
+                                             event.stopPropagation ();  },
         'paperdoll-mini': (event) => { Tootsville.UI.HUD.openPaperdoll ();
-                                       event.preventDefault (); },
+                                       event.stopPropagation (); },
         'troubleshooting-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('troubleshooting');
-                                             event.preventDefault ();  }
+                                             event.stopPropagation ();  }
     };
     for (var id in clickHandlers) {
         document.getElementById(id).addEventListener('click', clickHandlers[id]);

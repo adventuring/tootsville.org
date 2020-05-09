@@ -66,7 +66,9 @@ Tootsville.AvatarBuilder.addNameTag = function (avatar, model, scene)
 { if (scene !== Tootsville.Tank.scene) { return; }
   var nameTag = document.createElement ('DIV');
   nameTag.innerHTML = avatar.userName; /* Note this may start with ◆ */
+  nameTag.tootName = avatar.name;
   nameTag.className = 'name-tag';
+  nameTag.addEventListener ('click', Tootsville.UI.HUD.nameTagClicked);
   document.getElementById('hud').append (nameTag);
   Tootsville.Tank.findAvatar (avatar.name).nameTag = nameTag;
   Tootsville.UI.HUD.refreshNameTagAttachment (model, nameTag); };

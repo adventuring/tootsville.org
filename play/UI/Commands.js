@@ -102,7 +102,7 @@ Tootsville.UI.runCommand = function (command, event)
   { (cmd)(event);
     /* Beat up browsers trying to steal our keystrokes */
     event.preventDefault ();
-    event.stopImmediatePropagation ();
+    event.stopPropagation ();
     event.cancelBubble = true; }
   else if (undefined == cmd)
   { return; }

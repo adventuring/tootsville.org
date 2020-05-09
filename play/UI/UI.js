@@ -213,6 +213,11 @@ Tootsville.UI.clickedOnItem = function (meshName, picked)
 { /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
 };
 
+Tootsville.UI.getSpeechVolume = function ()
+{ return 'talk'; /* TODO */ 
+  let value = document.querySelector ('radio.talk-loud-menu-item   ::checked').getElementIO ();
+};
+
 /**
  *
  */
@@ -220,4 +225,5 @@ Tootsville.UI.say = function (speech)
 { if ("~" == speech.charAt (0))
   { Tootsville.Game.Speech.dispatchCommand (speech); }
   else
-  { Tootsville.Gossip.send ("speak", { speech: speech }); } };
+  { Tootsville.Gossip.send ("speak", { speech: speech,
+                                       vol: Tootsville.UI.getSpeechVolume () }); } };

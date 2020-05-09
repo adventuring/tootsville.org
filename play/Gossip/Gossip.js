@@ -302,3 +302,11 @@ Tootsville.Gossip.getICE = function ()
         "Squawk! Trouble getting connection servers",
         "I'm not able to get connection servers needed to join the game. Are you online?" );
                Tootsville.UI.HUD.refreshHUD (); } ); };
+
+/**
+*
+*/
+Tootsville.Gossip.closeStreams = function ()
+{ Tootsville.Gossip.closeAndQuitP = true;
+  /* TODO */
+};

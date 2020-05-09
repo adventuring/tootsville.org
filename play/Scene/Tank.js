@@ -74,6 +74,9 @@ Tootsville.Tank.initOTSCamera = function ()
           { Tootsville.Tank.onViewMatrixChangedObservable = true; } );
   return camera; };
 
+/**
+ *
+ */
 Tootsville.Tank.initArcCamera = function ()
 { const camera = new BABYLON.ArcRotateCamera (
     "Tootsville Camera", 0, 0, 10,
@@ -144,11 +147,13 @@ Tootsville.Tank.init3DEngine = function ()
           // TODO confirm if this is engine or scene:
           Tootsville.Tank.engine.workerCollisions = true;
           Tootsville.Tank.canvas.addEventListener (
-              'click',
-              Tootsville.UI.HUD.convertCanvasEventTo3D);
+              'click', Tootsville.UI.HUD.convertCanvasEventTo3D);
           document.getElementById('hud').addEventListener (
-              'click',
-              Tootsville.UI.HUD.convertCanvasEventTo3D);
+              'click', Tootsville.UI.HUD.convertCanvasEventTo3D);
+          document.getElementById('hud').addEventListener (
+              'contextmenu', (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
+                                          event.stopPropagation ();
+                                          event.preventDefault (); });
           console.log ("init3DEngine: ready");
           finish (); }); };
 
@@ -171,13 +176,15 @@ Tootsville.Tank.initPlayerToot = function ()
   ); };
 
 /**
- *
+ * Update the avatar model for avatarName, by looking up its description
+ * Tootsville.Tank.avatars.
  */
 Tootsville.Tank.updateAvatarFor = function (avatarName)
 { let avatar = Tootsville.Tank.avatars [ avatarName ];
-  if (! (avatar && avatar.avatarClass)) { console.warn ("Can't build avatar without info for " + avatarName);
-                                          Tootsville.Util.infinity ("finger", { updateAvatar: avatarName });
-                                          return; }
+  if (! (avatar && avatar.avatarClass))
+  { console.warn ("Can't build avatar without info for " + avatarName);
+    Tootsville.Util.infinity ("finger", { updateAvatar: avatarName });
+    return; }
   if (Tootsville.Tank.scene)
   { Tootsville.AvatarBuilder.build (avatar, Tootsville.Tank.scene); } };
 
@@ -186,16 +193,19 @@ Tootsville.Tank.updateAvatarFor = function (avatarName)
  * a static light.
  */
 Tootsville.Tank.createScene = function ()
-{ console.log ("Creating a test scene with an over-the-shoulder camera, ground plane, light, and Toot.");
-  console.log ("Babylon scene object is ", Tootsville.Tank.scene);
-  try { Tootsville.SkyBuilder.build (Tootsville.activity.world); } catch (e) { console.error (e); }
+{ console.log ("Initializing thet Babylon WebGL Scene.");
+  try { Tootsville.SkyBuilder.build (Tootsville.activity.world); }
+  catch (e) { console.error (e); }
   try { Tootsville.GroundBuilder.build (Tootsville.activity.x,
                                         Tootsville.activity.y,
-                                        Tootsville.activity.z); } catch (e) { console.error (e); }
-  try { Tootsville.Tank.initPlayerToot (); } catch (e) { console.error (e); }
+                                        Tootsville.activity.z); }
+  catch (e) { console.error (e); }
+  try { Tootsville.Tank.initPlayerToot (); }
+  catch (e) { console.error (e); }
   try { Tootsville.SceneBuilder.build (Tootsville.activity.x,
                                        Tootsville.activity.y,
-                                       Tootsville.activity.z); } catch (e) { console.error (e); }
+                                       Tootsville.activity.z); }
+  catch (e) { console.error (e); }
 
   /* Optimize display on lower-end systems at the expense of frame rate, if necessary */
   var optimize = BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed();
@@ -265,7 +275,7 @@ Tootsville.Tank.start3DReal = function ()
           { console.log ("3D libraries loaded");
             Tootsville.Tank.createScene ();
             Tootsville.Login.loginDone ();
-            console.log ("Created test scene; starting rendering loop");
+            console.log ("Created game scene; starting rendering loop");
             setTimeout ( () => { Tootsville.Tank.initOTSCamera ();
                                  Tootsville.Tank.scene.activeCamera = Tootsville.Tank.camera; }, 100);
             Tootsville.Tank.startRenderLoop ();

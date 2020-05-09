@@ -32,13 +32,13 @@
   </body>
   <script>
    window.addEventListener("load", function()
-   { var result = document.getElementById("webgl-check");
-           var canvas = document.createElement("CANVAS");
-           result.appendChild(canvas);
-           var gl = canvas.getContext("webgl");
-           if (gl && gl instanceof WebGLRenderingContext)
-           { result.innerHTML = "PASS"; }
-           else
-           { result.innerHTML = "FAIL"; } }, false);
+           { var result = document.getElementById("webgl-check");
+                   var canvas = document.createElement("CANVAS");
+                   result.appendChild(canvas);
+                   var gl = canvas.getContext("webgl");
+                   if (gl && gl instanceof WebGLRenderingContext)
+                   { result.innerHTML = "PASS"; }
+                   else
+                   { result.innerHTML = "FAIL"; } }, false);
   </script>
 </html>
