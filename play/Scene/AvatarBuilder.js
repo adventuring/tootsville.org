@@ -123,9 +123,10 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
   if (! assetsManager)
   { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
   assetsManager.useDefaultLoadingScreen = false;
-  if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
-  { console.warn ("Almost re-loaded avatar model for " + avatar.name);
-    return; /* XXX finish? */ }
+  if (scene == Tootsville.Tank.scene)
+  { if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
+    { console.warn ("Almost re-loaded avatar model for " + avatar.name);
+      return; /* XXX finish? */ } }
   var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".babylon");

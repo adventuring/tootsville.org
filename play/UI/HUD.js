@@ -351,24 +351,21 @@ Tootsville.UI.HUD.toggleTalkBox = function ()
  */
 Tootsville.UI.HUD.refreshPaperdoll = function ()
 { const paperdoll = document.getElementById ('paperdoll-mini');
-  return false; /* TODO */
-  if (Tootsville.Tank.avatars [ Tootsville.character ] )
-  { Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.Tank.avatars [ Tootsville.character ],
-                                                  paperdoll); }
-  if ( (! Tootsville.character) ||
-       (! paperdoll.scene) ||
-       (! paperdoll.scene.avatars) ||
-       (! Tootsville.Tank.scene) ) { return; }
-  if (!(Tootsville.Util.equalP (Tootsville.Tank.avatars [ Tootsville.character ], paperdoll.avatar))) /* _.isEqual would be better TODO */
-  { Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [ Tootsville.character ], paperdoll.scene.TODO,
-                                     paperdoll.scene, () =>
-                                     { paperdoll.avatar = Object.assign({}, Tootsville.character);
-                                       paperdoll.scene.render (); });
-    /* XXX These  probably belong in  some kind of watcher  for wardrobe
-     * changes, but for now this works. */
-    Tootsville.AvatarBuilder.update (Tootsville.Tank.avatars [Tootsville.character],
-                                     Tootsville.Tank.avatars [Tootsville.character].model,
-                                     Tootsville.Tank.scene, () => {}); } };
+  let currentAvatar = Tootsville.Tank.avatars [ Tootsville.character ];
+  if (! currentAvatar) { return; }
+  if (! currentAvatar.avatar ) { return; }
+  if (! paperdoll.avatar) { paperdoll.avatar = {}; }
+  if (Tootsville.Util.equalP (currentAvatar.equip != paperdoll.avatar.equip) &&
+      (paperdoll.lastHeight == paperdoll.offsetHeight) &&
+      (paperdoll.lastWidth == paperdoll.offsetWidth) )
+  { return; }
+  Object.assign (paperdoll.avatar, currentAvatar);
+  paperdoll.lastHeight = paperdoll.offsetHeight;
+  paperdoll.lastWidth = paperdoll.offsetWidth;
+  let canvas = document.createElement ("CANVAS");
+  canvas.height = paperdoll.offsetHeight;
+  canvas.width = paperdoll.offsetWidth;
+  Tootsville.AvatarViewer.createViewerInCanvas (currentAvatar, canvas, paperdoll); };
 
 /**
  * Refresh the display of the active equipment item.

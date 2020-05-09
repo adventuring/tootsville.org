@@ -319,6 +319,8 @@ p {
     height: 7vw; /* yes, vw, it's round */
     border-radius: 7vw;
 
+    overflow: hidden;
+
     /* https://stackoverflow.com/questions/35361986/css-gradient-checkerboard-pattern */
     background-image:
         linear-gradient(45deg, @pink 25%, transparent 25%),
@@ -329,6 +331,11 @@ p {
     background-position: 0 0, 0 .5rem, .5rem -.5rem, -.5rem 0px;
     z-index: 500;
     transition: .7s ease-in-out;
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
 }
 
 #paperdoll {
