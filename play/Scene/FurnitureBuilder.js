@@ -82,8 +82,7 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
  */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building furniture " + item.template.name + " " + item.uuid);
-  if (item.avatarScaling)
-  { model.scaling = new BABYLON.Vector3 (item.avatarScaling, item.avatarScaling, item.avatarScaling);  }
+  model.scaling = new BABYLON.Vector3 (item.scale.x, item.scale.y, item.scale.z);
   model.checkCollisions = true;
   try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
