@@ -211,6 +211,7 @@ Tootsville.UI.useActiveItem = function (entity)
  */
 Tootsville.UI.clickedOnItem = function (meshName, picked)
 { /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
+    console.log ("Click on " + meshName, picked);
 };
 
 Tootsville.UI.getSpeechVolume = function ()

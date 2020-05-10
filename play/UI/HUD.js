@@ -674,7 +674,7 @@ Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
   else if (0 == pickedName.indexOf ('item/'))
   { Tootsville.UI.clickedOnItem (mesh.name, picked); }
   else
-  { console.debug ('User clicked mesh ', mesh.name, picked);
+  { // console.debug ('User clicked mesh ', mesh.name, picked);
     if (mesh.parent)
     { Tootsville.UI.HUD.clickedOnMesh (mesh.parent, picked); }
     else
