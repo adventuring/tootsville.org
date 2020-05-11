@@ -487,3 +487,32 @@ Tootsville.Login.changeSensitivePlayer = function (button)
   Tootsville.Util.rest ('PUT', 'users/me', { key: 'sensitiveP', newValue: status ? 'true' : 'false' }).then
   ( personInfo => { Tootsville.player = personInfo;
                     this.populateTootsList (); } ); };
+
+/**
+*
+*/
+
+Tootsville.Login.loginKidDirty = function (item)
+{ if (document.getElementById ('toot-name').value.length > 2 &&
+      document.getElementById ('toot-code').value.length > 2 &&
+      document.getElementById ('toot-name').value.length < 33 &&
+      document.getElementById ('toot-code').value.length < 33)
+  { document.getElementById ('kid-login-submit').style.disabled = false; }
+  else
+  { document.getElementById ('kid-login-submit').style.disabled = true; } };
+
+/**
+ *
+ */
+Tootsville.Login.loginKidDone = function (button)
+{ let name = document.getElementById ('toot-name').value;
+  let code = document.getElementById ('toot-code').value;
+  Tootsville.Util.rest ('POST', '/login/child', { name: name, code: code }).then (
+      reply => { console.log ("Child login reply ", reply);
+                 if (reply.error)
+                 { reply.response.json ().then (
+                     body => { Tootsville.Gossip.Parrot.say ("Problem signing in",
+                                                             body.error || "Make sure your Toot name and code are right"); } ); }
+                 else
+                 { Tootsville.UI.HUD.showHUDPanel ('child-wait');
+                   Tootsville.UI.endBackgroundMusic (); } }); };

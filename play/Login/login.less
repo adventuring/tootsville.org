@@ -159,12 +159,13 @@
     float: right;
     width: 40%;
     margin-right: 1rem;
+    margin-top: 2rem;
 }
 
 #login-kid {
     display: block;
     width: 40%;
-    border-right: 4pt solid black;
+    margin-top: 2rem;
 }
 
 p {
@@ -289,17 +290,20 @@ p {
     }
 }
 
-#toot-name, .toot-name {
+#toot-name, .toot-name, #toot-code {
     font-family: Acme, sans-serif;
     padding: 1rem;
     font-size: 2rem;
 }
 
-#toot-name {
+#toot-name, #toot-code {
     border-bottom: 1px solid black;
+    border-top: 1px dotten @periwinkle;
+    border-left: 1px dotten @periwinkle;
+    border-right: 1px dotten @periwinkle;    
 }
 
-#toot-name:focus {
+#toot-name:focus, #toot-code:focus {
     background-color: @periwinkle;
 }
 

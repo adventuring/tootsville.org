@@ -2,15 +2,19 @@
 
 if (!('UI' in Tootsville)) { Tootsville.UI = {}; }
 
+Tootsville.UI.endBackgroundMusic = function ()
+{ let backgroundMusic = document.querySelector("#background-music");
+  console.log ("Fading out previous song");
+  setTimeout ( function () { backgroundMusic.volume = .5; }, 333 );
+  setTimeout ( function () { backgroundMusic.volume = .25; }, 666 );
+  setTimeout ( function () { backgroundMusic.volume = 0; }, 1000 );
+  setTimeout ( function () { backgroundMusic.parentNode.removeChild (backgroundMusic); }, 1050 ); };
+
 Tootsville.UI.setBackgroundMusic = function (song)
-{ var backgroundMusic = document.querySelector("#background-music");
+{ let backgroundMusic = document.querySelector("#background-music");
   if (backgroundMusic)
-  { console.log ("Fading out previous song");
-    setTimeout ( function () { backgroundMusic.volume = .5; }, 333 );
-    setTimeout ( function () { backgroundMusic.volume = .25; }, 666 );
-    setTimeout ( function () { backgroundMusic.volume = 0; }, 1000 );
-    setTimeout ( function () { backgroundMusic.parentNode.removeChild (backgroundMusic); }, 1050 ); }
-  var musicFooter = document.querySelector("#music-footer");
+  { Tootsville.UI.endBackgroundMusic (); }
+  let musicFooter = document.querySelector("#music-footer");
   if (musicFooter) { musicFooter.parentNode.removeChild (musicFooter); }
   console.log ("Scheduling to play " + song);
   setTimeout ( function ()
