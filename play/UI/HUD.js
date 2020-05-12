@@ -53,9 +53,6 @@ Tootsville.UI.HUD.getOpenPanel = function ()
 /**
  * Close (hide) the active HUD panel.
  */
-/*
- * FIXME Bug #26 --- closing the Paperdoll panel crashes the game
- */
 Tootsville.UI.HUD.closePanel = function ()
 
 { let foundAny = false;
