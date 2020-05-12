@@ -61,6 +61,17 @@ Tootsville.AvatarBuilder.getPathForPattern = function (pattern) {
                        Tootsville.AvatarBuilder.patterns.spots ); };
 
 /**
+* Pick a random color that does not match the avatar's skin
+*/
+Tootsville.AvatarBuilder.rainbowColor = function (baseColor)
+{ const patternColors = [ "Black", "Cyan", "Indigo", "Orange", "Pink", "Turquoise", "Violet", "White", "Yellow" ];
+  let color = patternColors [ Math.floor (Math.random () * patternColors.length) ];
+  if (color == baseColor)
+  { return Tootsville.AvatarBuilder.rainbowColor (baseColor); }
+  else
+  { return color; } };
+
+/**
  * Colorize an Avatar and apply their pattern
  */
 Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
@@ -74,7 +85,10 @@ Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
   for (let x = 0; x < 256; x += 64)
   { for (let y = 0; y < 256; y += 64)
     { canvas.setTransform (1, 0, 0, 1, x, y);
-      canvas.fillStyle = interpretTootColor (avatar.patternColor); /* FIXME rainbow */
+      if (avatar.patternColor == 'rainbow')
+      { canvas.fillStyle = Tootsville.AvatarBuilder.rainbowColor (avatar.baseColor); }
+      else
+      { canvas.fillStyle = interpretTootColor (avatar.patternColor); }
       canvas.fill (Tootsville.AvatarBuilder.getPathForPattern (avatar.pattern)); } }
   patternTexture.update ();
   const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
