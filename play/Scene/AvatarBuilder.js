@@ -35,14 +35,38 @@ if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
 
 
 /**
+ *
+ */
+Tootsville.AvatarBuilder.getPathForPattern = function (pattern) {
+    switch (pattern.toLowerCase())
+    { case "lightning":
+      return new Path2D ('m 165.49363,109.39907 49.02812,-11.852952 3.23262,56.032142 -14.00803,1.07754 12.93049,34.48131 -12.93049,3.7714 5.92648,21.55082 -26.39976,-33.94254 8.08156,-1.07755 -22.62836,-31.78746 17.77942,-4.31016 z');
+      default:
+      /* lightning */
+      return new Path2D ('m 165.49363,109.39907 49.02812,-11.852952 3.23262,56.032142 -14.00803,1.07754 12.93049,34.48131 -12.93049,3.7714 5.92648,21.55082 -26.39976,-33.94254 8.08156,-1.07755 -22.62836,-31.78746 17.77942,-4.31016 z');
+    } };
+
+/**
  * Colorize an Avatar and apply their pattern
  */
 Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
 { if (! model) { return; }
+  const patternTexture = new BABYLON.DynamicTexture (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
+                                                     256 /* resolution */,
+                                                     scene);
+  const canvas = patternTexture.getContext ();
+  canvas.fillStyle = interpretTootColor (avatar.baseColor);;
+  canvas.fillRect (0, 0, 256, 256);
+  for (let x = 0; x < 256; x += 64)
+  { for (let y = 0; y < 256; y += 64)
+    { canvas.setTransform (1, 0, 0, 1, x, y);
+      canvas.fillStyle = interpretTootColor (avatar.patternColor); /* FIXME rainbow */
+      canvas.fill (Tootsville.AvatarBuilder.getPathForPattern (avatar.pattern)); } }
+  patternTexture.update ();
   const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
                                                      scene);
-  skinMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.baseColor));
-  /* TODO apply pattern texture map to the skin */
+  skinMaterial.diffuseTexture = patternTexture;
+  
   const padMaterial = new BABYLON.StandardMaterial (avatar.padColor,
                                                     scene);
   padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.padColor));
