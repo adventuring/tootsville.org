@@ -46,3 +46,10 @@
         document.getElementById(id).addEventListener('click', clickHandlers[id]);
     }
 })();
+
+
+
+document.getElementById('hud').addEventListener (
+    'contextmenu', (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
+                                event.stopPropagation ();
+                                event.preventDefault (); });

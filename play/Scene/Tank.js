@@ -148,12 +148,7 @@ Tootsville.Tank.init3DEngine = function ()
           Tootsville.Tank.engine.workerCollisions = true;
           Tootsville.Tank.canvas.addEventListener (
               'click', Tootsville.UI.HUD.convertCanvasEventTo3D);
-          document.getElementById('hud').addEventListener (
-              'click', Tootsville.UI.HUD.convertCanvasEventTo3D);
-          document.getElementById('hud').addEventListener (
-              'contextmenu', (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
-                                          event.stopPropagation ();
-                                          event.preventDefault (); });
+
           console.log ("init3DEngine: ready");
           finish (); }); };
 
