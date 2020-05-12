@@ -279,8 +279,8 @@ Tootsville.UI.HUD.positionPaperdollMini = function ()
                  mini.style.zIndex = 1500; },
                5);
   setTimeout ( () =>
-               { let halfWidth = (stageBox.offsetWidth / 2);
-                 let halfHeight = (stageBox.offsetHeight / 2);
+               { let halfWidth = (stage.offsetWidth / 2);
+                 let halfHeight = (stage.offsetHeight / 2);
                  mini.style.top = stageBox.top + 'px';
                  mini.style.left = stageBox.left + 'px';
 
@@ -291,12 +291,12 @@ Tootsville.UI.HUD.positionPaperdollMini = function ()
                                       + halfHeight
                                       - (miniBox.height/2)) + 'px';
 
-                 mini.style.height = stageBox.offsetHeight + 'px';
-                 mini.style.width = stageBox.offsetWidth + 'px';
-                 fig.style.height = stageBox.offsetHeight + 'px';
-                 fig.style.width = stageBox.offsetWidth + 'px';
-                 fig.height = stageBox.offsetHeight;
-                 fig.width = stageBox.offsetWidth;
+                 mini.style.height = stage.offsetHeight + 'px';
+                 mini.style.width = stage.offsetWidth + 'px';
+                 fig.style.height = stage.offsetHeight + 'px';
+                 fig.style.width = stage.offsetWidth + 'px';
+                 fig.height = stage.offsetHeight;
+                 fig.width = stage.offsetWidth;
                  mini.style.borderRadius = 0; },
                500);};
 
@@ -310,7 +310,11 @@ Tootsville.UI.HUD.returnPaperdollMini = function ()
   mini.style.height = 'unset';
   mini.style.width = 'unset';
   mini.style.zIndex = 'unset';
-  setTimeout ( () => { mini.style = {}; }, 60);
+  let fig = mini.querySelector ('img');
+  fig.removeAttribute ('height');
+  fig.removeAttribute ('width');
+  fig.removeAttribute ('style');
+  setTimeout ( () => { mini.removeAttribute ('style'); }, 60);
   mini.addEventListener ('click', Tootsville.UI.HUD.openPaperdoll);
 };
 
