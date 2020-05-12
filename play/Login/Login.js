@@ -194,7 +194,9 @@ Tootsville.Login.playWithCharacter = function (name)
 { let li = this.findLIForToot (name);
   if (li ['data-toot'].childP)
   { Tootsville.Gossip.Parrot.ask ("That's a Child Toot",
-                                  "Are you sure you want to sign in with a Child account?",
+                                  "<p> Are you sure you want to sign in with a Child account? </p>" +
+                                  "<p> This does not give your child permission to play — it lets you control their character. </p>"+
+"<a href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how your child can sign in</a>",
                                   [{ tag: "yes", text: "Sign In" },
                                    { tag: "no", text: "Cancel" }]).
     then (answer => { if ('yes' == answer)
@@ -470,8 +472,9 @@ Tootsville.Login.storeCredentialInfo = function (result)
  */
 Tootsville.Login.quit = function ()
 { Tootsville.Gossip.closeStreams ();
-    Tootsville.player = null;
+  Tootsville.player = null;
   Tootsville.character = null;
+  Tootsville.childCode = null;
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
@@ -514,5 +517,7 @@ Tootsville.Login.loginKidDone = function (button)
                      body => { Tootsville.Gossip.Parrot.say ("Problem signing in",
                                                              body.error || "Make sure your Toot name and code are right"); } ); }
                  else
-                 { Tootsville.UI.HUD.showHUDPanel ('child-wait');
-                   Tootsville.UI.endBackgroundMusic (); } }); };
+                 { Tootsville.character = name;
+                   Tootsville.childCode = code.toLowerCase ();
+                   Tootsville.Gossip.ensureKeyPair ();
+                   Tootsville.Util.connectWebSocket ();} }); };

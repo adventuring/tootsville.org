@@ -45,7 +45,8 @@ Tootsville.Util.connectWebSocket = function () {
           Tootsville.Util.WebSocket.readyState == WebSocket.CONNECTING) )
     { console.log ("WebSocket already ready already.");
       return; }
-    if (! Tootsville.Login.firebaseAuth)
+    if ((! Tootsville.Login.firebaseAuth) &&
+        (! (Tootsville.character && Tootsville.childCode) ))
     { console.warn ("Can't connect until authenticated");
       return; }
     let uri = Tootsville.host.game.replace("http", "ws") + "/infinity/alef-null";
@@ -68,10 +69,12 @@ Tootsville.Util.stream = function (json)
   Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
 
 Tootsville.Util.openWebSocket = function (event) {
-    Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
-                              provider: "Firebase",
-                              token: Tootsville.Login.firebaseAuth });
-};
+    if (Tootsville.Login.firebaseAuth)
+    { Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
+                                provider: "Firebase",
+                                token: Tootsville.Login.firebaseAuth }); }
+    else if (Tootsville.character && Tootsville.childCode)
+    { Tootsville.Util.stream ({ c: "getApple" }); } };
 
 Tootsville.Util.closeWebSocket = function (event)
 { Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",

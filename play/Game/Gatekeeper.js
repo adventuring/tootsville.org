@@ -172,6 +172,46 @@ Tootsville.Game.Gatekeeper.getAwardRankings = function (gram)
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
+ * WRITEME
+ *
+ * See  `INFINITY-GET-APPLE'  for  an  overview  of  the  login  process
+ * for children.
+ */
+Tootsville.Game.Gatekeeper.getApple = function (gram)
+{ if (gram.status)
+  { let apple = gram.apple;
+    let sha1 = forge.md.sha1.create ();
+    sha1.update (apple);
+    sha1.update (Tootsville.childCode);
+    Tootsville.Util.infinity ("login", { userName: Tootsville.character,
+                                         password: sha1.digest ().toHex (),
+                                         zone: "$Eden" }); }
+  else
+  { Tootsville.Util.infinity ("getApple"); } };
+  
+/**
+ * WRITEME — this function is not yet documented.
+ */
+Tootsville.Game.Gatekeeper.login = function (gram)
+{ if (gram.status)
+  { Tootsville.UI.HUD.showHUDPanel ('child-wait');
+    Tootsville.UI.endBackgroundMusic (); }
+  else
+  { Tootsville.Gossip.Parrot.say ("Unable to log in",
+                                  gram.msg + "<small> (code " + gram.err2 + ")</small>"); } };
+
+/**
+ * WRITEME — this function is not yet documented.
+ */
+Tootsville.Game.Gatekeeper.parentApproval = function (gram)
+{ if (gram.status)
+  { Tootsville.Gossip.Parrot.say ("Let's play",
+                                   "It's OK for you to play in Tootsville"); }
+  else
+  { Tootsville.Gossip.Parrot.say ("Sorry",
+                                  "You do not have permission to play in Tootsville right now. Talk to your parent or guardian."); } };
+  
+/**
  * No longer used.
  */
 Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
@@ -343,14 +383,14 @@ Tootsville.Game.Gatekeeper.getUserLists = function (gram)
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.buddyList = function (gram)
 { let notice = gram.notice;
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.buddyRequest = function (gram)
 { let sender = gram.sender;
@@ -492,14 +532,14 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
   else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.newScript = function (gram)
 { if (gram.status && gram.script)
   { Tootsville.Util.loadScript (gram.script); } };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.joinOK = function (gram)
 { if (gram.status)
@@ -553,7 +593,7 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     avatar.facing = gram.facing; } };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.bye = function (gram)
 { let avatar = Tootsville.Tank.avatars [ gram.n ];
@@ -563,7 +603,7 @@ Tootsville.Game.Gatekeeper.bye = function (gram)
   Tootsville.Tank.destroyAvatar (avatar); };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.c = function (gram)
 { if (gram.status)
@@ -588,7 +628,7 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
   { Tootsville.Util.infinity ("ping"); } };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
@@ -606,3 +646,17 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
       else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (gram.var [ key ]); }
       else
       { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}}};
+
+
+/**
+ * Display a server-pushed prompt and prepare to reply.
+ *
+ * See `INFINITY-PROMPT-REPLY' for a discussion of the prompt system and
+ * the format of this datagram.
+ */
+Tootsville.Game.Gatekeeper.prompt = function (gram)
+{ if (gram.status)
+  { Tootsville.UI.makePrompt (gram,
+                              reply => {
+                                  Tootsville.Util.infinity ('promptReply',
+                                                            { reply: reply, id: gram.id }); }); } };

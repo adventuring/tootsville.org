@@ -38,7 +38,7 @@ if (!('UI' in Tootsville)) {Tootsville.UI={};}
  * markup into a DIV.
  */
 Tootsville.UI.makeDivOrParagraph = function (text)
-{ var element;
+{ let element;
   if (text.indexOf('<') >= 0)
   { element = document.createElement('DIV'); }
   else
@@ -55,32 +55,59 @@ Tootsville.UI.makeIDFromTitle = function (title)
  * buttons. and call resvolve function with user input later.
  */
 Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
-{ var dialog = document.createElement('DIALOG');
-  dialog.id = Tootsville.UI.makeIDFromTitle(title);
-  var caption = document.createElement('H3');
+{ let dialog = document.createElement ('DIALOG');
+  dialog.id = Tootsville.UI.makeIDFromTitle (title);
+  let caption = document.createElement ('H3');
   caption.innerHTML = title;
-  dialog.appendChild(caption);
-  dialog.appendChild(Tootsville.UI.makeDivOrParagraph(text));
-  var buttons = document.createElement('DIV');
+  dialog.appendChild (caption);
+  dialog.appendChild (Tootsville.UI.makeDivOrParagraph (text));
+  let buttons = document.createElement ('DIV');
   buttons.className = 'button-box';
-  var cancelButton = document.createElement('BUTTON');
+  let cancelButton = document.createElement ('BUTTON');
   cancelButton.className = 'cancel-button';
   cancelButton.innerHTML = cancel;
   cancelButton.addEventListener('click', ()=> {
       hud.removeChild(dialog);
-      resolve(false);
+      resolve(false)
   });
   buttons.appendChild(cancelButton);
-  var acceptButton = document.createElement('BUTTON');
+  let acceptButton = document.createElement ('BUTTON');
   acceptButton.className = 'accept-button';
   acceptButton.innerHTML = accept;
   acceptButton.addEventListener('click', () => {
-      hud.removeChild(dialog);
-      resolve(true);
-  });
-  buttons.appendChild(acceptButton);
-  dialog.appendChild(buttons);
+      document.getElementById("HUD").removeChild(dialog);
+      resolve(true);  });
+  buttons.appendChild (acceptButton);
+  dialog.appendChild (buttons);
   return dialog; };
+
+/**
+* WRITEME
+*/
+Tootsville.UI.makePrompt = function (prompt, resolve)
+{ let dialog = document.createElement ("DIALOG");
+  dialog.id = "prompt-" + prompt.id;
+  let caption  = document.createElement ("H3");
+  caption.innerHTML = prompt.title;
+  dialog.appendChild (caption);
+  dialog.appendChild (Tootsville.UI.makeDivOrParagraph (prompt.msg));
+  let buttons = document.createElement ('DIV');
+  buttons.className = 'button-box';
+  for (let reply in prompt.replies)
+  { let desc = prompt.replies [ reply ];
+    let button = document.createElement ("BUTTON");
+    button.className = ( (desc.type == "aff") ?
+                         "accept-button" :
+                         (desc.type == "neg") ?
+                         "cancel-button" : "" );
+    button.innerHTML = desc.label;
+    button.addEventListener ('click', () => {
+        document.getElementById("hud").removeChild (dialog);
+        resolve (reply); } );
+    buttons.appendChild (button);
+  }
+  dialog.appendChild (buttons);
+  document.getElementById("hud").appendChild (dialog); };
 
 /**
  * Present a nice UI box to confirm whether to do something or not.
@@ -90,9 +117,9 @@ Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
  * ``accept'' text reads ``Yes,'' in which case it will read ``No.''
  */
 Tootsville.UI.confirmPretty = function (title,text,accept)
-{ var hud = document.getElementById('hud');
+{ let hud = document.getElementById('hud');
   return new Promise(resolve => {
-      var cancel = 'Cancel';
+      let cancel = 'Cancel';
       if ('Yes' == accept) { cancel = 'No'; }
       hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
@@ -124,7 +151,7 @@ Tootsville.UI.signOut = function ()
  * the navigator.
  */
 Tootsville.UI.setFullscreenFromNavigator = function ()
-{ var fullscreenCheck = document.getElementById('fullscreen-toggle');
+{ let fullscreenCheck = document.getElementById('fullscreen-toggle');
   if (fullscreenCheck)
   { fullscreenCheck.checked = !! (document.fullscreenElement); }};
 
@@ -146,13 +173,13 @@ Tootsville.UI.toggleFullscreen = function ()
   { setTimeout ( () => { Tootsville.Tank.engine.resize (); }, 1000); } };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.UI.onFirstClick = function ()
 { window.removeEventListener('click', Tootsville.UI.onFirstClick);
   console.log ('noticed a first click');
   document.addEventListener('beforeunload', (ev) => {
-      var confirmationMessage = "If you leave or reload this page, you'll quit the game.";
+      let confirmationMessage = "If you leave or reload this page, you'll quit the game.";
       ev.returnValue = confirmationMessage;  /* Gecko, Trident, Chrome 34+ */
       return confirmationMessage; /* Gecko, WebKit, Chrome <34 */ }); };
 
@@ -185,7 +212,7 @@ Tootsville.UI.takeOneStep = function (δx, δz)
 };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.UI.interact = function (entity)
 { if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
@@ -200,14 +227,14 @@ Tootsville.UI.findAdjacentEntity = function ()
 { /* TODO */ };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.UI.useActiveItem = function (entity)
 { if (!entity) { entity = Tootsville.UI.findAdjacentEntity (); }
   /* TODO */ };
 
 /**
- *
+ * WRITEME — this function is not yet documented.
  */
 Tootsville.UI.clickedOnItem = function (meshName, picked)
 { /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
@@ -220,7 +247,7 @@ Tootsville.UI.getSpeechVolume = function ()
 };
 
 /**
- *
+ * WRITEME
  */
 Tootsville.UI.say = function (speech)
 { if ("~" == speech.charAt (0))
