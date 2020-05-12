@@ -72,7 +72,8 @@ Tootsville.Util.openWebSocket = function (event) {
     if (Tootsville.Login.firebaseAuth)
     { Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
                                 provider: "Firebase",
-                                token: Tootsville.Login.firebaseAuth }); }
+                                token: Tootsville.Login.firebaseAuth,
+                                userName: Tootsville.character }); }
     else if (Tootsville.character && Tootsville.childCode)
     { Tootsville.Util.stream ({ c: "getApple" }); } };
 
