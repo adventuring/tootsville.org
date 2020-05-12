@@ -602,9 +602,7 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
                    y: document.getElementById('tootsville3d').offsetHeight,
                    z: 1});
   
-  /* Shitty Z index guesswork here. TODO Get the Toot's actual height. */
-  const adjust = 0;
-  speechBubble.style.top = Math.max (30, Math.min (abs.y - adjust,
+  speechBubble.style.top = Math.max (30, Math.min (abs.y,
                                                    window.innerHeight - 30)) + 'px';
   speechBubble.style.left = Math.max (50, Math.min (abs.x,
                                                     window.innerWidth - 50)) + 'px'; };
