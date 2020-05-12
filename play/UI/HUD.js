@@ -592,7 +592,7 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
 { const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
   const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
   const abs = BABYLON.Vector3.Project (
-      model.getAbsolutePosition (),
+      model.getAbsolutePosition ().add (new BABYLON.Vector3 (0, 10, 0)),
       BABYLON.Matrix.IdentityReadOnly,
       Tootsville.Tank.scene.getTransformMatrix (),
       Tootsville.Tank.camera.viewport.toGlobal (
@@ -601,11 +601,9 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
                   {x: document.getElementById('tootsville3d').offsetWidth,
                    y: document.getElementById('tootsville3d').offsetHeight,
                    z: 1});
+  
   /* Shitty Z index guesswork here. TODO Get the Toot's actual height. */
-  const adjust = ( (1000 -
-                    Math.abs (model.position.z - Tootsville.Tank.camera.position.z) )
-                   / 2000
-                   * renderHeight / 2.5);
+  const adjust = 0;
   speechBubble.style.top = Math.max (30, Math.min (abs.y - adjust,
                                                    window.innerHeight - 30)) + 'px';
   speechBubble.style.left = Math.max (50, Math.min (abs.x,
