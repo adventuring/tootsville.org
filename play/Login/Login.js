@@ -115,8 +115,24 @@ Tootsville.Login.createTootListItem = function (toot)
         Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas, li); } ,
                  10 ); }
   li.innerHTML += '<SPAN CLASS="toot-name">' +
-  toot.name + '</SPAN><SPAN CLASS="note">' + (toot.note || "") + '</SPAN>'; /// FIXME innerText
-  Tootsville.Login.addChildFlag (li);return li; };
+  toot.name + '</SPAN>';
+  let note = document.createElement ("TEXTAREA");
+  note.rows = "2";
+  note.innerText = toot.note;
+  note.addEventListener ('change',
+                         event => { Tootsville.Login.updateNote (toot.name, event); });
+  note.addEventListener ('click',
+                         event => { event.stopPropagation (); });
+  li.appendChild (note);
+  Tootsville.Login.addChildFlag (li);
+  return li; };
+
+/**
+ *
+ */
+Tootsville.Login.updateNote = function (tootName, event)
+{ Tootsville.Util.rest ('PUT', 'toots/' + tootName,
+                        { key: 'note', newValue: event.target.value }); };
 
 /**
  *
