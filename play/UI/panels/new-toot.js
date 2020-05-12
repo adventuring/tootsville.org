@@ -207,6 +207,10 @@ Tootsville.UI.NewToot.ready = function ()
   { notReady += ("\n\nYou must give your Toot a name.");
     if (name.length > 0)
     { notReady += "\n(The name you have entered is not valid. Check the rules.)"; } };
+  if (document.getElementById ("new-toot-childp").checked)
+  { if (document.getElementById('new-toot-child-code').value.length < 6 ||
+        document.getElementById('new-toot-child-code').value.length > 12)
+    { notReady += "\n\nA Child Toot must have a secret code between 6 and 12 characters long."; } }
   if (baseColor && baseColor == padColor)
   { notReady += ("\n\nYour base color and pad color should be different."); }
   if (baseColor && baseColor == patternColor)
@@ -229,7 +233,9 @@ Tootsville.UI.NewToot.ready = function ()
                           padColor: padColor,
                           pattern: pattern,
                           patternColor: patternColor,
-                          tShirtColor: tShirtColor }).then (Tootsville.UI.NewToot.afterCreate);
+                          tShirtColor: tShirtColor,
+                          childP: document.getElementById('new-toot-childp').checked,
+                          childCode: document.getElementById('new-toot-child-code').value}).then (Tootsville.UI.NewToot.afterCreate);
   return true;};
 
 /**
@@ -239,8 +245,9 @@ Tootsville.UI.NewToot.afterCreate = function (reply)
 { if (reply && reply.error)
   { switch (reply.error)
     { case 400:
+      console.log(reply);
       Tootsville.Gossip.Parrot.say ("Program trouble!",
-                                    "Something in the game program running on your computer did not work correctly, and the server could not understand our request.");
+                                    "The server could not understand our request. One of the colors or the pattern chosen don't work together, perhaps.");
       break;;
       case 409:
       Tootsville.Gossip.Parrot.say ("Name already taken",
@@ -250,7 +257,10 @@ Tootsville.UI.NewToot.afterCreate = function (reply)
       Tootsville.Gossip.Parrot.say ("Pattern or color conflict",
                                     "The pattern or color combination you chose is not available. Perhaps you can change colors or patterns?");
       break;;
-    }; } };
+    }; }
+  else
+  { Tootsville.UI.HUD.showHUDPanel('login');
+    Tootsville.Util.infinity ('tootList'); } };
 
 /**
  *
@@ -324,7 +334,7 @@ Tootsville.UI.NewToot.createColorPicker = function (name, button)
     var label = document.createElement ("LABEL");
     label.appendChild (document.createTextNode (color));
     label.htmlFor = "new-toot-color-picker-" + name + "-" + color;
-    if ("White" == color || "Yellow" == color) {
+    if ("White" == color || "Yellow" == color || "Cyan" == color) {
         label.style.color = "black";
     }
     if ("Rainbow" == color) {
@@ -344,3 +354,4 @@ Tootsville.UI.NewToot.createColorPicker = function (name, button)
   buttonBox.appendChild (okButton);
   picker.appendChild (buttonBox);
   document.getElementById ('hud').appendChild (picker); };
+

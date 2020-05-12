@@ -384,7 +384,8 @@ Tootsville.Login.doneEditingSettings = function ()
   document.querySelector ('#pick-toot>h2').innerHTML = 'Pick a Toot Character';
   document.querySelector ('#pick-toot>p').innerHTML = 'Click or tap a character to play now.';
   document.querySelector ('#edit-toot-settings').style.display = 'block';
-  document.querySelector ('#new-toot-hint').style.display = 'block';
+  document.querySelector ('#new-toot-hint').style.display =
+  ( ((toots.length < 5) || Tootsville.enableMoreTootsP) ? 'block' : 'none');
   document.querySelector ('#edit-toot-settings-done').style.display = 'none'; };
 
 /**

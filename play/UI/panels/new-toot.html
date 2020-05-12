@@ -2,32 +2,32 @@
 
 <!-- ./play/ui/panels/dummy.html is part of Tootsville
 
-   Copyright  © 2008-2017  Bruce-Robert   Pocock;  ©  2018-2020  The
-   Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+     Copyright  © 2008-2017  Bruce-Robert   Pocock;  ©  2018-2020  The
+     Corporation for Inter-World Tourism and Adventuring (ciwta.org).
 
-   This  program is  Free Software:  you can  redistribute it  and/or
-   modify it under the terms of the GNU Affero General Public License
-   as published by the Free  Software Foundation; either version 3 of
-   the License, or (at your option) any later version.
+     This  program is  Free Software:  you can  redistribute it  and/or
+     modify it under the terms of the GNU Affero General Public License
+     as published by the Free  Software Foundation; either version 3 of
+     the License, or (at your option) any later version.
 
-   This program  is distributed in the  hope that it will  be useful,
-   but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
-   MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
-   Affero General Public License for more details.
+     This program  is distributed in the  hope that it will  be useful,
+     but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
+     MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
+     Affero General Public License for more details.
 
-   You should have  received a copy of the GNU  Affero General Public
-   License    along    with    this     program.    If    not,    see
-   <https://www.gnu.org/licenses/>.
+     You should have  received a copy of the GNU  Affero General Public
+     License    along    with    this     program.    If    not,    see
+     <https://www.gnu.org/licenses/>.
 
-   You can reach CIWTA at https://ciwta.org/, or write to us at:
+     You can reach CIWTA at https://ciwta.org/, or write to us at:
 
-   PO Box 23095
+     PO Box 23095
 
-   Oakland Park, FL 33307-3095
+     Oakland Park, FL 33307-3095
 
-   USA
+     USA
 
-   -->
+-->
 <html>
   <meta charset="utf-8">
   <body>
@@ -55,11 +55,11 @@
       <fieldset id="new-toot-name-block">
         <legend><label for="new-toot-name">Name:</label></legend>
         <input type="text" name="new-toot-name" id="new-toot-name"
-               size="32"
-               onkeyup="Tootsville.UI.NewToot.checkName()"
-               onchange="Tootsville.UI.NewToot.checkName()"
-               placeholder="(Toot's name here)"
-               pattern="[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?">
+                size="32"
+                onkeyup="Tootsville.UI.NewToot.checkName()"
+                onchange="Tootsville.UI.NewToot.checkName()"
+                placeholder="(Toot's name here)"
+                pattern="[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?">
         <div id="new-toot-name-howto">
           <p> Choose a Toot name that: </p>
           <ul>
@@ -76,16 +76,26 @@
               Has no more than 2 of the same letter in a row </li>
           </ul>
         </div>
-        </fieldset>
-        <div id="new-toot-ready-box">
-          <p>  Once  you're   happy  with  your  new   Toot's  name  and
-            appearance, click <b onclick="Tootsville.UI.NewToot.ready()">Ready</b>: </p>
-            <button id="new-toot-cancel"
-                    onclick="Tootsville.UI.HUD.closePanel ()">Cancel</button>
-          <button id="new-toot-ready"
-                  onclick="Tootsville.UI.NewToot.ready ()">Ready</button>
+      </fieldset>
+      <div id="new-toot-childp-box">
+        <div><label> <input type="radio" name="childp" value="false" checked>
+          This Toot is for myself. </label> </div>
+        <div><label> <input type="radio" name="childp" value="true" id="new-toot-childp">
+          This Toot is for my child. </label>
+          <a href="https://wiki.Tootsville.org/wiki/Create_Child_Toot" target="_blank" >What does this do?</a> </div>
+        <div>
+          <label> The secret code my child will type to sign in is:
+            <input type="text" name="child-code" id="new-toot-child-code" value="" size="12"> </label>
         </div>
+      </div>
+      <div id="new-toot-ready-box">
+        <p>  Once  you're   happy  with  your  new   Toot's  name  and
+          appearance, click <b onclick="Tootsville.UI.NewToot.ready()">Ready</b>: </p>
+        <button id="new-toot-cancel"
+                onclick="Tootsville.UI.HUD.closePanel ()">Cancel</button>
+        <button id="new-toot-ready"
+                onclick="Tootsville.UI.NewToot.ready ()">Ready</button>
+      </div>
     </div>
-    <script>Tootsville.UI.NewToot.randomize()</script>
   </body>
 </html>
