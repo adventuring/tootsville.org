@@ -51,21 +51,6 @@ Tootsville.Login.start = function ()
   Tootsville.inform ("Start login");
   Tootsville.UI.HUD.loadHUDPanel ("login", Tootsville.Login.firebaseLogin); };
 
-/**
- * Colorize the SVG avatar. DEPRECATED
- */
-Tootsville.Login.colorizeAvatar = function (avatar, svg)
-{ svg.children[0].children[1].children[0].setAttribute
-  ("style",
-   "fill:" +
-   interpretTootColor (avatar.baseColor) +
-   ";fill-opacity:1;fill-rule:evenodd;stroke:#030303;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1");
-  svg.children[0].children[1].children[8].setAttribute
-  ("style",
-   "fill:" +
-   interpretTootColor (avatar.padColor) +
-   ";fill-opacity:1;stroke:#000000;stroke-width:2.15044212;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill");
-  svg.children[0].children[1].removeChild (svg.children[0].children[1].children[9]); };
 
 /**
  * Clear the login Toots list
