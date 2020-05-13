@@ -524,6 +524,12 @@ Tootsville.UI.HUD.toggleElement = function (element)
  */
 Tootsville.UI.HUD.toggleTalkLoud = function (event)
 { Tootsville.UI.HUD.toggleElement (document.getElementById ('talk-loud-menu'));
+  if (Tootsville.Game.Speech.loudness == 'shout')
+  { document.getElementById ('talk-loud-shout').checked = true; }
+  else if (Tootsville.Game.Speech.loudness == 'whisper')
+  { document.getElementById ('talk-loud-whisper').checked = true; }
+  else
+  { document.getElementById ('talk-loud-talk').checked = true; }      
   event.stopPropagation (); };
 
 /**

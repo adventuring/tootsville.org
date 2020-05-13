@@ -241,9 +241,7 @@ Tootsville.UI.clickedOnItem = function (meshName, picked)
 };
 
 Tootsville.UI.getSpeechVolume = function ()
-{ return 'talk'; /* TODO */ 
-  let value = document.querySelector ('radio.talk-loud-menu-item   ::checked').getElementIO ();
-};
+{ return Tootsville.Game.Speech.loudness || 'talk'; };
 
 /**
  * WRITEME

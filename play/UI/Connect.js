@@ -40,7 +40,16 @@
         'paperdoll-mini': (event) => { Tootsville.UI.HUD.openPaperdoll ();
                                        event.stopPropagation (); },
         'troubleshooting-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('troubleshooting');
-                                             event.stopPropagation ();  }
+                                             event.stopPropagation ();  },
+        'talk-loud-shout': event => {
+            if (event.target.checked)
+            { Tootsville.Game.Speech.loudness = 'shout'; } },
+        'talk-loud-talk': event => {
+            if (event.target.checked)
+            { Tootsville.Game.Speech.loudness = 'talk'; } },
+        'talk-loud-whisper': event => {
+            if (event.target.checked)
+            { Tootsville.Game.Speech.loudness = 'whisper'; } }
     };
     for (var id in clickHandlers) {
         document.getElementById(id).addEventListener('click', clickHandlers[id]);

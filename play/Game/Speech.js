@@ -48,7 +48,9 @@ Tootsville.Game.Speech.createBalloon = function (words, extraClass)
  * Someone (maybe us) has spoken, so put up a speech balloon.
  */
 Tootsville.Game.Speech.say = function (words, extraClass, speaker)
-{ if (! speaker) { speaker = Tootsville.character; }
+{ if (! speaker) { speaker = Tootsville.character;
+                   if (!extraClass)
+                   { extraClass = Tootsville.Game.Speech.loudness || 'talk'; } }
   if ((! words) || (0 == words.length)) { return; }
   let balloon = Tootsville.Game.Speech.createBalloon (words, extraClass);
   const avatar = Tootsville.Tank.avatars [ speaker ];
@@ -96,21 +98,24 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
 { let words = commandLine.split (' ');
   switch (words[0])
   { case '~ua':
-    Tootsville.Game.Speech.say ("My UA is " + navigator.userAgent);
+    Tootsville.Game.Speech.say ("My UA is " + navigator.userAgent, 'whisper');
     return;
     case "~ping":
     Tootsville.Util.infinity ("ping");
     return;
     case "~d20":
     let roll = (Math.floor (Math.random () * 20) + 1);
-    Tootsville.UI.say ("I rolled a " + roll + " on a d20." + (roll == 1 ? " Critical failure!" : roll == 20 ? " Critical success!" : "") );
+    Tootsville.UI.say ("I rolled a " + roll + " on a d20." + (roll == 1 ? " Critical failure!" : roll == 20 ? " Critical success!" : ""),
+                       ( (roll == 1 || roll == 20) ? 'shout' : 'talk' ));
     break;;
     case "~credits":
     Tootsville.UI.confirmPretty("Credits",
                                 "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p><p>For a random dice roll, try “~d20”.</p>", "O.K.");
     break;;
     case '~lag':
-    Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s");
+    Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s",
+                                'whisper');
     return;
     default:
-    Tootsville.Game.Speech.say ("I don't recognize " + words[0] + " as a magic word."); }; };
+    Tootsville.Game.Speech.say ("I don't recognize " + words[0] + " as a magic word.",
+                               'whisper'); }; };
