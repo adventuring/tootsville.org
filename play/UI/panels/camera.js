@@ -32,7 +32,7 @@
  */
 
 if (! ('Camera' in Tootsville.UI)) { Tootsville.UI.Camera = {}; };
-!Tootsville.UI.Camera.takeScreenShot = function ()
+Tootsville.UI.Camera.takeScreenShot = function ()
 { BABYLON.Tools.CreateScreenshot (Tootsville.Tank.engine,
                                   Tootsville.Tank.camera,
                                   1024,
@@ -47,3 +47,5 @@ if (! ('Camera' in Tootsville.UI)) { Tootsville.UI.Camera = {}; };
                                       a.setAttribute ("download", "Photo from Tootsville.jpg");
                                   },
                                   'image/jpeg'); };
+
+Tootsville.UI.Camera.takeScreenShot ();
