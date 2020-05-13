@@ -74,7 +74,7 @@ Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
   acceptButton.className = 'accept-button';
   acceptButton.innerHTML = accept;
   acceptButton.addEventListener('click', () => {
-      document.getElementById("HUD").removeChild(dialog);
+      document.getElementById("hud").removeChild(dialog);
       resolve(true); });
   buttons.appendChild (acceptButton);
   dialog.appendChild (buttons);

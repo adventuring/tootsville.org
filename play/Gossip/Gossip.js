@@ -308,7 +308,8 @@ Tootsville.Gossip.getICE = function ()
 */
 Tootsville.Gossip.closeStreams = function ()
 { Tootsville.Gossip.closeAndQuitP = true;
-  Tootsville.Game.Nav.quiesce ();
+  if (Tootsville.character && Tootsville.character != '$new toot')
+  { Tootsville.Game.Nav.quiesce (); }
   Tootsville.Util.WebSocket.close ();
   /* TODO */
 };
