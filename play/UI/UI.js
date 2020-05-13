@@ -68,15 +68,14 @@ Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
   cancelButton.innerHTML = cancel;
   cancelButton.addEventListener('click', ()=> {
       hud.removeChild(dialog);
-      resolve(false)
-  });
+      resolve(false); });
   buttons.appendChild(cancelButton);
   let acceptButton = document.createElement ('BUTTON');
   acceptButton.className = 'accept-button';
   acceptButton.innerHTML = accept;
   acceptButton.addEventListener('click', () => {
       document.getElementById("HUD").removeChild(dialog);
-      resolve(true);  });
+      resolve(true); });
   buttons.appendChild (acceptButton);
   dialog.appendChild (buttons);
   return dialog; };

@@ -660,3 +660,9 @@ Tootsville.Game.Gatekeeper.prompt = function (gram)
                               reply => {
                                   Tootsville.Util.infinity ('promptReply',
                                                             { reply: reply, id: gram.id }); }); } };
+
+Tootsville.Game.Gatekeeper.quiesce = function (gram)
+{ if (gram.status)
+  { console.log ("Quiesced"); }
+  else
+  { Tootsville.Game.Nav.quiesce (); } };

@@ -74,27 +74,48 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
   Tootsville.Game.Nav.sendWTL ();
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
-/**
- *
- */
-Tootsville.Game.Nav.sendWTL = function ()
-{ let avatar = Tootsville.Tank.avatars [ Tootsville.character ];
+Tootsville.Game.Nav.buildWTL = function ()
+{ const avatar = Tootsville.Tank.avatars [ Tootsville.character ];
   let course = undefined; let facing = undefined;
   if (avatar)
-  { course = avatar.course; facing = avatar.facing;
-    if (! (course))
-    { course = { startPoint: avatar.position, endPoint: avatar.position,
+  { course = avatar.course;
+    facing = avatar.facing;
+    if (course)
+    { course = { startPoint: course.startPoint,
+                 endPoint: course.endPoint,
+                 startTime: course.startTime,
+                 speed: course.speed }; }
+    else
+    { course = { startPoint: avatar.model.position,
+                 endPoint: avatar.model.position,
                  startTime: Tootsville.Game.now + Tootsville.Game.lag,
                  speed: .1 }; } }
   if (! (facing))
   { facing = 0; }
-  if (course && course.startPoint )
-  { Tootsville.Util.infinity ("wtl", { course: course, facing: facing } ); }
-  else
-  { Tootsville.Util.infinity ("wtl", { course: { startPoint: avatar.model.position,
-                                                 endPoint: avatar.model.position,
-                                                 startTime: Tootsville.Game.now },
-                                       facing: facing } ); } };
+  return { course: course, facing: facing }; };
+
+/**
+*
+*/
+Tootsville.Game.Nav.quiesce = function ()
+{ Tootsville.Util.infinity ("quiesce",
+                            { latitude: Tootsville.activity.lat,
+                              longitude: Tootsville.activity.long,
+                              altitude: Tootsville.activity.alt,
+                              world: Tootsville.activity.world,
+                              wtl: Tootsville.Game.Nav.buildWTL (),
+                              d3: {},
+                              emotion: "",
+                              peanuts: Tootsville.Tank.avatars [ Tootsville.character ].peanuts,
+                              fairyDust: Tootsville.Tank.avatars [ Tootsville.character ].fairyDust }); };
+
+
+/**
+ *
+ */
+Tootsville.Game.Nav.sendWTL = function ()
+{ Tootsville.Util.infinity ("wtl",
+                            Tootsville.Game.Nav.buildWTL ()); };
 
 /**
  *
