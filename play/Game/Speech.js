@@ -101,6 +101,14 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
     case "~ping":
     Tootsville.Util.infinity ("ping");
     return;
+    case "~d20":
+    let roll = (Math.floor (Math.random () * 20) + 1);
+    Tootsville.UI.say ("I rolled a " + roll + " on a d20." + (roll == 1 ? " Critical failure!" : roll == 20 ? " Critical success!" : "") );
+    break;;
+    case "~credits":
+    Tootsville.UI.confirmPretty("Credits",
+                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p><p>For a random dice roll, try “~d20”.</p>", "O.K.");
+    break;;
     case '~lag':
     Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s");
     return;
