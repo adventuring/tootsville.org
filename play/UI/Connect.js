@@ -41,6 +41,9 @@
                                        event.stopPropagation (); },
         'troubleshooting-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('troubleshooting');
                                              event.stopPropagation ();  },
+        'talk-emoji-menu-close': event => {
+            document.getElementById ('talk-emoji-menu').style.display = 'none';
+        },
         'talk-loud-shout': event => {
             if (event.target.checked)
             { Tootsville.Game.Speech.loudness = 'shout'; } },
