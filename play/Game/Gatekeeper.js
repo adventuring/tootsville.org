@@ -380,7 +380,15 @@ Tootsville.Game.Gatekeeper.postman = function (gram)
 Tootsville.Game.Gatekeeper.getUserLists = function (gram)
 { let buddies = gram.buddyList || [];
   let ignored = gram.ignoreList || [];
-  Tootsville.warn ("unhandled datagram", gram);};
+  if (document.getElementById ('starred-contacts'))
+  { for (let i = 0; i < buddies.length; ++i)
+    { let buddy = buddies [ i ];
+      let buddyLI = document.createElement ('LI');
+      buddyLI.innerText = buddy.n;
+      if (buddy.starredP)
+      { document.getElementById ('starred-contacts').appendChild (buddyLI); }
+      else
+      { document.getElementById ('unstarred-contacts').appendChild (buddyLI); } } } };
 
 /**
  * WRITEME — this function is not yet documented.

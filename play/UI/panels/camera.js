@@ -30,3 +30,20 @@
  * USA
  *
  */
+
+if (! ('Camera' in Tootsville.UI)) { Tootsville.UI.Camera = {}; };
+!Tootsville.UI.Camera.takeScreenShot = function ()
+{ BABYLON.Tools.CreateScreenshot (Tootsville.Tank.engine,
+                                  Tootsville.Tank.camera,
+                                  1024,
+                                  data => {
+                                      let img = document.getElementById('camera-preview');
+                                      img.height = 256;
+                                      img.width = 256;
+                                      img.src = data;
+                                      img.alt = "Click to download";
+                                      let a = document.getElementById('camera-link');
+                                      a.href = data;
+                                      a.setAttribute ("download", "Photo from Tootsville.jpg");
+                                  },
+                                  'image/jpeg'); };

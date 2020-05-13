@@ -29,4 +29,9 @@
  *
  * USA
  *
- *//**/
+ */
+
+
+(function () {
+    Tootsville.Util.infinity('getUserLists');
+})();

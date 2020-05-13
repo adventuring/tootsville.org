@@ -141,7 +141,8 @@ Tootsville.Tank.init3DEngine = function ()
           { console.log ("Initializing Babylon3D as graphics engine for tank");
             Tootsville.Tank.engine =
             new BABYLON.Engine (Tootsville.Tank.canvas,
-                                true); }
+                                true,
+                                { preserveDrawingBuffer: true, stencil: true } ); }
           if (! Tootsville.Tank.scene)
           { Tootsville.Tank.initScene (); }
           // TODO confirm if this is engine or scene:

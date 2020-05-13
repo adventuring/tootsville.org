@@ -252,3 +252,10 @@ Tootsville.UI.say = function (speech)
   else
   { Tootsville.Gossip.send ("speak", { speech: speech,
                                        vol: Tootsville.UI.getSpeechVolume () }); } };
+
+/**
+*
+*/
+Tootsville.UI.insertEmoji = function (event) {
+    document.getElementById ('talk-speak').value += event.target.innerText;
+} ;

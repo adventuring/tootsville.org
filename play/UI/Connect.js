@@ -54,11 +54,17 @@
     for (var id in clickHandlers) {
         document.getElementById(id).addEventListener('click', clickHandlers[id]);
     }
+
+    document.getElementById('hud').addEventListener (
+    'contextmenu', (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
+                                event.stopPropagation ();
+                                event.preventDefault (); });
+    
+    let emojis = document.getElementsByClassName('emoji');
+    for (let i = 0; i < emojis.length; i++)
+    { emojis [ i ].addEventListener ('click', event => {Tootsville.UI.insertEmoji (event);}); };
 })();
 
 
 
-document.getElementById('hud').addEventListener (
-    'contextmenu', (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
-                                event.stopPropagation ();
-                                event.preventDefault (); });
+

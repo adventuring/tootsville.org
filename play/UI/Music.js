@@ -54,6 +54,8 @@ Tootsville.UI.setBackgroundMusic = function (song)
                      { document.getElementById ("background-music-link").href = json.link; }
                      musicFooter.style.opacity = 1;
                      setTimeout ( function ()
-                                  { document.getElementById ("music-footer").style.opacity = 0; },
+                                  { document.getElementById ("music-footer").style.opacity = 0;
+                                    setTimeout ( () => { musicFooter.style.display = 'none'; },
+                                               150);},
                                   10000 ); }); },
                1500 ); };
