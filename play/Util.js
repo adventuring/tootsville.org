@@ -136,7 +136,8 @@ Tootsville.Util.ensureServersReachable = function ()
     (error) => { Tootsville.Gossip.Parrot.say (
         "Squawk! I don't see any servers!",
         "I'm not able to reach any of the Tootsville.Game servers. "+
-            "This probably means you won't be able to sign in." ); } ); };
+            "This probably means you won't be able to play right now." +
+            "<a href='https://wiki.tootsville.org/Network_Troubleshooting'>Network Troubleshooting</a>" ); } ); };
 
 /**
  * Check for value equality of two objects
