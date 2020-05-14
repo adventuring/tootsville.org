@@ -349,7 +349,9 @@ Tootsville.Tank.findAvatar = function (avatarName)
 *
 */
 Tootsville.Tank.shutDown = function ()
-{ Tootsville.Tank.scene.dispose ();
-  Tootsville.Tank.engine.dispose ();
-  Tootsville.Tank.engine = null;
-  Tootsville.tank.scene = null; };
+{ if (Tootsville.Tank.scene)
+  { Tootsville.Tank.scene.dispose ();
+    Tootsville.Tank.scene = null; }
+  if (Tootsville.Tank.engine)
+  { Tootsville.Tank.engine.dispose ();
+    Tootsville.Tank.engine = null;}};
