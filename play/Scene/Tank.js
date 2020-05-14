@@ -345,3 +345,11 @@ Tootsville.Tank.findAvatar = function (avatarName)
   { if (Tootsville.Tank.scene.meshes [ i ].name == "avatar/" + avatarName)
     { return Tootsville.Tank.scene.meshes [ i ]; } }
   return null; };
+/**
+*
+*/
+Tootsville.Tank.shutDown = function ()
+{ Tootsville.Tank.scene.dispose ();
+  Tootsville.Tank.engine.dispose ();
+  Tootsville.Tank.engine = null;
+  Tootsville.tank.scene = null; };

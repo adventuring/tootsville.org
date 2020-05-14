@@ -87,7 +87,14 @@ Tootsville.UI.makePrompt = function (prompt, resolve)
 { let dialog = document.createElement ("DIALOG");
   dialog.id = "prompt-" + prompt.id;
   let caption  = document.createElement ("H3");
-  caption.innerHTML = prompt.title;
+  let close = document.createElement ('SPAN');
+  close.innerText = "□";
+  close.style.float = 'left';
+  close.addEventListener ('click', () => {
+        document.getElementById("hud").removeChild (dialog);
+        resolve ('close'); } );
+  caption.appendChild (close);
+  caption.innerHTML += prompt.title;
   dialog.appendChild (caption);
   dialog.appendChild (Tootsville.UI.makeDivOrParagraph (prompt.msg));
   let buttons = document.createElement ('DIV');

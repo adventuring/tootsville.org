@@ -356,7 +356,7 @@ Tootsville.Login.childSettings = function ()
  */
 Tootsville.Login.childRequestTimeLeft = function (request)
 { let remainMsec = ( (request.allowedUntil * 1000) -
-                     (new Date().getTime ()) );
+                     (new Date ().getTime ()) );
   let remainMin = Math.floor (remainMsec / (60 * 1000));
   let remainHour = Math.floor (remainMin / 60);
   remainMin = remainMin % 60;
@@ -552,14 +552,13 @@ Tootsville.Login.storeCredentialInfo = function (result)
  */
 Tootsville.Login.quit = function ()
 { Tootsville.Gossip.closeStreams ();
+  Tootsville.Tank.shutDown ();
   Tootsville.player = null;
   Tootsville.character = null;
   Tootsville.childCode = null;
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
-  /* XXX there should be a more elegant route than this */
-  document.location = Tootsville.host.play;
   firebase.auth().signOut().then(Tootsville.Login.start); };
 
 /**

@@ -506,7 +506,30 @@ Tootsville.UI.HUD.refreshHUD = function ()
   setTimeout ( () => { Tootsville.UI.HUD.refreshTalkStatus (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshWallet (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshPaperdoll (); }, 4);
-  setTimeout ( () => { Tootsville.UI.HUD.refreshAttachmentOverlays (); }, 4); };
+  setTimeout ( () => { Tootsville.UI.HUD.refreshAttachmentOverlays (); }, 4);
+  setTimeout ( () => { Tootsville.UI.HUD.refreshTimeLeft (); }, 4);};
+
+/**
+*
+*/
+Tootsville.UI.HUD.refreshTimeLeft = function ()
+{ if (Tootsville.playUntil)
+  { let remainMsec = ( (Tootsville.playUntil * 1000) -
+                       (new Date ().getTime ()) );
+    let remainMin = Math.floor (remainMsec / (60 * 1000));
+    let remainHour = Math.floor (remainMin / 60);
+    remainMin = remainMin % 60;
+    if (remainMin < 10) { remainMin = '0' + remainMin; }
+    document.getElementById ('time-left').innerText = '⌚' + remainHour + ':' + remainMin;
+    if (remainHour > 0)
+    { document.getElementById ('time-left').style.color = interpretTootColor ('spring-green'); }
+    else if (remainMin > 15)
+    { document.getElementById ('time-left').style.color = interpretTootColor ('yellow'); }
+    else
+    { document.getElementById ('time-left').style.color = interpretTootColor ('red'); }
+  }
+  else
+  { document.getElementById('time-left').innerText = ''; } };
 
 /**
  *

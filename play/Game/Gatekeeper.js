@@ -206,7 +206,9 @@ Tootsville.Game.Gatekeeper.login = function (gram)
 Tootsville.Game.Gatekeeper.parentApproval = function (gram)
 { if (gram.status)
   { Tootsville.Gossip.Parrot.say ("Let's play",
-                                   "It's OK for you to play in Tootsville"); }
+                                  "It's OK for you to play in Tootsville");
+    Tootsville.playUntil = gram.until;
+    document.getElementById('time-left').style.display = 'block'; }
   else
   { Tootsville.Gossip.Parrot.say ("Sorry",
                                   "You do not have permission to play in Tootsville right now. Talk to your parent or guardian."); } };
@@ -669,8 +671,16 @@ Tootsville.Game.Gatekeeper.prompt = function (gram)
                                   Tootsville.Util.infinity ('promptReply',
                                                             { reply: reply, id: gram.id }); }); } };
 
+/**
+ * WRITEME
+ */
 Tootsville.Game.Gatekeeper.quiesce = function (gram)
 { if (gram.status)
   { console.log ("Quiesced"); }
   else
   { Tootsville.Game.Nav.quiesce (); } };
+
+
+Tootsville.Game.Gatekeeper.kick = function (gram)
+{ if (gram.status)
+  { Tootsville.Login.quit (); } };
