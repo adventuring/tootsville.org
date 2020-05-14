@@ -80,12 +80,10 @@ Tootsville.Login.loadTootsList = function ()
 if (!('toots' in Tootsville.Login)) { Tootsville.Login.toots = {}; }
 
 /**
- *
+ * Create a Toot List item for the given Toot JSON object.
  */
 Tootsville.Login.createTootListItem = function (toot)
 { var li = document.createElement ('LI');
-  if (! Tootsville.Login.settingsP)
-  { li.onclick = function () { Tootsville.Login.pickCharacter (li); }; }
   li.innerHTML = '';
   li ['data-toot'] = toot;
   li.className = 'toot';
@@ -99,33 +97,39 @@ Tootsville.Login.createTootListItem = function (toot)
         console.debug ("Drawing avatar " + toot.name + " in a canvas");
         Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas, li); } ,
                  10 ); }
-  li.innerHTML += '<SPAN CLASS="toot-name">' +
-  toot.name + '</SPAN>';
+  let name = document.createElement ('SPAN');
+  name.className = 'toot-name';
+  name.addEventListener ('click', function ()
+                         { Tootsville.Login.pickCharacter (li); });
+  name.innerText = toot.name;
+  li.appendChild (name);
   let note = document.createElement ("TEXTAREA");
   note.rows = "2";
   note.innerText = toot.note;
   note.addEventListener ('change',
                          event => { Tootsville.Login.updateNote (toot.name, event); });
   note.addEventListener ('click',
-                         event => { event.stopPropagation (); });
+                         event => { event.stopPropagation ();});
   li.appendChild (note);
   Tootsville.Login.addChildFlag (li);
   return li; };
 
 /**
+ * Update the note attached to tootName
  *
+ * An event handler to be connected to the TEXTAREA control.
  */
 Tootsville.Login.updateNote = function (tootName, event)
 { Tootsville.Util.rest ('PUT', 'toots/' + tootName,
                         { key: 'note', newValue: event.target.value }); };
 
 /**
- *
+ * The Toots List in memory.
  */
 Tootsville.Login.toots = {};
 
 /**
- *
+ * Save LIST as the Toots List, then rebuild the display.
  */
 Tootsville.Login.saveTootsList = function (list)
 { for (let i = 0; i < list.length; ++i)
@@ -140,7 +144,7 @@ Tootsville.Login.setSensitiveP = function ()
   (Tootsville.player && Tootsville.player.sensitiveP); };
 
 /**
- *
+ * Build the Toots List display from the Toots List in memory.
  */
 Tootsville.Login.populateTootsList = function ()
 { Tootsville.Login.clearTootsList ();
@@ -155,14 +159,17 @@ Tootsville.Login.populateTootsList = function ()
   { Tootsville.Login.doneEditingSettings (); } };
 
 /**
+ * Launch the New Toot panel.
  *
+ * To     get    the     Gossip     Parrot     prompt    first,     call
+ * `Tootsville.Login.startCharacterCreation' instead.
  */
 Tootsville.Login.generateNewToot = function ()
 { Tootsville.character = "$new toot";
   Tootsville.UI.HUD.showHUDPanel('new-toot'); };
 
 /**
- *
+ * Start the New Toot creation process.
  */
 Tootsville.Login.startCharacterCreation = function ()
 { Tootsville.Gossip.Parrot.say ("Let's get started!",
@@ -173,14 +180,14 @@ Tootsville.Login.startCharacterCreation = function ()
   then(Tootsville.Login.generateNewToot); };
 
 /**
- *
+ * Dim all the Toot characters other than the one who was PICKED.
  */
 Tootsville.Login.dimUnpickedCharacters = function (picked)
 { var allItems = document.querySelectorAll ('#toots-list li');
   for (var i = 0; i < allItems.length; i++)
   { if (allItems[i] != picked)
     { allItems[i].style.opacity = .25;
-      allItems[i].style.filter = 'grayscale (100%)'; } } };
+      allItems[i].style.filter = 'grayscale(1)'; } } };
 
 /**
  *
@@ -323,7 +330,7 @@ Tootsville.Login.enableChildMode = function (name)
                           { key: 'childCode', newValue: childCode }); } };
 
 /**
- *
+ * Set NAME to no longer be a Child Toot.
  */
 Tootsville.Login.disableChildMode = function (name)
 { let li = this.findLIForToot (name);
@@ -333,22 +340,77 @@ Tootsville.Login.disableChildMode = function (name)
   Tootsville.Login.populateTootsList (); };
 
 /**
- *
+ * Enter the child settings mode.
  */
 Tootsville.Login.childSettings = function ()
 { document.querySelector ('#toots-list').style.backgroundColor = '#c4d82d';
   document.querySelector ('#toots-list>#add-toot').style.display = 'none';
   document.querySelector ('#pick-toot>h2').innerHTML = 'Edit Toot Characters';
-  document.querySelector ('#pick-toot>p').innerHTML = 'Set up Child options here. Set a 4-to-6-letter code for child logins (like a password). It must be all lower-case letters. <A TARGET="_blank" HREF="https://wiki.tootsville.org/wiki/Child_Sign-in_Code">More info…</A>';
+  document.querySelector ('#pick-toot>p').innerHTML = 'Set up Child options here. Set a 6-to-12-letter code for child logins (like a password). <A TARGET="_blank"  HREF="https://wiki.tootsville.org/wiki/Child_Sign-in_Code">More info…</A>';
   document.querySelector ('#edit-toot-settings').style.display = 'none';
   document.querySelector ('#new-toot-hint').style.display = 'none';
   document.querySelector ('#edit-toot-settings-done').style.display = 'block'; };
 
 /**
+ * Add information to a Toot List item about a Child Request.
+ *
+ * When the child Toot has an outstanding request, this shows whether it
+ * has been  granted or denied,  and if granted,  for how long,  and how
+ * much of that time remains.
+ *
+ * Includes the ability to answer (or  change the answer of) the request
+ * by triggering a server prompt.
  *
  */
+Tootsville.Login.addChildRequest = function (li, request)
+{ let div = document.createElement ('DIV');
+  let answeredP = false;
+  div.innerHTML = "<p> Requested permission to play </p>";
+  if ( request.deniedAt )
+  { div.innerHTML += "<p> Request denied: " + request.response + "</p>";
+    answeredP = true;}
+  else if ( request.allowedAt )
+  { let remainMsec = (new Date().getTime ()) - (request.allowedUntil * 1000);
+    let remainMin = Math.floor (remainMsec / (60 * 1000));
+    let remainHour = Math.floor (remainMin / 60);
+    remainMin = remainMin % 60;
+    let remainder = remainMin;
+    if (remainHour > 0) {
+        remainder = remainHour + " hour, " + remainder;
+    }
+    div.innerHTML += "<p> Allowed for " + request.allowedFor + " hours, with " +
+    remainder + " minutes left; " +
+    request.response + "</p>";
+    answeredP = true;}
+  else
+  { div.innerHTML += "<p> No reply yet. </p>"; }
+  let response = document.createElement ('BUTTON');
+  if (answeredP)
+  { response.innerText = "Change Response"; }
+  else
+  { response.innerText = "Respond to Request"; }
+  response.addEventListener ('click',
+                             event => { Tootsville.Login.considerChildApproval (request.uuid);
+                                        event.stopPropagation (); });
+  div.appendChild (response);
+  li.appendChild (div);
+  return li; };
+
+/**
+ * Ask the server to re-prompt us for the Child Request with UUID.
+ *
+ * The server will send a "prompt" packet down immediately.
+ */
+Tootsville.Login.considerChildApproval = function (uuid)
+{ Tootsville.Util.infinity ('considerChildApproval', { uuid: uuid }); };
+
+/**
+ * Add to LI the child settings flag.
+ * 
+ * Takes into account if we're in child settings mode or just displaying it.
+ */
 Tootsville.Login.addChildFlag = function (li)
-{ var toot = li ['data-toot'];
+{ let toot = li ['data-toot'];
   if (Tootsville.Login.settingsP)
   { if (toot.childP)
     { li.innerHTML += '<BR><LABEL><INPUT TYPE="checkbox" CHECKED onchange="Tootsville.Login.disableChildMode(' + "'" + toot.name + "'" + ')"><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL><BR>Child sign-in code: <INPUT PATTERN="^[a-z]{4,6}$" TYPE="text" SIZE=6 VALUE="' + (toot.childCode || '') + '" CLASS="child-code" onchange="Tootsville.Login.enableChildMode(' + "'" + toot.name + "'" + ')">'; }
@@ -356,10 +418,15 @@ Tootsville.Login.addChildFlag = function (li)
     { li.innerHTML += '<BR><LABEL><INPUT TYPE="checkbox" onchange="Tootsville.Login.enableChildMode(' + "'" + toot.name + "'" + ')"><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL>'; } }
   else
   { if (toot.childP)
-    { li.innerHTML += '<BR><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN>'; } }};
+    { li.innerHTML += '<BR><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN>';
+     if (toot.childRequest && toot.childRequest.uuid)
+      { console.log ("request for child " + toot.userName);
+        Tootsville.Login.addChildRequest (li, toot.childRequest); }
+      else
+      { console.log ("no request for child " + toot.userName); } }}} ;
 
 /**
- *
+ * Leave the Child Settings mode; return to login selection
  */
 Tootsville.Login.doneEditingSettings = function ()
 { var toots = document.querySelectorAll ('#toots-list>.toot');
@@ -374,7 +441,7 @@ Tootsville.Login.doneEditingSettings = function ()
   document.querySelector ('#edit-toot-settings-done').style.display = 'none'; };
 
 /**
- *
+ * Start the Firebase login system
  */
 Tootsville.Login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
@@ -412,7 +479,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             loginHintKey: "login_hint" }]}); };
 
 /**
- *
+ * 
  */
 Tootsville.Login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in");
@@ -470,7 +537,7 @@ Tootsville.Login.storeCredentialInfo = function (result)
 };
 
 /**
- *
+ * 
  */
 Tootsville.Login.quit = function ()
 { Tootsville.Gossip.closeStreams ();
@@ -481,7 +548,7 @@ Tootsville.Login.quit = function ()
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
   /* XXX there should be a more elegant route than this */
-  document.location = Tootsville.host.www;
+  document.location = Tootsville.host.play;
   firebase.auth().signOut().then(Tootsville.Login.start); };
 
 /**
@@ -494,9 +561,8 @@ Tootsville.Login.changeSensitivePlayer = function (button)
                     this.populateTootsList (); } ); };
 
 /**
-*
-*/
-
+ *
+ */
 Tootsville.Login.loginKidDirty = function (item)
 { if (document.getElementById ('toot-name').value.length > 2 &&
       document.getElementById ('toot-code').value.length > 2 &&
