@@ -352,6 +352,22 @@ Tootsville.Login.childSettings = function ()
   document.querySelector ('#edit-toot-settings-done').style.display = 'block'; };
 
 /**
+ * Pretty-print the time remaining for a child request
+ */
+Tootsville.Login.childRequestTimeLeft = function (request)
+{ let remainMsec = ( (request.allowedUntil * 1000) -
+                     (new Date().getTime ()) );
+  let remainMin = Math.floor (remainMsec / (60 * 1000));
+  let remainHour = Math.floor (remainMin / 60);
+  remainMin = remainMin % 60;
+  let remainder = remainMin;
+  if (remainHour > 1)
+  { remainder = remainHour + " hours, " + remainder; }
+  else if (remainHour > 0)
+  { remainder = remainHour + " hour, " + remainder; }
+  return remainder; };
+
+/**
  * Add information to a Toot List item about a Child Request.
  *
  * When the child Toot has an outstanding request, this shows whether it
@@ -365,25 +381,16 @@ Tootsville.Login.childSettings = function ()
 Tootsville.Login.addChildRequest = function (li, request)
 { let div = document.createElement ('DIV');
   let answeredP = false;
-  div.innerHTML = "<p> Requested permission to play </p>";
   if ( request.deniedAt )
-  { div.innerHTML += "<p> Request denied: " + request.response + "</p>";
-    answeredP = true;}
+  { answeredP = true;}
   else if ( request.allowedAt )
-  { let remainMsec = (new Date().getTime ()) - (request.allowedUntil * 1000);
-    let remainMin = Math.floor (remainMsec / (60 * 1000));
-    let remainHour = Math.floor (remainMin / 60);
-    remainMin = remainMin % 60;
-    let remainder = remainMin;
-    if (remainHour > 0) {
-        remainder = remainHour + " hour, " + remainder;
-    }
+  { let remainder = Tootsville.Login.childRequestTimeLeft (request);
     div.innerHTML += "<p> Allowed for " + request.allowedFor + " hours, with " +
     remainder + " minutes left; " +
     request.response + "</p>";
     answeredP = true;}
   else
-  { div.innerHTML += "<p> No reply yet. </p>"; }
+  { div.innerHTML += "<p> Requested to play. </p>"; }
   let response = document.createElement ('BUTTON');
   if (answeredP)
   { response.innerText = "Change Response"; }
@@ -451,8 +458,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
       { callbacks:
         { signInSuccessWithAuthResult: Tootsville.Login.acceptSignedIn,
           uiShown: function()
-          { Tootsville.trace ("FirebaseUI NASCAR display ready");
-            Tootsville.Login.startSignIn(); }},
+          { Tootsville.Login.startSignIn(); }},
         // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
         signInFlow: 'popup',
         tosUrl: 'https://wiki.tootsville.org/wiki/Core:ToS',
@@ -469,21 +475,26 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
           //   scopes:
           //   [ 'public_profile', 'email', 'user_likes' ] },
           // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-          firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-          /* Twitter does not support scopes. */,
           /* Yahoo! is a generic OAuth source and should work like this … */
           { provider: "yahoo.com",
             providerName: "Yahoo!",
             buttonColor: "#1111dd",
             iconUrl: "https://user-images.githubusercontent.com/49992195/56804289-28d68b00-681d-11e9-8341-e53b89061745.png",
-            loginHintKey: "login_hint" }]}); };
+            loginHintKey: "login_hint" },
+          firebase.auth.TwitterAuthProvider.PROVIDER_ID
+          /* Twitter does not support scopes. */,
+        ]}); };
 
 /**
- * 
+ * Callback for Firebase completing authentication
  */
 Tootsville.Login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in");
   Tootsville.Login.storeCredentialInfo (result);
+  document.getElementById('login-kid').style.display = 'none';
+  document.getElementById('login-13').style.display = 'none';
+  document.getElementById('sign-in').style.display = 'none';
+  document.getElementById('login-ready-13').style.display = 'block';
   return false; };
 
 /**
