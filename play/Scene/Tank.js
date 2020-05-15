@@ -330,8 +330,12 @@ Tootsville.Tank.updateCamera = function ()
  */
 Tootsville.Tank.destroyAvatar = function (avatar)
 { delete Tootsville.Tank.avatars [ avatar.name ];
+  if (avatar.speech)
+  { avatar.speech.parentNode.removeChild (avatar.speech); }
+  if (avatar.nameTag)
+  { avatar.nameTag.parentNode.removeChild (avatar.nameTag); }
   if (avatar.model)
-  { avatar.model.destroy (); } };
+  { avatar.model.dispose (); } };
 
 /**
  *
