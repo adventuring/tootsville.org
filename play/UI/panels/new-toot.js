@@ -168,7 +168,8 @@ Tootsville.UI.NewToot.applyPatternColor = function ()
 Tootsville.UI.NewToot.pickedPattern = function (event)
 { var button = event.target;
   Tootsville.UI.NewToot.setPattern (button.value);
-  Tootsville.UI.NewToot.updateAvatar (); };
+  Tootsville.UI.NewToot.avatar.pattern = button.value;
+  Tootsville.UI.NewToot.avatarViewerUpdate (); };
 
 /**
  *
