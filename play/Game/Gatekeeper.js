@@ -680,7 +680,26 @@ Tootsville.Game.Gatekeeper.quiesce = function (gram)
   else
   { Tootsville.Game.Nav.quiesce (); } };
 
-
+/**
+ * WRITEME
+ */
 Tootsville.Game.Gatekeeper.kick = function (gram)
 { if (gram.status)
   { Tootsville.Login.quit (); } };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper.burgeon = function (gram)
+{ if (gram.status)
+  { Tootsville.activity.world = gram.world;
+    Tootsville.activity.lat = gram.latitude;
+    Tootsville.activity.long = gram.longitude;
+    Tootsville.activity.alt = gram.altitude;
+    if (gram.wtl)
+    { Tootsville.Tank.avatars [ Tootsville.character ].course = gram.wtl.course;
+      Tootsville.Tank.avatars [ Tootsville.character ].facing = gram.wtl.facing; }
+    if (gram.d3) { console.warn ("d₃ packet ignored while burgeoning"); }
+    Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
+    Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
+    if (gram.attribs) { console.warn ("burgeon extended attributes ignored"); } } };
