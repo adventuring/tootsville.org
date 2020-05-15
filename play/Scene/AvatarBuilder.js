@@ -78,25 +78,28 @@ Tootsville.AvatarBuilder.rainbowColor = function (baseColor)
   else
   { return color; } };
 
+Tootsville.AvatarBuilder.drawPatternOnCanvas = function (avatar, canvas)
+{ canvas.fillStyle = interpretTootColor (avatar.baseColor);;
+  canvas.fillRect (0, 0, 1024, 1024);
+  for (let x = 0; x < 1023; x += 192)
+  { for (let y = 0; y < 1023; y += 192)
+    { canvas.setTransform (1, 0, 0, 1, x, y);
+      if (avatar.patternColor == 'rainbow')
+      { canvas.fillStyle = Tootsville.AvatarBuilder.rainbowColor (avatar.baseColor); }
+      else
+      { canvas.fillStyle = interpretTootColor (avatar.patternColor); }
+      canvas.fill (Tootsville.AvatarBuilder.getPathForPattern (avatar.pattern)); } } };
+
 /**
  * Colorize an Avatar and apply their pattern
  */
 Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
 { if (! model) { return; }
   const patternTexture = new BABYLON.DynamicTexture (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
-                                                     256 /* resolution */,
+                                                     1024 /* resolution */,
                                                      scene);
   const canvas = patternTexture.getContext ();
-  canvas.fillStyle = interpretTootColor (avatar.baseColor);;
-  canvas.fillRect (0, 0, 256, 256);
-  for (let x = 0; x < 256; x += 64)
-  { for (let y = 0; y < 256; y += 64)
-    { canvas.setTransform (1, 0, 0, 1, x, y);
-      if (avatar.patternColor == 'rainbow')
-      { canvas.fillStyle = Tootsville.AvatarBuilder.rainbowColor (avatar.baseColor); }
-      else
-      { canvas.fillStyle = interpretTootColor (avatar.patternColor); }
-      canvas.fill (Tootsville.AvatarBuilder.getPathForPattern (avatar.pattern)); } }
+  Tootsville.AvatarBuilder.drawPatternOnCanvas (avatar, canvas);
   patternTexture.update ();
   const skinMaterial = new BABYLON.StandardMaterial (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
                                                      scene);
