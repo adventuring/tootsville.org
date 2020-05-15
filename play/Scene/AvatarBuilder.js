@@ -113,12 +113,12 @@ Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
   const meshes = model.getChildMeshes ();
   for (let i = 0; i < meshes.length; ++i)
   { const mesh = meshes[i];
-    mesh.material = (
-        mesh.name.indexOf ('Eye') >= 0  ? eyeMaterial :
-            mesh.name.indexOf ('Skin') >= 0 ? skinMaterial :
-            mesh.name.indexOf ('Pad') >= 0 ? padMaterial :
-            eyeMaterial ); }
-  // console.debug ("Colorized " + meshes.length + " meshes for avatar "+ avatar.avatar + ' ' + avatar.userName);
+    if (mesh.name.indexOf ('Eye') >= 0)
+    { mesh.material = eyeMaterial; }
+    else if (mesh.name.indexOf ('Skin') >= 0)
+    { mesh.material = skinMaterial; }
+    else if (mesh.name.indexOf ('Pad') >= 0)
+    { mesh.material = padMaterial; } }
   if (finish) { finish (model); } };
 
 /**
