@@ -125,6 +125,13 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
   assetsManager.load (); };
 
 /**
+ * WRITEME … TODO update furniture …
+ */
+Tootsville.FurnitureBuilder.update = function (item, model, finish)
+{ /* TODO */
+    if (finish) { finish (model; } };
+
+/**
  * Given an item's description, load, colorize, and position its model.
  *
  * Furniture items are described differently than avatars; the canonical
