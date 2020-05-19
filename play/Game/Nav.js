@@ -105,9 +105,7 @@ Tootsville.Game.Nav.quiesce = function ()
                               world: Tootsville.activity.world,
                               wtl: Tootsville.Game.Nav.buildWTL (),
                               d3: {},
-                              emotion: "",
-                              peanuts: Tootsville.Tank.avatars [ Tootsville.character ].peanuts,
-                              fairyDust: Tootsville.Tank.avatars [ Tootsville.character ].fairyDust }); };
+                              emotion: "" }); };
 
 
 /**
