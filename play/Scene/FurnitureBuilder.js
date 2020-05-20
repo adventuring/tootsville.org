@@ -127,7 +127,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
 /**
  * WRITEME … TODO update furniture …
  */
-Tootsville.FurnitureBuilder.update = function (item, model, finish)
+Tootsville.FurnitureBuilder.update = function (item, model, scene, finish)
 { /* TODO */
     if (finish) { finish (model); } };
 

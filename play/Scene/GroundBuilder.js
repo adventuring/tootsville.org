@@ -43,23 +43,78 @@ if (!('GroundBuilder' in Tootsville)) { Tootsville.GroundBuilder = {}; }
 Tootsville.GroundBuilder.initGroundPlane = function ()
 { const ground =
         BABYLON.Mesh.CreateGround ('ground',
-                                   2000, 2000, 0,
+                                   3000, 3000, 0,
                                    Tootsville.Tank.scene);
-  ground.material = new BABYLON.StandardMaterial ('ground',
-                                                  Tootsville.Tank.scene);
-  ground.material.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor ('green'));
-  ground.material.specularColor = new BABYLON.Color3.FromHexString (interpretTootColor ('spring-green'));
+  const groundTexture = new BABYLON.DynamicTexture ("ground",
+                                                  1024, Tootsville.Tank.scene);
+  const groundCanvas = groundTexture.getContext ();
+  groundCanvas.fillStyle = interpretTootColor ('green');
+  groundCanvas.fillRect (0, 0, 1024, 1024);
+  const groundMaterial = new BABYLON.StandardMaterial ("ground",
+                                                       Tootsville.Tank.scene);
+  groundMaterial.diffuseTexture = groundTexture;
+  groundTexture.update ();
+  ground.material = groundMaterial;
   ground.receiveShadows = true;
   ground.checkCollisions = true;
   Tootsville.Tank.ground = ground;
-  return ground; };
+  Tootsville.Tank.groundTexture = groundTexture;
+  return groundCanvas; };
 
 /**
- * Build the ground plane (terrain map) for the scene at x, y, z.
+*
+*/
+Tootsville.GroundBuilder.kinds =
+    { grass: 'green',
+      tallGrass: 'green',
+      water: 'blue',
+      sidewalk: 'silver',
+      driveway: 'charcoal',
+      'cobbles': 'silver',
+      ice: 'perwinkle',
+      snow: 'white',
+      sand: 'yellow',
+      pit: 'black'     
+    };
+
+/**
+*
+*/
+Tootsville.GroundBuilder.colorForPlace = function (kind)
+{ return interpretTootColor ( Tootsville.GroundBuilder.kinds [ kind ] ); };
+
+/**
+ *
+ */
+Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
+{ const groundCanvas = Tootsville.Tank.groundTexture.getContext ();
+  const places = Object.values (Tootsville.SceneBuilder.places);
+  for (let i = 0; i < places.length; ++i)
+  { const kind = places [i].kind;
+    const shapes = places [i].shapes;
+    groundCanvas.setTransform (1, 0, 0, 1, 512, 512);
+    groundCanvas.scale (1024/3000, 1024/3000);
+    groundCanvas.fillStyle = Tootsville.GroundBuilder.colorForPlace (kind);
+    for (let j = 0; j < places.length; ++j)
+    { const shape = shapes [ j ];
+      console.debug ("Drawing shape on ground", shape);
+      groundCanvas.beginPath ();
+      for (let ii = 0; ii < shape.length; ++ii)
+      { const point = shape [ ii ];
+        if (0 == ii) { groundCanvas.moveTo (point.x, point.z); }
+        else { groundCanvas.lineTo (point.x, point.z); } }
+      groundCanvas.fill (); } }
+  Tootsville.Tank.groundTexture.update (); };
+
+/**
+ * Build the ground plane (terrain map) for the scene at lat, long, alt.
  *
  * Affects Tootsville.Tank.scene.
  */
-Tootsville.GroundBuilder.build = function (x, y, z)
+Tootsville.GroundBuilder.build = function (lat, long, alt)
 {
     /* TODO — get terrain data and build heightmap */
-    Tootsville.GroundBuilder.initGroundPlane (); };
+    if (! Tootsville.Tank.ground)
+    { Tootsville.GroundBuilder.initGroundPlane (); }
+    Tootsville.GroundBuilder.paintPlaces (lat, long, alt); };
+

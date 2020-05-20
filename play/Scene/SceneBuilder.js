@@ -112,8 +112,22 @@ Tootsville.SceneBuilder.addFurn  = function (item)
 Tootsville.SceneBuilder.addText  = function (item)
 { console.warn ("Unimplemented: Not adding text ", item); };
 
+if (! ('places' in Tootsville.SceneBuilder))
+{ Tootsville.SceneBuilder.places = {}; };
+
 /**
  *
  */
-Tootsville.SceneBuilder.addPlace  = function (item)
-{ console.warn ("Unimplemented: Not adding place ", item); };
+Tootsville.SceneBuilder.addPlace  = function (key, info)
+{ let [ kind, shapeInfo ] = info.split (':');
+  let shapes = [];
+  let shape = shapeInfo.split ('~').map ( el => {
+      if ("" == el) { return null; }
+      else { let [x,y,z] = el.split (',');
+             return new BABYLON.Vector3 (parseFloat (x),
+                                         parseFloat (y),
+                                         parseFloat (z)); } } );
+  /* FIXME break into shapes on nulls */
+  shapes = [ shape ];
+  let place = { kind: kind, shapes: shapes };
+  Tootsville.SceneBuilder.places [ key ] = place; };

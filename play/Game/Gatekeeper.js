@@ -653,9 +653,10 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
       else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram.var [ key ]); }
       else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram.var [ key ]); }
       else if (key.startsWith ('text')) { Tootsville.SceneBuilder.addText (gram.var [ key ]); }
-      else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (gram.var [ key ]); }
+      else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (key, gram.var [ key ]); }
       else
-      { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}}};
+      { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}
+    Tootsville.GroundBuilder.build (); }};
 
 
 /**
