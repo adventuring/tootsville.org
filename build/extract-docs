@@ -1,0 +1,25 @@
+#!/usr/bin/perl -W
+# -*- cperl -*-
+$doc = "";
+
+while (<>)
+  { if (m(/\*\*[^\@]) .. m(\*/))
+      { s(-\*-.*?-\*-) ();
+	s(/?\*[\*\/]?[ \t]*) ();
+	s(^ *) ();
+	$doc = $doc . $_ }
+    else
+      { if (($doc ne "") &&
+	    /(^\s*Tootsville.*?)=/)
+	{ $obj = $1;
+	  if (/function (\(.*\))/)
+	    { $ll = $1;
+	      if ('()' eq $ll)
+		{ print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$obj is nullary function.\n\n$doc\n\n"; }
+	      else
+		{ print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$obj is a function with lambda list: $ll\n\n$doc\n\n"; } }
+	  else
+	    { print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$doc\n\n"; }
+	  $doc = ""; } } }
+
+print $doc;
