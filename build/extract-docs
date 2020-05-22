@@ -12,7 +12,7 @@ while (<>)
       { if (($doc ne "") &&
 	    /(^\s*Tootsville.*?)=/)
 	{ $obj = $1;
-	  if (/function (\(.*\))/)
+	  if (/function (\.*?\))/)
 	    { $ll = $1;
 	      if ('()' eq $ll)
 		{ print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$obj is nullary function.\n\n$doc\n\n"; }
