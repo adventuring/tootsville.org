@@ -61,6 +61,7 @@ Tootsville.GroundBuilder.buildGroundForShape = function (shape, place, placeName
  */
 Tootsville.GroundBuilder.buildGroundForPlace = function (placeName, place)
 { const shapes = place.shapes;
+  if (!shapes) return;
   const shapesLength = shapes.length;
   for (let i = 0; i < shapesLength; ++i)
   { Tootsville.GroundBuilder.buildGroundForShape (shape, place, placeName); } };
@@ -88,13 +89,14 @@ Tootsville.GroundBuilder.buildSurroundingGrass = function ()
  * Affects Tootsville.Tank.scene.
  */
 Tootsville.GroundBuilder.build = function (lat, long, alt)
-{ if (! Tootsville.Tank.ground )
+{ if (Tootsville.Tank.ground)
   { Tootsville.Tank.ground.dispose (); }
   Tootsville.GroundBuilder.holes = {};
   const places = Object.keys (Tootsville.SceneBuilder.places);
   const placesLength = places.length;
   for (let i = 0; i < placesLength; ++i)
-  { Tootsville.GroundBuilder.buildGroundForPlace (Tootsville.SceneBuilder.places [place], place); }
+  { const place = places [i];
+    Tootsville.GroundBuilder.buildGroundForPlace (Tootsville.SceneBuilder.places [place], place); }
   Tootsville.GroundBuilder.buildSurroundingGrass (); };
 
 /**
@@ -103,8 +105,9 @@ Tootsville.GroundBuilder.build = function (lat, long, alt)
  * Should be called immediately after Tootsville.Tank.scene is initialized.
  */
 Tootsville.GroundBuilder.init = function ()
-{ if (undefined == Tootsville.GroundBuilder.materials)
-  { const grassMaterial = new BABYLON.StandardMaterial ('ground/grass', Tootsville.Tank.scene);
+{ if (! Tootsville.GroundBuilder.materials)
+  { Tootsville.GroundBuilder.materials = {};
+      const grassMaterial = new BABYLON.StandardMaterial ('ground/grass', Tootsville.Tank.scene);
     grassMaterial.diffuseColor = interpretTootColor ('green');
     grassMaterial.specularColor = interpretTootColor ('spring-green');
     Tootsville.GroundBuilder.materials ['grass'] = grassMaterial;
@@ -121,6 +124,4 @@ Tootsville.GroundBuilder.init = function ()
     Tootsville.GroundBuilder.materials ['sidewalk'] = sidewalkMaterial;
     Tootsville.GroundBuilder.materials ['cobbles'] = sidewalkMaterial;
     Tootsville.GroundBuilder.materials ['pavement'] = sidewalkMaterial; }};
-
-
 

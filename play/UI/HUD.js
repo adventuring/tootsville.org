@@ -665,7 +665,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   console.log ("Click at ", event.clientX + ", " + event.clientY, " hit ", picked);
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
-  if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
+  if ('ground' == picked.pickedMesh.name.substring (0, 6))
   { if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.avatars [ Tootsville.character ], picked.pickedPoint);
       return;}
