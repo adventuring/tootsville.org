@@ -50,6 +50,7 @@ play/UI/Gamepad.js
 play/UI/HUD.js
 play/UI/UI.js
 play/UI/Music.js
+play/UI/WaWa.js
 play/UI/FullscreenPolyfill.js
 play/UI/AudioControl.js
 play/UI/Keys.js

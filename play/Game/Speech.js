@@ -41,7 +41,6 @@ Tootsville.Game.Speech.createBalloon = function (words, extraClass)
 { const balloon = document.createElement ('DIV');
   balloon.className = 'speech ' + (extraClass || '');
   balloon.innerText = words;
-  balloon.endTime = Tootsville.Game.now + 5000 + words.length * 100;
   return balloon; };
 
 /**
@@ -61,6 +60,7 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
   if (avatar.speech)
   { avatar.speech.parentNode.removeChild (avatar.speech); }
   avatar.speech = balloon;
+  Tootsville.UI.WaWa.build (words, () => { balloon.parentNode.removeChild (balloon); } );
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
 
@@ -80,7 +80,7 @@ Tootsville.Game.Speech.updateSpeech = function ()
   const avatars = Object.values(Tootsville.Tank.avatars);
   for (let i = 0; i < avatars.length; ++i)
   { let balloon = avatars [i].speech;
-    if (balloon && Tootsville.Game.now > balloon.endTime)
+    if (balloon && balloon.endTime && Tootsville.Game.now > balloon.endTime)
     { Tootsville.Game.Speech.removeSpeech (balloon);
       delete avatars[i]['speech']; } } };
 
