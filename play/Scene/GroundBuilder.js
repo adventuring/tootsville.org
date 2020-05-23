@@ -33,78 +33,54 @@
 
 if (!('GroundBuilder' in Tootsville)) { Tootsville.GroundBuilder = {}; }
 
-
-
 /**
- * Initialize the ground plane.
- *
- * TODO: have a height map across the groundplane.
+ * Set the parameters of POLYGON to appear to be the kind of place PLACE is.
  */
-Tootsville.GroundBuilder.initGroundPlane = function ()
-{ const ground =
-        BABYLON.Mesh.CreateGround ('ground',
-                                   3000, 3000, 0,
-                                   Tootsville.Tank.scene);
-  const groundTexture = new BABYLON.DynamicTexture ("ground",
-                                                  1024, Tootsville.Tank.scene);
-  const groundCanvas = groundTexture.getContext ();
-  groundCanvas.fillStyle = interpretTootColor ('green');
-  groundCanvas.fillRect (0, 0, 1024, 1024);
-  const groundMaterial = new BABYLON.StandardMaterial ("ground",
-                                                       Tootsville.Tank.scene);
-  groundMaterial.diffuseTexture = groundTexture;
-  groundTexture.update ();
-  ground.material = groundMaterial;
-  ground.receiveShadows = true;
-  ground.checkCollisions = true;
-  Tootsville.Tank.ground = ground;
-  Tootsville.Tank.groundTexture = groundTexture;
-  return groundCanvas; };
+Tootsville.GroundBuilder.setPolygonForPlace = function (polygon, place)
+{ polygon.material = Tootsville.GroundBuilder.materials [ place.kind ]; };
 
 /**
-*
-*/
-Tootsville.GroundBuilder.kinds =
-    { grass: 'green',
-      tallGrass: 'green',
-      water: 'blue',
-      sidewalk: 'silver',
-      driveway: 'charcoal',
-      'cobbles': 'silver',
-      ice: 'perwinkle',
-      snow: 'white',
-      sand: 'yellow',
-      pit: 'black'     
-    };
-
-/**
-*
-*/
-Tootsville.GroundBuilder.colorForPlace = function (kind)
-{ return interpretTootColor ( Tootsville.GroundBuilder.kinds [ kind ] ); };
-
-/**
- *
+ * Build the ground for a certain shape
  */
-Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
-{ const groundCanvas = Tootsville.Tank.groundTexture.getContext ();
-  const places = Object.values (Tootsville.SceneBuilder.places);
-  for (let i = 0; i < places.length; ++i)
-  { const kind = places [i].kind;
-    const shapes = places [i].shapes;
-    groundCanvas.setTransform (1, 0, 0, 1, 512, 512);
-    groundCanvas.scale (1024/3000, 1024/3000);
-    groundCanvas.fillStyle = Tootsville.GroundBuilder.colorForPlace (kind);
-    for (let j = 0; j < places.length; ++j)
-    { const shape = shapes [ j ];
-      console.debug ("Drawing shape on ground", shape);
-      groundCanvas.beginPath ();
-      for (let ii = 0; ii < shape.length; ++ii)
-      { const point = shape [ ii ];
-        if (0 == ii) { groundCanvas.moveTo (point.x, point.z); }
-        else { groundCanvas.lineTo (point.x, point.z); } }
-      groundCanvas.fill (); } }
-  Tootsville.Tank.groundTexture.update (); };
+Tootsville.GroundBuilder.buildGroundForShape = function (shape, place, placeName)
+{ const path = new BABYLON.Path2 (shape [0].x, shape [0].z);
+  const shapeLength = shape.length;
+  for (let i = 1; i < shapeLength; ++i)
+  { const point = shape [i];
+    path.addLineTo (point.x, point.y); }
+  path.close ();
+  const triangles = new BABYLON.PolygonMeshBuilder ('ground/' + placeName, path, Tootsville.Tank.scene);
+  const polygon = triangles.build (/* updateable: */ false, /* depth: */ 0);
+  Tootsville.GroundBuilder.holes [ placeName ] = path;
+  polygon.rotation.z = Math.PI / 2;
+  Tootsville.GroundBuilder.setPolygonForPlace (polygon, place);
+};
+
+/**
+ * Build the ground for a certain place
+ */
+Tootsville.GroundBuilder.buildGroundForPlace = function (placeName, place)
+{ const shapes = place.shapes;
+  const shapesLength = shapes.length;
+  for (let i = 0; i < shapesLength; ++i)
+  { Tootsville.GroundBuilder.buildGroundForShape (shape, place, placeName); } };
+
+/**
+ * Build grass surrounding any other ground polygons that were already created
+ */
+Tootsville.GroundBuilder.buildSurroundingGrass = function ()
+{ const holes = Tootsville.GroundBuilder.holes;
+  const holesLength = holes.length;
+  const triangles = new BABYLON.PolygonMeshBuilder ('ground*',
+						    [ new BABYLON.Vector2 (-1500, -1500),
+						      new BABYLON.Vector2 (-1500, 1500),
+						      new BABYLON.Vector2 (1500, 1500),
+						      new BABYLON.Vector2 (1500, -1500) ],
+						    Tootsville.Tank.scene);
+  for (let i = 0; i < holesLength; ++i)
+  { triangles.addHole (holes [i]); }
+  const surroundings = triangles.build (/* updateable: */ false, /* depth: */ 0);
+  surroundings.material = Tootsville.GroundBuilder.materials [ 'grass' ]; };
 
 /**
  * Build the ground plane (terrain map) for the scene at lat, long, alt.
@@ -112,9 +88,39 @@ Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
  * Affects Tootsville.Tank.scene.
  */
 Tootsville.GroundBuilder.build = function (lat, long, alt)
-{
-    /* TODO — get terrain data and build heightmap */
-    if (! Tootsville.Tank.ground)
-    { Tootsville.GroundBuilder.initGroundPlane (); }
-    Tootsville.GroundBuilder.paintPlaces (lat, long, alt); };
+{ if (! Tootsville.Tank.ground )
+  { Tootsville.Tank.ground.dispose (); }
+  Tootsville.GroundBuilder.holes = {};
+  const places = Object.keys (Tootsville.SceneBuilder.places);
+  const placesLength = places.length;
+  for (let i = 0; i < placesLength; ++i)
+  { Tootsville.GroundBuilder.buildGroundForPlace (Tootsville.SceneBuilder.places [place], place); }
+  Tootsville.GroundBuilder.buildSurroundingGrass (); };
+
+/**
+ * Initialize the GroundBuilder so it can be used.
+ *
+ * Should be called immediately after Tootsville.Tank.scene is initialized.
+ */
+Tootsville.GroundBuilder.init = function ()
+{ if (undefined == Tootsville.GroundBuilder.materials)
+  { const grassMaterial = new BABYLON.StandardMaterial ('ground/grass', Tootsville.Tank.scene);
+    grassMaterial.diffuseColor = interpretTootColor ('green');
+    grassMaterial.specularColor = interpretTootColor ('spring-green');
+    Tootsville.GroundBuilder.materials ['grass'] = grassMaterial;
+    Tootsville.GroundBuilder.materials ['tallGrass'] = grassMaterial;
+
+    const waterMaterial = new BABYLON.StandardMaterial ('ground/water', Tootsville.Tank.scene);
+    waterMaterial.diffuseColor = interpretTootColor ('blue');
+    waterMaterial.specularColor = interpretTootColor ('periwinkle');
+    Tootsville.GroundBuilder.materials ['water'] = waterMaterial;
+
+    const sidewalkMaterial = new BABYLON.StandardMaterial ('ground/sidewalk', Tootsville.Tank.scene);
+    sidewalkMaterial.diffuseColor = interpretTootColor ('silver');
+    sidewalkMaterial.specularColor = interpretTootColor ('white');
+    Tootsville.GroundBuilder.materials ['sidewalk'] = sidewalkMaterial;
+    Tootsville.GroundBuilder.materials ['cobbles'] = sidewalkMaterial;
+    Tootsville.GroundBuilder.materials ['pavement'] = sidewalkMaterial; }};
+
+
 

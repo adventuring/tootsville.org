@@ -145,6 +145,7 @@ Tootsville.Tank.init3DEngine = function ()
                                 { preserveDrawingBuffer: true, stencil: true } ); }
           if (! Tootsville.Tank.scene)
           { Tootsville.Tank.initScene (); }
+	  Tootsville.GroundBuilder.init ();
           // TODO confirm if this is engine or scene:
           Tootsville.Tank.engine.workerCollisions = true;
           Tootsville.Tank.canvas.addEventListener (
