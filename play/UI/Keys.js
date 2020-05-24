@@ -53,8 +53,8 @@ Tootsville.UI.Keys.bindings =
         ArrowUp: 'arrow-up',
         End: 'end-of-line',
         Home: 'beginning-of-line',
-        PageDown: null,
-        PageUp: null,
+        PageDown: 'mobile',
+        PageUp: 'paperdoll',
         Backspace: 'delete-backward',
         Clear: 'clear',
         Copy: 'kill-ring-save',
@@ -71,30 +71,31 @@ Tootsville.UI.Keys.bindings =
         Cancel: null,
         ContextMenu: 'toggle-control-panel',
         Escape: 'close-all-panels',
+        BrowserStop: 'close-all-panels',
         Execute: 'execute-extended-command',
         Find: 'isearch',
         Finish: null,
         Help: 'help',
         Pause: null,
         Play: null,
-        Props: 'show-paperdoll',
+        Props: 'paperdoll',
         Select: null,
         ZoomIn: null,
         ZoomOut: null,
-        PrintScreen: 'show-camera',
+        PrintScreen: 'camera',
         WakeUp: null,
         F1: 'help',
-        F2: null,
-        F3: null,
-        F4: null,
-        F5: null,
-        F6: null,
-        F7: null,
-        F8: null,
-        F9: null,
-        F10: null,
-        F11: null,
-        F12: null,
+        F2: 'paperdoll',
+        F3: 'mobile',
+        F4: 'end-of-line',
+        F5: 'hide-talk-box',
+        F6: 'contacts',
+        F7: 'swap-items',
+        F8: 'pick-expression',
+        F9: 'camera',
+        F10: 'control-panel',
+        F11: 'toggle-fullscreen',
+        F12: 'toggle-mute',
         F13: null,
         F14: null,
         F15: null,
@@ -119,6 +120,13 @@ Tootsville.UI.Keys.bindings =
         MediaTrackNext: null,
         MediaTrackPrevious: null
     },
+      withShift:
+      {
+          'PageUp': 'swap-items',
+          'PageDown': 'camera',
+          'Home': 'use-item',
+          'F12': 'volume-up'
+      },
       withControl:
       { 'a': 'beginning-of-line',
         'b': 'backward-char',
@@ -137,10 +145,33 @@ Tootsville.UI.Keys.bindings =
         't': 'transpose-chars',
         'w': 'kill-region',
         'x': 'prefix-C-x',
-        'y': 'yank'
+        'y': 'yank',
+        'PageDown': 'show-contacts',
+        'PageUp': 'control-panel',
+        'Home': 'hide-talk-box',
+        ',': 'whisper',
+        '.': 'shout',
+        "'": 'talk',
+        '/': 'talk',
+        'F12': 'volume-down',
+        'ArrowDown': 'volume-down',
+        'ArrowUp': 'volume-up'
       },
       withMeta: {
-
+          'c': 'control-panel',
+          'm': 'mobile',
+          'p': 'paperdoll',
+          'h': 'hide-talk-box',
+        'PageDown': 'show-contacts',
+        'PageUp': 'control-panel',
+        'Home': 'hide-talk-box',
+        ',': 'whisper',
+        '.': 'shout',
+        "'": 'talk',
+        '/': 'talk',
+        'F12': 'volume-down',
+        'ArrowDown': 'volume-down',
+        'ArrowUp': 'volume-up'
       },
       withHyper: {},
       withSuper: {},
@@ -164,10 +195,12 @@ Tootsville.UI.Keys.onKeyDown = function (ev)
   var coda = 'single';
   if (ev.altKey || ev.metaKey ) { coda = 'withMeta'; }
   else if (ev.ctrlKey) { coda = 'withControl'; }
+  else if (ev.shiftKey) { coda = 'withShift'; }
+  console.info ("Keypress " + coda + " " + ev.key + " bound to " + Tootsville.UI.Keys.bindings [coda][ev.key]);
   if (Tootsville.UI.Keys.prefixed)
   { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings["afterControl" + Tootsville.UI.Keys.prefixed][coda], ev); }
   else
-  { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings[coda][ev.key], ev); } };
+  { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings [coda][ev.key], ev); } };
 
 // 
 
@@ -202,6 +235,7 @@ Tootsville.UI.Keys.backwardWord = function (event)
  */
 Tootsville.UI.Keys.beginningOfLine = function (event)
 { Tootsville.UI.talkSpeak.focus ();
+  Tootsville.UI.HUD.openTalkBox ();
   Tootsville.UI.talkSpeak.setSelectionRange (0,0); };
 
 /**
@@ -252,7 +286,9 @@ Tootsville.UI.Keys.downcaseWord = function (event)
  * Move the cursor to after the end of the line.
  */
 Tootsville.UI.Keys.endOfLine = function (event)
-{ /* TODO */ };
+{ Tootsville.UI.talkSpeak.focus ();
+  Tootsville.UI.HUD.openTalkBox ();
+  Tootsville.UI.talkSpeak.setSelectionRange (-1, -1); };
 
 /**
  * Reserved for future use.

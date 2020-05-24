@@ -448,7 +448,7 @@ Tootsville.UI.HUD.switchActiveItem = function ()
 Tootsville.UI.HUD.refreshTalkStatus = function ()
 { if (Tootsville.Gossip.connectedP () && Tootsville.character)
   { document.getElementById ('talk-box').className = 'talk-connected';
-    document.getElementById ('talk-speak').placeholder = "Press TAB to talk"; }
+    document.getElementById ('talk-speak').placeholder = "Press HOME or CONTROL+E to talk"; }
   else
   { document.getElementById ('talk-box').className = 'talk-disconnected';
     document.getElementById ('talk-speak').placeholder = 'disconnected'; }};
@@ -707,8 +707,30 @@ Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
     { console.debug ("No parent node of ", mesh.name, picked); } } };
 
 /**
-*
-*/
+ * WRITEME
+ */
 Tootsville.UI.HUD.nameTagClicked = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showPlayerCard (event.target.tootName); };
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.showMobile = function ()
+{ event.stopPropagation ();
+  Tootsville.UI.HUD.showHUDPanel ('mobile'); };
+
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.showCamera = function ()
+{ event.stopPropagation ();
+  Tootsville.UI.HUD.showHUDPanel ('camera'); };
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.showControlPanel = function ()
+{ event.stopPropagation ();
+  Tootsville.UI.HUD.showHUDPanel ('control-panel'); };
