@@ -63,7 +63,6 @@ Tootsville.AvatarViewer.createCamera = function (canvas, name)
     new BABYLON.Vector3 (0, 4.5, -12.5),
     canvas.scene);
 
-  camera.target = BABYLON.Vector3.Zero;
   camera.inputs.clear ();
   canvas.camera = camera; };
 
