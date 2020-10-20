@@ -40,7 +40,7 @@ if (!('iceServers' in Tootsville.Gossip)) { Tootsville.Gossip.iceServers = {}; }
  * Accept an offer which was exchanged
  */
 Tootsville.Gossip.acceptOffer = function (offer)
-{ if ( (!(offer)) || (0 == offer.length) )
+{ if ( (!(offer)) || (0 === offer.length) )
   { Tootsville.trace ("No offer to accept");
     return; }
   Tootsville.trace ("Accepting offer", offer);
@@ -106,7 +106,7 @@ Tootsville.Gossip.createConnection = function ()
                                    peer.connection.localDescription);
                  Tootsville.Util.rest ('POST', 'gossip/offers', peer.connection.localDescription).then (
                      next => { console.debug ("⁂", next);
-                               if (null == next) { Tootsville.Gossip.createConnection (); }
+                               if (null === next) { Tootsville.Gossip.createConnection (); }
                                else { Tootsville.Gossip.waitForAnswer (peer, offer, 30, next.location); }}); });
   Tootsville.trace ("Offer should be posting now. This is confirmation."); };
 
@@ -131,7 +131,7 @@ Tootsville.Gossip.gatekeeperAccept = function (peer, event)
   else if (gram.seq)
   { for (let i = 0; i < gram.seq.length; ++i)
     { Tootsville.Gossip.gatekeeperAccept (peer, { data: gram.seq [i] }); } }
-  else if (gram._cmd && gram._cmd == 'logOK')
+  else if (gram._cmd && gram._cmd === 'logOK')
   { Tootsville.Game.Gatekeeper.logOK (gram); }
   else
   { Tootsville.warn ("Unknown datagram type received", gram); }
@@ -250,15 +250,15 @@ Tootsville.Gossip.signPacket = function (c, d, r)
  * Returns a JSON string of the signed packet.
  */
 Tootsville.Gossip.createPacket = function (c, d, r)
-{ let packet = (( c == 'logOK' ) || ( c.substring (0, 1) == ':' ))
+{ let packet = (( c === 'logOK' ) || ( c.substring (0, 1) === ':' ))
       ? d : { d: d };
   packet.r = r || '$World';
   packet.a = Tootsville.characterUUID;
   packet.u = Tootsville.characterUUID;
   packet.s = Tootsville.Gossip.signPacket (c, d, r);
-  packet [ ((c == 'logOK') ? '_cmd'
-            : (c.substring (0,1) == ':') ? 'from'
-            : 'c') ] = (c.substring (0,1) == ':') ? c.substring(1) : c;
+  packet [ ((c === 'logOK') ? '_cmd'
+            : (c.substring (0,1) === ':') ? 'from'
+            : 'c') ] = (c.substring (0,1) === ':') ? c.substring(1) : c;
   return packet; };
 
 /**
@@ -288,7 +288,7 @@ Tootsville.Gossip.connect = function (success)
 Tootsville.Gossip.connectedP = function ()
 { return ( (Tootsville.Gossip.peers.length > 0) ||
            (Tootsville.Util.WebSocket &&
-            Tootsville.Util.WebSocket.readyState == WebSocket.OPEN) ); };
+            Tootsville.Util.WebSocket.readyState === WebSocket.OPEN) ); };
 
 /**
  * Obtain ICE server info from the game server.

@@ -217,9 +217,12 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
       { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
         if (done) { console.debug (avatar.name + " finished course ", avatar.course, " at " + Tootsville.Game.now );
                     if (avatar.course)
-                    { Tootsville.Tank.avatars [ avatar.name ].model.position = new BABYLON.Vector3 (avatar.course.endPoint.x, avatar.course.endPoint.y, avatar.course.endPoint.z); }
+                    { Tootsville.Tank.avatars [ avatar.name ].model.position =
+                      new BABYLON.Vector3 (avatar.course.endPoint.x,
+                                           avatar.course.endPoint.y,
+                                           avatar.course.endPoint.z); }
                     delete avatar['course'];
-                    if (avatar.name == Tootsville.character)
+                    if (avatar.name === Tootsville.character)
                     { Tootsville.Game.Nav.sendWTL (); }}}}}};
 
 /**

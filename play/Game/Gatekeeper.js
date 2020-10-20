@@ -225,7 +225,7 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
  * Public message (speech)
  */
 Tootsville.Game.Gatekeeper.pub = function (gram)
-{ if (gram.id == Tootsville.characterUUID)
+{ if (gram.id === Tootsville.characterUUID)
   { Tootsville.Game.Speech.say (gram.t, gram.x); }
   else
   { Tootsville.Game.Speech.say (gram.t, gram.x, gram.u); } };
@@ -250,9 +250,9 @@ Tootsville.Game.Gatekeeper.inventory = function (gram)
   Tootsville.warn ("unhandled datagram", gram);};
 
 Tootsville.Game.Gatekeeper.ping = function (gram)
-{ if (gram.ping == 'ping')
+{ if (gram.ping === 'ping')
   { Tootsville.Util.infinity ("ping"); }
-  else if (gram.ping == 'pong')
+  else if (gram.ping === 'pong')
   { if (gram.pingStarted)
     { Tootsville.Game.lag = Tootsville.Game.now - gram.pingStarted;
       console.info ("Received Ping-Pong with " + Tootsville.Game.lag + " lag"); }
@@ -287,9 +287,9 @@ Tootsville.Game.Gatekeeper.initUserRoom = function (gram)
     Tootsville.warn ("unhandled datagram", gram); }
   else
   { let err = gram.err;
-    if ("showFirstRun" == err)
+    if ("showFirstRun" === err)
     { Tootsville.warn ("ancient datagram now ignored", gram); }
-    else if ("exists" == err)
+    else if ("exists" === err)
     { let world = gram.moniker;
       Tootsville.warn ("unhandled datagram", gram); }}};
 
@@ -439,13 +439,13 @@ Tootsville.Game.Gatekeeper.buddyRequest = function (gram)
  */
 Tootsville.Game.Gatekeeper.outOfBand = function (gram)
 { let type = gram.type;
-  if ("invite" == type)
+  if ("invite" === type)
   { let body = gram.body;
     Tootsville.warn ("unhandled datagram", gram);  }
-  else if ("response" == type)
+  else if ("response" === type)
   { let body = gram.body;
     Tootsville.warn ("unhandled datagram", gram);  }
-  else if (true === gram.body.toRoom)
+  else if (true ==== gram.body.toRoom)
   { let vars = gram.body.vars;
     Tootsville.warn ("unhandled datagram", gram);  }
   else
@@ -553,7 +553,7 @@ Tootsville.Game.Gatekeeper.newScript = function (gram)
  */
 Tootsville.Game.Gatekeeper.joinOK = function (gram)
 { if (gram.status)
-  { if (gram.uLs == Tootsville.characterUUID)
+  { if (gram.uLs === Tootsville.characterUUID)
     { console.log ("I have joined " + gram.r);
       Tootsville.Util.infinity ("getRoomVars"); }
     else
@@ -594,7 +594,7 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
                                              facing: gram.facing };
       Tootsville.Util.infinity("finger", { walker: gram.n });
       return; }
-    if (! (avatar.uuid == gram.u))
+    if (! (avatar.uuid === gram.u))
     { console.warn ("UUID mismatch, not walking the line", gram);
       return; }
     if (! avatar.model)
@@ -607,7 +607,7 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
  */
 Tootsville.Game.Gatekeeper.bye = function (gram)
 { let avatar = Tootsville.Tank.avatars [ gram.n ];
-  if (! (avatar && avatar.uuid == gram.u))
+  if (! (avatar && avatar.uuid === gram.u))
   { console.warn ("UUID mismatch, not destroying avatar. may be a zombie", gram);
     return; }
   Tootsville.Tank.destroyAvatar (avatar); };
@@ -646,9 +646,9 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
     if (! radians)
     { console.warn ("Non-Radian facings not supported TODO"); }
     for (let key in gram.var)
-    { if ('s' == key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
-      else if ('w' == key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
-      else if ('f' == key) {}
+    { if ('s' === key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
+      else if ('w' === key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
+      else if ('f' === key) {}
       else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram.var [ key ]); }
       else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram.var [ key ]); }
       else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram.var [ key ]); }
