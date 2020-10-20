@@ -122,7 +122,7 @@ Tootsville.SceneBuilder.addPlace  = function (key, info)
 { let [ kind, shapeInfo ] = info.split (':');
   let shapes = [];
   let shape = shapeInfo.split ('~').map ( el => {
-      if ("" == el) { return null; }
+      if ("" === el) { return null; }
       else { let [x,y,z] = el.split (',');
              return new BABYLON.Vector3 (parseFloat (x),
                                          parseFloat (y),

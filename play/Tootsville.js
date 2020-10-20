@@ -62,9 +62,9 @@ if (/\bwith-cluster=([a-z.]+)\b/i.test (window.location.hash))
 else
 { Tootsville.clusterReal = true; }
 
-if (('test.tootsville.org' == Tootsville.cluster) ||
-    ('qa.tootsville.org' == Tootsville.cluster) ||
-    ('tootsville.org' == Tootsville.cluster))
+if (('test.tootsville.org' === Tootsville.cluster) ||
+    ('qa.tootsville.org' === Tootsville.cluster) ||
+    ('tootsville.org' === Tootsville.cluster))
 { Tootsville.host =
   { www: 'https://www.' + Tootsville.cluster,
     play: 'https://play.' + Tootsville.cluster,

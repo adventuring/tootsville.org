@@ -76,7 +76,7 @@ Tootsville.SkyBuilder.setStarfield = function (atmosphereP)
   if (starsP || (! layersP))
   { return; }
   const layer = Tootsville.Tank.scene.layers[0];
-  if (layer && layer.name == 'starfield')
+  if (layer && 'starfield' === layer.name)
   { layer.dispose(); } };
 
 /**
@@ -129,10 +129,10 @@ Tootsville.SkyBuilder.setPlanet = function ()
 Tootsville.SkyBuilder.setMoon = function (whichMoon)
 { let moon;
   let moonColor;
-  if ('MOON' == whichMoon)
+  if ('MOON' === whichMoon)
   { moon = BABYLON.Mesh.CreateSphere ("The Moon", 6, 300, Tootsville.Tank.scene);
     moonColor = new BABYLON.Color3 (1, .90, .95); }
-  else if ('OTHM' == whichMoon)
+  else if ('OTHM' === whichMoon)
   { moon = BABYLON.Mesh.CreateSphere ("The Other Moon", 6, 250, Tootsville.Tank.scene);
     moonColor = new BABYLON.Color3 (1, .90, .95); }
   else
@@ -241,14 +241,14 @@ Tootsville.SkyBuilder.updateMoon = function (model, period)
  * @end enumerate
  */
 Tootsville.SkyBuilder.build = function (world)
-{ Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' == world);
-  Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
+{ Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' === world);
+  Tootsville.SkyBuilder.setStarfield ('CHOR' === world);
   Tootsville.SkyBuilder.setSun ();
-  if ('CHOR' != world) { Tootsville.SkyBuilder.setPlanet (); }
-  if ('MOON' != world) { Tootsville.SkyBuilder.setTheMoon (); }
-  if ('OTHM' != world) { Tootsville.SkyBuilder.setTheOtherMoon (); }
-  if ('PINK' != world) { Tootsville.SkyBuilder.setThePinkMoon (); }
-  if ('CHOR' == world)
+  if ('CHOR' !== world) { Tootsville.SkyBuilder.setPlanet (); }
+  if ('MOON' !== world) { Tootsville.SkyBuilder.setTheMoon (); }
+  if ('OTHM' !== world) { Tootsville.SkyBuilder.setTheOtherMoon (); }
+  if ('PINK' !== world) { Tootsville.SkyBuilder.setThePinkMoon (); }
+  if ('CHOR' === world)
   { Tootsville.SkyBuilder.setCloudCover ();
     Tootsville.SkyBuilder.setPrecipitation ();}
   Tootsville.SkyBuilder.update ();
@@ -260,8 +260,8 @@ Tootsville.SkyBuilder.build = function (world)
  * XXX Some things aren't able to be updated yet.
  */
 Tootsville.SkyBuilder.update = function (world)
-{ Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' == world);
-  Tootsville.SkyBuilder.setStarfield ('CHOR' == world);
+{ Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' === world);
+  Tootsville.SkyBuilder.setStarfield ('CHOR' === world);
   const sun = Tootsville.SkyBuilder.sun;
   sun.position.x = Tootsville.SkyBuilder.sunX ();
   sun.position.y = Tootsville.SkyBuilder.sunY ();

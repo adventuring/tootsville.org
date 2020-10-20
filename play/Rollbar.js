@@ -30,7 +30,7 @@
  * USA
  *
  */
-if ('local' == Tootsville.cluster)
+if ('local' === Tootsville.cluster)
 { console.log("Local: no Rollbar"); }
 else
 { var _rollbarConfig = {

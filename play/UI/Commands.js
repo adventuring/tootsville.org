@@ -111,6 +111,6 @@ Tootsville.UI.runCommand = function (command, event)
     event.preventDefault ();
     event.stopPropagation ();
     event.cancelBubble = true; }
-  else if (undefined == cmd)
+  else if (undefined === cmd)
   { return; }
   else { console.warn ("Keypress: No such command as " + command); }  };

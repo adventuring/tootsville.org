@@ -37,11 +37,11 @@ if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
  * we're in.
  */
 Tootsville.Util.assertValidHostName = function (hostName)
-{ if ("http" == hostName || "https" == hostName)
+{ if ("http" === hostName || "https" === hostName)
   { Tootsville.error ("Landed here with http/s as a hostName"); }
-  if ("wiki" == hostName)
+  if ("wiki" === hostName)
   { return "https://wiki.tootsville.org"; }
-  if ("tootsbook" == hostName)
+  if ("tootsbook" === hostName)
   { return "https://tootsbook.com"; }
   return Tootsville.host["game"]; };
 
@@ -64,7 +64,7 @@ Tootsville.Util.assertValidHostName = function (hostName)
 Tootsville.Util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
   let origURI = uri;
-  if (hostName == "http" || hostName == 'https')
+  if ('http' === hostName || 'https' === hostName)
   { /* do not alter */ }
   else
   { hostName = Tootsville.Util.assertValidHostName (hostName);
@@ -83,9 +83,9 @@ Tootsville.Util.rest = function (method, uri, body, headers)
   return fetch (uri, opts).then(
       response =>
           { if (response.ok)
-            { if (200 == response.status)
+            { if (200 === response.status)
               { return response.json (); }
-              else if (204 == response.status)
+              else if (204 === response.status)
               { return null; } }
             else
             { Tootsville.warn("Server error from " + uri, response);

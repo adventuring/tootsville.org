@@ -50,7 +50,7 @@ Tootsville.AvatarBuilder.getPathForPattern = function (pattern) {
 Tootsville.AvatarBuilder.rainbowColor = function (baseColor)
 { const patternColors = [ "Black", "Cyan", "Indigo", "Orange", "Pink", "Turquoise", "Violet", "White", "Yellow" ];
   let color = patternColors [ Math.floor (Math.random () * patternColors.length) ];
-  if (color == baseColor)
+  if (color === baseColor)
   { return Tootsville.AvatarBuilder.rainbowColor (baseColor); }
   else
   { return color; } };
@@ -65,7 +65,7 @@ Tootsville.AvatarBuilder.drawPatternOnCanvas = function (avatar, canvas)
       canvas.setTransform (1, 0, 0, 1, x + x % 171, y + y % 53);
       // XXX rotate only  once all the patterns have  been recentered on
       // the origin properly: // canvas.rotate ( (x + y) / 256 );
-      if (avatar.patternColor.toLowerCase () == 'rainbow')
+      if ('rainbow' === avatar.patternColor.toLowerCase ())
       { canvas.fillStyle = Tootsville.AvatarBuilder.rainbowColor (avatar.baseColor); }
       else
       { canvas.fillStyle = interpretTootColor (avatar.patternColor); }
@@ -135,7 +135,7 @@ Tootsville.AvatarBuilder.enableShadows = function (object, scene)
 Tootsville.AvatarBuilder.rememberAvatar = function (avatar, object, scene)
 { if (Tootsville.Tank.avatars [ avatar.name ].model)
   { console.error ("Already remembered a model for avatar " + avatar.name);
-    if (Tootsville.Tank.avatars [ avatar.name ].model != object)
+    if (Tootsville.Tank.avatars [ avatar.name ].model !== object)
     { object.dispose (); }
     return; }
   Tootsville.Tank.avatars [ avatar.name ] = Object.assign ((Tootsville.Tank.avatars [avatar.name] || {}), avatar);
@@ -171,7 +171,7 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
   if (! assetsManager)
   { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
   assetsManager.useDefaultLoadingScreen = false;
-  if (scene == Tootsville.Tank.scene)
+  if (scene === Tootsville.Tank.scene)
   { if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
     { console.warn ("Almost re-loaded avatar model for " + avatar.name);
       return; /* XXX finish? */ } }
@@ -194,7 +194,7 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +
                    task.loadedSkeletons.length + " skeletons.");
-    if (scene == Tootsville.Tank.scene)
+    if (scene === Tootsville.Tank.scene)
     { Tootsville.AvatarBuilder.postBuild (avatar, modelRoot, scene); }
     Tootsville.AvatarBuilder.colorize (avatar, modelRoot, scene, finish); };
   assetsManager.load (); };
@@ -218,7 +218,7 @@ Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
  */
 Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
 { if (!scene) { scene = Tootsville.Tank.scene; }
-  if (scene == Tootsville.Tank.scene)
+  if (scene === Tootsville.Tank.scene)
   { if (Tootsville.Tank.avatars &&
         Tootsville.Tank.avatars [avatar.name] &&
         Tootsville.Tank.avatars [avatar.name].model)

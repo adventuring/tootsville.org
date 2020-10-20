@@ -50,7 +50,7 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
 { if (! speaker) { speaker = Tootsville.character;
                    if (!extraClass)
                    { extraClass = Tootsville.Game.Speech.loudness || 'talk'; } }
-  if ((! words) || (0 == words.length)) { return; }
+  if ((! words) || (0 === words.length)) { return; }
   let balloon = Tootsville.Game.Speech.createBalloon (words, extraClass);
   const avatar = Tootsville.Tank.avatars [ speaker ];
   if (! avatar)
@@ -105,8 +105,8 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
     return;
     case "~d20":
     let roll = (Math.floor (Math.random () * 20) + 1);
-    Tootsville.UI.say ("I rolled a " + roll + " on a d20." + (roll == 1 ? " Critical failure!" : roll == 20 ? " Critical success!" : ""),
-                       ( (roll == 1 || roll == 20) ? 'shout' : 'talk' ));
+    Tootsville.UI.say ("I rolled a " + roll + " on a d20." + (1 === roll ? " Critical failure!" : 20 === roll ? " Critical success!" : ""),
+                       ( (1 === roll || 20 === roll) ? 'shout' : 'talk' ));
     break;;
     case "~credits":
     Tootsville.UI.confirmPretty("Credits",

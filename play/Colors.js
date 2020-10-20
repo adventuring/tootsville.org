@@ -69,7 +69,7 @@
      * expected to already be an HTML-style hex code.
      */
     window.interpretTootColor = function (name) {
-        if (null == name || undefined == name)
+        if (null === name || undefined === name)
         { return '#000'; }
         return tootColorMapping[name.toLowerCase()] || name;
     };

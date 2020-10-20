@@ -39,9 +39,9 @@ Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_VIEWER = 1;
 Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_CLOSEUP = 2;
 
 Tootsville.Tank.CameraManager.updateCamera = function (camera, avatar, zoomMode)
-{ if (zoomMode == Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_VIEWER)
+{ if (zoomMode === Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_VIEWER)
   { Tootsville.Tank.CameraManager.positionCameraForAvatarViewer (camera, avatar); }
-  else if (zoomMode == Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_CLOSEUP)
+  else if (zoomMode === Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_CLOSEUP)
   { Tootsville.Tank.CameraManager.positionCameraForAvatarCloseUp (camera, avatar); }
   else // Tootsville.Tank.CameraManager.ZOOM_MODE_GAME
   { Tootsville.Tank.CameraManager.positionCameraForGameBoard (camera, avatar); } };

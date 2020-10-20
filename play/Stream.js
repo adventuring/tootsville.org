@@ -34,15 +34,15 @@ if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
 
 Tootsville.Util.checkStream = function () {
     if (Tootsville.Util.WebSocket)
-    { if (Tootsville.Util.WebSocket.readyState == WebSocket.OPEN)
+    { if (Tootsville.Util.WebSocket.readyState === WebSocket.OPEN)
       { Tootsville.Util.infinity ("ping", { pingStarted: Tootsville.Game.now } ); }
-      else if (! (Tootsville.Util.WebSocket.readyState == WebSocket.CONNECTING) )
+      else if (! (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING) )
       { Tootsville.Util.connectWebSocket (); } } };
 
 Tootsville.Util.connectWebSocket = function () {
     if ( Tootsville.Util.WebSocket &&
-         (Tootsville.Util.WebSocket.readyState == WebSocket.OPEN ||
-          Tootsville.Util.WebSocket.readyState == WebSocket.CONNECTING) )
+         (Tootsville.Util.WebSocket.readyState === WebSocket.OPEN ||
+          Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING) )
     { console.log ("WebSocket already ready already.");
       return; }
     if ((! Tootsville.Login.firebaseAuth) &&
@@ -55,16 +55,16 @@ Tootsville.Util.connectWebSocket = function () {
     }
     console.log ("Connecting WebSocket to " + uri);
     Tootsville.Util.WebSocket = new WebSocket (uri);
-    Tootsville.Util.WebSocket.onopen = (event) => { Tootsville.Util.openWebSocket (event); }
-    Tootsville.Util.WebSocket.onclose = (event) => { Tootsville.Util.closeWebSocket (event); }
-    Tootsville.Util.WebSocket.onmessage = (event) => { Tootsville.Util.messageFromWebSocket (event); }
-    Tootsville.Util.WebSocket.onerror = (event) => { Tootsville.Util.errorFromWebSocket (event); }
+    Tootsville.Util.WebSocket.onopen = (event) => { Tootsville.Util.openWebSocket (event); };
+    Tootsville.Util.WebSocket.onclose = (event) => { Tootsville.Util.closeWebSocket (event); };
+    Tootsville.Util.WebSocket.onmessage = (event) => { Tootsville.Util.messageFromWebSocket (event); };
+    Tootsville.Util.WebSocket.onerror = (event) => { Tootsville.Util.errorFromWebSocket (event); };
     if (! Tootsville.Util.checkStreamRunning)
     { Tootsville.Util.checkStreamRunning = setInterval (Tootsville.Util.checkStream, 300000); } };
 
 Tootsville.Util.stream = function (json)
 { console.debug ("WebSocket stream send command " + json.c, json);
-  if (Tootsville.Util.WebSocket.readyState == WebSocket.CONNECTING)
+  if (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING)
   { setTimeout ( () => Tootsville.Util.stream (json), 10 ); }
   Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
 

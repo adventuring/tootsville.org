@@ -101,7 +101,7 @@ Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
       groundCanvas.beginPath ();
       for (let ii = 0; ii < shape.length; ++ii)
       { const point = shape [ ii ];
-        if (0 == ii) { groundCanvas.moveTo (point.x, point.z); }
+        if (0 === ii) { groundCanvas.moveTo (point.x, point.z); }
         else { groundCanvas.lineTo (point.x, point.z); } }
       groundCanvas.fill (); } }
   Tootsville.Tank.groundTexture.update (); };

@@ -292,7 +292,7 @@ Tootsville.Tank.start3DReal = function ()
  */
 Tootsville.Tank.getLargestChildMesh = function (object)
 { const children = object.getChildMeshes ();
-  if (0 == children.length) { return object; }
+  if (0 === children.length) { return object; }
   let largest = null;
   let largestSize = 0;
   for (let i = 0; i < children.length; ++i)
@@ -346,7 +346,7 @@ Tootsville.Tank.findAvatar = function (avatarName)
   if (! Tootsville.Tank.scene)
   { return null; }
   for (let i = 0; i < Tootsville.Tank.scene.meshes; ++i)
-  { if (Tootsville.Tank.scene.meshes [ i ].name == "avatar/" + avatarName)
+  { if (Tootsville.Tank.scene.meshes [ i ].name === "avatar/" + avatarName)
     { return Tootsville.Tank.scene.meshes [ i ]; } }
   return null; };
 /**

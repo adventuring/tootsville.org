@@ -63,7 +63,7 @@ Tootsville.Game.NPCSystem.burgeonNPC = function (npc)
 Tootsville.Game.NPCSystem.nextBehavior = function (npc)
 { const oldBehavior = npc.behavior;
   const unrandom = Tootsville.Game.NPCSystem.unrandom (npc) % npc.behaviors.length;
-  if (npc.behaviors [unrandom] == oldBehavior)
+  if (npc.behaviors [unrandom] === oldBehavior)
   { npc.behavior = npc.behaviors [ (unrandom + 1) % npc.behaviors.length ]; }
   else
   { npc.behavior = npc.behaviors [ unrandom ]; }

@@ -165,7 +165,7 @@ Tootsville.UI.Gamepad.updateStatus = function ()
      { Tootsville.UI.Gamepad.controllerState [j] = { buttons: [], axes: [] }; }
      for (let i = 0; i < controller.buttons.length; ++i)
      { let val = controller.buttons [i];
-       if (typeof (val) == "object")
+       if ('object' === typeof (val))
        { val = val.value; }
        if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
        { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;
