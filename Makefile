@@ -230,7 +230,9 @@ dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 
 #################### devel-test
 
-devel-test:	devel-play
+devel-test:
+	gnome-terminal --title='Play server' --profile=Runner --tab -- $(MAKE) devel-play-watch &
+	gnome-terminal --title='WWW server' --profile=Runner --tab -- $(MAKE) devel-www-watch &
 
 devel-play-watch:	devel-play
 	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done
