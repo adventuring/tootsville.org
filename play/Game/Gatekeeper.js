@@ -445,7 +445,7 @@ Tootsville.Game.Gatekeeper.outOfBand = function (gram)
   else if ("response" === type)
   { let body = gram.body;
     Tootsville.warn ("unhandled datagram", gram);  }
-  else if (true ==== gram.body.toRoom)
+  else if (true === gram.body.toRoom)
   { let vars = gram.body.vars;
     Tootsville.warn ("unhandled datagram", gram);  }
   else
