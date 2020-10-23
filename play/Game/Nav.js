@@ -79,6 +79,9 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
   Tootsville.Game.Nav.sendWTL ();
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
+/**
+ *
+ */
 Tootsville.Game.Nav.buildWTL = function ()
 { const avatar = Tootsville.Tank.avatars [ Tootsville.character ];
   let course = undefined; let facing = undefined;
@@ -86,13 +89,20 @@ Tootsville.Game.Nav.buildWTL = function ()
   { course = avatar.course;
     facing = avatar.facing;
     if (course)
-    { course = { startPoint: course.startPoint,
-                 endPoint: course.endPoint,
+    { course = { startPoint: { x: course.startPoint.x,
+                               y: course.startPoint.y,
+                               z: course.startPoint.z },
+                 endPoint: { x: course.endPoint.x,
+                             y: course.endPoint.y,
+                             z: course.endPoint.z },
                  startTime: course.startTime,
                  speed: course.speed }; }
     else
-    { course = { startPoint: avatar.model.position,
-                 endPoint: avatar.model.position,
+    { let point = { x: avatar.model.position.x,
+                    y: avatar.model.position.y,
+                    z: avatar.model.position.z };
+      course = { startPoint: point,
+                 endPoint: point,
                  startTime: Tootsville.Game.now + Tootsville.Game.lag,
                  speed: .1 }; } }
   if (! (facing))
@@ -100,8 +110,8 @@ Tootsville.Game.Nav.buildWTL = function ()
   return { course: course, facing: facing }; };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.Game.Nav.quiesce = function ()
 { Tootsville.Util.infinity ("quiesce",
                             { latitude: Tootsville.activity.lat,
