@@ -252,32 +252,51 @@ Tootsville.Game.Nav.updateAvatars = function ()
   for (let i = 0; i < avatars.length; ++i)
   { try { Tootsville.Game.Nav.updateAvatar (avatars [i]); } catch (e) { console.error (e); } } };
 
+Tootsville.Game.Nav.CAMERA_DOLLY_SPEED = 4;
+Tootsville.Game.Nav.CAMERA_TRUCK_SPEED = .4;
+
 /**
- * Update the camera's position to keep the player in view.
+ * Update the camera's dolly position (foreward/back)
  */
-Tootsville.Game.Nav.updateCamera = function ()
-{ if (! Tootsville.Tank || ! Tootsville.Tank.avatars) return;
-  const avatar = Tootsville.Tank.avatars [Tootsville.character];
-  if (! avatar) return;
-  const model = avatar.model;
-  const δPosition = Tootsville.Tank.camera.position.subtract (model.position);
+Tootsville.Game.Nav.updateCameraDolly = function (model, cameraPosition)
+{ const δPosition = Tootsville.Tank.camera.position.subtract (model.position);
   const absZ = Math.abs (δPosition.z);
-  const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
+  if (absZ > 200)
+      cameraPosition = cameraPosition.add (new BABYLON.Vector3 (0, 0, Tootsville.Game.Nav.CAMERA_DOLLY_SPEED));
+  else if (absZ < 50)
+      cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (0, 0, Tootsville.Game.Nav.CAMERA_DOLLY_SPEED));
+  return cameraPosition; };
+
+/**
+ * Update the camera's truck position (left/right)
+ */
+Tootsville.Game.Nav.updateCameraTruck = function (model, cameraPosition)
+{ const renderWidth = Tootsville.Tank.engine.getRenderWidth ();
   const renderHeight = Tootsville.Tank.engine.getRenderHeight ();
-  if (! (Tootsville.Tank.camera && Tootsville.Tank.camera.viewport) ) { return; }
+  if (! (Tootsville.Tank.camera && Tootsville.Tank.camera.viewport) )
+      return cameraPosition;
   const abs = BABYLON.Vector3.Project (
       model.getAbsolutePosition (),
       BABYLON.Matrix.IdentityReadOnly,
       Tootsville.Tank.scene.getTransformMatrix (),
-      Tootsville.Tank.camera.viewport.toGlobal (1.0, 1.0));
-  const relX = abs.x;
-  let cameraPosition = Tootsville.Tank.camera.position;
-  if (relX < 1/3)
-  { cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (Tootsville.Game.Nav.CAMERA_MOVE_SPEED, 0, 0)); } 
-  else if (relX > 2/3) 
-  { cameraPosition = cameraPosition.add (new BABYLON.Vector3 (Tootsville.Game.Nav.CAMERA_MOVE_SPEED, 0, 0)); }
-  if (absZ > 150)
-  { cameraPosition = cameraPosition.add (new BABYLON.Vector3 (0, 0, Tootsville.Game.Nav.CAMERA_MOVE_SPEED)); }
-  else if (absZ < 50)
-  { cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (0, 0, Tootsville.Game.Nav.CAMERA_MOVE_SPEED)); }
+      Tootsville.Tank.camera.viewport.toGlobal (
+          renderWidth, renderHeight));
+  const relX = abs.x / renderWidth;
+  if (relX < 1/4)
+      cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (Tootsville.Game.Nav.CAMERA_TRUCK_SPEED, 0, 0)); 
+  else if (relX > 3/4) 
+      cameraPosition = cameraPosition.add (new BABYLON.Vector3 (Tootsville.Game.Nav.CAMERA_TRUCK_SPEED, 0, 0));
+  return cameraPosition; };
+
+/**
+ * Update the camera's position
+ */
+Tootsville.Game.Nav.updateCamera = function ()
+{ if (!(Tootsville.Tank.avatars [Tootsville.character])) return;
+  const model = Tootsville.Tank.avatars [Tootsville.character].model;
+  const camera = Tootsville.Tank.camera;
+  if (!(camera)) return;
+  let cameraPosition = camera.position;
+  cameraPosition = Tootsville.Game.Nav.updateCameraDolly (model, cameraPosition);
+  cameraPosition = Tootsville.Game.Nav.updateCameraTruck (model, cameraPosition);
   Tootsville.Tank.camera.position = cameraPosition; };
