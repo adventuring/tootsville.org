@@ -115,12 +115,15 @@ Tootsville.Util.rest = function (method, uri, body, headers)
              { console.log ("User-initiated retry after error for " + origURI);
                return Tootsville.Util.rest (method, origURI, body, headers); });} ); };
 
+/**
+ * Load the Javascript referenced by SRC into the page
+ */
 Tootsville.Util.loadScript = function (src)
 { return new Promise( finish =>
-                      { let el = document.createElement('SCRIPT');
-                        el.onload = finish;
-                        el.src = src;
-                        document.body.appendChild(el); });};
+    { let el = document.createElement('SCRIPT');
+      el.addEventListener ('load', finish);
+      el.src = src;
+      document.body.appendChild(el); });};
 
 //
 
