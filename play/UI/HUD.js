@@ -510,8 +510,8 @@ Tootsville.UI.HUD.refreshHUD = function ()
   setTimeout ( () => { Tootsville.UI.HUD.refreshTimeLeft (); }, 4);};
 
 /**
-*
-*/
+ * Refresh the time remaining indicator for a child player
+ */
 Tootsville.UI.HUD.refreshTimeLeft = function ()
 { if (Tootsville.playUntil)
   { let remainMsec = ( (Tootsville.playUntil * 1000) -
@@ -532,7 +532,8 @@ Tootsville.UI.HUD.refreshTimeLeft = function ()
   { document.getElementById('time-left').innerText = ''; } };
 
 /**
- *
+ * Toggle whether ELEMENT is displayed or not (with a transition
+ * fade).
  */
 Tootsville.UI.HUD.toggleElement = function (element)
 { if ('block' === element.style.display)
@@ -688,7 +689,7 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
                                                          container); } ); };
 
 /**
- *
+ * Respond to a user click (tap) on a mesh in the tank
  */
 Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
 { const pickedName = mesh.name || '';
@@ -706,14 +707,14 @@ Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
     { console.debug ("No parent node of ", mesh.name, picked); } } };
 
 /**
- * WRITEME
+ * Respond to a user click (tap) on a name tag
  */
 Tootsville.UI.HUD.nameTagClicked = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showPlayerCard (event.target.tootName); };
 
 /**
- * WRITEME
+ * Show the player's mobile device
  */
 Tootsville.UI.HUD.showMobile = function ()
 { event.stopPropagation ();
@@ -721,14 +722,14 @@ Tootsville.UI.HUD.showMobile = function ()
 
 
 /**
- * WRITEME
+ * Show the camera widget
  */
 Tootsville.UI.HUD.showCamera = function ()
 { event.stopPropagation ();
   Tootsville.UI.HUD.showHUDPanel ('camera'); };
 
 /**
- * WRITEME
+ * Show the control panel menu
  */
 Tootsville.UI.HUD.showControlPanel = function ()
 { event.stopPropagation ();
