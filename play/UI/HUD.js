@@ -631,7 +631,6 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
                   new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
                                        document.getElementById ('tootsville3d').offsetHeight,
                                        1));
-  
   speechBubble.style.top = Math.max (30, Math.min (abs.y,
                                                    window.innerHeight - 30)) + 'px';
   speechBubble.style.left = Math.max (50, Math.min (abs.x,
