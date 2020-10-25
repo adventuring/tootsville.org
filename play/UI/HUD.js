@@ -605,10 +605,10 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
       Tootsville.Tank.scene.getTransformMatrix (),
       Tootsville.Tank.camera.viewport.toGlobal (
           renderWidth, renderHeight)).divide (
-              {x: renderWidth, y: renderHeight, z: 1}).multiply (
-                  {x: document.getElementById ('tootsville3d').offsetWidth,
-                   y: document.getElementById ('tootsville3d').offsetHeight,
-                   z: 1});
+              new BABYLON.Vector3 (renderWidth, renderHeight, 1)).multiply (
+                  new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
+                                       document.getElementById ('tootsville3d').offsetHeight,
+                                       1));
   nameTag.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
   nameTag.style.left = Math.max (50, Math.min (abs.x, window.innerWidth - 50)) + 'px'; };
 
@@ -627,10 +627,10 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
       Tootsville.Tank.scene.getTransformMatrix (),
       Tootsville.Tank.camera.viewport.toGlobal (
           renderWidth, renderHeight)).divide (
-              {x: renderWidth, y: renderHeight, z: 1}).multiply (
-                  {x: document.getElementById('tootsville3d').offsetWidth,
-                   y: document.getElementById('tootsville3d').offsetHeight,
-                   z: 1});
+              new BABYLON.Vector3 (renderWidth, renderHeight, 1)).multiply (
+                  new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
+                                       document.getElementById ('tootsville3d').offsetHeight,
+                                       1));
   
   speechBubble.style.top = Math.max (30, Math.min (abs.y,
                                                    window.innerHeight - 30)) + 'px';
