@@ -383,8 +383,8 @@ Tootsville.UI.HUD.paperdollCurrentP = function ()
   return false; };
 
 /**
-*
-*/
+ * Create the canvas for paperdoll display
+ */
 Tootsville.UI.HUD.createPaperdollCanvas = function (paperdoll)
 { let canvas = document.createElement ("CANVAS");
   canvas.height = paperdoll.offsetHeight;
