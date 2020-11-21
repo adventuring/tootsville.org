@@ -299,7 +299,7 @@ Tootsville.Game.Nav.updateCamera = function ()
 { if (!(Tootsville.Tank.avatars [Tootsville.character])) return;
   const model = Tootsville.Tank.avatars [Tootsville.character].model;
   const camera = Tootsville.Tank.camera;
-  if (!(camera)) return;
+  if (!(camera) || !(model)) return;
   let cameraPosition = camera.position;
   cameraPosition = Tootsville.Game.Nav.updateCameraDolly (model, cameraPosition);
   cameraPosition = Tootsville.Game.Nav.updateCameraTruck (model, cameraPosition);
