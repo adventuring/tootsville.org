@@ -261,7 +261,9 @@ Tootsville.Game.Nav.CAMERA_TRUCK_SPEED = .4;
 Tootsville.Game.Nav.updateCameraDolly = function (model, cameraPosition)
 { const δPosition = Tootsville.Tank.camera.position.subtract (model.position);
   const absZ = Math.abs (δPosition.z);
-  if (absZ > 200)
+  if (absZ > 1000 || absZ < 0)
+      cameraPosition = model.position.subtract (new BABYLON.Vector3 (0, -10, 100));
+  else if (absZ > 200)
       cameraPosition = cameraPosition.add (new BABYLON.Vector3 (0, 0, Tootsville.Game.Nav.CAMERA_DOLLY_SPEED));
   else if (absZ < 50)
       cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (0, 0, Tootsville.Game.Nav.CAMERA_DOLLY_SPEED));
@@ -282,7 +284,9 @@ Tootsville.Game.Nav.updateCameraTruck = function (model, cameraPosition)
       Tootsville.Tank.camera.viewport.toGlobal (
           renderWidth, renderHeight));
   const relX = abs.x / renderWidth;
-  if (relX < 1/4)
+  if (relX < 0 || relX > 1)
+      cameraPosition = model.position.subtract (new BABYLON.Vector3 (0, -10, 100));
+  else if (relX < 1/4)
       cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (Tootsville.Game.Nav.CAMERA_TRUCK_SPEED, 0, 0)); 
   else if (relX > 3/4) 
       cameraPosition = cameraPosition.add (new BABYLON.Vector3 (Tootsville.Game.Nav.CAMERA_TRUCK_SPEED, 0, 0));
