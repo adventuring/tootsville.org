@@ -513,6 +513,10 @@ Tootsville.Game.Commands.useEquipment = function (d, u, r)
 /**
  * Begin walking along a straight path. Path specification:
  *
+ * The path is specified as a series of values joined by ``@~''
+ * (tilde) characters. Note that the coördinate triplets in particular
+ * are comma-delimited segments within a tilde-delimited segment.
+ *
  * @table @code
  * @item o
  * object (person) walking UUID
