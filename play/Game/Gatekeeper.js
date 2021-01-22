@@ -52,17 +52,19 @@ Tootsville.Game.Gatekeeper.logOK = function (gram)
     Tootsville.Gossip.ensureKeyPair ();
     if ('none' != document.getElementById ('sign-in').style.display)
     { Tootsville.Login.switchTootsView (); }
-    if (gram.greet) { console.info ("Greeting", gram.greet); }
-    if (gram.auth) { console.log ("Authentication", gram.auth); }
+    if (gram.greet) console.info ("Greeting", gram.greet);
+    if (gram.auth) console.log ("Authentication", gram.auth);
     if (gram.motd && ! ( Tootsville.seen.motd ) )
     { Tootsville.Gossip.Parrot.say ("Message of the Day", gram.motd);
-      Tootsville.seen.motd = true; } }  else
+      Tootsville.seen.motd = true; } }
+  else
   { Tootsville.Gossip.Parrot.say ("Error from login", gram.error + " due to " + gram.auth +
                                   " This will prevent you from playing. " +
                                   "Contact support if you don't understand.");
     Tootsville.Util.WebSocket.close ();
     Tootsville.Util.connectWebSocket (); }
-  if (neighbor) { Tootsville.warn ("logOK not handled for peer connections", gram); } };
+  if (neighbor)
+      Tootsville.warn ("logOK not handled for peer connections", gram); };
 
 /**
  * Receive a  list of avatar  info that describes  an area of  the world.
@@ -525,9 +527,9 @@ Tootsville.Game.Gatekeeper.reportBug = function (gram)
  */
 Tootsville.Game.Gatekeeper.tootList = function (gram)
 { if (gram.status)
-  { Tootsville.Login.saveTootsList (gram.toots); }
+    Tootsville.Login.saveTootsList (gram.toots);
   else
-  { Tootsville.Login.startCharacterCreation (); } };
+      Tootsville.Login.startCharacterCreation (); };
 
 /**
  * The server has  given us ``permission'' to play as  the Toot we asked
@@ -539,14 +541,15 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
     Tootsville.character = gram.playWith;
     Tootsville.player = gram.player;
     Tootsville.Tank.start3D (); }
-  else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
+  else
+      Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); };
 
 /**
  * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.newScript = function (gram)
 { if (gram.status && gram.script)
-  { Tootsville.Util.loadScript (gram.script); } };
+    Tootsville.Util.loadScript (gram.script); };
 
 /**
  * WRITEME — this function is not yet documented.
@@ -562,19 +565,19 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
       if (Tootsville.Tank.avatars)
       { if (Tootsville.Tank.avatars [ gram.n ])
         { if (Tootsville.Tank.avatars [ gram.n ].model.course )
-          { Tootsville.Util.infinity ("wtl4",
+            Tootsville.Util.infinity ("wtl4",
                                       { u: gram.n,
                                         course: Tootsville.Tank.avatars [ gram.n ].model.course,
-                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing }); }
+                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing });
           else if ( Tootsville.Tank.avatars [ gram.n ].model.position )
-          { Tootsville.Util.infinity ("wtl4",
-                                      { u: gram.n,
-                                        course: { startPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
-                                                  endPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
-                                                  startTime: Tootsville.Game.now },
-                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing });} }
+              Tootsville.Util.infinity ("wtl4",
+                                        { u: gram.n,
+                                          course: { startPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
+                                                    endPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
+                                                    startTime: Tootsville.Game.now },
+                                          facing: Tootsville.Tank.avatars [ gram.n ].model.facing });}
         else
-        { Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}}};
+            Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}};
 
 /**
  * Walk The Line
@@ -598,7 +601,7 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     { console.warn ("UUID mismatch, not walking the line", gram);
       return; }
     if (! avatar.model)
-    { Tootsville.AvatarBuilder.build (avatar); }
+        Tootsville.AvatarBuilder.build (avatar);
     avatar.course = gram.course;
     avatar.facing = gram.facing; } };
 
@@ -617,16 +620,17 @@ Tootsville.Game.Gatekeeper.bye = function (gram)
  */
 Tootsville.Game.Gatekeeper.c = function (gram)
 { if (gram.status)
-  { console.info ("Command processor reports success", gram); }
+    console.info ("Command processor reports success", gram);
   else
-  { console.warn ("Command processor reports error", gram); } };
+      console.warn ("Command processor reports error", gram); };
 
 /**
  * This  packet  instructs  the  user  to  leave  the  game  and  go  to
  * a different web site.
  */
 Tootsville.Game.Gatekeeper.goToWeb = function (gram)
-{ if (gram.status) { document.location = gram.url; } };
+{ if (gram.status)
+    document.location = gram.url; };
 
 /**
  * If the server sees no activity for a long time, it'll send an Are You
@@ -635,7 +639,7 @@ Tootsville.Game.Gatekeeper.goToWeb = function (gram)
  */
 Tootsville.Game.Gatekeeper.ayt = function (gram)
 { if (gram.status)
-  { Tootsville.Util.infinity ("ping"); } };
+    Tootsville.Util.infinity ("ping"); };
 
 /**
  * WRITEME — this function is not yet documented.
@@ -646,14 +650,14 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
     if (! radians)
     { console.warn ("Non-Radian facings not supported TODO"); }
     for (let key in gram.var)
-    { if ('s' === key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
-      else if ('w' === key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
+    { if ('s' === key) Tootsville.SkyBuilder.buildMatchingSky (gram.var.s);
+      else if ('w' === key) Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w);
       else if ('f' === key) {}
-      else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram.var [ key ]); }
-      else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram.var [ key ]); }
-      else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram.var [ key ]); }
-      else if (key.startsWith ('text')) { Tootsville.SceneBuilder.addText (gram.var [ key ]); }
-      else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (key, gram.var [ key ]); }
+      else if (key.startsWith ("itm2")) Tootsville.SceneBuilder.addItem2 (gram.var [ key ]);
+      else if (key.startsWith ("item")) Tootsville.SceneBuilder.addItem1 (gram.var [ key ]);
+      else if (key.startsWith ('furn')) Tootsville.SceneBuilder.addFurn (gram.var [ key ]);
+      else if (key.startsWith ('text')) Tootsville.SceneBuilder.addText (gram.var [ key ]);
+      else if (key.startsWith ('zone')) Tootsville.SceneBuilder.addPlace (key, gram.var [ key ]);
       else
       { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}
     Tootsville.GroundBuilder.build (); }};
@@ -667,26 +671,26 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
  */
 Tootsville.Game.Gatekeeper.prompt = function (gram)
 { if (gram.status)
-  { Tootsville.UI.makePrompt (gram,
+    Tootsville.UI.makePrompt (gram,
                               reply => {
                                   Tootsville.Util.infinity ('promptReply',
-                                                            { reply: reply, id: gram.id }); }); } };
+                                                            { reply: reply, id: gram.id }); }); };
 
 /**
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.quiesce = function (gram)
 { if (gram.status)
-  { console.log ("Quiesced"); }
+    console.log ("Quiesced");
   else
-  { Tootsville.Game.Nav.quiesce (); } };
+      Tootsville.Game.Nav.quiesce (); };
 
 /**
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.kick = function (gram)
 { if (gram.status)
-  { Tootsville.Login.quit (); } };
+    Tootsville.Login.quit (); };
 
 /**
  * WRITEME
@@ -704,3 +708,20 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
     Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
     Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
     if (gram.attribs) { console.warn ("burgeon extended attributes ignored"); } } };
+
+/**
+ * Migrate from the current websockets server to another one.
+ *
+ * Optional parameter `newConnection' can be used to provide a new
+ * `Tootsville.host.game' URL. Normally, though, this will be `#same',
+ * indicating no change --- the load balancers should take care of
+ * things.
+ */
+Tootsville.Game.Gatekeeper.migrate = function (gram)
+{ if (gram.status)
+  { if (gram.newConnection && "#same" !== gram.newConnection)
+      Tootsville.host.game = gram.newConnection;
+    if (! Tootsville.Util.Websocket)
+        Tootsville.Util.checkStream ();
+    Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
+    Tootsville.Util.Websocket.close (1001, "migrate"); } };
