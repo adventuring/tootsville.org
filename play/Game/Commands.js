@@ -513,11 +513,18 @@ Tootsville.Game.Commands.useEquipment = function (d, u, r)
 /**
  * Begin walking along a straight path. Path specification:
  *
- * o — object (person) walking UUID
- * sT — start time (Universal)
- * eT — end time (Universal)
- * sX, sY, sZ — start x, y, z
- * eX, eY, eZ — end x, y, z
+ * @table @code
+ * @item o
+ * object (person) walking UUID
+ * @item sT
+ * start time (Universal)
+ * @item eT
+ * end time (Universal)
+ * @item sX, sY, sZ
+ * start x, y, z
+ * @item eX, eY, eZ
+ * end x, y, z
+ * @end table
  *
  * @subsection Added in Romance 1.2
  *
