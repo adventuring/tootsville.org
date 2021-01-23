@@ -74,6 +74,7 @@ ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 clean:
 	find . -name \*~ -exec rm {} \;
 	rm -rf dist/ ; mkdir -p dist/
+	rm -rf doc/ ; mkdir -p doc/
 	rm -f TODO.org TODO.scorecard	
 
 #################### doc
@@ -82,7 +83,7 @@ doc:	js-doc
 
 doc/doc.css:	www/doc.less
 
-js-doc:	doc/texi/tootsville-js.texi
+js-doc:	dist/doc.texi
 
 doc/texi/tootsville-js.texi:	doc/texi/TootsvilleJS.texi
 	perl -ne 'print if /@c END_PREAMBLE/..0' \

@@ -40,7 +40,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Tootsville.org JavaScript'
-copyright = u'2018'
+copyright = u'2018-2021'
 author = u'Bruce-Robert Pocock'
 
 # The version info for the project you're documenting, acts as replacement for
