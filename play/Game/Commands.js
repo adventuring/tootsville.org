@@ -513,7 +513,7 @@ Tootsville.Game.Commands.useEquipment = function (d, u, r)
 /**
  * Begin walking along a straight path. Path specification:
  *
- * The path is specified as a series of values joined by ``@~''
+ * The path is specified as a series of values joined by ``@~{}''
  * (tilde) characters. Note that the coördinate triplets in particular
  * are comma-delimited segments within a tilde-delimited segment.
  *
@@ -530,9 +530,26 @@ Tootsville.Game.Commands.useEquipment = function (d, u, r)
  * end x, y, z
  * @end table
  *
+ * Example:
+ *
+ * @verbatim
+ * 2A2FA700-FF51-11E8-A63B-94DE802CBFC4~3820353198~3820353298~0,0,0~0,100,0
+ * @end verbatim
+ *
+ * This indicates that the Toot with UUID 
+ * ``2A2FA700-FF51-11E8-A63B-94DE802CBFC4'' (which happens to be
+ * ``Superstar'') began walking from 0,0,0 at Universal time 3820353198
+ * (about 20:13 Eastern time on 22 January, 2021) and will finish walking
+ * in 100 seconds after that at 0,100,0.
+ *
+ * cv: `INFINITY-WTL' is the replacement command which uses a JSON 
+ * equivalent for the ``d'' structure defined here.
+ *
  * @subsection Added in Romance 1.2
  *
- * This replaced the ``d'' notation from Romance 1.1 with 1.2.0
+ * This replaced the ``d'' notation from Romance 1.1 with 1.2.0. In
+ * particular, the ``z'' coordinates are now required, and the sense of the
+ * ``y'' and ``z'' coördinates are different now.
  *
  * @subsection Gossipnet only
  *
