@@ -61,7 +61,7 @@ Tootsville.Game.Commands.addToList = function (d, u, r)
 
 
 /**
- * See `INFINTY-CLICK'
+ * See `INFINITY-CLICK'
  */
 Tootsville.Game.Commands.click = function (d, u, r)
 {
