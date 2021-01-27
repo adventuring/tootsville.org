@@ -1,25 +1,65 @@
 #!/usr/bin/perl -W
 # -*- cperl -*-
-$doc = "";
+use strict;
 
-while (<>)
-  { if (m(/\*\*[^\@]) .. m(\*/))
-      { s(-\*-.*?-\*-) ();
-	s(/?\*[\*\/]?[ \t]*) ();
-	s(^ *) ();
-	$doc = $doc . $_ }
-    else
-      { if (($doc ne "") &&
-	    /(^\s*Tootsville.*?)=/)
-	{ $obj = $1;
-	  if (/function (\.*?\))/)
-	    { $ll = $1;
-	      if ('()' eq $ll)
-		{ print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$obj is nullary function.\n\n$doc\n\n"; }
-	      else
-		{ print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$obj is a function with lambda list: $ll\n\n$doc\n\n"; } }
-	  else
-	    { print "\n\@vskip 48pt\n\@node $obj\n\@section $obj\n\n$doc\n\n"; }
-	  $doc = ""; } } }
+my $doc = "";
 
-print $doc;
+my %doc = ();
+
+while (<>) {
+  if (m(/\*\*[^\@]) .. m(\*/)) {
+    s(-\*-.*?-\*-) ();
+    s(/?\*[\*/]?[ \t]*) ();
+    s(^ *) ();
+    s(`(Tootsville\..+)') (\@ref{$1})g;
+    s(([^`])`([^`].*?)::?(.+)') ($1\@ref{$2 $3})g;
+    s(([^`])`([^`].*?)') ($1\@ref{TOOTSVILLE $2})g;
+    $doc .= $_
+  } else {
+    if (($doc ne "") && (m(^\s*((window|Tootsville)\..*?) *= *(.*))) ) {
+      my $obj = $1; my $val = $3;
+      my $iobj = $obj; $iobj =~ s/^Tootsville\.//;
+      if ($val =~ m/function *(\(.*?\))/) {
+        my $ll = $1;
+        if ('()' eq $ll) {
+          $doc{$obj} = "
+\@page
+\@node $obj
+\@jsindex $iobj
+\@section $obj
+\@subsection Function
+
+$obj is nullary function.
+
+$doc\n\n";
+        } else {
+          $doc{$obj} = "
+\@page
+\@node $obj
+\@jsindex $iobj
+\@section $obj
+\@subsection Function
+
+$obj is a function with lambda list: $ll
+
+$doc\n\n";
+        }
+      } else {
+        $doc{$obj} = "
+\@page
+\@node $obj
+\@section $obj
+\@jsindex $iobj
+\@subsection Variable
+
+$doc\n\n";
+      }
+      $doc = "";
+    }
+  }
+}
+
+for my $key (sort keys %doc)
+{ print $doc{$key} }
+
+
