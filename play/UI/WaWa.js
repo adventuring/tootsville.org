@@ -4,7 +4,7 @@
  *
  * ./play/ui/hud.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -70,7 +70,7 @@ Tootsville.UI.WaWa.playShifted = function (file, speed=1, after) {
  *
  */
 Tootsville.UI.WaWa.playChained = function (chain, finish)
-{ if ( (! chain) || (0 == chain.length) ) { return; }
+{ if ( (! chain) || (0 === chain.length) ) { return; }
   const [ sound, speed ] = chain [0];
   const rest = chain.slice (1);
   Tootsville.UI.WaWa.playShifted ('https://jumbo.tootsville.org/Assets/Voices/5/' + sound, speed, rest ? ( () => {
@@ -102,7 +102,7 @@ Tootsville.UI.WaWa.build = function (phrase, finish)
         { duration += 1; } }
       if (duration > 0)
       { const speed = 9 / Math.min(duration, 9);
-        if (j == wordsLength)
+        if (j === wordsLength)
         { if (exclamationP)
           { chain [chain.length] = [ 'cc0-elephant-bellow-trimmed.webm', .67 * speed ]; }
           else if (questionP)

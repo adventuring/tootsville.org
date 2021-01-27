@@ -4,7 +4,7 @@
  *
  * play/Login/Login.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -44,7 +44,7 @@ Tootsville.Login.overlay = function ()
  */
 Tootsville.Login.start = function ()
 { if (document.getElementById ("login") &&
-      document.getElementById ("login").style.display == "block")
+      'block' === document.getElementById ("login").style.display)
   { Tootsville.trace ("Restarting login…");
     Tootsville.Login.startSignIn();
     return; }
@@ -207,7 +207,7 @@ Tootsville.Login.playWithCharacter = function (name)
 "<a href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how your child can sign in</a>",
                                   [{ tag: "yes", text: "Sign In" },
                                    { tag: "no", text: "Cancel" }]).
-    then (answer => { if ('yes' == answer)
+    then (answer => { if ('yes' === answer)
                       { this.doRealLogin (name); }
                       else
                       { this.populateTootsList ();
@@ -305,7 +305,7 @@ Tootsville.Login.removeChildFlag = function (li)
 Tootsville.Login.findLIForToot = function (name)
 { var toots = document.querySelectorAll ('#toots-list>.toot');
   for (var i = 0; i < toots.length; ++i)
-  { if (toots [i]['data-toot'].name == name)
+  { if (toots [i]['data-toot'].name === name)
     { return toots[i]; } }
   throw new Error ("Altered a non-existent Toot"); };
 

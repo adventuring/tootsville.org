@@ -4,7 +4,7 @@
  *
  * ./play/ui/gamepad.js is part of Tootsville
  *
- * Copyright  © 2018-2020  The Corporation  for Inter-World  Tourism and
+ * Copyright  © 2018-2021  The Corporation  for Inter-World  Tourism and
  * Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -165,7 +165,7 @@ Tootsville.UI.Gamepad.updateStatus = function ()
      { Tootsville.UI.Gamepad.controllerState [j] = { buttons: [], axes: [] }; }
      for (let i = 0; i < controller.buttons.length; ++i)
      { let val = controller.buttons [i];
-       if (typeof (val) == "object")
+       if ('object' === typeof (val))
        { val = val.value; }
        if (Math.abs (Tootsville.UI.Gamepad.controllerState [j].buttons [i] - val) > 0.01)
        { Tootsville.UI.Gamepad.controllerState [j].buttons [i] = val;

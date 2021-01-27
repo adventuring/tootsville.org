@@ -4,7 +4,7 @@
  *
  * play/Game/NPCSystem.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -63,7 +63,7 @@ Tootsville.Game.NPCSystem.burgeonNPC = function (npc)
 Tootsville.Game.NPCSystem.nextBehavior = function (npc)
 { const oldBehavior = npc.behavior;
   const unrandom = Tootsville.Game.NPCSystem.unrandom (npc) % npc.behaviors.length;
-  if (npc.behaviors [unrandom] == oldBehavior)
+  if (npc.behaviors [unrandom] === oldBehavior)
   { npc.behavior = npc.behaviors [ (unrandom + 1) % npc.behaviors.length ]; }
   else
   { npc.behavior = npc.behaviors [ unrandom ]; }

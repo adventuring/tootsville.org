@@ -4,7 +4,7 @@
  *
  * play/Game/Wardrobe.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -66,7 +66,7 @@ Tootsville.Game.Wardrobe = {
 Tootsville.Game.Wardrobe.findBaseSlot = function (slot)
 { for (var baseSlot in Tootsville.Game.Wardrobe.valences)
   { for (var j = 0; j < Tootsville.Game.Wardrobe.valences[ baseSlot ].length; ++j)
-    { if (slot == Tootsville.Game.Wardrobe.valences[ baseSlot ][ j ])
+    { if (slot === Tootsville.Game.Wardrobe.valences[ baseSlot ][ j ])
       { return baseSlot; }}}
   return null; };
 
@@ -77,9 +77,9 @@ Tootsville.Game.Wardrobe.findBaseSlot = function (slot)
 Tootsville.Game.Wardrobe.don = function (item, slot)
 { if (Tootsville.Game.Wardrobe.wearingP (item))
   { return; }
-  if (null == slot || undefined == slot)
+  if (null === slot || undefined === slot)
   { slot = item.valenceSlot; }
-  if (null != Tootsville.player.wearing[ slot ])
+  if (null !== Tootsville.player.wearing[ slot ])
   { Tootsville.Game.Wardrobe.doff (item); }
   var valences = Tootsville.Game.Wardrobe.valences[ Tootsville.Game.Wardrobe.findBaseSlot (slot) ];
   for (var i = 0; i < valences.length; ++i)
@@ -112,7 +112,7 @@ Tootsville.Game.Wardrobe.readied = function () {
  *
  */
 Tootsville.Game.Wardrobe.readiedP = function (item) {
-    return Tootsville.Game.Wardrobe.readied () == item;
+    return Tootsville.Game.Wardrobe.readied () === item;
 };
 
 

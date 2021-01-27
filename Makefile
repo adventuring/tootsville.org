@@ -1,6 +1,6 @@
 # This is the Makefile for Tootsville
 #
-# Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2020 The Corporation
+# Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2021 The Corporation
 # for Inter-World Tourism and Adventuring (ciwta.org).
 #
 # This program is  Free Software: you can redistribute  it and/or modify
@@ -230,7 +230,9 @@ dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 
 #################### devel-test
 
-devel-test:	devel-play
+devel-test:
+	gnome-terminal --title='Play server' --profile=Runner --tab -- $(MAKE) devel-play-watch &
+	gnome-terminal --title='WWW server' --profile=Runner --tab -- $(MAKE) devel-www-watch &
 
 devel-play-watch:	devel-play
 	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done

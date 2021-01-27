@@ -4,7 +4,7 @@
  *
  * play/Scene/GroundBuilder.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -101,7 +101,7 @@ Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
       groundCanvas.beginPath ();
       for (let ii = 0; ii < shape.length; ++ii)
       { const point = shape [ ii ];
-        if (0 == ii) { groundCanvas.moveTo (point.x, point.z); }
+        if (0 === ii) { groundCanvas.moveTo (point.x, point.z); }
         else { groundCanvas.lineTo (point.x, point.z); } }
       groundCanvas.fill (); } }
   Tootsville.Tank.groundTexture.update (); };

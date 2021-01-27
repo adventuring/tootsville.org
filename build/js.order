@@ -70,4 +70,6 @@ play/Scene/Tank.js
 
 play/Game/StopWatchdogs.js
 
+play/Debug.js
+
 play/Game/Start.js

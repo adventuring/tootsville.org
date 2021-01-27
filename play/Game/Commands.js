@@ -2,7 +2,7 @@
 /**@license
  * play/Game/Commands.js is part of Tootsville
  *
- * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2020,
+ * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2021,
  * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software: you can redistribute it and/or modify
@@ -513,11 +513,22 @@ Tootsville.Game.Commands.useEquipment = function (d, u, r)
 /**
  * Begin walking along a straight path. Path specification:
  *
- * o — object (person) walking UUID
- * sT — start time (Universal)
- * eT — end time (Universal)
- * sX, sY, sZ — start x, y, z
- * eX, eY, eZ — end x, y, z
+ * The path is specified as a series of values joined by ``@~''
+ * (tilde) characters. Note that the coördinate triplets in particular
+ * are comma-delimited segments within a tilde-delimited segment.
+ *
+ * @table @code
+ * @item o
+ * object (person) walking UUID
+ * @item sT
+ * start time (Universal)
+ * @item eT
+ * end time (Universal)
+ * @item sX, sY, sZ
+ * start x, y, z
+ * @item eX, eY, eZ
+ * end x, y, z
+ * @end table
  *
  * @subsection Added in Romance 1.2
  *

@@ -4,7 +4,7 @@
  *
  * ./play/ui/ui.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -102,9 +102,9 @@ Tootsville.UI.makePrompt = function (prompt, resolve)
   for (let reply in prompt.replies)
   { let desc = prompt.replies [ reply ];
     let button = document.createElement ("BUTTON");
-    button.className = ( (desc.type == "aff") ?
+    button.className = ( ('aff' === desc.type) ?
                          "accept-button" :
-                         (desc.type == "neg") ?
+                         ('neg' === desc.type) ?
                          "cancel-button" : "" );
     button.innerHTML = desc.label;
     button.addEventListener ('click', () => {
@@ -126,7 +126,7 @@ Tootsville.UI.confirmPretty = function (title,text,accept)
 { let hud = document.getElementById('hud');
   return new Promise(resolve => {
       let cancel = 'Cancel';
-      if ('Yes' == accept) { cancel = 'No'; }
+      if ('Yes' === accept) { cancel = 'No'; }
       hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
 /**
@@ -254,7 +254,7 @@ Tootsville.UI.getSpeechVolume = function ()
  * WRITEME
  */
 Tootsville.UI.say = function (speech)
-{ if ("~" == speech.charAt (0))
+{ if ("~" === speech.charAt (0))
   { Tootsville.Game.Speech.dispatchCommand (speech); }
   else
   { Tootsville.Gossip.send ("speak", { speech: speech,

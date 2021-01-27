@@ -4,7 +4,7 @@
  *
  * ./play/Util.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -37,11 +37,11 @@ if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
  * we're in.
  */
 Tootsville.Util.assertValidHostName = function (hostName)
-{ if ("http" == hostName || "https" == hostName)
+{ if ("http" === hostName || "https" === hostName)
   { Tootsville.error ("Landed here with http/s as a hostName"); }
-  if ("wiki" == hostName)
+  if ("wiki" === hostName)
   { return "https://wiki.tootsville.org"; }
-  if ("tootsbook" == hostName)
+  if ("tootsbook" === hostName)
   { return "https://tootsbook.com"; }
   return Tootsville.host["game"]; };
 
@@ -64,7 +64,7 @@ Tootsville.Util.assertValidHostName = function (hostName)
 Tootsville.Util.rest = function (method, uri, body, headers)
 { let hostName = uri.split('/')[0];
   let origURI = uri;
-  if (hostName == "http" || hostName == 'https')
+  if ('http' === hostName || 'https' === hostName)
   { /* do not alter */ }
   else
   { hostName = Tootsville.Util.assertValidHostName (hostName);
@@ -83,9 +83,9 @@ Tootsville.Util.rest = function (method, uri, body, headers)
   return fetch (uri, opts).then(
       response =>
           { if (response.ok)
-            { if (200 == response.status)
+            { if (200 === response.status)
               { return response.json (); }
-              else if (204 == response.status)
+              else if (204 === response.status)
               { return null; } }
             else
             { Tootsville.warn("Server error from " + uri, response);
@@ -115,12 +115,15 @@ Tootsville.Util.rest = function (method, uri, body, headers)
              { console.log ("User-initiated retry after error for " + origURI);
                return Tootsville.Util.rest (method, origURI, body, headers); });} ); };
 
+/**
+ * Load the Javascript referenced by SRC into the page
+ */
 Tootsville.Util.loadScript = function (src)
 { return new Promise( finish =>
-                      { let el = document.createElement('SCRIPT');
-                        el.onload = finish;
-                        el.src = src;
-                        document.body.appendChild(el); });};
+    { let el = document.createElement('SCRIPT');
+      el.addEventListener ('load', finish);
+      el.src = src;
+      document.body.appendChild(el); });};
 
 //
 
@@ -142,28 +145,27 @@ Tootsville.Util.ensureServersReachable = function ()
 /**
  * Check for value equality of two objects
  */
-Tootsville.Util.equalP = function (x, y) {
-    'use strict';
+Tootsville.Util.equalP = function (x, y)
+{ 'use strict';
 
-    if (x === null || x === undefined || y === null || y === undefined) { return x === y; }
-    // after this just checking type of one would be enough
-    if (x.constructor !== y.constructor) { return false; }
-    // if they are functions, they should exactly refer to same one (because of closures)
-    if (x instanceof Function) { return x === y; }
-    // if they are regexps, they should exactly refer to same one (it is hard to better equality check on current ES)
-    if (x instanceof RegExp) { return x === y; }
-    if (x === y || x.valueOf() === y.valueOf()) { return true; }
-    if (Array.isArray(x) && x.length !== y.length) { return false; }
+  if (x === null || x === undefined || y === null || y === undefined) { return x === y; }
+  // after this just checking type of one would be enough
+  if (x.constructor !== y.constructor) { return false; }
+  // if they are functions, they should exactly refer to same one (because of closures)
+  if (x instanceof Function) { return x === y; }
+  // if they are regexps, they should exactly refer to same one (it is hard to better equality check on current ES)
+  if (x instanceof RegExp) { return x === y; }
+  if (x === y || x.valueOf() === y.valueOf()) { return true; }
+  if (Array.isArray(x) && x.length !== y.length) { return false; }
 
-    // if they are dates, they must had equal valueOf
-    if (x instanceof Date) { return false; }
+  // if they are dates, they must had equal valueOf
+  if (x instanceof Date) { return false; }
 
-    // if they are strictly equal, they both need to be object at least
-    if (!(x instanceof Object)) { return false; }
-    if (!(y instanceof Object)) { return false; }
+  // if they are strictly equal, they both need to be object at least
+  if (!(x instanceof Object)) { return false; }
+  if (!(y instanceof Object)) { return false; }
 
-    // recursive object equality check
-    let p = Object.keys(x);
-    return Object.keys(y).every(function (i) { return p.indexOf(i) !== -1; }) &&
-        p.every(function (i) { return Tootsville.Util.equalP (x[i], y[i]); });
-};
+  // recursive object equality check
+  let p = Object.keys(x);
+  return Object.keys(y).every(function (i) { return p.indexOf(i) !== -1; }) &&
+  p.every(function (i) { return Tootsville.Util.equalP (x[i], y[i]); }); };

@@ -4,7 +4,7 @@
  *
  * ./play/ui/hud.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -59,7 +59,7 @@ Tootsville.UI.HUD.closePanel = function ()
   let panelPopup = Tootsville.UI.HUD.getOpenPanel ();
   if (panelPopup)
   { let panelID = panelPopup.id;
-    if (panelID == 'paperdoll')
+    if ('paperdoll' === panelID)
     { Tootsville.UI.HUD.returnPaperdollMini (); }
 
     panelPopup.style.opacity = .1;
@@ -114,7 +114,7 @@ Tootsville.UI.HUD.createHUDLoaderPanel = function (panel)
     div.style.opacity = .1;
     div.style.maxHeight = '1px';
     div.style.transition = 'opacity .2s, max-height .2s';
-    if ('help' == panel)
+    if ('help' === panel)
     { div.innerHTML = '<i class="fa fa-life-ring fa-spin fa-5x"></i>'; }
     else
     { div.innerHTML = '<i class="fa fa-spinner fa-spin fa-5x"></i>'; }
@@ -202,7 +202,7 @@ Tootsville.UI.HUD.loadHUDPanel = function (panelName, finish)
  */
 Tootsville.UI.HUD.toggleHUDPanel = function (panel)
 { var div = document.getElementById (panel);
-  if (div && Tootsville.UI.HUD.getOpenPanel () == div)
+  if (div && Tootsville.UI.HUD.getOpenPanel () === div)
   { Tootsville.UI.HUD.closePanel ();
     return false; }
   else
@@ -231,7 +231,7 @@ Tootsville.UI.HUD.beginWatchingPaperdollWindowForClose = function ()
   /* watch for hiding … */
   let boxWatcher = new MutationObserver (
       records =>
-          { if ( (box.style.opacity < 1) || (box.style.display == 'none'))
+          { if ( (box.style.opacity < 1) || ('none' === box.style.display))
             { Tootsville.UI.HUD.returnPaperdollMini (); }});
   boxWatcher.observe (box, { attributes: true });
 
@@ -240,7 +240,7 @@ Tootsville.UI.HUD.beginWatchingPaperdollWindowForClose = function ()
       records =>
           { for (let mutation of records)
             { for (let i = 0; i < mutation.removedNodes.length; ++i)
-              { if (mutation.removedNodes[i] == box)
+              { if (mutation.removedNodes[i] === box)
                 { Tootsville.UI.HUD.returnPaperdollMini ();}}}});
   let hud = document.getElementById ('hud');
   boxWatcher.observe (hud, { childList: true });};
@@ -377,14 +377,14 @@ Tootsville.UI.HUD.paperdollCurrentP = function ()
   if (! currentAvatar.avatar ) { return true; }
   if (! paperdoll.avatar) { paperdoll.avatar = {}; }
   if (//Tootsville.Util.equalP (currentAvatar.equip != paperdoll.avatar.equip) &&
-      (paperdoll.lastHeight == paperdoll.offsetHeight) &&
-      (paperdoll.lastWidth == paperdoll.offsetWidth) )
+      (paperdoll.lastHeight === paperdoll.offsetHeight) &&
+      (paperdoll.lastWidth === paperdoll.offsetWidth) )
   { return true; }
   return false; };
 
 /**
-*
-*/
+ * Create the canvas for paperdoll display
+ */
 Tootsville.UI.HUD.createPaperdollCanvas = function (paperdoll)
 { let canvas = document.createElement ("CANVAS");
   canvas.height = paperdoll.offsetHeight;
@@ -418,12 +418,12 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
  * Refresh the display of the active equipment item.
  */
 Tootsville.UI.HUD.refreshEquipment = function ()
-{ if (null == Tootsville.player || null == Tootsville.player.activeItem)
+{ if (null === Tootsville.player || null === Tootsville.player.activeItem)
   { document.getElementById ('active-item-box').style.opacity = 0; }
   else
   { document.getElementById ('active-item-box').style.opacity = 1; 
     console.debug ("TODO: active item box"); }
-  if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
+  if (null === Tootsville.player || null === Tootsville.player.inactiveItem)
   { document.getElementById ('inactive-item-box').style.opacity = 0; }
   else
   { document.getElementById ('inactive-item-box').style.opacity = 1;
@@ -433,7 +433,7 @@ Tootsville.UI.HUD.refreshEquipment = function ()
  * Switch the active item with the secondary item.
  */
 Tootsville.UI.HUD.switchActiveItem = function ()
-{ if (null == Tootsville.player || null == Tootsville.player.inactiveItem)
+{ if (null === Tootsville.player || null === Tootsville.player.inactiveItem)
   { return; }
   let prior = Tootsville.player.activeItem;
   if (prior) { Tootsville.wardrobe.doff (prior); }
@@ -510,8 +510,8 @@ Tootsville.UI.HUD.refreshHUD = function ()
   setTimeout ( () => { Tootsville.UI.HUD.refreshTimeLeft (); }, 4);};
 
 /**
-*
-*/
+ * Refresh the time remaining indicator for a child player
+ */
 Tootsville.UI.HUD.refreshTimeLeft = function ()
 { if (Tootsville.playUntil)
   { let remainMsec = ( (Tootsville.playUntil * 1000) -
@@ -532,10 +532,11 @@ Tootsville.UI.HUD.refreshTimeLeft = function ()
   { document.getElementById('time-left').innerText = ''; } };
 
 /**
- *
+ * Toggle whether ELEMENT is displayed or not (with a transition
+ * fade).
  */
 Tootsville.UI.HUD.toggleElement = function (element)
-{ if ('block' == element.style.display)
+{ if ('block' === element.style.display)
   { element.style.opacity = 0;
     setTimeout ( () => { element.style.display = 'none'; }, 150 ); }
   else
@@ -547,9 +548,9 @@ Tootsville.UI.HUD.toggleElement = function (element)
  */
 Tootsville.UI.HUD.toggleTalkLoud = function (event)
 { Tootsville.UI.HUD.toggleElement (document.getElementById ('talk-loud-menu'));
-  if (Tootsville.Game.Speech.loudness == 'shout')
+  if ('shout' === Tootsville.Game.Speech.loudness)
   { document.getElementById ('talk-loud-shout').checked = true; }
-  else if (Tootsville.Game.Speech.loudness == 'whisper')
+  else if ('whisper' === Tootsville.Game.Speech.loudness)
   { document.getElementById ('talk-loud-whisper').checked = true; }
   else
   { document.getElementById ('talk-loud-talk').checked = true; }      
@@ -605,10 +606,10 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
       Tootsville.Tank.scene.getTransformMatrix (),
       Tootsville.Tank.camera.viewport.toGlobal (
           renderWidth, renderHeight)).divide (
-              {x: renderWidth, y: renderHeight, z: 1}).multiply (
-                  {x: document.getElementById ('tootsville3d').offsetWidth,
-                   y: document.getElementById ('tootsville3d').offsetHeight,
-                   z: 1});
+              new BABYLON.Vector3 (renderWidth, renderHeight, 1)).multiply (
+                  new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
+                                       document.getElementById ('tootsville3d').offsetHeight,
+                                       1));
   nameTag.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
   nameTag.style.left = Math.max (50, Math.min (abs.x, window.innerWidth - 50)) + 'px'; };
 
@@ -627,11 +628,10 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
       Tootsville.Tank.scene.getTransformMatrix (),
       Tootsville.Tank.camera.viewport.toGlobal (
           renderWidth, renderHeight)).divide (
-              {x: renderWidth, y: renderHeight, z: 1}).multiply (
-                  {x: document.getElementById('tootsville3d').offsetWidth,
-                   y: document.getElementById('tootsville3d').offsetHeight,
-                   z: 1});
-  
+              new BABYLON.Vector3 (renderWidth, renderHeight, 1)).multiply (
+                  new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
+                                       document.getElementById ('tootsville3d').offsetHeight,
+                                       1));
   speechBubble.style.top = Math.max (30, Math.min (abs.y,
                                                    window.innerHeight - 30)) + 'px';
   speechBubble.style.left = Math.max (50, Math.min (abs.x,
@@ -665,7 +665,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
   console.log ("Click at ", event.clientX + ", " + event.clientY, " hit ", picked);
   if (! picked) { return; }
   if (! picked.pickedMesh) { return; }
-  if ('ground' == picked.pickedMesh.name /* == Tootsville.Tank.ground */)
+  if ('ground' === picked.pickedMesh.name /* === Tootsville.Tank.ground */)
   { if (event.detail > 1) /* double or triple click */
     { Tootsville.Game.Nav.runTo (Tootsville.Tank.avatars [ Tootsville.character ], picked.pickedPoint);
       return;}
@@ -678,7 +678,7 @@ Tootsville.UI.HUD.convertCanvasEventTo3D = function (event)
  * Show the Player Card pop-up for another player
  */
 Tootsville.UI.HUD.showPlayerCard = function (name)
-{ if (name == Tootsville.character) { return; }
+{ if (name === Tootsville.character) { return; }
     Tootsville.UI.HUD.showHUDPanel ('player-card').
   then ( () =>
          { document.getElementById ('other-player-name').innerText = Tootsville.Tank.avatars [ name ].userName;
@@ -689,15 +689,15 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
                                                          container); } ); };
 
 /**
- *
+ * Respond to a user click (tap) on a mesh in the tank
  */
 Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
 { const pickedName = mesh.name || '';
-  if ('ground' == pickedName)
+  if ('ground' === pickedName)
   { console.error ("Click on ground went to clickedOnMesh"); }
-  if (0 == pickedName.indexOf ('avatar/'))
+  if (0 === pickedName.indexOf ('avatar/'))
   { Tootsville.UI.HUD.showPlayerCard (mesh.name.substr (7)); }
-  else if (0 == pickedName.indexOf ('item/'))
+  else if (0 === pickedName.indexOf ('item/'))
   { Tootsville.UI.clickedOnItem (mesh.name, picked); }
   else
   { // console.debug ('User clicked mesh ', mesh.name, picked);
@@ -707,14 +707,14 @@ Tootsville.UI.HUD.clickedOnMesh = function (mesh, picked)
     { console.debug ("No parent node of ", mesh.name, picked); } } };
 
 /**
- * WRITEME
+ * Respond to a user click (tap) on a name tag
  */
 Tootsville.UI.HUD.nameTagClicked = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showPlayerCard (event.target.tootName); };
 
 /**
- * WRITEME
+ * Show the player's mobile device
  */
 Tootsville.UI.HUD.showMobile = function ()
 { event.stopPropagation ();
@@ -722,14 +722,14 @@ Tootsville.UI.HUD.showMobile = function ()
 
 
 /**
- * WRITEME
+ * Show the camera widget
  */
 Tootsville.UI.HUD.showCamera = function ()
 { event.stopPropagation ();
   Tootsville.UI.HUD.showHUDPanel ('camera'); };
 
 /**
- * WRITEME
+ * Show the control panel menu
  */
 Tootsville.UI.HUD.showControlPanel = function ()
 { event.stopPropagation ();

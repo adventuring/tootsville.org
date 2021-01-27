@@ -4,7 +4,7 @@
  *
  * play/Scene/CameraManager.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -39,9 +39,9 @@ Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_VIEWER = 1;
 Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_CLOSEUP = 2;
 
 Tootsville.Tank.CameraManager.updateCamera = function (camera, avatar, zoomMode)
-{ if (zoomMode == Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_VIEWER)
+{ if (zoomMode === Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_VIEWER)
   { Tootsville.Tank.CameraManager.positionCameraForAvatarViewer (camera, avatar); }
-  else if (zoomMode == Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_CLOSEUP)
+  else if (zoomMode === Tootsville.Tank.CameraManager.ZOOM_MODE_AVATAR_CLOSEUP)
   { Tootsville.Tank.CameraManager.positionCameraForAvatarCloseUp (camera, avatar); }
   else // Tootsville.Tank.CameraManager.ZOOM_MODE_GAME
   { Tootsville.Tank.CameraManager.positionCameraForGameBoard (camera, avatar); } };

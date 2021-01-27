@@ -4,7 +4,7 @@
  *
  * play/Scene/Tank.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2020   The
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
  *
  * This program is Free Software:  you can redistribute it and/or modify
@@ -238,7 +238,7 @@ Tootsville.Tank.prepareFor3D = function ()
         { if ("BABYLON" in window)
           { finish (); }
           else
-          { Tootsville.Util.loadScript ('https://preview.babylonjs.com/babylon.js'
+          { Tootsville.Util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
                                         /*'https://cdn.babylonjs.com/babylon.js'*/).then (
                                             Tootsville.Tank.prepareFor3D); }}); };
 
@@ -254,7 +254,7 @@ Tootsville.Tank.loadUISounds = function ()
     { Tootsville.Gossip.Parrot.squawk = squawk; }); };
 
 /**
- * Start  the 3D  engine, after  doing any  necessary preparatory  work.
+ * Start the 3D engine, after doing any necessary preparatory work.
  * This is the main entry point for the 3D simulation engine.
  */
 Tootsville.Tank.start3D = function ()
@@ -288,11 +288,13 @@ Tootsville.Tank.start3DReal = function ()
 /**
  * Find the child mesh with the greatest volume.
  *
- * If there are no children, returns the parent mesh. Otherwise. always returns a child. Uses the radius of the bounding sphere as a proxy for volume computations.
+ * If there are no children, returns the parent
+ * mesh. Otherwise. always returns a child. Uses the radius of the
+ * bounding sphere as a proxy for volume computations.
  */
 Tootsville.Tank.getLargestChildMesh = function (object)
 { const children = object.getChildMeshes ();
-  if (0 == children.length) { return object; }
+  if (0 === children.length) { return object; }
   let largest = null;
   let largestSize = 0;
   for (let i = 0; i < children.length; ++i)
@@ -314,7 +316,7 @@ Tootsville.Tank.playerAvatar = function ()
   return Tootsville.Tank.avatars [ Tootsville.character ]; };
 
 /**
- * Reposition the camera as needed.
+ * Reposition the camera as needed to track the player
  */
 Tootsville.Tank.updateCamera = function ()
 { const playerAvatar = Tootsville.Tank.playerAvatar ();
@@ -326,7 +328,7 @@ Tootsville.Tank.updateCamera = function ()
                                               Tootsville.Tank.CameraManager.ZOOM_MODE_GAME); };
 
 /**
- *
+ * Destroy avatar and attachments.
  */
 Tootsville.Tank.destroyAvatar = function (avatar)
 { delete Tootsville.Tank.avatars [ avatar.name ];
@@ -338,7 +340,8 @@ Tootsville.Tank.destroyAvatar = function (avatar)
   { avatar.model.dispose (); } };
 
 /**
- *
+ * Find an avatar by name; may return null if we don't know about that
+ * avatar yet.
  */
 Tootsville.Tank.findAvatar = function (avatarName)
 { if (Tootsville.Tank.avatars [ avatarName ])
@@ -346,12 +349,12 @@ Tootsville.Tank.findAvatar = function (avatarName)
   if (! Tootsville.Tank.scene)
   { return null; }
   for (let i = 0; i < Tootsville.Tank.scene.meshes; ++i)
-  { if (Tootsville.Tank.scene.meshes [ i ].name == "avatar/" + avatarName)
+  { if (Tootsville.Tank.scene.meshes [ i ].name === "avatar/" + avatarName)
     { return Tootsville.Tank.scene.meshes [ i ]; } }
   return null; };
 /**
-*
-*/
+ * Shut down the 3D environment cleanly.
+ */
 Tootsville.Tank.shutDown = function ()
 { if (Tootsville.Tank.camera)
   { Tootsville.Tank.camera.dispose ();
