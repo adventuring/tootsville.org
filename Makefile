@@ -491,11 +491,10 @@ git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.as
 
 	$(MAKE) bump-next-version
 
-dist/doc.texi: $(shell cat build/js.order)
-	cp build/header.texi dist/doc.texi
-	for file in $$(grep -v lib/ build/js.order); do \
-		perl build/extract-docs < $$file >> dist/doc.texi; \
-	done
+dist/doc.texi: $(shell cat build/js.order) build/extract-docs \
+		build/header.texi build/footer.texi
+	cp -f build/header.texi dist/doc.texi
+	perl build/extract-docs $$(grep -v lib/ build/js.order) >> dist/doc.texi; \
 	cat build/footer.texi >> dist/doc.texi
 
 #################### deploy-docs

@@ -10,5 +10,3 @@ This front-end is broken down into a number of modules, each of which
 is in its own namespace; often, a namespace is defined entirely by one
 source file, but not always.
 
-Entries in this section are in the order in which they are defined in
-the source code, rather than alphabetically.
