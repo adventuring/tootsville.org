@@ -35,7 +35,7 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {Speech: {}}; }
 if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
 
 /**
- * Create a speech balloon
+ * Create a speech balloon containing ``words'' with CSS class ``extraClass''.
  */
 Tootsville.Game.Speech.createBalloon = function (words, extraClass)
 { const balloon = document.createElement ('DIV');
@@ -44,7 +44,11 @@ Tootsville.Game.Speech.createBalloon = function (words, extraClass)
   return balloon; };
 
 /**
- * Someone (maybe us) has spoken, so put up a speech balloon.
+ * Someone (maybe us) has spoken, so put up a speech balloon and play wawa.
+ *
+ * If the speaker was not known already, finger the user.
+ *
+ * Builds wawa with `Tootsville.UI.WaWa.build'.
  */
 Tootsville.Game.Speech.say = function (words, extraClass, speaker)
 { if (! speaker) { speaker = Tootsville.character;
@@ -87,11 +91,20 @@ Tootsville.Game.Speech.updateSpeech = function ()
 /**
  * Dispatch local ~ commands.
  *
+ * @cindex Client Tilde Commands
+ *
  * @table @code
  * @item ~ua
- * Displays the user agent information
+ * Displays the user agent information.
  * @item ~lag
- * Provides the user's estimated lag in msec
+ * Provides the user's estimated lag in msec.
+ * @item ~ping
+ * Send an `INFINITY-PING' message to the server.
+ * @item ~d20
+ * Simulate rolling a d20 and speak aloud the results.
+ * @item ~credits
+ * Display the client's credits.
+ * @item ~
  * @end table
  */
 Tootsville.Game.Speech.dispatchCommand = function (commandLine)
@@ -110,7 +123,7 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
     break;;
     case "~credits":
     Tootsville.UI.confirmPretty("Credits",
-                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p><p>For a random dice roll, try “~d20”.</p>", "O.K.");
+                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p>", "O.K.");
     break;;
     case '~lag':
     Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s",
