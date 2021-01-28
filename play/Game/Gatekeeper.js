@@ -294,10 +294,7 @@ Tootsville.Game.Gatekeeper.ping = function (gram)
  * No longer used.
  */
 Tootsville.Game.Gatekeeper.getColorPalettes = function (gram)
-{ let baseColors = gram.baseColors;
-  let padColors = gram.extraColors;
-  let patternColors = gram.patternColors;
-  Tootsville.warn ("ancient datagram now ignored", gram);};
+{ Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
  * Obtains  visible information  about one  avatar at  a time;  not only
