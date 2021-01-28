@@ -747,9 +747,9 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
   { for (let key in gram.var)
-    { if ('s' == key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
-      else if ('w' == key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
-      else if ('f' == key) {}
+    { if ('s' === key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
+      else if ('w' === key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
+      else if ('f' === key) {}
       else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram.var [ key ]); }
       else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram.var [ key ]); }
       else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram.var [ key ]); }
