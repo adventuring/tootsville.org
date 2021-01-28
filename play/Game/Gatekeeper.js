@@ -307,6 +307,9 @@ Tootsville.Game.Gatekeeper.wardrobe = function (gram)
 
 /**
  * Add a room (including a first room) to a user's house/lot.
+ *
+ * UNIMPLEMENTED. it's unclear if this is actually needed on the
+ * client side regardless.
  */
 Tootsville.Game.Gatekeeper.initUserRoom = function (gram)
 { let successP = gram.status;
@@ -332,7 +335,7 @@ Tootsville.Game.Gatekeeper.initUserRoom = function (gram)
  * The list of available lots in the given neighborhood.
  * FIXME: format?
  * @item houses
- * The list of available hoses in the given neighborhood.
+ * The list of available houses in the given neighborhood.
  * FIXME: format?
  * @item neighborhood
  * The selected neighborhood.
