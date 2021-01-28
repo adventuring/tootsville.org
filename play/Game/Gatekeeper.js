@@ -35,15 +35,19 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {Gatekeeper: {}}; }
 if (!('Gatekeeper' in Tootsville.Game)) { Tootsville.Game.Gatekeeper = {}; }
 
 /**
- * Acknowledge  a new  player's login  and introduce  yourself as  a new
- * next-hop neighbor.
+ * Acknowledge a new player's login
  *
- * neighbor: next-hop neighbor's UUID
+ * neighbor: next-hop neighbor's UUID for peer-to-peer connections
  *
- * Note that this message (only) uses “_cmd” as its attribute rather than
- * “c” or “from” for historical reasons.
+ * Note that this message (only) uses @code{_cmd} as its attribute rather than
+ * @code{c} or @code{from} for historical reasons.
  *
  * This message is usually unicast.
+ *
+ * Hides Toots view, if it was present.
+ * Displays any @code{motd} on server connection.
+ * 
+ * UNIMPLEMENTED TODO peer connections.
  */
 Tootsville.Game.Gatekeeper.logOK = function (gram)
 { let neighbor = gram.neighbor;
@@ -65,7 +69,8 @@ Tootsville.Game.Gatekeeper.logOK = function (gram)
   if (neighbor) { Tootsville.warn ("logOK not handled for peer connections", gram); } };
 
 /**
- * Receive a  list of avatar  info that describes  an area of  the world.
+ * Receive a list of avatar info that describes an area of the world.
+ *
  * This is one observer's set of nearby avatars or objects.
  */
 Tootsville.Game.Gatekeeper.avatars = function (gram)
@@ -94,7 +99,9 @@ Tootsville.Game.Gatekeeper.bots = function (gram)
   Tootsville.warn ("ancient datagram now ignored", gram); };
 
 /**
- * No longer used.
+ * Not currently used. UNIMPLEMENTED.
+ *
+ * XXX bring back passports
  */
 Tootsville.Game.Gatekeeper.passport = function (gram)
 { let passport = gram.passport;
@@ -102,6 +109,8 @@ Tootsville.Game.Gatekeeper.passport = function (gram)
 
 /**
  * Mostly just for fountains, now
+ *
+ * UNIMPLEMENTED
  */
 Tootsville.Game.Gatekeeper.startEvent = function (gram)
 { let eventMoniker = gram.moniker;
@@ -113,7 +122,9 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
   Tootsville.warn ("unhandled datagram", gram); };
 
 /**
- * Used to be used for minigame scores; no longer needed.
+ * Used to be used for minigame scores; not currently used.
+ *
+ * UNIMPLEMENTED. Display the rank and score in an overlay.
  */
 Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
 { let successP = gram.status;
@@ -123,8 +134,11 @@ Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
- * End   an    event   begun    by   startEvent.   Earn    peanuts   for
- * event participation.
+ * End an event begun by startEvent.
+ *
+ * Earn peanuts for event participation.
+ *
+ * UNIMPLEMENTED. See also `Tootsville.Game.Gatekeeper.earning'
  */
 Tootsville.Game.Gatekeeper.endEvent = function (gram)
 { let successP = gram.status;
@@ -136,7 +150,7 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
- * No longer in use.
+ * Not currently in use. UNIMPLEMENTED.
  */
 Tootsville.Game.Gatekeeper.gameAction = function (gram)
 { let data = gram.data;
@@ -149,6 +163,8 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
  *
  * The author must have the privilege to beam this player, or the signal
  * should be discarded.
+ *
+ * TODO UNIMPLEMENTED
  */
 Tootsville.Game.Gatekeeper.beam = function (gram)
 { let world = gram.room;
@@ -159,23 +175,30 @@ Tootsville.Game.Gatekeeper.beam = function (gram)
 
 /**
  * Player has received money (peanuts) or fairy dust.
+ *
+ * TODO: update wallet displays with an animation.
  */
 Tootsville.Game.Gatekeeper.earning = function (gram)
 {
     Tootsville.warn ("unhandled datagram", gram);};
 
 /**
- * No longer used.
+ * No longer used. Ignored.
  */
 Tootsville.Game.Gatekeeper.getAwardRankings = function (gram)
 { let ranks = gram.ranks;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
- * WRITEME
+ * Get an apple from the server for a child's login.
+ *
+ * Upon receipt, create the SHA1-digest-hex password code and submit
+ * an `INFINITY-LOGIN' packet.
  *
  * See  `INFINITY-GET-APPLE'  for  an  overview  of  the  login  process
  * for children.
+ *
+ * If status = false, retries to call @code{getApple} again.
  */
 Tootsville.Game.Gatekeeper.getApple = function (gram)
 { if (gram.status)
@@ -190,7 +213,13 @@ Tootsville.Game.Gatekeeper.getApple = function (gram)
   { Tootsville.Util.infinity ("getApple"); } };
   
 /**
- * WRITEME — this function is not yet documented.
+ * Response to a login attempt (for a child).
+ *
+ * On success, displays the @code{child-wait} overlay, awaiting
+ * parental approval.
+ *
+ * On failure, the gossip parrots reveal the error message and
+ * detailed error code.
  */
 Tootsville.Game.Gatekeeper.login = function (gram)
 { if (gram.status)
@@ -482,6 +511,10 @@ Tootsville.Game.Gatekeeper.admin = function (gram)
  * @item gameTime
  * In milliseconds since Unix epoch
  * @end table
+ *
+ * UNIMPLEMENTED. Should show the game timer, if present.
+ *
+ * UNIMPLEMENTED. Should update estimated server lag?
  */
 Tootsville.Game.Gatekeeper.serverTime = function (gram)
 { let successP = gram.status;
@@ -542,7 +575,20 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
   else { Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); } };
 
 /**
- * WRITEME — this function is not yet documented.
+ * Load a new Javascript file pushed from the server.
+ *
+ * This is potentially useful for patching the game on-the-fly.
+ *
+ * The expected syntax is something like:
+ *
+ * @verbatim
+ * { from: "newScript",
+ *   status: true,
+ *   script: "/path/to/script.js" }
+ * @end verbatim
+ *
+ * See `TOOTSVILLE-USER::PUSH-SCRIPT' for one way to generate these
+ * packets.
  */
 Tootsville.Game.Gatekeeper.newScript = function (gram)
 { if (gram.status && gram.script)
@@ -579,9 +625,32 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
 /**
  * Walk The Line
  *
- * WRITEME
+ * This is the method that Romance 2.0 uses for moving avatars in the
+ * game world.
  *
- * See alse: `INFINITY-WTL'
+ * See also: `INFINITY-WTL'
+ *
+ * There are some bookkeeping side-effects here:
+ *
+ * @itemize
+ *
+ * @item
+ * If the avatar named is not already known, we'll try to look them
+ * up with @code{finger}, but we'll also try to remember their WTL course.
+ *
+ * @item
+ * If the name and UUID for a character mismatch, we'll discard the
+ * packet.
+ *
+ * @item
+ * If the avatar is known, but has no associated model, we'll try to
+ * build the model.
+ *
+ * @end itemize
+ *
+ * These are basically part of the attempt to synchronize the client
+ * in the presence of missing information, which should not happen
+ * often.
  */
 Tootsville.Game.Gatekeeper.wtl = function (gram)
 { if (gram.status)
@@ -603,12 +672,16 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     avatar.facing = gram.facing; } };
 
 /**
- * WRITEME — this function is not yet documented.
+ * The user has left the game.
+ *
+ * The user named @code{n} with UUID @code{u} has left the game.
+ *
+ * This destroys their avatar.
  */
 Tootsville.Game.Gatekeeper.bye = function (gram)
 { let avatar = Tootsville.Tank.avatars [ gram.n ];
   if (! (avatar && avatar.uuid == gram.u))
-  { console.warn ("UUID mismatch, not destroying avatar. may be a zombie", gram);
+  { console.warn ("UUID mismatch, not destroying avatar. May be a zombie", gram);
     return; }
   Tootsville.Tank.destroyAvatar (avatar); };
 
@@ -624,11 +697,16 @@ Tootsville.Game.Gatekeeper.c = function (gram)
 /**
  * This  packet  instructs  the  user  to  leave  the  game  and  go  to
  * a different web site.
+ *
+ * The packet's @code{url} is immediately loaded, kicking them out of
+ * Tootsville.
  */
 Tootsville.Game.Gatekeeper.goToWeb = function (gram)
 { if (gram.status) { document.location = gram.url; } };
 
 /**
+ * Respond to AYT (Are You There) inquiry
+ *
  * If the server sees no activity for a long time, it'll send an Are You
  * There (ayt)  packet to  verify that  the client  isn't just  a zombie
  * connection. We reply with a ping to show some activity.
@@ -638,14 +716,33 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
   { Tootsville.Util.infinity ("ping"); } };
 
 /**
- * WRITEME — this function is not yet documented.
+ * React to ``room variables''.
+ *
+ * See `LOCAL-ROOM-VAR' for a discussion. Room variables are a general
+ * communication channel of miscellaneous information about the game
+ * world. When received, they are interpreted to change or update
+ * information about the player's surroundings.
+ *
+ * Currently, the client supports the following room variable types:
+ *
+ * @code{s}ky, @code{w}eather, @code{f}loor (ignored), @code{item}, @code{itm2},
+ * @code{furn}iture, @code{text}, @code{zone} (place).
+ *
+ * Destruction of objects is UNIMPLEMENTED in the client currently (TODO)
+ *
+ * @subsection See Also
+ *
+ * `INFINITY-GET-ROOM-VARS', `Tootsville.SkyBuilder.buildMatchingSky',
+ * `Tootsville.SkyBuilder.buildMatchingWeather',
+ * `Tootsville.SceneBuilder.addItem1',
+ * `Tootsville.SceneBuilder.addItem2',
+ * `Tootsville.SceneBuilder.addFurn',
+ * `Tootsville.SceneBuilder.addText',
+ * `Tootsville.SceneBuilder.addPlace'
  */
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
-  { let radians = gram.rad;
-    if (! radians)
-    { console.warn ("Non-Radian facings not supported TODO"); }
-    for (let key in gram.var)
+  { for (let key in gram.var)
     { if ('s' == key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
       else if ('w' == key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
       else if ('f' == key) {}
@@ -664,6 +761,9 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
  *
  * See `INFINITY-PROMPT-REPLY' for a discussion of the prompt system and
  * the format of this datagram.
+ *
+ * See `Tootsville.UI.makePrompt' for the implementation of the prompt
+ * dialog builder.
  */
 Tootsville.Game.Gatekeeper.prompt = function (gram)
 { if (gram.status)
@@ -673,7 +773,9 @@ Tootsville.Game.Gatekeeper.prompt = function (gram)
                                                             { reply: reply, id: gram.id }); }); } };
 
 /**
- * WRITEME
+ * Respond to a request to quiesce.
+ *
+ * See `INFINITY-QUIESCE', `Tootsville.Game.Nav.quiesce'
  */
 Tootsville.Game.Gatekeeper.quiesce = function (gram)
 { if (gram.status)
@@ -682,14 +784,21 @@ Tootsville.Game.Gatekeeper.quiesce = function (gram)
   { Tootsville.Game.Nav.quiesce (); } };
 
 /**
- * WRITEME
+ * The user has been kicked out. Quit the game.
+ *
+ * TODO kick reason display
  */
 Tootsville.Game.Gatekeeper.kick = function (gram)
 { if (gram.status)
   { Tootsville.Login.quit (); } };
 
 /**
- * WRITEME
+ * Burgeon the Toot on logging back in.
+ *
+ * TODO extended attributes are ignored
+ *
+ * XXX @code{d3} objects are ignored. @code{wtl} is the only supported
+ * course type for now.
  */
 Tootsville.Game.Gatekeeper.burgeon = function (gram)
 { if (gram.status)
