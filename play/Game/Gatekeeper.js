@@ -361,6 +361,10 @@ Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
  * An enumeration of message objects. Each message object
  * has FIXME format.
  * @end table
+ *
+ * UNIMPLEMENTED.
+ *
+ * See `INFINITY-GET-MAIL-IN-BOX' 
  */
 Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
 { let successP = gram.status;
@@ -381,6 +385,8 @@ Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
  * The message object. This contains the
  * message uuid, sender, and body in FIXME format.
  * @end table
+ *
+ * See `INFINITY-GET-MAIL-MESSAGE'
  */
 Tootsville.Game.Gatekeeper.getMailMessage = function (gram)
 { let successP = gram.status;
