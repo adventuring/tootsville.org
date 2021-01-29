@@ -65,7 +65,7 @@ for my $key (sort keys %doc) {
   my $prefix = $key; $prefix =~ s/\.[^\.]+$//g;
   if ($prefix ne $lastprefix) {
     $lastprefix = $prefix;
-    print "\n$prefix\n\n";
+    print "\n\n$prefix\n\n";
   }
   print "* ${key}::\n";
 }
