@@ -3,6 +3,16 @@
   <head>
     <meta charset="utf-8">
     <title>Tootsville System Check</title>
+    <style type='text/css'>
+
+      @import url('https://fonts.googleapis.com/css?family=Acme|B612:400,700|Cantarell:400,700&.css');
+      body { margin: 10%;
+             font-family: Acme;
+             font-size: 125% }
+      .pass { color: #7ac142 }
+      .fail { color: #e51b24 }
+      
+    </style>
   </head>
   <body>
     <h1>Tootsville System Check</h1>
@@ -12,33 +22,35 @@
     <section>
       <h2> Mandatory Requirements </h2>
       <ul>
-        <li> Javascript enabled: <noscript>FAIL</noscript>
-          <script>document.write("PASS");</script> </li>
+        <li> Javascript enabled: <noscript class="fail">FAIL</noscript>
+          <script>document.write("<span class='pass'>PASS</span>");</script>
+                                                                 </li>
         <li> Javascript supports ES6:
-          <script> ( () => { document.write('PASS'); } )(); </script></li>
+          <script> ( () => { document.write('<span class="pass">PASS</span>'); } )(); </script></li>
         <li> WebGL 3D scene support: <span id="webgl-check"></span> </li>
         <li> WebRTC communications support:
-          <script> if (RTCPeerConnection) { document.write("PASS"); }
-           else { document.write('FAIL'); } </script></li>
+          <script> if (RTCPeerConnection) { document.write("<span class='pass'>PASS</span>"); }
+           else { document.write('<span class="fail">FAIL</span>'); } </script></li>
       </ul>
       <h2> Optional Features </h2>
       <ul>
-        <li> Audio support: TODO </li>
-        <li> Gamepad support: <script> if (GamepadEvent) { document.write('PASS'); }
-                               else { document.write('FAIL'); } </script> </li>
+        <li> Audio support: (not checked) </li>
+        <li> Gamepad support: <script> if (GamepadEvent) { document.write("<span class='pass'>PASS</span>"); }
+           else { document.write('<span class="fail">FAIL</span>'); } </script> </li>
       </ul>
     </section>
 
   </body>
   <script>
    window.addEventListener("load", function()
-           { var result = document.getElementById("webgl-check");
-                   var canvas = document.createElement("CANVAS");
+           { const result = document.getElementById("webgl-check");
+                   const canvas = document.createElement("CANVAS");
                    result.appendChild(canvas);
-                   var gl = canvas.getContext("webgl");
+                   const gl = canvas.getContext("webgl");
                    if (gl && gl instanceof WebGLRenderingContext)
-                   { result.innerHTML = "PASS"; }
+                   { result.innerHTML = "<span class='pass'>PASS</span>"; }
                    else
-                   { result.innerHTML = "FAIL"; } }, false);
+             { result.innerHTML = "<span class='fail'>FAIL</span>"; } },
+                           false);
   </script>
 </html>
