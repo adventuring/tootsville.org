@@ -43,7 +43,7 @@ Tootsville.Util.assertValidHostName = function (hostName)
   { return "https://wiki.tootsville.org"; }
   if ("tootsbook" === hostName)
   { return "https://tootsbook.com"; }
-  return Tootsville.host["game"]; };
+  return Tootsville.host.game; };
 
 /**
  * The main REST client.
