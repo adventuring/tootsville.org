@@ -722,7 +722,7 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
 /**
  * React to ``room variables''.
  *
- * See `LOCAL-ROOM-VAR' for a discussion. Room variables are a general
+ * See `LOCAL-ROOM-VARS' for a discussion. Room variables are a general
  * communication channel of miscellaneous information about the game
  * world. When received, they are interpreted to change or update
  * information about the player's surroundings.
@@ -822,7 +822,7 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
  * Migrate from the current websockets server to another one.
  *
  * Optional parameter `newConnection' can be used to provide a new
- * `Tootsville.host.game' URL. Normally, though, this will be `#same',
+ * `Tootsville.host' @code{game} URL. Normally, though, this will be `#same',
  * indicating no change --- the load balancers should take care of
  * things.
  */
