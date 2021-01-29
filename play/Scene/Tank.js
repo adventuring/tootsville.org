@@ -238,9 +238,9 @@ Tootsville.Tank.prepareFor3D = function ()
         { if ("BABYLON" in window)
           { finish (); }
           else
-          { Tootsville.Util.loadScript ('https://cdn.babylonjs.com/babylon.max.js'
-                                        /*'https://cdn.babylonjs.com/babylon.js'*/).then (
-                                            Tootsville.Tank.prepareFor3D); }}); };
+          { Tootsville.Util.loadScript ('https://cdn.babylonjs.com/babylon.js').then (
+              () => { Tootsville.Util.loadScript ('https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js').then (
+                  Tootsville.Tank.prepareFor3D); }}}); };
 
 /**
  * Enqueue some foley sound effects that will be used in the scene.
