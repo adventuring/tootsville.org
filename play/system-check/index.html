@@ -25,8 +25,8 @@
         <li> Javascript enabled: <noscript class="fail">FAIL</noscript>
           <script>document.write("<span class='pass'>PASS</span>");</script>
                                                                  </li>
-        <li> Javascript supports ES6:
-          <script> ( () => { document.write('<span class="pass">PASS</span>'); } )(); </script></li>
+        <li> Javascript supports ES6: <span id="es6" class="fail">FAIL</span>
+          <script> ( () => { document.getElementById('es6').outerHTML = '<span class="pass">PASS</span>'; } )(); </script></li>
         <li> WebGL 3D scene support: <span id="webgl-check"></span> </li>
         <li> WebRTC communications support:
           <script> if (RTCPeerConnection) { document.write("<span class='pass'>PASS</span>"); }
