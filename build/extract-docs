@@ -18,7 +18,7 @@ while (<>) {
   } else {
     if (($doc ne "") && (m(^\s*((window|Tootsville)\..*?) *= *(.*))) ) {
       my $obj = $1; my $val = $3;
-      my $iobj = $obj; $iobj =~ s/^Tootsville\.//;
+      my $iobj = $obj; $iobj =~ s/^Tootsville\.//; $iobj =~ s/\./. /g;
       if ($val =~ m/function *(\(.*?\))/) {
         my $ll = $1;
         if ('()' eq $ll) {
