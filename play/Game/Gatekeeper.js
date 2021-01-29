@@ -232,7 +232,23 @@ Tootsville.Game.Gatekeeper.login = function (gram)
                                   gram.msg + "<small> (code " + gram.err2 + ")</small>"); } };
 
 /**
- * WRITEME — this function is not yet documented.
+ * Receive parent approval for a child's Toot to log in.
+ *
+ * @verbatim
+ * { from: "parentApproval",
+ *   status: true,
+ *   until: 1611945540 }
+ *
+ * { from: "parentApproval",
+ *   status: false }
+ * @end verbatim
+ *
+ * If @code{status} is @code{true}, the parent has approved;
+ * if @code{status} is @code{false}, then the parent has denied
+ * permission.
+ *
+ * The time until which the player is allowed to play is passed
+ * in @code{until} as a Unix time
  */
 Tootsville.Game.Gatekeeper.parentApproval = function (gram)
 { if (gram.status)
@@ -254,6 +270,23 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
 
 /**
  * Public message (speech)
+ *
+ * See `INFINITY-SPEAK' for how speech is generated, or `TOOT-SPEAK'.
+ * 
+ * The @code{pub} packet contains the speaker's name and UUID, the
+ * text spoken, and (optionally) whether it was whispered or shouted.
+ *
+ * @subsection Example
+ *
+ * @verbatim
+ * { from: "pub",
+ *   status: true,
+ *   u: "Toot-name",
+ *   t: "This is what I say",
+ *   x: "whisper",
+ *   id: "2259E5F5-CDED-4A6A-AE68-1C4BA481CB7C" }
+ * @end verbatim
+ * 
  */
 Tootsville.Game.Gatekeeper.pub = function (gram)
 { if (gram.id === Tootsville.characterUUID)
@@ -262,7 +295,7 @@ Tootsville.Game.Gatekeeper.pub = function (gram)
   { Tootsville.Game.Speech.say (gram.t, gram.x, gram.u); } };
 
 /**
- * No longer used.
+ * Not currently used.
  */
 Tootsville.Game.Gatekeeper.purchase = function (gram)
 { let totalPeanuts = gram.totalPeanuts;
@@ -437,7 +470,18 @@ Tootsville.Game.Gatekeeper.buddyList = function (gram)
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
- * WRITEME — this function is not yet documented.
+ * You have been requested to be someone's buddy.
+ *
+ * See `INFINITY-REQUEST-BUDDY'
+ *
+ * @subsection Example
+ *
+ * @verbatim
+ * { from: "buddyRequest",
+ *   status: true,
+ *   sender: "Pil",
+ *   signature: ""
+ * @end verbatim
  */
 Tootsville.Game.Gatekeeper.buddyRequest = function (gram)
 { let sender = gram.sender;
