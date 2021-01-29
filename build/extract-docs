@@ -25,8 +25,8 @@ while (<>) {
           $doc{$obj} = "
 \@page
 \@node $obj
-\@jsindex $iobj
 \@section $obj
+\@jsindex $iobj
 \@subsection Function
 
 $obj is nullary function.
@@ -36,8 +36,8 @@ $doc\n\n";
           $doc{$obj} = "
 \@page
 \@node $obj
-\@jsindex $iobj
 \@section $obj
+\@jsindex $iobj
 \@subsection Function
 
 $obj is a function with lambda list: $ll
@@ -58,6 +58,18 @@ $doc\n\n";
     }
   }
 }
+
+print "\@menu\n";
+my $lastprefix = '';
+for my $key (sort keys %doc) {
+  my $prefix = $key; $prefix =~ s/\.[^\.]+$//g;
+  if ($prefix ne $lastprefix) {
+    $lastprefix = $prefix;
+    print "\n$prefix\n\n";
+  }
+  print "* ${key}::\n";
+}
+print "\@end menu\n";
 
 for my $key (sort keys %doc)
 { print $doc{$key} }
