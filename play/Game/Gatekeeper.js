@@ -822,9 +822,9 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
  * Migrate from the current websockets server to another one.
  *
  * Optional parameter `newConnection' can be used to provide a new
- * `Tootsville.host' @code{game} URL. Normally, though, this will be `#same',
- * indicating no change --- the load balancers should take care of
- * things.
+ * ``Tootsville.host'' @code{game} URL.  Normally, though, this will be
+ * @code{#same}, indicating no change --- the load balancers should take
+ * care of things.
  */
 Tootsville.Game.Gatekeeper.migrate = function (gram)
 { if (gram.status)

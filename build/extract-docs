@@ -11,7 +11,7 @@ while (<>) {
     s(-\*-.*?-\*-) ();
     s(/?\*[\*/]?[ \t]*) ();
     s(^ *) ();
-    s(`(Tootsville\..+)') (\@ref{$1})g;
+    s(`(Tootsville\..+?)') (\@ref{$1})g;
     s(([^`])`([^`].*?)::?(.+)') ($1\@ref{$2 $3})g;
     s(([^`])`([A-Z0-9@$%\*/-].*?)') ($1\@ref{TOOTSVILLE $2})g;
     $doc .= $_
@@ -65,7 +65,7 @@ for my $key (sort keys %doc) {
   my $prefix = $key; $prefix =~ s/\.[^\.]+$//g;
   if ($prefix ne $lastprefix) {
     $lastprefix = $prefix;
-    print "\n\n";
+    print "\n\n\n";
 #    print "\n\n$prefix\n\n";
   }
   print "* ${key}::\n";
