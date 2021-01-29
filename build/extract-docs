@@ -11,22 +11,22 @@ while (<>) {
     s(-\*-.*?-\*-) ();
     s(/?\*[\*/]?[ \t]*) ();
     s(^ *) ();
-    s(`(Tootsville\..+)') (\@ref{$1})g;
+    s(`(Tootsville\..+?)') (\@ref{$1})g;
     s(([^`])`([^`].*?)::?(.+)') ($1\@ref{$2 $3})g;
-    s(([^`])`([^`].*?)') ($1\@ref{TOOTSVILLE $2})g;
+    s(([^`])`([A-Z0-9@$%\*/-].*?)') ($1\@ref{TOOTSVILLE $2})g;
     $doc .= $_
   } else {
     if (($doc ne "") && (m(^\s*((window|Tootsville)\..*?) *= *(.*))) ) {
       my $obj = $1; my $val = $3;
-      my $iobj = $obj; $iobj =~ s/^Tootsville\.//;
+      my $iobj = $obj; $iobj =~ s/^Tootsville\.//; $iobj =~ s/\./. /g;
       if ($val =~ m/function *(\(.*?\))/) {
         my $ll = $1;
         if ('()' eq $ll) {
           $doc{$obj} = "
 \@page
 \@node $obj
-\@jsindex $iobj
 \@section $obj
+\@jsindex $iobj
 \@subsection Function
 
 $obj is nullary function.
@@ -36,8 +36,8 @@ $doc\n\n";
           $doc{$obj} = "
 \@page
 \@node $obj
-\@jsindex $iobj
 \@section $obj
+\@jsindex $iobj
 \@subsection Function
 
 $obj is a function with lambda list: $ll
@@ -58,6 +58,19 @@ $doc\n\n";
     }
   }
 }
+
+print "\@menu\n";
+my $lastprefix = '';
+for my $key (sort keys %doc) {
+  my $prefix = $key; $prefix =~ s/\.[^\.]+$//g;
+  if ($prefix ne $lastprefix) {
+    $lastprefix = $prefix;
+    print "\n\n\n";
+#    print "\n\n$prefix\n\n";
+  }
+  print "* ${key}::\n";
+}
+print "\@end menu\n";
 
 for my $key (sort keys %doc)
 { print $doc{$key} }

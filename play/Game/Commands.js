@@ -52,6 +52,11 @@ if (!('Commands' in Tootsville.Game)) { Tootsville.Game.Commands = {}; };
 Tootsville.Game.Commands.addFurniture = function (d, u, r)
 { Tootsville.Game.Commands.setFurniture (d, u, r); };
 
+/**
+* See `INFINITY-SET-FURNITURE'
+*/
+Tootsville.Game.Commands.setFurniture = function (d, u, r)
+{ console.warn ("unimplemented: setFurniture"); };
 
 /**
  * No longer used

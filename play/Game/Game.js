@@ -35,7 +35,7 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
 
 /**
  * Is   the   `point'   near   to  the   center   of   current   activity
- * `Tootsville.activity' to be of interest to us? If the point is too far
+ * Tootsville.activity to be of interest to us?  If the point is too far
  * away, we may not care about it.
  */
 Tootsville.Game.interestingPoint = function (point)

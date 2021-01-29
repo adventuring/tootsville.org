@@ -493,6 +493,7 @@ git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.as
 
 dist/doc.texi: $(shell cat build/js.order) build/extract-docs \
 		build/header.texi build/footer.texi
+	bin/make-all-htaccess
 	cp -f build/header.texi dist/doc.texi
 	perl build/extract-docs $$(grep -v lib/ build/js.order) >> dist/doc.texi; \
 	cat build/footer.texi >> dist/doc.texi
