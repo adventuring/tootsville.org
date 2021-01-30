@@ -441,10 +441,10 @@ remotes:
 	then \
 		git remote add github git@github.com:adventuring/tootsville.org ;\
 	fi
-	if ! git remote -v | grep gitlab &>/dev/null ;\
-	then \
-		git remote add gitlab git@gitlab.com:adventuring/tootsville.org ;\
-	fi
+	# if ! git remote -v | grep gitlab &>/dev/null ;\
+	# then \
+	# 	git remote add gitlab git@gitlab.com:adventuring/tootsville.org ;\
+	# fi
 	if ! git remote -v | grep goethe &>/dev/null ;\
 	then \
 		git remote add goethe goethe.Tootsville.org:devel/git/tootsville.org ;\
@@ -484,8 +484,8 @@ git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.as
 	git submodule foreach --recursive 'git push --tags origin ||:'
 	git push --tags github ||:
 	git submodule foreach --recursive 'git push --tags github ||:'
-	git push --tags gitlab ||:
-	git submodule foreach --recursive 'git push --tags gitlab ||:'
+	# git push --tags gitlab ||:
+	# git submodule foreach --recursive 'git push --tags gitlab ||:'
 	git push --tags goethe ||:
 	git submodule foreach --recursive 'git push --tags goethe ||:'
 
