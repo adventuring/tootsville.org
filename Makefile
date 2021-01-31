@@ -160,7 +160,7 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ -i $@
 
 dist/version.js:	build/version
-	echo "Tootsville.version = \"$$(< build/version)\"" > dist/version.js
+	echo "Tootsville.version = \"$$(< build/version)\";" > dist/version.js
 
 play:	dist/play.$(clusterorg)
 
