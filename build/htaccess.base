@@ -102,6 +102,7 @@ RedirectMatch ^/users/(.*)$ https://game.@@CLUSTER@@.net/users/$1
 RedirectMatch ^/wiki/(.*)$ https://wiki.tootsville.org/wiki/$1
 RedirectMatch ^/wikiwiki/(.*)$ https://wiki.tootsville.org/wiki/$1
 RedirectMatch ^/world/(.*)$ https://game.@@CLUSTER@@.net/world/$1
+RedirectMatch ^/www/(.*)$ https://www.@@CLUSTER@@.org/$1
 
 # Error Documents for all defined error codes.
 ErrorDocument 400 /error/400
