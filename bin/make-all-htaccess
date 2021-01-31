@@ -39,7 +39,8 @@ for cluster in tootsville test.tootsville qa.tootsville ; do
             | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
                    > $host.$cluster.org.htaccess
     done
-    for host in gossip world users goethe ; do
+    sed -e 's#RedirectMatch ^/$ https://www.'$cluster'.org/www/##g' -i www.$cluster.org.htaccess
+    for host in goethe; do
         sed ../../build/htaccess.base -e s/@@HOST@@/$host/g \
             -e s/@@CLUSTER@@/$cluster/g \
             | grep -v 'RedirectMatch ^/[a-z].* https://'$host'.' \
