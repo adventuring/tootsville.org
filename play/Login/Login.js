@@ -70,6 +70,8 @@ Tootsville.Login.settingsP = false;
 
 /**
  * Query the server for my characters after user has signed in.
+ *
+ * See `INFINITY-TOOT-LIST'
  */
 Tootsville.Login.loadTootsList = function ()
 { Tootsville.Util.infinity ("tootList"); };
@@ -500,7 +502,7 @@ Tootsville.Login.acceptSignedIn = function(result)
   return false; };
 
 /**
- *
+ * After signing in, begin choosing a Toot and connect networking.
  */
 Tootsville.Login.finishSignIn = function (idToken)
 { console.log ("Finishing sign-in");
@@ -510,7 +512,7 @@ Tootsville.Login.finishSignIn = function (idToken)
   Tootsville.Login.switchTootsView(); };
 
 /**
- *
+ * Get credential information back from Firebase
  */
 Tootsville.Login.storeCredentialInfo = function (result)
 { var cred = result.credential;
