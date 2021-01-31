@@ -159,6 +159,9 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	echo '//# sourceMappingURL=/play/play.map' >> $@
 	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ -i $@
 
+dist/version.js:	build/version
+	echo "Tootsville.version = \"$$(< build/version)\"" > dist/version.js
+
 play:	dist/play.$(clusterorg)
 
 dist/play/play.map:	dist/play/play.js

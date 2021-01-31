@@ -4,6 +4,8 @@ play/Tootsville.js
 play/Util.js
 play/Stream.js
 
+dist/version.js
+
 play/Analytics.js
 play/Rollbar.js
 
