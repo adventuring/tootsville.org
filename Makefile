@@ -460,7 +460,7 @@ bump-next-version:
 	git commit -m "bump version number for next build"
 
 git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.asd
-	VERSION=$$(../tootsville.net/Tootsville version-info version) ;\
+	VERSION=$$(< build/version) ;\
 	now=$$(date +%Y-%m-%d) ;\
 	msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	if git rev-parse v$$VERSION &>/dev/null ;\
