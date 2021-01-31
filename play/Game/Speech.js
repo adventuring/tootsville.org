@@ -104,7 +104,8 @@ Tootsville.Game.Speech.updateSpeech = function ()
  * Simulate rolling a d20 and speak aloud the results.
  * @item ~credits
  * Display the client's credits.
- * @item ~
+ * @item ~version
+ * Display the version of the client 
  * @end table
  */
 Tootsville.Game.Speech.dispatchCommand = function (commandLine)
@@ -123,11 +124,17 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
     break;;
     case "~credits":
     Tootsville.UI.confirmPretty("Credits",
-                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p>", "O.K.");
-    break;;
+                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p>",
+                                "O.K.");
+    return;
     case '~lag':
     Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s",
                                 'whisper');
+    return;
+    case '~version':
+    Tootsville.UI.confirmPretty('Version',
+                                '<p> Version ' + Tootsville.version + '</p>',
+                                'O.K.');
     return;
     default:
     Tootsville.Game.Speech.say ("I don't recognize " + words[0] + " as a magic word.",
