@@ -84,7 +84,13 @@ Tootsville.Util.closeWebSocket = function (event)
   then ( () => { Tootsville.Util.checkStream (); } ); };
 
 Tootsville.Util.messageFromWebSocket = function (event)
-{ let data = JSON.parse (event.data);
+{ let data;
+  try {
+      data = JSON.parse (event.data);
+  } catch (e) {
+      console.warn ("Error in JSON data received", e, event.data);
+      return;
+  }
   console.debug ("Received data from " + data.from, data);
   Tootsville.Gossip.gatekeeperAccept (null, { data: data } ); };
 
