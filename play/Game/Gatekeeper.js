@@ -419,7 +419,7 @@ Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
  * message uuid, sender, and body in FIXME format.
  * @end table
  *
- * See `INFINITY-GET-MAIL-MESSAGE'
+ * See `INFINITY-GET-MAIL-IN-BOX'
  */
 Tootsville.Game.Gatekeeper.getMailMessage = function (gram)
 { let successP = gram.status;
