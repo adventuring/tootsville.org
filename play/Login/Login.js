@@ -222,7 +222,7 @@ Tootsville.Login.playWithCharacter = function (name)
   { this.doRealLogin (name); } };
 
 /**
- *
+ * Pick ``picked'' as your Toot to play with today
  */
 Tootsville.Login.pickCharacter = function (picked)
 { Tootsville.Login.dimUnpickedCharacters (picked);
@@ -235,7 +235,7 @@ Tootsville.Login.pickCharacter = function (picked)
   Tootsville.Login.playWithCharacter (picked ['data-toot'].name); };
 
 /**
- *
+ * Accept information from Google to fill in the display
  */
 Tootsville.Login.fillGoogleUserInfo = function ()
 { document.getElementById ('google-user-name').innerHTML = Tootsville.Login.player.name;
@@ -248,7 +248,7 @@ Tootsville.Login.fillGoogleUserInfo = function ()
         Tootsville.Login.player.name = personInfo.displayName; } ); } };
 
 /**
- *
+ * Show the view for switching Toot characters
  */
 Tootsville.Login.switchTootsView = function ()
 { Tootsville.Login.fillGoogleUserInfo ();
@@ -257,7 +257,7 @@ Tootsville.Login.switchTootsView = function ()
   document.getElementById ('login-warm-up').style.display = 'none'; };
 
 /**
- *
+ * Start the login/sign-in process
  */
 Tootsville.Login.startSignIn = function ()
 { document.getElementById ('login').style.display = 'block';
@@ -266,7 +266,7 @@ Tootsville.Login.startSignIn = function ()
   document.getElementById ('pick-toot').style.display = 'none'; };
 
 /**
- *
+ * Stop playing the login music and start playing game background music.
  */
 Tootsville.Login.endLoginMusic = function ()
 { Tootsville.UI.setBackgroundMusic ("bensound-smile"); };
@@ -286,7 +286,9 @@ Tootsville.Login.loginDone = function ()
   Tootsville.UI.HUD.refreshHUD (); };
 
 /**
- * Choose a CHARACTER to play as.
+ * Inform the server that we want to play with ``character''
+ *
+ * See `INFINITY-PLAY-WITH'
  */
 Tootsville.Login.serverLinkTokenToCharacter = function (character)
 { Tootsville.Util.infinity ("playWith", { character: character }); };
