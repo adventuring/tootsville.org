@@ -197,11 +197,15 @@ Tootsville.UI.Keys.onKeyDown = function (ev)
   else if (ev.ctrlKey) { coda = 'withControl'; }
   else if (ev.shiftKey) { coda = 'withShift'; }
   if (Tootsville.UI.Keys.prefixed)
-  {   console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + Tootsville.UI.Keys.bindings [coda][ev.key]);
-      Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings["afterControl" + Tootsville.UI.Keys.prefixed][coda], ev); }
+  { let binding = Tootsville.UI.Keys.prefixed ["afterControl" + Tootsville.UI.Keys.prefixed][coda][ev.key];
+    if (ev.key.length > 1 || binding)
+      console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
+    Tootsville.UI.runCommand(binding, ev); }
   else
-  { console.info ("Keypress " + coda + " " + ev.key + " bound to " + Tootsville.UI.Keys.bindings [coda][ev.key]);
-Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings [coda][ev.key], ev); } };
+  { let binding = Tootsville.UI.Keys.bindings [coda][ev.key];
+    if (ev.key.length > 1 || binding)
+        console.info ("Keypress " + coda + " " + ev.key + " bound to " + binding);
+Tootsville.UI.runCommand(binding, ev); } };
 
 // 
 
