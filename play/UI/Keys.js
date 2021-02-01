@@ -196,11 +196,12 @@ Tootsville.UI.Keys.onKeyDown = function (ev)
   if (ev.altKey || ev.metaKey ) { coda = 'withMeta'; }
   else if (ev.ctrlKey) { coda = 'withControl'; }
   else if (ev.shiftKey) { coda = 'withShift'; }
-  console.info ("Keypress " + coda + " " + ev.key + " bound to " + Tootsville.UI.Keys.bindings [coda][ev.key]);
   if (Tootsville.UI.Keys.prefixed)
-  { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings["afterControl" + Tootsville.UI.Keys.prefixed][coda], ev); }
+  {   console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + Tootsville.UI.Keys.bindings [coda][ev.key]);
+      Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings["afterControl" + Tootsville.UI.Keys.prefixed][coda], ev); }
   else
-  { Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings [coda][ev.key], ev); } };
+  { console.info ("Keypress " + coda + " " + ev.key + " bound to " + Tootsville.UI.Keys.bindings [coda][ev.key]);
+Tootsville.UI.runCommand(Tootsville.UI.Keys.bindings [coda][ev.key], ev); } };
 
 // 
 
