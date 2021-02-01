@@ -234,6 +234,7 @@ Tootsville.Login.pickCharacter = function (picked)
   document.querySelector ('#new-toot-hint').disabled = true;
   document.querySelector ('#switch-google-account').style.opacity = .25;
   document.querySelector ('#switch-google-account').disabled = true;
+  Tootsville.player.activeItem = Tootsville.player.inactiveItem = null;
   Tootsville.Login.playWithCharacter (picked ['data-toot'].name); };
 
 /**
