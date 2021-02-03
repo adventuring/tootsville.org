@@ -51,6 +51,9 @@ Redirect /quiz/toots-quiz-201610 https://docs.google.com/forms/d/e/1FAIpQLSf3u02
 <FilesMatch "\.babylon$">
   Header set Content-type "application/json;charset=utf-8"
 </FilesMatch>
+<FilesMatch "\.glb$">
+  Header set Content-type "model/gltf-binary"
+</FilesMatch>
 
 Header set Access-Control-Allow-Origin "*"
 Header set Access-Control-Allow-Headers "Accept,Accept-Language,Content-Language,Content-Type"
