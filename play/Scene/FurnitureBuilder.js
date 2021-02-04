@@ -103,7 +103,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
   let loadTask = assetsManager.addMeshTask (
       "loading " + item.template.name, null,
       "https://jumbo.tootsville.org/Assets/Models/5/" + item.template.avatar + "/",
-      item.template.avatar + ".babylon");
+      item.template.avatar + ".glb");
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
     let i;
