@@ -418,14 +418,12 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
  * Refresh the display of the active equipment item.
  */
 Tootsville.UI.HUD.refreshEquipment = function ()
-{ if (null === Tootsville.player || null === Tootsville.player.activeItem ||
-     undefined === Tootsville.player.activeItem)
+{ if (!Tootsville.player || !Tootsville.player.activeItem)
   { document.getElementById ('active-item-box').style.opacity = 0; }
   else
   { document.getElementById ('active-item-box').style.opacity = 1; 
     console.debug ("TODO: active item box"); }
-  if (null === Tootsville.player || null === Tootsville.player.inactiveItem ||
-     undefined === Tootsville.player.activeItem)
+  if (!Tootsville.player || !Tootsville.player.inactiveItem)
   { document.getElementById ('inactive-item-box').style.opacity = 0; }
   else
   { document.getElementById ('inactive-item-box').style.opacity = 1;
