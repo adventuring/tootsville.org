@@ -553,7 +553,7 @@ Tootsville.Login.storeCredentialInfo = function (result)
 };
 
 /**
- * 
+ * Quit the game
  */
 Tootsville.Login.quit = function ()
 { Tootsville.Gossip.closeStreams ();
