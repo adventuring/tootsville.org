@@ -42,7 +42,7 @@ Tootsville.Game.Speech.createBalloon = function (words, extraClass)
   balloon.className = 'speech ' + (extraClass || '');
   words = words.replaceAll('&', '&amp;');
   words = words.replaceAll('<', '&lt;');
-  words = words.replaceAll('Ⓣ', '<img src="https://jumbo.tootsville.org/favicon.svg" style="height: 1.5rem" alt="Ⓣ">');
+  words = words.replaceAll('Ⓣ', '<img src="http://jumbo.tootsville.org/Assets/Icons/toots-t-logo-circled.svg" style="height: 1.5rem" alt="Ⓣ">');
   balloon.innerHTML = words;
   return balloon; };
 
