@@ -78,9 +78,14 @@ Tootsville.Util.openWebSocket = function (event) {
     { Tootsville.Util.stream ({ c: "getApple" }); } };
 
 Tootsville.Util.closeWebSocket = function (event)
-{ if (Tootsville.Gossip.closeAndQuitP) { return; }
-  Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
-                                "The server stream connection went down. Are we off-line?").
+{if (Tootsville.Gossip.closeAndQuitP) return;
+ console.warn ("WebSocket closed unexpectedly", event);
+ if (1006 === event.code)
+     Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
+                                   "The server stream connection was lost without warning.");
+ else
+     Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
+                                   "The server stream connection went down. Are we off-line?").
   then ( () => { Tootsville.Util.checkStream (); } ); };
 
 Tootsville.Util.messageFromWebSocket = function (event)
