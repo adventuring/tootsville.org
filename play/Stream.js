@@ -85,8 +85,8 @@ Tootsville.Util.closeWebSocket = function (event)
                                    "The server stream connection was lost without warning.");
  else
      Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
-                                   "The server stream connection went down. Are we off-line?").
-  then ( () => { Tootsville.Util.checkStream (); } ); };
+                                   "The server stream connection went down. Are we off-line?");
+ Tootsville.Util.checkStream (); };
 
 Tootsville.Util.messageFromWebSocket = function (event)
 { let data;
