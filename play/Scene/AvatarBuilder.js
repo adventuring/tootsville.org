@@ -178,18 +178,26 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
   var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".glb");
+  loadTask.onError = function (task, message, e)
+  { console.error ("Error " + task.name + ": " + message + ": " +
+                   e.message + " in " + e.filename + ":"  + e.lineNumber, task, e); };
   loadTask.onSuccess = function (task)
-  { const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
+  { console.log ("Success with " + task.name);
+    const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
     modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
-    let i;
-    for (i = 0; i < task.loadedMeshes.length; ++i)
-    { modelRoot.addChild (task.loadedMeshes [i]);
-      task.loadedMeshes [i].renderOutline = true;
-      task.loadedMeshes [i].outlineColor = BABYLON.Color3.Black (); }
-    for (i = 0; i < task.loadedParticleSystems.length; ++i)
-    { modelRoot.addChild (task.loadedParticleSystems [i]); }
-    for (i = 0; i < task.loadedSkeletons.length; ++i)
-    { modelRoot.addChild (task.loadedSkeletons [i]); }
+    modelRoot.rotationQuaternion = undefined;
+    modelRoot.rotation = BABYLON.Vector3.Zero ();
+    if (task.loadedMeshes.length > 0)
+        for (let i = 0; i < task.loadedMeshes.length; ++i) {
+            modelRoot.addChild (task.loadedMeshes [i]);
+            task.loadedMeshes [i].renderOutline = true;
+            task.loadedMeshes [i].outlineColor = BABYLON.Color3.Black (); }
+    // if (task.loadedParticleSystems.length > 0)
+    // for (let i = 0; i < task.loadedParticleSystems.length; ++i)
+    // { modelRoot.addChild (task.loadedParticleSystems [i]); }
+    // if (task.loadedSkeletons.length > 0)
+    //     for (let i = 0; i < task.loadedSkeletons.length; ++i)
+    // { modelRoot.addChild (task.loadedSkeletons [i]); }
     console.debug ("Loaded base avatar " + avatar.avatar + " with " +
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +

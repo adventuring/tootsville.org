@@ -33,7 +33,6 @@
 
 if (!('Game' in Tootsville)) { Tootsville.Game = {Nav: {}}; }
 if (!('Nav' in Tootsville.Game)) { Tootsville.Game.Nav= {}; }
-
 if (!('now' in Tootsville.Game)) { Tootsville.Game.now = 0; }
 
 /**
@@ -61,7 +60,8 @@ Tootsville.Game.Nav.CAMERA_MOVE_SPEED = Tootsville.Game.Nav.RUN_SPEED * 4;
  */
 Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
 { if (! avatar) { console.warn ("nobody can't walk"); return; }
-  if (! avatar.model) { console.warn ("you need a body to walk");
+  if (! avatar.model) { Tootsville.Gossip.Parrot.say ("Something is awry",
+                                                      "You need a body to walk");
                         Tootsville.Tank.updateAvatarFor (avatar.name); }
   if (! avatar.model) { console.warn ("No AvatarBuilder body made");
                         return; }
@@ -80,11 +80,11 @@ Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
   Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
- *
+ * Build a Walk The Line packet for the player's avatar
  */
 Tootsville.Game.Nav.buildWTL = function ()
 { const avatar = Tootsville.Tank.avatars [ Tootsville.character ];
-  let course = undefined; let facing = undefined;
+  let course, facing;
   if (avatar)
   { course = avatar.course;
     facing = avatar.facing;
@@ -124,25 +124,25 @@ Tootsville.Game.Nav.quiesce = function ()
 
 
 /**
- *
+ * Send a @samp{wtl} packet for the current player
  */
 Tootsville.Game.Nav.sendWTL = function ()
 { Tootsville.Util.infinity ("wtl",
                             Tootsville.Game.Nav.buildWTL ()); };
 
 /**
- *
+ * Run to ``destinationPoint''
  */
 Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
 { Tootsville.Game.Nav.walkTheLine (avatar, destinationPoint, Tootsville.Game.Nav.RUN_SPEED);};
 
 /**
- *
+ * Detect a collision between ``model'' on the line from ``start'' to ``end''
  */
 Tootsville.Game.Nav.collisionP = function (model, start, end)
-{  // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
-    //                                                      model.getWorldMatrix () );
-    if (!Tootsville.Tank.scene) { return null; }
+{ // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
+  //                                                      model.getWorldMatrix () );
+  if (!Tootsville.Tank.scene) return null;
     const step = end.subtract (start);
     const direction = BABYLON.Vector3.Normalize (step) ;
     const ray = new BABYLON.Ray (start, direction, step.length);
