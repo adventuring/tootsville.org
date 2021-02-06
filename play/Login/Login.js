@@ -196,7 +196,7 @@ Tootsville.Login.dimUnpickedCharacters = function (picked)
       allItems[i].style.filter = 'grayscale(1)'; } } };
 
 /**
- *
+ * Link the character ``name'' to the player and start playing the game
  */
 Tootsville.Login.doRealLogin = function (name)
 { Tootsville.Login.serverLinkTokenToCharacter (name); };
@@ -319,13 +319,13 @@ Tootsville.Login.findLIForToot = function (name)
   throw new Error ("Altered a non-existent Toot"); };
 
 /**
- * Determines whether STRING might be a valid Child Code.
+ * Determines whether ``string'' might be a valid Child Code.
  */
 Tootsville.Login.validChildCode = function (string)
 { return (string.match (/^[a-z]{4,6}$/)) ? string : false; };
 
 /**
- * Set NAME to be a Child Toot.
+ * Set ``name'' to be a Child Toot.
  */
 Tootsville.Login.enableChildMode = function (name)
 { let li = this.findLIForToot (name);
@@ -339,7 +339,7 @@ Tootsville.Login.enableChildMode = function (name)
                           { key: 'childCode', newValue: childCode }); } };
 
 /**
- * Set NAME to no longer be a Child Toot.
+ * Set ``name'' to no longer be a Child Toot.
  */
 Tootsville.Login.disableChildMode = function (name)
 { let li = this.findLIForToot (name);
@@ -413,7 +413,7 @@ Tootsville.Login.addChildRequest = function (li, request)
   return li; };
 
 /**
- * Ask the server to re-prompt us for the Child Request with UUID.
+ * Ask the server to re-prompt us for the Child Request with ``UUID''.
  *
  * The server will send a "prompt" packet down immediately.
  */
@@ -480,10 +480,6 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             // Forces account selection even when one account
             // is available.
             { prompt: 'select_account' } },
-          // { provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-          //   scopes:
-          //   [ 'public_profile', 'email', 'user_likes' ] },
-          // firebase.auth.PhoneAuthProvider.PROVIDER_ID,
           /* Yahoo! is a generic OAuth source and should work like this … */
           { provider: "yahoo.com",
             providerName: "Yahoo!",
@@ -491,8 +487,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             iconUrl: "https://user-images.githubusercontent.com/49992195/56804289-28d68b00-681d-11e9-8341-e53b89061745.png",
             loginHintKey: "login_hint" },
           firebase.auth.TwitterAuthProvider.PROVIDER_ID
-          /* Twitter does not support scopes. */,
-        ]}); };
+          /* Twitter does not support scopes. */ ]}); };
 
 /**
  * Callback for Firebase completing authentication
