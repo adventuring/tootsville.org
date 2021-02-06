@@ -141,7 +141,7 @@ Tootsville.Login.saveTootsList = function (list)
   Tootsville.Login.populateTootsList (); };
 
 /**
- *
+ * Set the sensitive player flag in the UI based upon the settings
  */
 Tootsville.Login.setSensitiveP = function ()
 { document.getElementById('sensitive-player-p').checked =
