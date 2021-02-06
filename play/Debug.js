@@ -6,7 +6,7 @@ if (!('traced' in window)) window.traced = {};
      let lastPart, ref;
      if (nameParts)
      { lastPart = nameParts.pop ();
-       for (ref = window; 0 < nameParts.length; ref = ref[nameParts.shift ()]); }
+       for (ref = window; 0 < nameParts.length; ref = ref[nameParts.shift ()]) {} }
      else { lastPart = name;
             ref = window; }
      ref[ lastPart ] = fn; };
@@ -16,7 +16,7 @@ if (!('traced' in window)) window.traced = {};
      let lastPart, ref;
      if (nameParts)
      { lastPart = nameParts.pop ();
-       for (ref = window; 0 < nameParts.length; ref = ref[nameParts.shift ()]); }
+       for (ref = window; 0 < nameParts.length; ref = ref[nameParts.shift ()]) {} }
      else { lastPart = name;
             ref = window; }
      return ref[ lastPart ]; };
