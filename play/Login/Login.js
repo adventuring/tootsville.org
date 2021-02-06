@@ -462,6 +462,17 @@ Tootsville.Login.doneEditingSettings = function ()
 Tootsville.Login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
   Tootsville.trace ("Starting Firebase login");
+  /*
+  let yahoo = new firebase.auth.OAuthProvider('yahoo.com');
+  yahoo.setCustomParameters({ prompt: 'login' });
+  document.getElementById ('firebase-sign-in-with-yahoo').addEventListener (
+      'click',
+      function () {
+          firebase.auth().signInWithPopup (yahoo).then
+          ((result) => {
+              alert ("Got Yahoo! login " + result);
+          }); });
+  */
   ui.start(
       '#firebaseui-auth-container',
       { callbacks:
@@ -480,12 +491,6 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             // Forces account selection even when one account
             // is available.
             { prompt: 'select_account' } },
-          /* Yahoo! is a generic OAuth source and should work like this … */
-          { provider: "yahoo.com",
-            providerName: "Yahoo!",
-            buttonColor: "#1111dd",
-            iconUrl: "https://user-images.githubusercontent.com/49992195/56804289-28d68b00-681d-11e9-8341-e53b89061745.png",
-            loginHintKey: "login_hint" },
           firebase.auth.TwitterAuthProvider.PROVIDER_ID
           /* Twitter does not support scopes. */ ]}); };
 
