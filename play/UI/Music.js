@@ -36,8 +36,8 @@ if (!('UI' in Tootsville)) { Tootsville.UI = {}; }
 Tootsville.UI.endBackgroundMusic = function ()
 { let backgroundMusic = document.querySelector("#background-music");
   console.log ("Fading out previous song");
-  setTimeout ( function () { backgroundMusic.volume = .5; }, 333 );
-  setTimeout ( function () { backgroundMusic.volume = .25; }, 666 );
+  setTimeout ( function () { backgroundMusic.volume = Tootsville.UI.Audio.currentVolume / 100 * .5; }, 333 );
+  setTimeout ( function () { backgroundMusic.volume = Tootsville.UI.Audio.currentVolume / 100 * .25; }, 666 );
   setTimeout ( function () { backgroundMusic.volume = 0; }, 1000 );
   setTimeout ( function () { backgroundMusic.parentNode.removeChild (backgroundMusic); }, 1050 ); };
 
@@ -54,7 +54,7 @@ Tootsville.UI.setBackgroundMusic = function (song)
                  audio.setAttribute ("ID", "background-music");
                  audio.autoplay = true;
                  audio.loop = true;
-                 audio.volume = 1;
+                 audio.volume = Tootsville.UI.Audio.currentVolume / 100;
                  var source = document.createElement ("SOURCE");
                  source.setAttribute ("SRC", "https://jumbo.tootsville.org/Assets/Music/5/" + song + ".mp3");
                  audio.appendChild (source);
