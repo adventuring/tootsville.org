@@ -48,8 +48,9 @@ Tootsville.Login.start = function ()
   { Tootsville.trace ("Restarting login…");
     Tootsville.Login.startSignIn();
     return; }
-  Tootsville.inform ("Start login");
-  Tootsville.Gossip.ensureKeyPair ();
+  Tootsville.inform ("Start login (build crypto keys)");
+  document.querySelector('#bugs>h1').innerHTML = 'Loading…';
+  setTimeout (Tootsville.Gossip.ensureKeyPair, 1);
   Tootsville.UI.HUD.loadHUDPanel ("login", Tootsville.Login.firebaseLogin); };
 
 
