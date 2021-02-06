@@ -177,7 +177,7 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
       return; /* XXX finish? */ } }
   var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
-                                            avatar.avatar + ".babylon");
+                                            avatar.avatar + ".glb");
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
     modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
