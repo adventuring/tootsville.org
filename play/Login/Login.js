@@ -49,6 +49,7 @@ Tootsville.Login.start = function ()
     Tootsville.Login.startSignIn();
     return; }
   Tootsville.inform ("Start login");
+  Tootsville.Gossip.ensureKeyPair ();
   Tootsville.UI.HUD.loadHUDPanel ("login", Tootsville.Login.firebaseLogin); };
 
 
