@@ -744,8 +744,14 @@ Tootsville.Game.Gatekeeper.bye = function (gram)
 Tootsville.Game.Gatekeeper.c = function (gram)
 { if (gram.status)
     console.info ("Command processor reports success", gram);
-  else
-      console.warn ("Command processor reports error", gram); };
+  else {
+      console.error ("Command processor reports error", gram);
+      Tootsville.Gossip.Parrot.say ("Server error", `
+<P>The server reports that this game made a mistake: </P>
+<BLOCKQUOTE> ${ gram.error } </BLOCKQUOTE>
+<A HREF="https://wiki.tootsville.org/wiki/Server_command_processor_error">Learn more…</A>
+`);
+  } };
 
 /**
  * This  packet  instructs  the  user  to  leave  the  game  and  go  to
