@@ -407,7 +407,7 @@ Tootsville.UI.Keys.prefixCx = function (event)
  *
  */
 Tootsville.UI.Keys.priorHistoryLine = function (event)
-{ /* TODO */ };
+{ document.getElementById ('talk-speak').value = Tootsville.UI.recallText; };
 
 /**
  *
@@ -416,12 +416,13 @@ Tootsville.UI.Keys.selectAll = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Speak the line currently in the buffer
  */
 Tootsville.UI.Keys.speakLine = function (event)
 { let el = document.getElementById ('talk-speak');
   Tootsville.UI.say (el.value);
   console.info ("Speaking: «" + el.value + "»");
+  Tootsville.UI.recallText = el.value;
   el.value = ''; };
 
 /**
