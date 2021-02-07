@@ -462,9 +462,13 @@ Tootsville.Login.doneEditingSettings = function ()
 Tootsville.Login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
   Tootsville.trace ("Starting Firebase login");
-  /*
+  
   let yahoo = new firebase.auth.OAuthProvider('yahoo.com');
   yahoo.setCustomParameters({ prompt: 'login' });
+  document.getElementById ('login-13').innerHTML += `
+<center>
+  <button id="firebase-sign-in-with-yahoo">SIgn in with Yahoo!</button>
+</center>`;
   document.getElementById ('firebase-sign-in-with-yahoo').addEventListener (
       'click',
       function () {
@@ -472,13 +476,12 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
           ((result) => {
               alert ("Got Yahoo! login " + result);
           }); });
-  */
+ 
   ui.start(
       '#firebaseui-auth-container',
       { callbacks:
         { signInSuccessWithAuthResult: Tootsville.Login.acceptSignedIn,
-          uiShown: function()
-          { Tootsville.Login.startSignIn(); }},
+          uiShown: Tootsville.Login.startSignIn },
         // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
         signInFlow: 'popup',
         tosUrl: 'https://wiki.tootsville.org/wiki/Core:ToS',
@@ -488,8 +491,8 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             scopes:
             [ 'https://www.googleapis.com/auth/plus.login' ],
             customParameters:
-            // Forces account selection even when one account
-            // is available.
+            /* Forces account selection even when one account
+             is available. */
             { prompt: 'select_account' } },
           firebase.auth.TwitterAuthProvider.PROVIDER_ID,
           /* Yahoo! is a generic OAuth source and should work like this … */
