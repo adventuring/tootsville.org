@@ -82,7 +82,8 @@ Tootsville.Util.closeWebSocket = function (event)
  console.warn ("WebSocket closed unexpectedly", event);
  if (1006 === event.code)
      Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
-                                   "The server stream connection was lost without warning.");
+                                   `<p>The server stream connection was lost without warning.</p>
+<p>Your Internet connection might not be working.</p>`);
  else
      Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
                                    "The server stream connection went down. Are we off-line?");

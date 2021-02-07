@@ -134,13 +134,20 @@ Tootsville.Util.loadScript = function (src)
  * to the player if it can't be reached.
  */
 Tootsville.Util.ensureServersReachable = function ()
-{ Tootsville.Util.rest ('GET', 'meta-game/ping').then
-  ( (response) => { Tootsville.trace ("Ping replied", response); },
+{ fetch (Tootsville.host.game + '/meta-game/ping').then
+  ( (response) => { if (response.ok)
+      Tootsville.trace ("Ping replied", response);
+                    else
+                        Tootsville.Gossip.Parrot.say (
+        "Squawk! I don't see any servers!",
+        `<p>I'm not able to reach any of the Tootsville game servers. </p>
+<p>This probably means you won't be able to play right now. </p>
+<p> <a href='https://wiki.tootsville.org/Network_Troubleshooting'>Network Troubleshooting</a></p>` );},
     (error) => { Tootsville.Gossip.Parrot.say (
         "Squawk! I don't see any servers!",
-        "I'm not able to reach any of the Tootsville.Game servers. "+
-            "This probably means you won't be able to play right now." +
-            "<a href='https://wiki.tootsville.org/Network_Troubleshooting'>Network Troubleshooting</a>" ); } ); };
+        `<p>A network error prevents access to the Tootsville game servers. </p>
+<p>This probably means you won't be able to play right now. </p>
+<p> <a href='https://wiki.tootsville.org/Network_Troubleshooting'>Network Troubleshooting</a></p>` ); });};
 
 /**
  * Check for value equality of two objects
