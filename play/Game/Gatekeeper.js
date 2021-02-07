@@ -733,6 +733,9 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
  */
 Tootsville.Game.Gatekeeper.bye = function (gram)
 { let avatar = Tootsville.Tank.avatars [ gram.n ];
+  if (gram.u === Tootsville.characterUUID || gram.n === Tootsville.character)
+  { console.error ("Received a “bye” packet for myself", gram);
+    return; }
   if (! (avatar && avatar.uuid === gram.u))
   { console.warn ("UUID mismatch, not destroying avatar. may be a zombie", gram);
     return; }
