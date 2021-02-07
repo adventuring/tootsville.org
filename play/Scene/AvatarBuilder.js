@@ -164,29 +164,12 @@ Tootsville.AvatarBuilder.postBuild = function (avatar, model, scene)
   { try { Tootsville.Game.NPCSystem.register (a); } catch (e) { console.error (e); } } };
 
 /**
- * Load the base avatar model from Jumbo.
+ * After loading the avatar in ``task'', set it up and colorize it.
  */
-Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
-{ var assetsManager = scene.assetManager;
-  if (! assetsManager)
-  { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
-  assetsManager.useDefaultLoadingScreen = false;
-  if (scene === Tootsville.Tank.scene)
-  { if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
-    { console.warn ("Almost re-loaded avatar model for " + avatar.name);
-      return; /* XXX finish? */ } }
-  var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
-                                            "https://jumbo.tootsville.org/Assets/Avatars/5/",
-                                            avatar.avatar + ".glb");
-  loadTask.onError = function (task, message, e)
-  { console.error ("Error " + task.name + ": " + message + ": " +
-                   e.message + " in " + e.filename + ":"  + e.lineNumber, task, e); };
-  loadTask.onSuccess = function (task)
+Tootsville.AvatarBuilder.afterLoading = function (task, avatar, scene, finish)
   { console.log ("Success with " + task.name);
     const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
     modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
-    modelRoot.rotationQuaternion = undefined;
-    modelRoot.rotation = BABYLON.Vector3.Zero ();
     if (task.loadedMeshes.length > 0)
         for (let i = 0; i < task.loadedMeshes.length; ++i) {
             modelRoot.addChild (task.loadedMeshes [i]);
@@ -204,7 +187,29 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
                    task.loadedSkeletons.length + " skeletons.");
     if (scene === Tootsville.Tank.scene)
     { Tootsville.AvatarBuilder.postBuild (avatar, modelRoot, scene); }
+    modelRoot.rotationQuaternion = undefined;
+    modelRoot.rotation = BABYLON.Vector3.Zero ();
     Tootsville.AvatarBuilder.colorize (avatar, modelRoot, scene, finish); };
+
+/**
+ * Load the base avatar model from Jumbo.
+ */
+Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
+{ var assetsManager = scene.assetManager;
+  if (! assetsManager)
+  { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
+  assetsManager.useDefaultLoadingScreen = false;
+  if (scene === Tootsville.Tank.scene)
+  { if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
+    { console.warn ("Almost re-loaded avatar model for " + avatar.name);
+      return; /* XXX finish? */ } }
+  var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
+                                            "https://jumbo.tootsville.org/Assets/Avatars/5/",
+                                            avatar.avatar + ".glb");
+  loadTask.onError = function (task, message, e)
+  { console.error ("Error " + task.name + ": " + message + ": " +
+                   e.message + " in " + e.filename + ":"  + e.lineNumber, task, e); };
+  loadTask.onSuccess = task => { Tootsville.AvatarBuilder.afterLoading (task, avatar, scene, finish) };
   assetsManager.load (); };
 
 /**
