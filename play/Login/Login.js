@@ -491,8 +491,13 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             // Forces account selection even when one account
             // is available.
             { prompt: 'select_account' } },
-          firebase.auth.TwitterAuthProvider.PROVIDER_ID
-          /* Twitter does not support scopes. */ ]}); };
+          firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+          /* Yahoo! is a generic OAuth source and should work like this … */
+          { provider: "yahoo.com",
+            providerName: "Yahoo!",
+            buttonColor: "#1111dd",
+            iconUrl: "https://user-images.githubusercontent.com/49992195/56804289-28d68b00-681d-11e9-8341-e53b89061745.png",
+            loginHintKey: "login_hint" }]}); };
 
 /**
  * Callback for Firebase completing authentication
