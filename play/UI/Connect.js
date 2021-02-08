@@ -32,7 +32,7 @@
  */
 
 (function () {
-    var clickHandlers = {
+    let clickHandlers = {
         'control-panel-icon': (event) => { Tootsville.UI.HUD.toggleHUDPanel('control-panel');
                                            event.stopPropagation (); },
         'toolbox-mobile-phone': (event) => { Tootsville.UI.HUD.showHUDPanel('mobile');
@@ -54,7 +54,7 @@
             if (event.target.checked)
             { Tootsville.Game.Speech.loudness = 'whisper'; } }
     };
-    for (var id in clickHandlers) {
+    for (let id in clickHandlers) {
         document.getElementById(id).addEventListener('click', clickHandlers[id]);
     }
 
@@ -67,7 +67,4 @@
     for (let i = 0; i < emojis.length; i++)
     { emojis [ i ].addEventListener ('click', event => {Tootsville.UI.insertEmoji (event);}); };
 })();
-
-
-
 
