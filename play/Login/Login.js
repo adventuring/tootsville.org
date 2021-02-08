@@ -151,7 +151,8 @@ Tootsville.Login.setSensitiveP = function ()
  * Build the Toots List display from the Toots List in memory.
  */
 Tootsville.Login.populateTootsList = function ()
-{ if ('block' !== document.getElementById ('login').style.display)
+{ if (Tootsville.character ||
+      ('block' !== document.getElementById ('login').style.display))
     return;
   Tootsville.Login.clearTootsList ();
   Tootsville.Login.setSensitiveP ();
@@ -450,7 +451,7 @@ Tootsville.Login.doneEditingSettings = function ()
   document.querySelector ('#toots-list>#add-toot').style.display =
   ( ((toots.length < 5) || Tootsville.enableMoreTootsP) ? 'block' : 'none');
   document.querySelector ('#pick-toot>h2').innerHTML = 'Pick a Toot Character';
-  document.querySelector ('#pick-toot>p').innerHTML = 'Click or tap a character to play now.';
+  document.querySelector ('#pick-toot>p').innerHTML = "Click or tap a character's name to play now.";
   document.querySelector ('#edit-toot-settings').style.display = 'block';
   document.querySelector ('#new-toot-hint').style.display =
   ( ((toots.length < 5) || Tootsville.enableMoreTootsP) ? 'block' : 'none');
@@ -467,7 +468,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
   yahoo.setCustomParameters({ prompt: 'login' });
   document.getElementById ('login-13').innerHTML += `
 <center>
-  <button id="firebase-sign-in-with-yahoo">SIgn in with Yahoo!</button>
+  <button id="firebase-sign-in-with-yahoo">Sign in with Yahoo!</button>
 </center>`;
   document.getElementById ('firebase-sign-in-with-yahoo').addEventListener (
       'click',

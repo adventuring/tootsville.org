@@ -62,7 +62,7 @@ Tootsville.Game.bootstrap = function ()
     Tootsville.Login.start ();
 
     let savedVolume = parseInt(localStorage.getItem('volume'));
-    if (NaN !== savedVolume)
+    if (! isNaN(savedVolume))
         Tootsville.UI.Audio.currentVolume = savedVolume;
 
     Tootsville.UI.setBackgroundMusic ("bensound-adventure");
