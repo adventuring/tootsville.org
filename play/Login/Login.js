@@ -473,8 +473,13 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
       'click',
       function () {
           firebase.auth().signInWithPopup (yahoo).then
-          ((result) => {
-              alert ("Got Yahoo! login " + result);
+          (result => {
+              console.info ("Got Yahoo! login", result);
+              Tootsville.Login.storeCredentialInfo (result);
+          },
+           error => {
+              console.error ("Error with Yahoo! login", result);
+              alert ("Error with Yahoo! login");
           }); });
  
   ui.start(
