@@ -97,7 +97,7 @@ Tootsville.Login.createTootListItem = function (toot)
     canvas.width = 256;
     canvas.height = 256;
     /* Create AvatarViewer asynchronously */
-    setTimeout ( () => { 
+    setTimeout ( () => {
         console.debug ("Drawing avatar " + toot.name + " in a canvas");
         Tootsville.AvatarViewer.createViewerInCanvas (toot, canvas, li); } ,
                  10 ); }
@@ -211,7 +211,7 @@ Tootsville.Login.playWithCharacter = function (name)
   { Tootsville.Gossip.Parrot.ask ("That's a Child Toot",
                                   "<p> Are you sure you want to sign in with a Child account? </p>" +
                                   "<p> This does not give your child permission to play — it lets you control their character. </p>"+
-"<a href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how your child can sign in</a>",
+                                  "<a href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how your child can sign in</a>",
                                   [{ tag: "yes", text: "Sign In" },
                                    { tag: "no", text: "Cancel" }]).
     then (answer => { if ('yes' === answer)
@@ -252,8 +252,8 @@ Tootsville.Login.fillGoogleUserInfo = function ()
   if (! Tootsville.player)
   { Tootsville.Util.rest ('GET', '/users/me').then
     ( personInfo =>
-      { Tootsville.player = personInfo;
-        Tootsville.Login.player.name = personInfo.displayName; } ); } };
+        { Tootsville.player = personInfo;
+          Tootsville.Login.player.name = personInfo.displayName; } ); } };
 
 /**
  * Show the view for switching Toot characters
@@ -423,7 +423,7 @@ Tootsville.Login.considerChildApproval = function (uuid)
 
 /**
  * Add to LI the child settings flag.
- * 
+ *
  * Takes into account if we're in child settings mode or just displaying it.
  */
 Tootsville.Login.addChildFlag = function (li)
@@ -436,7 +436,7 @@ Tootsville.Login.addChildFlag = function (li)
   else
   { if (toot.childP)
     { li.innerHTML += '<BR><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN>';
-     if (toot.childRequest && toot.childRequest.uuid)
+      if (toot.childRequest && toot.childRequest.uuid)
       { console.log ("request for child " + toot.userName);
         Tootsville.Login.addChildRequest (li, toot.childRequest); }
       else
@@ -463,7 +463,7 @@ Tootsville.Login.doneEditingSettings = function ()
 Tootsville.Login.firebaseLogin = function (loginPanel)
 { var ui = new firebaseui.auth.AuthUI(firebase.auth());
   Tootsville.trace ("Starting Firebase login");
-  
+
   let yahoo = new firebase.auth.OAuthProvider('yahoo.com');
   yahoo.setCustomParameters({ prompt: 'login' });
   document.getElementById ('login-13').innerHTML += `
@@ -480,8 +480,8 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
               Tootsville.Login.storeCredentialInfo (result);
           },
            error => {
-              console.error ("Error with Yahoo! login", result);
-              alert ("Error with Yahoo! login");
+               console.error ("Error with Yahoo! login", result);
+               alert ("Error with Yahoo! login");
            }); });
   let twitter = new firebase.auth.TwitterAuthProvider ();
   document.getElementById ('firebase-sign-in-with-twitter').addEventListener (
@@ -493,10 +493,9 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
               Tootsville.Login.storeCredentialInfo (result);
           },
            error => {
-              console.error ("Error with Twittter login", result);
-              alert ("Error with Twitter login");
-          }); });
- 
+               console.error ("Error with Twittter login", result);
+               alert ("Error with Twitter login");
+           }); });
   ui.start(
       '#firebaseui-auth-container',
       { callbacks:
@@ -512,7 +511,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
             [ 'https://www.googleapis.com/auth/plus.login' ],
             customParameters:
             /* Forces account selection even when one account
-             is available. */
+               is available. */
             { prompt: 'select_account' } } ]}); };
 
 /**
