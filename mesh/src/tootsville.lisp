@@ -3,7 +3,7 @@
 
 ;;;; -*- lisp -*-
 ;;;
-;;;; src/tootsville.lisp is part of Tootsville
+;;;; mesh/src/tootsville.lisp is part of Tootsville
 ;;;
 ;;;; Copyright  ©   2008-2017  Bruce-Robert  Pocock;  ©   2018-2021  The
 ;;;; Corporation for Inter-World Tourism and Adventuring (ciwta.org).
