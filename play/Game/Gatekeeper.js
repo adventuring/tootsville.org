@@ -446,21 +446,25 @@ Tootsville.Game.Gatekeeper.postman = function (gram)
  *
  * @table @code
  * @item buddyList
+ * Buddy list
  * @item ignoreList
+ * Ignore List
  * @end table
  */
 Tootsville.Game.Gatekeeper.getUserLists = function (gram)
-{ let buddies = gram.buddyList || [];
-  let ignored = gram.ignoreList || [];
-  if (document.getElementById ('starred-contacts'))
-  { for (let i = 0; i < buddies.length; ++i)
-    { let buddy = buddies [ i ];
-      let buddyLI = document.createElement ('LI');
-      buddyLI.innerText = buddy.n;
-      if (buddy.starredP)
-      { document.getElementById ('starred-contacts').appendChild (buddyLI); }
-      else
-      { document.getElementById ('unstarred-contacts').appendChild (buddyLI); } } } };
+{ Tootsville.buddyList = gram.buddyList || [];
+  Tootsville.ignoreList = gram.ignoreList || [];
+  let starredContacts = document.getElementById ('starred-contacts');
+  let unstarredContacts = document.getElementById ('unstarred-contacts');
+  if (starredContacts)
+      for (let i = 0; i < Tootsville.buddyList.length; ++i) {
+          let buddy = Tootsville.buddyList [ i ];
+          let buddyLI = document.createElement ('LI');
+          buddyLI.innerText = buddy.n;
+          if (buddy.starredP)
+              starredContacts.appendChild (buddyLI);
+          else
+              unstarredContacts.appendChild (buddyLI); }};
 
 /**
  * WRITEME — this function is not yet documented.
@@ -623,7 +627,8 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
   { Tootsville.characterUUID = gram.uuid;
     Tootsville.character = gram.playWith;
     Tootsville.player = gram.player;
-    Tootsville.Tank.start3D (); }
+    Tootsville.Tank.start3D ();
+    Tootsville.Util.infinity('getUserLists'); }
   else
       Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); };
 
