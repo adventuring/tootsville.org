@@ -682,11 +682,65 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
     Tootsville.UI.HUD.showHUDPanel ('player-card').
   then ( () =>
          { document.getElementById ('other-player-name').innerText = Tootsville.Tank.avatars [ name ].userName;
-           let container = document.getElementById ('other-player-avatar');
-           let canvas = Tootsville.UI.HUD.createPaperdollCanvas (container.querySelector ("IMG"));
+           const container = document.getElementById ('other-player-avatar');
+           const canvas = Tootsville.UI.HUD.createPaperdollCanvas (container.querySelector ("IMG"));
            Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.Tank.avatars [ name ],
                                                          canvas,
-                                                         container); } ); };
+                                                         container);
+           const contactStatus = document.getElementById ('other-player-contact-status');
+           let contactKind = null;
+           for (let i = 0; i < Tootsville.buddyList.length; ++i)
+               if (Tootsville.buddyList [i].n === name)
+           { if (Tootsville.buddyList [i].starredP)
+               contactKind = 'starred';
+             else
+                 contactKind = 'buddy'; };
+           for (let i = 0; i < Tootsville.ignoreList.length; ++i)
+               contactKind = 'ignore';
+           if (null === contactKind)
+               contactStatus.innerHTML = `
+<button id="add-contact-as-buddy">Add Contact</button>
+<button id="add-contact-as-ignore">Ignore</button>`;
+           else if ('buddy' === contactKind)
+               contactStatus.innerHTML = `
+<button id="remove-contact-as-buddy">Remove Contact</button>
+<button id="star-buddy">Star Contact</button>
+<button id="add-contact-as-ignore">Ignore</button>`;
+           else if ('starred' === contactKind)
+               contactStatus.innerHTML = `
+<button id="remove-contact-as-buddy">Remove Contact</button>
+<button id="unstar-buddy">Unstar Contact</button>
+<button id="add-contact-as-ignore">Ignore</button>`;
+           else
+               contactStatus.innerHTML = `
+<button id="add-contact-as-buddy">Add Contact</button>
+<button id="remove-contact-as-ignore">Stop Ignoring</button>`;
+           const addContactAsBuddy = document.getElementById('add-contact-as-buddy');
+           if (addContactAsBuddy)
+               addContactAsBuddy.addEventListener ('click',
+                                                   () => { Tootsville.Game.UserLists.addContactAsBuddy (name); });
+           const addContactAsIgnore = document.getElementById('add-contact-as-ignore');
+           if (addContactAsIgnore)
+               addContactAsIgnore.addEventListener ('click',
+                                                   () => { Tootsville.Game.UserLists.addContactAsIgnore (name); });
+           const removeContactAsBuddy = document.getElementById('remove-contact-as-buddy');
+           if (removeContactAsBuddy)
+               removeContactAsBuddy.addEventListener ('click',
+                                                   () => { Tootsville.Game.UserLists.removeContactAsBuddy (name); });
+           const removeContactAsIgnore = document.getElementById('remove-contact-as-ignore');
+           if (removeContactAsIgnore)
+               removeContactAsIgnore.addEventListener ('click',
+                                                   () => { Tootsville.Game.UserLists.removeContactAsIgnore (name); });
+           const starBuddy = document.getElementById('star-buddy');
+           if (starBuddy)
+               starBuddy.addEventListener ('click',
+                                           () => { Tootsville.Game.UserLists.starBuddy (name); });
+           const unstarBuddy = document.getElementById('unstar-buddy');
+           if (unstarBuddy)
+               unstarBuddy.addEventListener ('click',
+                                                   () => { Tootsville.Game.UserLists.unstarBuddy (name); });
+           
+         });};
 
 /**
  * Respond to a user click (tap) on a mesh in the tank
