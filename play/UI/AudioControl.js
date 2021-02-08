@@ -81,7 +81,7 @@ Tootsville.UI.Audio.setVolume = function (newVolume)
 Tootsville.UI.Audio.updateVolumeSlider = function()
 { var slider = document.getElementById('volume-slider');
   if (slider)
-  { slider.value = Tootsville.UI.Audio.currentVolume;
+  { slider.value = Tootsville.UI.Audio.currentVolume ||= 100;
     slider.disabled = false; } };
 
 /**
@@ -89,7 +89,7 @@ Tootsville.UI.Audio.updateVolumeSlider = function()
  */
 Tootsville.UI.Audio.updateVolumeMuteIcon = function()
 { var muteIcon = document.getElementById('mute-icon');
-  if (Tootsville.UI.Audio.currentVolume < 9)
+  if (Tootsville.UI.Audio.currentVolume < 5)
   { muteIcon.style.color = 'red'; } else
   { muteIcon.style.color = 'black'; } };
 
