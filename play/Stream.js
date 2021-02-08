@@ -68,7 +68,9 @@ Tootsville.Util.connectWebSocket = function () {
     { Tootsville.Util.checkStreamRunning = setInterval (Tootsville.Util.checkStream, 300000); } };
 
 /**
+ * Send raw ``json'' data down stream connection.
  *
+ * It's usually advisable to call `Tootsville.Util.infinity' instead.
  */
 Tootsville.Util.stream = function (json)
 { console.debug ("WebSocket stream send command " + json.c, json);
@@ -77,7 +79,7 @@ Tootsville.Util.stream = function (json)
   Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
 
 /**
- *
+ * Upon connection, log in with Auth/∞/ℵ₀ method or child code
  */
 Tootsville.Util.openWebSocket = function (event) {
     if (Tootsville.Login.firebaseAuth)
@@ -89,22 +91,22 @@ Tootsville.Util.openWebSocket = function (event) {
     { Tootsville.Util.stream ({ c: "getApple" }); } };
 
 /**
- *
+ * When the WebSocket is closed, warn the user but try also to reconnect.
  */
 Tootsville.Util.closeWebSocket = function (event)
 {if (Tootsville.Gossip.closeAndQuitP) return;
  console.warn ("WebSocket closed unexpectedly", event);
  if (1006 === event.code)
      Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
-                                   `<p>The server stream connection was lost without warning.</p>
-<p>Your Internet connection might not be working.</p>`);
+                                   `<p>The server stream connection was lost without warning.</p> <p>Your
+Internet connection might not be working.</p>`);
  else
      Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
                                    "The server stream connection went down. Are we off-line?");
  Tootsville.Util.checkStream (); };
 
 /**
- *
+ * Handle incoming WebSocket datagram
  */
 Tootsville.Util.messageFromWebSocket = function (event)
 { let data;
@@ -118,7 +120,7 @@ Tootsville.Util.messageFromWebSocket = function (event)
   Tootsville.Gossip.gatekeeperAccept (null, { data: data } ); };
 
 /**
- *
+ * Handle WebSocket errors during connection.
  */
 Tootsville.Util.errorFromWebSocket = function (event)
 { console.warn ("WebSocket error", event);
@@ -140,7 +142,9 @@ Tootsville.Util.infinityAwaits = function (command, fromType, params) {
         Tootsville.Util.stream (Tootsville.Gossip.createPacket (command, params || {}) ); }); };
 
 /**
+ * Send an Infinity-mode stream request.
  *
+ * See `DEFINFINITY' for a discussion of Infinity Mode.
  */
 Tootsville.Util.infinity = function (command, params) {
     Tootsville.Util.stream (Tootsville.Gossip.createPacket (command, params || {}) ); };
