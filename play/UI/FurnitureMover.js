@@ -34,3 +34,103 @@
 if (!('Tootsville' in window)) { Tootsville = { UI: { FurnitureMover: {} }}; }
 if (!('UI' in Tootsville)) { Tootsville.UI = { FurnitureMover: {} }; }
 if (!('FurnitureMover' in Tootsville.UI)) { Tootsville.UI.FurnitureMover = {}; }
+
+Tootsville.UI.FurnitureMover.activeItem = undefined;
+Tootsville.UI.FurnitureMover.decorations = undefined;
+Tootsville.UI.FurnitureMover.mouseMode = null;
+
+/**
+ * Capture mouse events and translate based on mouseMode
+ */
+Tootsville.UI.FurnitureMover.dragHelper = function (event) {
+    if ('position' === Tootsville.UI.FurnitureMover.mouseMode) {
+        // TODO
+    } else if ('rotation' === Tootsville.UI.FurnitureMover.mouseMode) {
+        // TODO
+    } else {
+        /* How did we get here? Abandon any changes */
+        Tootsville.UI.FurnitureMover.endArranging (false);
+    }
+};
+
+Tootsville.UI.FurnitureMover.clickHelper = function (event) {
+    // TODO
+};
+
+/**
+ * Stop capturing the mouse movement
+ */
+Tootsville.UI.FurnitureMover.releaseMouseDrag = function (pointerId) {
+    document.onpointermove = undefined;
+    document.onpointerdown = undefined;
+    document.releasePointerCapture (pointerId);
+};
+
+/**
+ * Begin capturing the mouse movement
+ */
+Tootsville.UI.FurnitureMover.captureMouseDrag = function (pointerId) {
+    document.onpointermove = Tootsville.UI.FurnitureBuilder.dragHelper;
+    document.onpointerdown = Tootsville.UI.FurnitureBuilder.clickHelper;
+    document.setPointerCapture (pointerId);
+};
+
+/**
+ * Start rotating the active item
+ */
+Tootsville.UI.FurnitureMover.rotateItem = function (event) {
+    Tootsville.UI.FurnitureMover.mouseMode = 'rotate';
+    Tootsville.UI.FurnitureMover.captureMouseDrag (event.pointerId);
+    // TODO alter decorations
+};
+
+/**
+ * Start positioning the active item
+ */
+Tootsville.UI.FurnitureMover.positionItem = function (event) {
+    Tootsville.UI.FurnitureMover.mouseMode = 'position';
+    Tootsville.UI.FurnitureMover.captureMouseDrag (event.pointerId);
+    // TODO alter decorations
+};
+
+/**
+ * Close the furniture moving interface and commit or abandon changes
+ */
+Tootsville.UI.FurnitureMover.endArranging = function (keepChangesP) {
+    Tootsville.UI.FurnitureMover.releaseMouseDrag ();
+    Tootsville.UI.FurnitureMover.destroyDecorations ();
+    if (keepChangesP) {
+        // TODO, send changes to server
+        // Tootsville.Util.infinity ( . . . );
+    } else {
+        const item = Tootsville.UI.FurnitureMover.activeItem;
+        item.model.position = item.originalPosition;
+        item.model.rotation = item.originalRotation;
+    }
+};
+
+/**
+ * Destroy the move and rotate decorations
+ */
+Tootsville.UI.FurnitureMover.destroyDecorations = function () {
+    // TODO
+};
+
+/**
+ * Add the move and rotate decorations to ``item''
+ */
+Tootsville.UI.FurnitureMover.addDecorations = function (item) {
+    // TODO
+};
+
+/**
+ * Begin arranging the position and facing of ``item''
+ *
+ * Adds UI buttons to translate or rotate the item
+ */
+Tootsville.UI.FurnitureMover.beginArranging = function (item) {
+    Tootsville.UI.FurnitureMover.activeItem = item;
+    item.originalPosition = item.model.position;
+    item.originalRotation = item.model.rotation;
+    Tootsville.UI.FurnitureMover.addDecorations (item);
+};
