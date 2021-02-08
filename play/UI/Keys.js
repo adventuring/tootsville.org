@@ -68,7 +68,7 @@ Tootsville.UI.Keys.bindings =
         Accept: null,
         Again: null,
         Attn: null,
-        Cancel: null,
+        Cancel: 'keyboard-quit',
         ContextMenu: 'toggle-control-panel',
         Escape: 'close-all-panels',
         BrowserStop: 'close-all-panels',
@@ -130,7 +130,7 @@ Tootsville.UI.Keys.bindings =
       withControl:
       { 'a': 'beginning-of-line',
         'b': 'backward-char',
-        'c': 'prefix C-c',
+        'c': 'prefix-C-c',
         'd': 'delete',
         'e': 'end-of-line',
         'f': 'forward-char',
@@ -162,21 +162,23 @@ Tootsville.UI.Keys.bindings =
           'm': 'mobile',
           'p': 'paperdoll',
           'h': 'hide-talk-box',
-        'PageDown': 'show-contacts',
-        'PageUp': 'control-panel',
-        'Home': 'hide-talk-box',
-        ',': 'whisper',
-        '.': 'shout',
-        "'": 'talk',
-        '/': 'talk',
-        'F12': 'volume-down',
-        'ArrowDown': 'volume-down',
-        'ArrowUp': 'volume-up'
+          'PageDown': 'show-contacts',
+          'PageUp': 'control-panel',
+          'Home': 'hide-talk-box',
+          ',': 'whisper',
+          '.': 'shout',
+          "'": 'talk',
+          '/': 'talk',
+          'F12': 'volume-down',
+          'ArrowDown': 'volume-down',
+          'ArrowUp': 'volume-up'
       },
       withHyper: {},
       withSuper: {},
       afterControlX:
-      { single: {},
+      { single: {
+          'h': 'select-all'
+      },
         withControl: {},
         withMeta: {} },
       afterControlC:
@@ -199,13 +201,13 @@ Tootsville.UI.Keys.onKeyDown = function (ev)
   if (Tootsville.UI.Keys.prefixed)
   { let binding = Tootsville.UI.Keys.prefixed ["afterControl" + Tootsville.UI.Keys.prefixed][coda][ev.key];
     if (ev.key.length > 1 || binding)
-      console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
+        console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
     Tootsville.UI.runCommand(binding, ev); }
   else
   { let binding = Tootsville.UI.Keys.bindings [coda][ev.key];
     if (ev.key.length > 1 || binding)
         console.info ("Keypress " + coda + " " + ev.key + " bound to " + binding);
-Tootsville.UI.runCommand(binding, ev); } };
+    Tootsville.UI.runCommand(binding, ev); } };
 
 // 
 
@@ -352,7 +354,8 @@ Tootsville.UI.Keys.isearchBackward = function (event)
  *
  */
 Tootsville.UI.Keys.keyboardQuit = function (event)
-{ /* TODO */ };
+{ /* TODO */
+    Tootsville.UI.Keys.prefixed = undefined; };
 
 /**
  * Delete the entire contents of the speaking box.
@@ -386,34 +389,38 @@ Tootsville.UI.Keys.killWord = function (event)
 { /* TODO */ };
 
 /**
+ * Navigate to the next line in the history of spoken lines.
  *
+ * TODO. Currently just clears the input box.
  */
 Tootsville.UI.Keys.nextHistoryLine = function (event)
-{ /* TODO */ };
+{ document.getElementById('talk-speak').value = ''; };
 
 /**
- *
+ * Sets the C-c prefix
  */
 Tootsville.UI.Keys.prefixCc = function (event)
-{ /* TODO */ };
+{ Tootsville.UI.Keys.prefixed = 'C'; };
 
 /**
- *
+ * Sets the C-x prefix
  */
 Tootsville.UI.Keys.prefixCx = function (event)
-{ /* TODO */ };
+{ Tootsville.UI.Keys.prefixed = 'X'; };
 
 /**
+ * Move back through the history of spoken lines.
  *
+ * TODO. Currently only recalls the last submitted text.
  */
 Tootsville.UI.Keys.priorHistoryLine = function (event)
 { document.getElementById ('talk-speak').value = Tootsville.UI.recallText; };
 
 /**
- *
+ * Select the entire buffer
  */
 Tootsville.UI.Keys.selectAll = function (event)
-{ /* TODO */ };
+{ document.getElementById('talk-speak').select (); };
 
 /**
  * Speak the line currently in the buffer
