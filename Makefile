@@ -220,12 +220,12 @@ TODO.scorecard:	$(shell find \( -name \*.lisp -o -name \*.asd \
 
 #################### bin/jscl
 
-jscl:	bin/jscl
+jscl:	jscl/jscl.js
 
-jscl/jscl.min.js:	jscl
-
-bin/jscl: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
+jscl/jscl.js: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
 	cd jscl; ./make.sh
+	rm jscl/jscl-node.js
+	rm jscl/jscl-web.js
 
 #################### www
 
@@ -347,7 +347,7 @@ dist/play.$(clusterorg)/play/UI/panels/control-panel.html:	$(shell ls -1 play/UI
 	mkdir -p dist/play.$(clusterorg)/play/UI/panels
 	cp -ar play/UI/panels/* dist/play.$(clusterorg)/play/UI/panels
 
-dist/play.$(clusterorg):	worker htaccess \
+dist/play.$(clusterorg):	worker htaccess mesh \
 	dist/play.$(clusterorg)/play/tootsville.js \
 	dist/play.$(clusterorg)/.well-known/assetlinks.json \
 	dist/play.$(clusterorg)/play/UI/panels/control-panel.html \
@@ -361,6 +361,29 @@ dist/play.$(clusterorg):	worker htaccess \
 	dist/play.$(clusterorg)/.htaccess \
 	dist/play.$(clusterorg)/error/404.var \
 	dist/play.$(clusterorg)/play/system-check/index.html
+
+#################### mesh
+
+mesh:	dist/play.$(clusterorg)/play/mesh.js \
+	dist/play.$(clusterorg)/play/jscl.min.js
+
+dist/play.$(clusterorg)/play/jscl.min.js: jscl/jscl.js
+	closure-compiler \
+                    $(< build/closure-compiler.opts)           \
+		--js jscl/jscl.js   \
+		--js_output_file $@
+
+dist/play.$(clustororg)/play/mesh.min.js: dist/mesh.js
+	closure-compiler \
+                    $(< build/closure-compiler.opts)           \
+		--js dist/mesh.js   \
+		--js_output_file $@
+
+dist/mesh.js: $(find mesh -name \*.lisp)
+	sbcl --load 'jscl/jscl.lisp' \
+		--eval '(jscl::bootstrap)' \
+		--load 'mesh/make-mesh.lisp' \
+		--quit
 
 #################### deploy
 
