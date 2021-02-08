@@ -39,11 +39,11 @@ if (!('WaWa' in Tootsville.UI)) { Tootsville.UI.WaWa = {}; }
 */
 Tootsville.UI.WaWa.playShifted = function (file, speed=1, after) {
     /*
-          https://stackoverflow.com/a/49749868/475150
-          https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode/playbackRate
-          https://github.com/mdn/webaudio-examples/tree/master/decode-audio-data
-          https://www.w3schools.com/jsref/prop_audio_loop.asp
-        */
+      https://stackoverflow.com/a/49749868/475150
+      https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode/playbackRate
+      https://github.com/mdn/webaudio-examples/tree/master/decode-audio-data
+      https://www.w3schools.com/jsref/prop_audio_loop.asp
+    */
     let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let source = audioCtx.createBufferSource();
     let request = new XMLHttpRequest();
@@ -55,6 +55,7 @@ Tootsville.UI.WaWa.playShifted = function (file, speed=1, after) {
         audioCtx.decodeAudioData(audioData, function(buffer) {
             let myBuffer = buffer;
             source.buffer = myBuffer;
+            // TODO set volume here?
             source.playbackRate.value = speed;
             source.connect(audioCtx.destination);
             source.loop = false;
@@ -101,7 +102,7 @@ Tootsville.UI.WaWa.build = function (phrase, finish)
         else
         { duration += 1; } }
       if (duration > 0)
-      { const speed = 9 / Math.min(duration, 9);
+      { const speed = 9 / Math.min(duration, 9); // XXX adjust speed
         if (j === wordsLength)
         { if (exclamationP)
           { chain [chain.length] = [ 'cc0-elephant-bellow-trimmed.webm', .67 * speed ]; }
