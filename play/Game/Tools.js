@@ -32,7 +32,7 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {}; };
 if (!('Tools' in Tootsville.Game)) { Tootsville.Game.Tools = {}; };
 
 /**
- * Use a shovel at the given coördinates.
+ * Use a shovel on the given item.
  *
  * A shovel creates a hole, and may reveal any hidden object buried
  * there.
@@ -40,54 +40,58 @@ if (!('Tools' in Tootsville.Game)) { Tootsville.Game.Tools = {}; };
  * Using a shovel can also fill a hole, hiding any objects in the
  * hole.
  */
-Tootsville.Game.Tools.shovel = function (x, y, z)
+Tootsville.Game.Tools.shovel = function (item, x, y, z)
 { /* TODO shovel */};
 
 /**
- * Use an axe at the given coördinates.
+ * Use an axe on the given item.
  *
  * Cut a branch or tree trunk.
  */
-Tootsville.Game.Tools.axe = function (x, y, z)
+Tootsville.Game.Tools.axe = function (item, x, y, z)
 { /* TODO axe */};
 
 /**
- * Use a pickaxe at the given coördinates.
+ * Use a pickaxe on the given item.
  *
  * Break apart a rock into smaller stones.
  */
-Tootsville.Game.Tools.pickaxe = function (x, y, z)
+Tootsville.Game.Tools.pickaxe = function (item, x, y, z)
 { /* TODO pickaxe */};
 
 /**
- * Use a wrench at the given coördinates.
+ * Use a wrench on the given item.
  *
  * Given some building materials, combine them into a constructed
  * object.
  */
-Tootsville.Game.Tools.wrench = function (x, y, z)
+Tootsville.Game.Tools.wrench = function (item, x, y, z)
 { /* TODO hammer */ };
 
 /**
- * Use a sewing kit at the given coördinates.
+ * Use a sewing kit on the given item.
  *
  * Used to create clothing from cloth.
  */
-Tootsville.Game.Tools.sewingKit = function (x, y, z)
+Tootsville.Game.Tools.sewingKit = function (item, x, y, z)
 { /* TODO sewing kit */ };
 
 /**
- * Use a butterfly net at the given coördinates.
+ * Use a butterfly net on the given item.
  *
  * Attempt to capture a bug.
  */
-Tootsville.Game.Tools.butterflyNet = function (x, y, z)
+Tootsville.Game.Tools.butterflyNet = function (item, x, y, z)
 { /* TODO butterfly net */ };
 
 /**
- * Use a fishing rod at the given coördinates.
+ * Use a fishing rod on the given item.
  *
  * Attempt to catch a fish.
  */
-Tootsville.Game.Tools.fishingRod = function (x, y, z)
+Tootsville.Game.Tools.fishingRod = function (item, x, y, z)
 { /* TODO fishing rod */ };
+
+/**
+ * Use a paint brush on the given item.
+ */
