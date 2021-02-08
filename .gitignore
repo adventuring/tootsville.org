@@ -45,3 +45,5 @@ TODO.scorecard
 node_modules
 package-lock.json
 
+# macOS junk
+.DS_Store
