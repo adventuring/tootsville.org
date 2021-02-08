@@ -351,7 +351,7 @@ Tootsville.UI.Keys.isearchBackward = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Quit keyboard action. Currently only resets the prefix keys.
  */
 Tootsville.UI.Keys.keyboardQuit = function (event)
 { /* TODO */
@@ -365,10 +365,12 @@ Tootsville.UI.Keys.killLine = function (event)
   Tootsville.UI.talkSpeak.focus (); };
 
 /**
- *
+ * Kill (cut) the selected region
  */
 Tootsville.UI.Keys.killRegion = function (event)
-{ /* TODO */ };
+{ const text = document.getElementById('talk-speak');
+  navigator.clipboard.writeText (text.value.substr(text.selectionStart, text.selectionEnd));
+  text.setRangeText (''); };
 
 /**
  *
@@ -377,13 +379,13 @@ Tootsville.UI.Keys.killRingSave = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Remove the current or previous sentence
  */
 Tootsville.UI.Keys.killSentence = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Remove the current or previous word
  */
 Tootsville.UI.Keys.killWord = function (event)
 { /* TODO */ };
@@ -423,7 +425,9 @@ Tootsville.UI.Keys.selectAll = function (event)
 { document.getElementById('talk-speak').select (); };
 
 /**
- * Speak the line currently in the buffer
+ * Speak the line currently in the buffer.
+ *
+ * TODO: If a Parrot message is open, instead dismiss it.
  */
 Tootsville.UI.Keys.speakLine = function (event)
 { let el = document.getElementById ('talk-speak');
@@ -459,10 +463,11 @@ Tootsville.UI.Keys.upcaseWord = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Yank (paste) from the system's clipboard
  */
 Tootsville.UI.Keys.yank = function (event)
-{ /* TODO */ };
+{ const text = document.getElementById('talk-speak');
+  text.setRangeText (navigator.clipboard.readText ()); };
 
 /**
  *
