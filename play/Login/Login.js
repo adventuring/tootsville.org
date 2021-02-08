@@ -207,10 +207,12 @@ Tootsville.Login.doRealLogin = function (name)
 Tootsville.Login.playWithCharacter = function (name)
 { let li = this.findLIForToot (name);
   if (li ['data-toot'].childP)
-  { Tootsville.Gossip.Parrot.ask ("That's a Child Toot",
-                                  "<p> Are you sure you want to sign in with a Child account? </p>" +
-                                  "<p> This does not give your child permission to play — it lets you control their character. </p>"+
-                                  "<a href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how your child can sign in</a>",
+  { Tootsville.Gossip.Parrot.ask ("That's a Child Toot", `
+<p> Are you sure you want to sign in with a Child account? </p> <p>
+This does not give your child permission to play — it lets you control
+their character. </p> <a
+href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how
+your child can sign in</a>`,
                                   [{ tag: "yes", text: "Sign In" },
                                    { tag: "no", text: "Cancel" }]).
     then (answer => { if ('yes' === answer)
