@@ -756,9 +756,10 @@ Tootsville.Game.Gatekeeper.c = function (gram)
       console.error ("Command processor reports error", gram);
       Tootsville.Gossip.Parrot.say ("Server error", `
 <P>The server reports that this game made a mistake: </P>
-<BLOCKQUOTE> ${ gram.error } </BLOCKQUOTE>
+<BLOCKQUOTE ID="error-text-for-parrot"></BLOCKQUOTE>
 <A HREF="https://wiki.tootsville.org/wiki/Server_command_processor_error">Learn more…</A>
 `);
+      document.getElementById('error-text-for-parrot').innerText = gram.error;
   } };
 
 /**
