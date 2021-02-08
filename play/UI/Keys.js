@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/ui/keys.js is part of Tootsville
+ * ./play/UI/Keys.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,7 +31,7 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = { Ui: { KEYS: {} }}; }
+if (!('Tootsville' in window)) { Tootsville = { UI: { Keys: {} }}; }
 if (!('UI' in Tootsville)) { Tootsville.UI = { Keys: {} }; }
 if (!('Keys' in Tootsville.UI)) { Tootsville.UI.Keys = {}; }
 
