@@ -82,7 +82,9 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
  */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building furniture " + item.template.name + " " + item.uuid);
-  model.scaling = new BABYLON.Vector3 (item.scale.x, item.scale.y, item.scale.z);
+  model.scaling = new BABYLON.Vector3 (parseFloat(item.scale.x),
+                                       parseFloat(item.scale.y),
+                                       parseFloat(item.scale.z));
   model.checkCollisions = true;
   try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
@@ -107,8 +109,10 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
   loadTask.onSuccess = function (task)
   { const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
     let i;
-    modelRoot.position = new BABYLON.Vector3 (item.position.x, item.position.y, item.position.z);
-    modelRoot.rotate (BABYLON.Axis.Y, item.facing);
+    modelRoot.position = new BABYLON.Vector3 (parseFloat(item.position.x),
+                                              parseFloat(item.position.y),
+                                              parseFloat(item.position.z));
+    modelRoot.rotate (BABYLON.Axis.Y, parseFloat(item.facing));
     for (i = 0; i < task.loadedMeshes.length; ++i)
     { modelRoot.addChild (task.loadedMeshes [i]);
       task.loadedMeshes [i].renderOutline = true;
