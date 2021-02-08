@@ -589,7 +589,10 @@ Tootsville.Login.quit = function ()
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
-  firebase.auth().signOut().then(Tootsville.Login.start); };
+  firebase.auth().signOut().then(Tootsville.Login.start);
+  /* the above does not work properly, so */
+  location.reload ();
+};
 
 /**
  * Toggle whether the player is marked as Sensitive or not.
