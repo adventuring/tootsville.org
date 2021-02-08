@@ -32,6 +32,11 @@
  */
 if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
 
+/**
+ * Ensure that a WebSocket stream connection is connected.
+ *
+ * May attempt to re-connect if the stream does not seem to be alive.
+ */
 Tootsville.Util.checkStream = function () {
     if (Tootsville.Util.WebSocket)
     { if (Tootsville.Util.WebSocket.readyState === WebSocket.OPEN)
@@ -39,6 +44,9 @@ Tootsville.Util.checkStream = function () {
       else if (! (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING) )
       { Tootsville.Util.connectWebSocket (); } } };
 
+/**
+ * Connect the WebSocket stream to the game host
+ */
 Tootsville.Util.connectWebSocket = function () {
     if ( Tootsville.Util.WebSocket &&
          (Tootsville.Util.WebSocket.readyState === WebSocket.OPEN ||
@@ -49,10 +57,7 @@ Tootsville.Util.connectWebSocket = function () {
         (! (Tootsville.character && Tootsville.childCode) ))
     { console.warn ("Can't connect until authenticated");
       return; }
-    let uri = Tootsville.host.game.replace("http", "ws") + "/infinity/alef-null";
-    if (/:5000/.test (uri)) {
-        uri = uri.replace (":5000", ":5004");
-    }
+    let uri = Tootsville.host.stream;
     console.log ("Connecting WebSocket to " + uri);
     Tootsville.Util.WebSocket = new WebSocket (uri);
     Tootsville.Util.WebSocket.onopen = (event) => { Tootsville.Util.openWebSocket (event); };
@@ -62,12 +67,18 @@ Tootsville.Util.connectWebSocket = function () {
     if (! Tootsville.Util.checkStreamRunning)
     { Tootsville.Util.checkStreamRunning = setInterval (Tootsville.Util.checkStream, 300000); } };
 
+/**
+ *
+ */
 Tootsville.Util.stream = function (json)
 { console.debug ("WebSocket stream send command " + json.c, json);
   if (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING)
   { setTimeout ( () => Tootsville.Util.stream (json), 10 ); }
   Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
 
+/**
+ *
+ */
 Tootsville.Util.openWebSocket = function (event) {
     if (Tootsville.Login.firebaseAuth)
     { Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
@@ -77,6 +88,9 @@ Tootsville.Util.openWebSocket = function (event) {
     else if (Tootsville.character && Tootsville.childCode)
     { Tootsville.Util.stream ({ c: "getApple" }); } };
 
+/**
+ *
+ */
 Tootsville.Util.closeWebSocket = function (event)
 {if (Tootsville.Gossip.closeAndQuitP) return;
  console.warn ("WebSocket closed unexpectedly", event);
@@ -89,6 +103,9 @@ Tootsville.Util.closeWebSocket = function (event)
                                    "The server stream connection went down. Are we off-line?");
  Tootsville.Util.checkStream (); };
 
+/**
+ *
+ */
 Tootsville.Util.messageFromWebSocket = function (event)
 { let data;
   try {
@@ -100,13 +117,15 @@ Tootsville.Util.messageFromWebSocket = function (event)
   console.debug ("Received data from " + data.from, data);
   Tootsville.Gossip.gatekeeperAccept (null, { data: data } ); };
 
+/**
+ *
+ */
 Tootsville.Util.errorFromWebSocket = function (event)
 { console.warn ("WebSocket error", event);
   Tootsville.Gossip.Parrot.say ("Connection Problem",
                                 "WebSocket connection problem: " + event.type +
                                 " connecting to " + event.target.url +
                                 ". Are you online?"); };
-
 /**
  * Submit an Infinity Mode command to  the servers or peers, but wait for
  * the next reply  of the given type for a  Promised call-back. Note that
@@ -120,5 +139,8 @@ Tootsville.Util.infinityAwaits = function (command, fromType, params) {
             resolve (data); });
         Tootsville.Util.stream (Tootsville.Gossip.createPacket (command, params || {}) ); }); };
 
+/**
+ *
+ */
 Tootsville.Util.infinity = function (command, params) {
     Tootsville.Util.stream (Tootsville.Gossip.createPacket (command, params || {}) ); };
