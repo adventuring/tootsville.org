@@ -43,8 +43,16 @@
           <h2 class="book-title"></h2>
           <div class="book-contents"></div>
           <h3 class="book-byline"></h3>
-          <button id="book-page-prev">&lt;</button>
-          <button id="book-page-next">&gt;</button>           
+          <button id="book-page-prev"
+                  onClick="Tootsville.UI.Book.prevPage"
+                  title="Previous Page">
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+          <button id="book-page-next"
+                  onClick="Tootsville.UI.Book.nextPage"
+                  title="Next Page">
+            <i class="fas fa-arrow-circle-right"></i>
+          </button>
         </div>
       </div>
       <button id="close-book" onclick="Tootsville.UI.HUD.closePanel();">✗ Close</button>
