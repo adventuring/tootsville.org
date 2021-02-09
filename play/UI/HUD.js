@@ -610,7 +610,7 @@ Tootsville.UI.HUD.refreshNameTagAttachment = function (model, nameTag)
                   new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
                                        document.getElementById ('tootsville3d').offsetHeight,
                                        1));
-  nameTag.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 30)) + 'px';
+  nameTag.style.top = Math.max (30, Math.min (abs.y, window.innerHeight - 64)) + 'px';
   nameTag.style.left = Math.max (50, Math.min (abs.x, window.innerWidth - 50)) + 'px'; };
 
 /**
@@ -632,8 +632,9 @@ Tootsville.UI.HUD.refreshSpeechAttachment = function (model, speechBubble)
                   new BABYLON.Vector3 (document.getElementById ('tootsville3d').offsetWidth,
                                        document.getElementById ('tootsville3d').offsetHeight,
                                        1));
+  if (!(speechBubble.ctime)) speechBubble.ctime = new Date();
   speechBubble.style.top = Math.max (30, Math.min (abs.y,
-                                                   window.innerHeight - 30)) + 'px';
+                                                   window.innerHeight - 64)) + 'px';
   speechBubble.style.left = Math.max (50, Math.min (abs.x,
                                                     window.innerWidth - 50)) + 'px'; };
 
@@ -647,6 +648,74 @@ Tootsville.UI.HUD.refreshAttachmentsForAvatar = function (avatar)
   { Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, avatar.speech); } };
 
 /**
+ * Sort speech by the creation time of speech balloons
+ */
+Tootsville.UI.HUD.sortSpeechByCTime = function (avatars) {
+    let unsorted = [];
+    for (let i in avatars)
+        if (avatars[i].speech) unsorted = unsorted.concat (avatars[i].speech);
+    return unsorted.sort( (a,b) => {
+        if (a.ctime > b.ctime) return 1; else return -1;
+    });
+};
+
+/**
+ * A generalized boolean as to whether a overlaps b
+ *
+ * a and b are HTML elements
+ */
+Tootsville.UI.HUD.overlappingP = function (a, b) {
+    const rect1 = a.getBoundingClientRect ();
+    const rect2 = b.getBoundingClientRect ();
+    return (!(rect1.right < rect2.left || 
+              rect1.left > rect2.right || 
+              rect1.bottom < rect2.top || 
+              rect1.top > rect2.bottom));
+};
+
+/**
+ * If array[index] overlaps array[0..index-1], return the offending overlapper.
+ * 
+ * index must be >0.
+ */
+Tootsville.UI.HUD.speechOverlaps = function (array, index) {
+    const firstArrival = array [index];
+    for (let i = 0; i < index; ++i)
+        if (Tootsville.UI.HUD.overlappingP (array [i], firstArrival))
+            return array[i];
+    return null;
+};
+
+/**
+ * Try to move bumped out of the way of keeper
+ *
+ * It's a given that the two overlap currently
+ */
+Tootsville.UI.HUD.bumpSpeech = function (bumped, keeper) {
+    bumped.style.fontSize = '0.75rem';
+    const keepRect = keeper.getBoundingClientRect ();
+    const bumpRect = bumped.getBoundingClientRect ();
+    if (keepRect.top < bumpRect.top)
+        bumped.style.top = Math.min(window.innerHeight - 64,
+                               Math.max(keepRect.bottom, 30)) + "px";
+    else
+        bumped.style.top = Math.min(window.innerHeight - 64,
+                               Math.max(keepRect.top /* - bumpRect.height */, 30)) + "px"; };
+
+/**
+ * Try to move speech balloons so they don't overlap
+ */
+Tootsville.UI.HUD.arrangeSpeechBalloons = function (avatars) {
+    const sorted = Tootsville.UI.HUD.sortSpeechByCTime (avatars);
+    if (sorted.length < 2) return;
+    for (let i = 1; i < sorted.length; ++i) {
+        let overlapper = Tootsville.UI.HUD.speechOverlaps (sorted, i);
+        if (overlapper)
+            Tootsville.UI.HUD.bumpSpeech (overlapper, sorted[i]);
+    }
+};
+
+/**
  * Refresh all 2D attachment overlays to follow the 3D scene.
  */
 Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
@@ -654,8 +723,9 @@ Tootsville.UI.HUD.refreshAttachmentOverlays = function ()
        (! Tootsville.Tank.avatars) )
   { return; }
   const avatars = Tootsville.Tank.avatars;
-  for (let i = 0; i < avatars.length; ++i)
-  { Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]); } };
+  for (let i in avatars)
+      Tootsville.UI.HUD.refreshAttachmentsForAvatar (avatars [i]);
+  Tootsville.UI.HUD.arrangeSpeechBalloons (avatars); };
 
 /**
  * Convert an event on the HUD or CANVAS object into a 3D event as appropriate.
