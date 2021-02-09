@@ -69,7 +69,7 @@ if (('test.tootsville.org' === Tootsville.cluster) ||
   { www: 'https://www.' + Tootsville.cluster,
     play: 'https://play.' + Tootsville.cluster,
     game: 'https://game1.' + Tootsville.cluster.replace('.org','.net') + ":5000",
-    stream: 'wss://game1.' + Tootsville.cluster.replace('.org','.net') + ':5004/alef-null' };
+    stream: 'wss://game1.' + Tootsville.cluster.replace('.org','.net') + ':5004/infinity/alef-null' };
   if (Tootsville.clusterReal) { document.domain = Tootsville.cluster; } }
 else
 { Tootsville.cluster = 'local';
@@ -78,7 +78,7 @@ else
   { www: 'http://' + host + ':5001',
     play: 'http://' + host + ':5002',
     game: 'http://' + host + ':5000',
-    stream: 'ws://' + host + ':5004/alef-null' }; }
+    stream: 'ws://' + host + ':5004/infinity/alef-null' }; }
 
 window.loadWatchdog1 = setTimeout(() => {
     if (Tootsville.UI.slowLoadingWatchdog)
