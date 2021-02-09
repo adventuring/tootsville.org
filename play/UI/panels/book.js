@@ -30,3 +30,16 @@
  * USA
  *
  */
+
+if (!('Tootsville' in window)) { Tootsville = { UI: { Book: {}}}; };
+if (!('UI' in Tootsville)) { Tootsville.UI = { Book: {}}; };
+if (!('Book' in Tootsville.UI)) { Tootsville.UI.Book = {}; };
+
+Tootsville.UI.Book.prevPage = function (event) {
+    // TODO
+};
+
+Tootsville.UI.Book.nextPage = function (event) {
+    // TODO
+};
+

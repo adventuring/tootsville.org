@@ -68,7 +68,7 @@ Tootsville.Login.clearTootsList = function ()
 /**
  * Is the login panel currently presenting account settings mode?
  */
-Tootsville.Login.settingsP = false;
+Tootsville.Login.settingsP ||= false;
 
 /**
  * Query the server for my characters after user has signed in.
@@ -179,11 +179,10 @@ Tootsville.Login.generateNewToot = function ()
  * Start the New Toot creation process.
  */
 Tootsville.Login.startCharacterCreation = function ()
-{ Tootsville.Gossip.Parrot.say ("Let's get started!",
-                                "<p>Let's create your Toot character.</p>" +
-                                "<p>This takes about a minute. I'll create a new " +
-                                "Toot character for you. You can change the name, colors, or " +
-                                "pattern to be what you like. </p>").
+{ Tootsville.Gossip.Parrot.say ("Let's get started!", `
+<p>Let's create your Toot character.</p> <p>This takes about a
+minute. I'll create a new Toot character for you. You can set the
+name, colors, and pattern to be what you like. </p>`).
   then(Tootsville.Login.generateNewToot); };
 
 /**
@@ -208,10 +207,12 @@ Tootsville.Login.doRealLogin = function (name)
 Tootsville.Login.playWithCharacter = function (name)
 { let li = this.findLIForToot (name);
   if (li ['data-toot'].childP)
-  { Tootsville.Gossip.Parrot.ask ("That's a Child Toot",
-                                  "<p> Are you sure you want to sign in with a Child account? </p>" +
-                                  "<p> This does not give your child permission to play — it lets you control their character. </p>"+
-                                  "<a href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how your child can sign in</a>",
+  { Tootsville.Gossip.Parrot.ask ("That's a Child Toot", `
+<p> Are you sure you want to sign in with a Child account? </p> <p>
+This does not give your child permission to play — it lets you control
+their character. </p> <a
+href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how
+your child can sign in</a>`,
                                   [{ tag: "yes", text: "Sign In" },
                                    { tag: "no", text: "Cancel" }]).
     then (answer => { if ('yes' === answer)
@@ -588,7 +589,10 @@ Tootsville.Login.quit = function ()
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
-  firebase.auth().signOut().then(Tootsville.Login.start); };
+  firebase.auth().signOut().then(Tootsville.Login.start);
+  /* the above does not work properly, so */
+  location.reload ();
+};
 
 /**
  * Toggle whether the player is marked as Sensitive or not.

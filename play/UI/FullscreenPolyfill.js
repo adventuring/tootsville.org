@@ -29,7 +29,9 @@
  *
  * USA
  *
- *//* Fullscreen polyfill */
+ */
+
+/* Fullscreen polyfill */
 if (! document.documentElement.requestFullscreen) {
     if (document.documentElement.mozRequestFullScreen) {
         document.documentElement.requestFullscreen =

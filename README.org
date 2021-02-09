@@ -4,6 +4,52 @@
 This package contains the working copy of the Tootsville V game, as it is
 being built / merged-into
 
+** Coding Style
+
+Note a couple of things here.
+
+*** Idempotent script loading.
+
+Scripts should be able to be reloaded on the fly idempotently; in
+particular, we want to never define something like
+
+Tootsville.Namespace = { a: function () {...}, b: ... }
+
+… because that might destroy e.g. Tootsville.Namespace.c that was
+created by someone else, but instead, we build namespaces safely so:
+
+if (!('Namespace' in Tootsville)) { Tootsville.Namespace = {}; };
+Tootsville.Namespace.a = function () {...};
+Tootsville.Namespace.b = function () {...};
+
+This is a little different than typical JavaScript style, but keep in
+mind that we sometimes push new JavaScripts out to running clients on
+the fly during the game.
+
+*** Late binding event handlers
+
+Wherever possible, we prefer:
+
+object.onevent = (event) => { Tootsville.handler (event); };
+
+over:
+
+object.onevent = Tootsville.handler;
+
+This is so that Tootsville.handler (eg) can be redefined later and the
+lambda function will call the new definition, but in the non-preferred
+style, the handler is bound at compile-time and cannot be altered
+without reassigning it.
+
+*** Many small functions
+
+We prefer many small functions over one large one. Wherever practical,
+each branch of an "if" or body of a "for" should probably be a
+distinct function call. A small caveat is given for simply logging and
+then calling another function. This is definitely something we have
+not so far lived up to, but the ideal is to reduce the cyclomatic
+complexity of each function as far as possible.
+
 ** External Components
 
 The game system is essentially made up of 8 pillars, or main components.
@@ -104,3 +150,4 @@ without a known auth token. This is how we're implementing two features:
  CPU-OS-Compiler-Library match-ups, allow  compile-time optimizations for
  the host configuration, and avoid surprises).
 
+ 

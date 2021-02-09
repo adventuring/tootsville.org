@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <!-- -*- web -*- -->
+<html>
+  <meta charset="utf-8">
 
 <!-- ./play/ui/panels/control-panel.html is part of Tootsville
 
@@ -29,8 +31,6 @@
    USA
 
    -->
-<html>
-  <meta charset="utf-8">
   <body>
     <b> This is a panel loaded by the UI. </b>
     <div id="control-panel">
@@ -48,8 +48,8 @@
         &nbsp;
         <i class="fas fa-volume-down fa-fw" onclick="Tootsville.UI.Audio.volumeDown()"></i>
         <input type="range" id="volume-slider" min="0" max="100"
-               value="50" disabled
-               step="10" onchange="Tootsville.UI.Audio.setVolume(this.value)">
+               value="100" disabled
+               step="5" onchange="Tootsville.UI.Audio.setVolume(this.value)">
         <i class="fas fa-volume-up fa-fw" onclick="Tootsville.UI.Audio.volumeUp()"></i>
       </div>
 

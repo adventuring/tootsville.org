@@ -137,8 +137,14 @@ Tootsville.Gossip.gatekeeperAccept = function (peer, event)
   { Tootsville.warn ("Unknown datagram type received", gram); }
   /* TODO: echo routing */ };
 
+/**
+ *
+ */
 Tootsville.Gossip.eavesdroppers = {};
 
+/**
+ *
+ */
 Tootsville.Gossip.eavesdrop = function (fromType, callback) {
     if (! Tootsville.Gossip.eavesdroppers [ fromType ])
     { Tootsville.Gossip.eavesdroppers [ fromType ] = []; }
@@ -304,8 +310,8 @@ Tootsville.Gossip.getICE = function ()
                Tootsville.UI.HUD.refreshHUD (); } ); };
 
 /**
-*
-*/
+ * Close peer-to-peer and server (WebSocket) stream connections.
+ */
 Tootsville.Gossip.closeStreams = function ()
 { Tootsville.Gossip.closeAndQuitP = true;
   if (Tootsville.character && Tootsville.character != '$new toot')

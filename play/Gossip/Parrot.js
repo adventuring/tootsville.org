@@ -45,7 +45,7 @@ Tootsville.Gossip.Parrot.show = function (reallyp)
   { parrot.style.display = 'block';
     parrot.style.zIndex = 2000;
     if (Tootsville.Gossip.Parrot.squawk)
-    {Tootsville.Gossip.Parrot.squawk.play (); } }
+    { Tootsville.Gossip.Parrot.squawk.play (); } }
   else
   { setTimeout(() => { parrot.style.display = 'none'; }, 1000 ); }};
 
@@ -69,7 +69,8 @@ Tootsville.Gossip.Parrot.say = function (title, message)
       buttonBox.setAttribute ('class', 'button-box');
       var okButton = document.createElement('BUTTON');
       okButton.innerText = ' O.K. ';
-      okButton.onclick = () => { Tootsville.Gossip.Parrot.done().then(() => {finish ()}); };
+      okButton.onclick = () => { Tootsville.Gossip.Parrot.done().then(() => {finish (); }); };
+      /* TODO: Trap Return and Escape keys to clear message */
       buttonBox.append (okButton);
       reply.append (buttonBox);
       reply.style.display = 'block';
@@ -82,8 +83,8 @@ Tootsville.Gossip.Parrot.say = function (title, message)
 /**
  * Ask  a question from the Gossip Parrot with multiple replies possible.
  *
- * TODO:  Document  the  format  in   which  replies  are  submitted  to
- * this function.
+ * WRITEME: Document the format in which replies are submitted to this
+ * function.
  */
 Tootsville.Gossip.Parrot.ask = function (title, message, replies)
 { return new Promise
@@ -96,7 +97,7 @@ Tootsville.Gossip.Parrot.ask = function (title, message, replies)
       replies.forEach( (reply) =>
                        { var button = document.createElement ('BUTTON');
                          button.innerText = reply.text || reply.tag;
-                         button.onclick = () => { Tootsville.Gossip.Parrot.done().then(function () {finish (reply.tag)}); };
+                         button.onclick = () => { Tootsville.Gossip.Parrot.done().then(function () {finish (reply.tag);}); };
                          buttonBox.append (button); });
       reply.append (buttonBox);
       reply.style.display = 'block';

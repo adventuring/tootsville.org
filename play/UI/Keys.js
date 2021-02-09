@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/ui/keys.js is part of Tootsville
+ * ./play/UI/Keys.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
@@ -31,7 +31,7 @@
  *
  */
 
-if (!('Tootsville' in window)) { Tootsville = { Ui: { KEYS: {} }}; }
+if (!('Tootsville' in window)) { Tootsville = { UI: { Keys: {} }}; }
 if (!('UI' in Tootsville)) { Tootsville.UI = { Keys: {} }; }
 if (!('Keys' in Tootsville.UI)) { Tootsville.UI.Keys = {}; }
 
@@ -68,7 +68,7 @@ Tootsville.UI.Keys.bindings =
         Accept: null,
         Again: null,
         Attn: null,
-        Cancel: null,
+        Cancel: 'keyboard-quit',
         ContextMenu: 'toggle-control-panel',
         Escape: 'close-all-panels',
         BrowserStop: 'close-all-panels',
@@ -130,7 +130,7 @@ Tootsville.UI.Keys.bindings =
       withControl:
       { 'a': 'beginning-of-line',
         'b': 'backward-char',
-        'c': 'prefix C-c',
+        'c': 'prefix-C-c',
         'd': 'delete',
         'e': 'end-of-line',
         'f': 'forward-char',
@@ -162,21 +162,23 @@ Tootsville.UI.Keys.bindings =
           'm': 'mobile',
           'p': 'paperdoll',
           'h': 'hide-talk-box',
-        'PageDown': 'show-contacts',
-        'PageUp': 'control-panel',
-        'Home': 'hide-talk-box',
-        ',': 'whisper',
-        '.': 'shout',
-        "'": 'talk',
-        '/': 'talk',
-        'F12': 'volume-down',
-        'ArrowDown': 'volume-down',
-        'ArrowUp': 'volume-up'
+          'PageDown': 'show-contacts',
+          'PageUp': 'control-panel',
+          'Home': 'hide-talk-box',
+          ',': 'whisper',
+          '.': 'shout',
+          "'": 'talk',
+          '/': 'talk',
+          'F12': 'volume-down',
+          'ArrowDown': 'volume-down',
+          'ArrowUp': 'volume-up'
       },
       withHyper: {},
       withSuper: {},
       afterControlX:
-      { single: {},
+      { single: {
+          'h': 'select-all'
+      },
         withControl: {},
         withMeta: {} },
       afterControlC:
@@ -199,13 +201,13 @@ Tootsville.UI.Keys.onKeyDown = function (ev)
   if (Tootsville.UI.Keys.prefixed)
   { let binding = Tootsville.UI.Keys.prefixed ["afterControl" + Tootsville.UI.Keys.prefixed][coda][ev.key];
     if (ev.key.length > 1 || binding)
-      console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
+        console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
     Tootsville.UI.runCommand(binding, ev); }
   else
   { let binding = Tootsville.UI.Keys.bindings [coda][ev.key];
     if (ev.key.length > 1 || binding)
         console.info ("Keypress " + coda + " " + ev.key + " bound to " + binding);
-Tootsville.UI.runCommand(binding, ev); } };
+    Tootsville.UI.runCommand(binding, ev); } };
 
 // 
 
@@ -349,10 +351,11 @@ Tootsville.UI.Keys.isearchBackward = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Quit keyboard action. Currently only resets the prefix keys.
  */
 Tootsville.UI.Keys.keyboardQuit = function (event)
-{ /* TODO */ };
+{ /* TODO */
+    Tootsville.UI.Keys.prefixed = undefined; };
 
 /**
  * Delete the entire contents of the speaking box.
@@ -362,10 +365,12 @@ Tootsville.UI.Keys.killLine = function (event)
   Tootsville.UI.talkSpeak.focus (); };
 
 /**
- *
+ * Kill (cut) the selected region
  */
 Tootsville.UI.Keys.killRegion = function (event)
-{ /* TODO */ };
+{ const text = document.getElementById('talk-speak');
+  navigator.clipboard.writeText (text.value.substr(text.selectionStart, text.selectionEnd));
+  text.setRangeText (''); };
 
 /**
  *
@@ -374,49 +379,55 @@ Tootsville.UI.Keys.killRingSave = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Remove the current or previous sentence
  */
 Tootsville.UI.Keys.killSentence = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Remove the current or previous word
  */
 Tootsville.UI.Keys.killWord = function (event)
 { /* TODO */ };
 
 /**
+ * Navigate to the next line in the history of spoken lines.
  *
+ * TODO. Currently just clears the input box.
  */
 Tootsville.UI.Keys.nextHistoryLine = function (event)
-{ /* TODO */ };
+{ document.getElementById('talk-speak').value = ''; };
 
 /**
- *
+ * Sets the C-c prefix
  */
 Tootsville.UI.Keys.prefixCc = function (event)
-{ /* TODO */ };
+{ Tootsville.UI.Keys.prefixed = 'C'; };
 
 /**
- *
+ * Sets the C-x prefix
  */
 Tootsville.UI.Keys.prefixCx = function (event)
-{ /* TODO */ };
+{ Tootsville.UI.Keys.prefixed = 'X'; };
 
 /**
+ * Move back through the history of spoken lines.
  *
+ * TODO. Currently only recalls the last submitted text.
  */
 Tootsville.UI.Keys.priorHistoryLine = function (event)
 { document.getElementById ('talk-speak').value = Tootsville.UI.recallText; };
 
 /**
- *
+ * Select the entire buffer
  */
 Tootsville.UI.Keys.selectAll = function (event)
-{ /* TODO */ };
+{ document.getElementById('talk-speak').select (); };
 
 /**
- * Speak the line currently in the buffer
+ * Speak the line currently in the buffer.
+ *
+ * TODO: If a Parrot message is open, instead dismiss it.
  */
 Tootsville.UI.Keys.speakLine = function (event)
 { let el = document.getElementById ('talk-speak');
@@ -452,10 +463,11 @@ Tootsville.UI.Keys.upcaseWord = function (event)
 { /* TODO */ };
 
 /**
- *
+ * Yank (paste) from the system's clipboard
  */
 Tootsville.UI.Keys.yank = function (event)
-{ /* TODO */ };
+{ const text = document.getElementById('talk-speak');
+  text.setRangeText (navigator.clipboard.readText ()); };
 
 /**
  *
