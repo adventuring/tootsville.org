@@ -201,12 +201,12 @@ Tootsville.UI.Keys.onKeyDown = function (ev)
   if (Tootsville.UI.Keys.prefixed)
   { let binding = Tootsville.UI.Keys.prefixed ["afterControl" + Tootsville.UI.Keys.prefixed][coda][ev.key];
     if (ev.key.length > 1 || binding)
-        console.info ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
+        console.debug ("Keypress afterControl" + Tootsville.UI.Keys.prefixed + " " + coda + " " + ev.key + " bound to " + binding);
     Tootsville.UI.runCommand(binding, ev); }
   else
   { let binding = Tootsville.UI.Keys.bindings [coda][ev.key];
     if (ev.key.length > 1 || binding)
-        console.info ("Keypress " + coda + " " + ev.key + " bound to " + binding);
+        console.debug ("Keypress " + coda + " " + ev.key + " bound to " + binding);
     Tootsville.UI.runCommand(binding, ev); } };
 
 // 
