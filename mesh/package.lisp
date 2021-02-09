@@ -25,8 +25,6 @@
 ;;;; Oakland Park, FL 33307-3095
 ;;; USA
 
-(in-package :Tootsville)
-
 
 
 (defpackage :Tootsville (:use :cl))

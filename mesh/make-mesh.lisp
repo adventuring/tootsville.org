@@ -25,8 +25,6 @@
 ;;;; Oakland Park, FL 33307-3095
 ;;; USA
 
-(in-package :Tootsville)
-
 
 
 (Common-Lisp::in-package :CL-USER)
@@ -43,4 +41,4 @@
  (make-pathname :name "mesh" :type "js"
                 :defaults (merge-pathnames "../dist/"
                                            *load-pathname*)))
-                          
+

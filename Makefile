@@ -364,7 +364,7 @@ dist/play.$(clusterorg):	worker htaccess mesh \
 
 #################### mesh
 
-mesh:	dist/play.$(clusterorg)/play/mesh.js \
+mesh:	dist/play.$(clusterorg)/play/mesh.min.js \
 	dist/play.$(clusterorg)/play/jscl.min.js
 
 dist/play.$(clusterorg)/play/jscl.min.js: jscl/jscl.js
@@ -373,7 +373,7 @@ dist/play.$(clusterorg)/play/jscl.min.js: jscl/jscl.js
 		--js jscl/jscl.js   \
 		--js_output_file $@
 
-dist/play.$(clustororg)/play/mesh.min.js: dist/mesh.js
+dist/play.$(clusterorg)/play/mesh.min.js: dist/mesh.js
 	closure-compiler \
                     $(< build/closure-compiler.opts)           \
 		--js dist/mesh.js   \

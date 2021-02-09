@@ -68,7 +68,8 @@ Tootsville.Login.clearTootsList = function ()
 /**
  * Is the login panel currently presenting account settings mode?
  */
-Tootsville.Login.settingsP ||= false;
+if (!('settingsP' in Tootsville.Login))
+    Tootsville.Login.settingsP = false;
 
 /**
  * Query the server for my characters after user has signed in.

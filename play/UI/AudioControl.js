@@ -80,8 +80,10 @@ Tootsville.UI.Audio.setVolume = function (newVolume)
  */
 Tootsville.UI.Audio.updateVolumeSlider = function()
 { var slider = document.getElementById('volume-slider');
+  if ( (!('currentVolume' in Tootsville.UI.Audio)) || isNaN(Tootsville.UI.Audio.currentVolume) )
+      Tootsville.UI.Audio.currentVolume = 100;
   if (slider)
-  { slider.value = Tootsville.UI.Audio.currentVolume ||= 100;
+  { slider.value = Tootsville.UI.Audio.currentVolume;
     slider.disabled = false; } };
 
 /**
