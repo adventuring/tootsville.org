@@ -37,3 +37,11 @@ Tootsville.Lisp = function (fn, ...argv) {
     argv = [null].concat(argv)
     return jscl.packages.TOOTSVILLE.symbols[fn].fvalue.apply(null, argv)
 };
+
+Tootsville.LispFn = function(fn) {
+    return function (...argv) {
+        argv = [null].concat(argv);
+        return jscl.packages.TOOTSVILLE.symbols[fn].fvalue.apply(null, argv)
+    };
+};
+        
