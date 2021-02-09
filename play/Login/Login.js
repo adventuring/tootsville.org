@@ -470,8 +470,8 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
   yahoo.setCustomParameters({ prompt: 'login' });
   document.getElementById ('login-13').innerHTML += `
 <center>
-  <button id="firebase-sign-in-with-twitter">Sign in with Twitter</button>
-  <button id="firebase-sign-in-with-yahoo">Sign in with Yahoo!</button>
+  <button id="firebase-sign-in-with-twitter">Sign in with <i class="fab fa-yahoo"></i> Twitter</button>
+  <button id="firebase-sign-in-with-yahoo">Sign in with <i class="fab fa-yahoo"></i> Yahoo!</button>
 </center>`;
   document.getElementById ('firebase-sign-in-with-yahoo').addEventListener (
       'click',
