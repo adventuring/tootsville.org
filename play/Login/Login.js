@@ -566,7 +566,7 @@ Tootsville.Login.storeCredentialInfo = function (result)
   Tootsville.Login.idToken = cred.idToken;
   Tootsville.Login.idProvider = cred.providerId;
   if (! ("player" in Tootsville.Login)) { Tootsville.Login.player = {}; }
-  Tootsville.Login.player.name = user.displayName;
+  Tootsville.Login.player.name = user.displayName || (addl.given_name + ' ' + addl.family_name);
   Tootsville.Login.player.email = (user.email ||
                                    user.providerData[0].email ||
                                    addl.email);
