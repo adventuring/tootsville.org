@@ -83,5 +83,8 @@ Tootsville.Game.fastForward = function (sinceTime)
 Tootsville.Game.clickedOnItem = function (itemNameString, pickedEvent)
 { console.debug ("Clicked on item ", itemNameString. pickedEvent); };
 
+/**
+ *
+ */
 Tootsville.Game.pivotItemTemplate = function (entity)
 { /* TODO */ };
