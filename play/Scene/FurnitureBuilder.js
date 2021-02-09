@@ -143,7 +143,9 @@ Tootsville.FurnitureBuilder.update = function (item, model, scene, finish)
  *
  */
 Tootsville.FurnitureBuilder.build = function (item, scene, finish)
-{ if (!scene) { scene = Tootsville.Tank.scene; }
+{ if (!scene) scene = Tootsville.Tank.scene;
+  if (!scene) { console.error ("Can't build furniture without a scene", item);
+                return; }
   if (scene.items && scene.items [item.uuid] && ('model' in scene.items [item.uuid]))
   { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else
