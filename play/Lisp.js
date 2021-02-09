@@ -44,4 +44,3 @@ Tootsville.LispFn = function(fn) {
         return jscl.packages.TOOTSVILLE.symbols[fn].fvalue.apply(null, argv)
     };
 };
-        
