@@ -61,7 +61,7 @@ Tootsville.Util.assertValidHostName = function (hostName)
  * defaulted to application/json if not set.
  * @end table
  */
-Tootsville.Util.rest = function (method, uri, body, headers)
+Tootsville.Util.rest = function (method, uri, body=undefined, headers=undefined)
 { let hostName = uri.split('/')[0];
   let origURI = uri;
   if ('http' === hostName || 'https' === hostName)

@@ -123,11 +123,10 @@ Tootsville.UI.makePrompt = function (prompt, resolve)
  * one  button;  the negative  button  will  read ``Cancel''  unless  the
  * ``accept'' text reads ``Yes,'' in which case it will read ``No.''
  */
-Tootsville.UI.confirmPretty = function (title,text,accept)
+Tootsville.UI.confirmPretty = function (title,text,accept,cancel='Cancel')
 { let hud = document.getElementById('hud');
   return new Promise(resolve => {
-      let cancel = 'Cancel';
-      if ('Yes' === accept) { cancel = 'No'; }
+      if ('Yes' === accept && 'Cancel' === cancel) cancel = 'No';
       hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
 
 /**

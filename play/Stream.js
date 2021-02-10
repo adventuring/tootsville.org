@@ -134,7 +134,7 @@ Tootsville.Util.errorFromWebSocket = function (event)
  * the Gatekeeper still gets a chance to handle any returned values, this
  * just registers a Promise to listen for the reply.
  */
-Tootsville.Util.infinityAwaits = function (command, fromType, params) {
+Tootsville.Util.infinityAwaits = function (command, fromType, params={}) {
     return new Promise ( resolve => {
         Tootsville.Gossip.eavesdrop (fromType || command, (data) => {
             console.log ("Got awaited reply from: " + fromType);
@@ -146,5 +146,5 @@ Tootsville.Util.infinityAwaits = function (command, fromType, params) {
  *
  * See `DEFINFINITY' for a discussion of Infinity Mode.
  */
-Tootsville.Util.infinity = function (command, params) {
+Tootsville.Util.infinity = function (command, params={}) {
     Tootsville.Util.stream (Tootsville.Gossip.createPacket (command, params || {}) ); };

@@ -37,7 +37,7 @@ if (!('WaWa' in Tootsville.UI)) { Tootsville.UI.WaWa = {}; }
 /**
 * Play a sound sample pitch-shifted by the speed difference given.
 */
-Tootsville.UI.WaWa.playShifted = function (file, speed=1, after) {
+Tootsville.UI.WaWa.playShifted = function (file, speed=1, after=undefined) {
     /*
       https://stackoverflow.com/a/49749868/475150
       https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode/playbackRate
@@ -74,8 +74,11 @@ Tootsville.UI.WaWa.playChained = function (chain, finish)
 { if ( (! chain) || (0 === chain.length) ) { return; }
   const [ sound, speed ] = chain [0];
   const rest = chain.slice (1);
-  Tootsville.UI.WaWa.playShifted ('https://jumbo.tootsville.org/Assets/Voices/5/' + sound, speed, rest ? ( () => {
-      Tootsville.UI.WaWa.playChained (rest, finish); }) : finish); };
+  Tootsville.UI.WaWa.playShifted (
+      'https://jumbo.tootsville.org/Assets/Voices/5/' + sound, speed,
+      rest ? ( () => {
+          Tootsville.UI.WaWa.playChained (rest, finish); })
+          : finish); };
 
 /**
  *

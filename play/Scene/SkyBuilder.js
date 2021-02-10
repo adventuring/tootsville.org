@@ -259,7 +259,7 @@ Tootsville.SkyBuilder.build = function (world)
  *
  * XXX Some things aren't able to be updated yet.
  */
-Tootsville.SkyBuilder.update = function (world)
+Tootsville.SkyBuilder.update = function (world=Tootsville.activity.world)
 { Tootsville.SkyBuilder.setFirstSkyLayer ('CHOR' === world);
   Tootsville.SkyBuilder.setStarfield ('CHOR' === world);
   const sun = Tootsville.SkyBuilder.sun;

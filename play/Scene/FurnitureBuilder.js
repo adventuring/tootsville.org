@@ -131,7 +131,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
 /**
  * WRITEME … TODO update furniture …
  */
-Tootsville.FurnitureBuilder.update = function (item, model, scene, finish)
+Tootsville.FurnitureBuilder.update = function (item, model, scene, finish=undefined)
 { /* TODO */
     if (finish) { finish (model); } };
 
@@ -142,7 +142,7 @@ Tootsville.FurnitureBuilder.update = function (item, model, scene, finish)
  * description is at `ITEM-INFO', qv., and `ITEM-TEMPLATE-INFO'.
  *
  */
-Tootsville.FurnitureBuilder.build = function (item, scene, finish)
+Tootsville.FurnitureBuilder.build = function (item, scene=undefined, finish=undefined)
 { if (!scene) scene = Tootsville.Tank.scene;
   if (!scene) { console.error ("Can't build furniture without a scene", item);
                 return; }

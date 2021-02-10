@@ -583,8 +583,9 @@ Tootsville.Login.storeCredentialInfo = function (result)
 /**
  * Quit the game
  */
-Tootsville.Login.quit = function ()
-{ Tootsville.Gossip.closeStreams ();
+Tootsville.Login.quit = function (event=null)
+{ if (event) event.preventDefault ();
+  Tootsville.Gossip.closeStreams ();
   Tootsville.Tank.shutDown ();
   Tootsville.player = null;
   Tootsville.character = null;

@@ -40,14 +40,14 @@ Tootsville.inform = function (event, details)
   if (('Rollbar' in window) && window.Rollbar.info)
       window.Rollbar.info (arguments); };
 
-Tootsville.warn = function (message)
+Tootsville.warn = function (message, ...args)
 { console.warn.apply(console, arguments);
   if ('ga' in window)
       window.ga('send', 'warning', Array.prototype.join(arguments, "\n"));
   if (('Rollbar' in window) && window.Rollbar.warn)
       window.Rollbar.warn (arguments); };
 
-Tootsville.error = function (message)
+Tootsville.error = function (message, ...args)
 { console.error.apply(console, arguments);
   if ('ga' in window)
       window.ga('send', 'error', Array.prototype.join(arguments, "\n"));

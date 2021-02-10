@@ -31,34 +31,33 @@
  *
  */
 
-if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
+if (!('Game' in Tootsville)) Tootsville.Game = {};
+if (!('Wardrobe' in Tootsville.Game)) Tootsville.Game.Wardrobe = {};
 
 /**
  * Clothing  valences  and  conflicts,   encoded  for  Javascript  form.
  * Compare to `WEAR-SLOT', which  should be the canonical representation
  * and used to populate this.
  */
-Tootsville.Game.Wardrobe = {
+Tootsville.Game.Wardrobe.valences = {
+    head: [ 'wig', 'hat', 'helmet', 'pivitz' ],
+    face: [ 'makeup', 'lashes', 'earring', 'glasses', 'trunkCover', 'trunkHold' ],
+    chest: [ 'undershirt', 'dress', 'shirt', 'necklace', /* or necktie */
+             'vest', 'coat', 'scarf', 'overcoat' ],
+    legs: [ 'socks', 'pants', 'skirt', 'shoes' ],
+    leftArm: [ 'leftBracelet' ],
+    rightArm: [ 'rightBracelet' ],
+    unPhysical: [ 'readied' ]
+};
 
-    valences: {
-        head: [ 'wig', 'hat', 'helmet', 'pivitz' ],
-        face: [ 'makeup', 'lashes', 'earring', 'glasses', 'trunkCover', 'trunkHold' ],
-        chest: [ 'undershirt', 'dress', 'shirt', 'necklace', /* or necktie */
-                 'vest', 'coat', 'scarf', 'overcoat' ],
-        legs: [ 'socks', 'pants', 'skirt', 'shoes' ],
-        leftArm: [ 'leftBracelet' ],
-        rightArm: [ 'rightBracelet' ],
-        unPhysical: [ 'readied' ]
-    },
-
-    valenceConflicts: {
-        hat: ['helmet'],
-        dress: ['shirt', 'pants', 'skirt'],
-        helmet: ['hat'],
-        shirt: ['dress'],
-        pants: ['skirt', 'dress'],
-        skirt: ['pants', 'dress']
-    } };
+Tootsville.Game.Wardrobe.valenceConflicts = {
+    hat: ['helmet'],
+    dress: ['shirt', 'pants', 'skirt'],
+    helmet: ['hat'],
+    shirt: ['dress'],
+    pants: ['skirt', 'dress'],
+    skirt: ['pants', 'dress']
+};
 
 /**
  * Find a base slot in the 3D model for clothing to mount.
@@ -74,11 +73,10 @@ Tootsville.Game.Wardrobe.findBaseSlot = function (slot)
 /**
  * Don an article of clothing on a wear slot.
  */
-Tootsville.Game.Wardrobe.don = function (item, slot)
+Tootsville.Game.Wardrobe.don = function (item, slot=null)
 { if (Tootsville.Game.Wardrobe.wearingP (item))
   { return; }
-  if (null === slot || undefined === slot)
-  { slot = item.valenceSlot; }
+  if (!(slot)) slot = item.valenceSlot;
   if (null !== Tootsville.player.wearing[ slot ])
   { Tootsville.Game.Wardrobe.doff (item); }
   var valences = Tootsville.Game.Wardrobe.valences[ Tootsville.Game.Wardrobe.findBaseSlot (slot) ];

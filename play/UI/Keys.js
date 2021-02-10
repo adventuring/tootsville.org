@@ -242,7 +242,7 @@ Tootsville.UI.Keys.backwardWord = function (event)
  */
 Tootsville.UI.Keys.beginningOfLine = function (event)
 { Tootsville.UI.talkSpeak.focus ();
-  Tootsville.UI.HUD.openTalkBox ();
+  Tootsville.UI.HUD.openTalkBox (event);
   Tootsville.UI.talkSpeak.setSelectionRange (0,0); };
 
 /**
@@ -294,7 +294,7 @@ Tootsville.UI.Keys.downcaseWord = function (event)
  */
 Tootsville.UI.Keys.endOfLine = function (event)
 { Tootsville.UI.talkSpeak.focus ();
-  Tootsville.UI.HUD.openTalkBox ();
+  Tootsville.UI.HUD.openTalkBox (event);
   Tootsville.UI.talkSpeak.setSelectionRange (-1, -1); };
 
 /**
@@ -498,7 +498,7 @@ Tootsville.UI.Keys.arrowRight = function (event)
  */
 Tootsville.UI.Keys.arrowUp = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
-  { /* retype last line */ }
+  { Tootsville.UI.Keys.priorHistoryLine (event); }
   else
   { Tootsville.UI.takeOneStep (0, 1); } };
 
@@ -507,6 +507,6 @@ Tootsville.UI.Keys.arrowUp = function (event)
  */
 Tootsville.UI.Keys.arrowDown = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
-  { Tootsville.UI.Keys.killLine (); }
+  { Tootsville.UI.Keys.nextHistoryLine (event); }
   else
   { Tootsville.UI.takeOneStep (0, -1); } };

@@ -210,7 +210,7 @@ Tootsville.Gossip.openInfinityMode = function (peer, event)
  * to be null, or an array of UUIDs.
  * @end table
  */
-Tootsville.Gossip.send = function (c, d, r, a, v)
+Tootsville.Gossip.send = function (c, d=null, r=null, a=null, v=null)
 { let packet = Tootsville.Gossip.createPacket (c, d, r || '$World', a, v);
   /* TODO: Routing */
   Tootsville.Util.stream (packet);
@@ -255,7 +255,7 @@ Tootsville.Gossip.signPacket = function (c, d, r)
  *
  * Returns a JSON string of the signed packet.
  */
-Tootsville.Gossip.createPacket = function (c, d, r)
+Tootsville.Gossip.createPacket = function (c, d={}, r='$World')
 { let packet = (( c === 'logOK' ) || ( c.substring (0, 1) === ':' ))
       ? d : { d: d };
   packet.r = r || '$World';

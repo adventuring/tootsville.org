@@ -238,7 +238,7 @@ Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
  *
  * A duplicate of an existing avatar will not be created, but it may be updated.
  */
-Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
+Tootsville.AvatarBuilder.build = function (avatar, scene, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   if (scene === Tootsville.Tank.scene)
   { if (Tootsville.Tank.avatars &&
@@ -259,6 +259,30 @@ Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
 /**
  *
  */
-Tootsville.AvatarBuilder.buildNewForm = function (avatar, scene, funish)
+Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar) {
+    return function (material) {
+        if (!(material.name)) return;
+        if ('base' == material.name.toLower ())
+            Tootsville.AvatarBuilder.assignPatternToMaterial (material, avatar);
+        else if ('pad' == material.name.toLower ())
+            Tootsville.ModelLoader.setMaterialColor (material, avatar.padColor); }; };
+
+/**
+ *
+ */
+Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
+    let colorizeMaterial = Tootsville.AvatarBuilder.makeAvatarColorizeMaterial (avatar);
+    return function (node) {
+        if (!(node.materials)) return;
+        for (let i = 0; i < node.materials.length; ++i)
+            colorizeMaterial (node.materials [i]); }; };
+
+/**
+ *
+ */
+Tootsville.AvatarBuilder.buildNewForm = function (avatar, scene, finish)
 { if (!scene) { scene = Tootsville.Tank.scene; }
+  let colorizer = Tootsville.AvatarBuilder.makeAvatarColorizer (avatar);
+  Tootsville.ModelLoader.loadAndColorize ('Avatars', avatar.avatar, colorizer,
+                                          scene);
   /* TODO call ModelLoader with an avatar colorizer function */  };

@@ -31,13 +31,11 @@
  *
  */
 
-if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
+if (!('Tootsville' in window)) Tootsville = {};
+if (!('ModelLoader' in Tootsville)) Tootsville.ModelLoader = {};
 
-
-
-
-
-if (!('avatarCache' in Tootsville.ModelLoader)) Tootsville.ModelLoader.avatarCache = {};
+if (!('avatarCache' in Tootsville.ModelLoader))
+    Tootsville.ModelLoader.avatarCache = {};
 
 /**
  * Create a loading promise for an asset
@@ -67,7 +65,7 @@ Tootsville.ModelLoader.recursiveColorize = function (node, colorizer) {
         if (node.children [i].material)
             colorizer (node.children[i]);
         else if (node.children [i].children)
-            Tootsville.ModelLoader.recursiveColorize (node); };
+            Tootsville.ModelLoader.recursiveColorize (node, colorizer); };
 /**
  *
  */
@@ -75,5 +73,6 @@ Tootsville.ModelLoader.loadAndColorize = async (kind, file, colorizer, scene) =>
     let assets = await Tootsville.ModelLoader.loadModelOnce (kind, file, scene);
     let clone = assets.instantiateModelsToScene ();
     for (let i = 0; i < clone.rootNodes.length; ++i)
-        Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer); };
+        Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer);
+    return assets; };
 

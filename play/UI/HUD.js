@@ -128,7 +128,7 @@ Tootsville.UI.HUD.createHUDLoaderPanel = function (panel)
 /**
  * Show the HUD panel named in the given DIV container.
  */
-Tootsville.UI.HUD.showHUDPanel = function (panel, div)
+Tootsville.UI.HUD.showHUDPanel = function (panel, div=null)
 { console.debug ("Show HUD Panel " + panel, div);
   return new Promise (
       finish =>
@@ -256,18 +256,18 @@ Tootsville.UI.HUD.positionPaperdollMini = function ()
   let stage = document.getElementById ('doll-stage');
   let miniBox = mini.getBoundingClientRect ();
   let stageBox = stage.getBoundingClientRect ();
-  let halfWidth = (stageBox.offsetWidth / 2);
-  let halfHeight = (stageBox.offsetHeight / 2);
-  let centerX = stageBox.left + halfWidth + (miniBox.offsetWidth / 2);
-  let centerY = stageBox.top + halfHeight + (miniBox.offsetHeight / 2);
+  let halfWidth = (stageBox.width / 2);
+  let halfHeight = (stageBox.height / 2);
+  let centerX = stageBox.left + halfWidth + (miniBox.width / 2);
+  let centerY = stageBox.top + halfHeight + (miniBox.height / 2);
   mini.style.left = miniBox.left + "px";
   mini.style.top = miniBox.top + "px";
-  mini.style.right = null;
-  mini.style.bottom = null;
+  mini.style.removeProperty('right');
+  mini.style.removeProperty('bottom');
   mini.style.cursor = 'default';
   setTimeout ( () =>
-               { let halfWidth = (stageBox.offsetWidth / 2);
-                 let halfHeight = (stageBox.offsetHeight / 2);
+               { let halfWidth = (stageBox.width / 2);
+                 let halfHeight = (stageBox.height / 2);
                  mini.style.left = centerX + "px";
                  mini.style.top = centerY + "px";
                  mini.style.width = halfWidth + "px";
@@ -315,13 +315,14 @@ Tootsville.UI.HUD.returnPaperdollMini = function ()
   fig.removeAttribute ('width');
   fig.removeAttribute ('style');
   setTimeout ( () => { mini.removeAttribute ('style'); }, 60);
-  mini.addEventListener ('click', Tootsville.UI.HUD.openPaperdoll);
+  mini.addEventListener ('click',
+                         event => { Tootsville.UI.HUD.openPaperdoll (event); });
 };
 
 /**
  * Open the Paperdoll display from the paperdoll-mini widget.
  */
-Tootsville.UI.HUD.openPaperdoll = function (event)
+Tootsville.UI.HUD.openPaperdoll = function (event=null)
 { if (event) { event.stopPropagation (); }
   document.getElementById ('paperdoll-mini').removeEventListener
   ('click', Tootsville.UI.HUD.openPaperdoll);
@@ -341,16 +342,16 @@ Tootsville.UI.HUD.destroyHUD = function ()
 /**
  * Open (reveal) the Talk Box.
  */
-Tootsville.UI.HUD.openTalkBox = function (event)
+Tootsville.UI.HUD.openTalkBox = function (event=null)
 { Tootsville.UI.HUD.talkBoxOpenP = true;
   document.getElementById ('talk-box').removeEventListener  ('click', Tootsville.UI.HUD.openTalkBox);
-  document.getElementById ('talk-box').style.bottom = 0;
+  document.getElementById ('talk-box').style.bottom = '0px';
   if (event) { event.stopPropagation (); } };
 
 /**
  * Close (hide) the Talk Box
  */
-Tootsville.UI.HUD.closeTalkBox = function (event)
+Tootsville.UI.HUD.closeTalkBox = function (event=null)
 { Tootsville.UI.HUD.talkBoxOpenP = false;
   document.getElementById ('talk-box').addEventListener ('click', Tootsville.UI.HUD.openTalkBox);
   document.getElementById ('talk-box').style.bottom = '-2.25rem';
@@ -436,9 +437,9 @@ Tootsville.UI.HUD.switchActiveItem = function ()
 { if (null === Tootsville.player || null === Tootsville.player.inactiveItem)
   { return; }
   let prior = Tootsville.player.activeItem;
-  if (prior) { Tootsville.wardrobe.doff (prior); }
-  Tootsville.wardrobe.don (Tootsville.player.inactiveItem);
-  if (prior) { Tootsville.wardrobe.don2 (prior); }
+  if (prior) { Tootsville.Game.Wardrobe.doff (prior); }
+  Tootsville.Game.Wardrobe.don (Tootsville.player.inactiveItem);
+  if (prior) { Tootsville.Game.Wardrobe.don2 (prior); }
   console.debug ("TODO: cool rotate-and-swap animation between the two item boxes");
   Tootsville.UI.HUD.refreshEquipment (); };
 

@@ -86,3 +86,9 @@ window.loadWatchdog1 = setTimeout(() => {
     else
         setTimeout(window.loadWatchdog1, 300); },
                                   5000);
+
+/* make Closure-Compiler happy: */
+var firebase;
+var firebaseui;
+var BABYLON;
+var forge;

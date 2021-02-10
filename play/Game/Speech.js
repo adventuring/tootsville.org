@@ -53,11 +53,12 @@ Tootsville.Game.Speech.createBalloon = function (words, extraClass)
  *
  * Builds wawa with `Tootsville.UI.WaWa.build'.
  */
-Tootsville.Game.Speech.say = function (words, extraClass, speaker)
+Tootsville.Game.Speech.say = function (words, extraClass, speaker=null)
 { if (! speaker) { speaker = Tootsville.character;
                    if (!extraClass)
-                   { extraClass = Tootsville.Game.Speech.loudness || 'talk'; } }
-  if ((! words) || (0 === words.length)) { return; }
+                       extraClass = Tootsville.Game.Speech.loudness || 'talk'; }
+  if (! extraClass) extraClass = 'talk';
+  if ((! words) || (0 === words.length)) return;
   let balloon = Tootsville.Game.Speech.createBalloon (words, extraClass);
   const avatar = Tootsville.Tank.avatars [ speaker ];
   if (! avatar)
@@ -65,12 +66,11 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker)
     Tootsville.Util.infinity ("finger", { talkie: speaker });
     return; }
   if (avatar.speech)
-  { avatar.speech.parentNode.removeChild (avatar.speech); }
+      avatar.speech.parentNode.removeChild (avatar.speech);
   avatar.speech = balloon;
   Tootsville.UI.WaWa.build (words, () => { balloon.parentNode.removeChild (balloon); } );
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
-
 
 /**
  * The time has passed; remove a speech balloon.

@@ -59,7 +59,7 @@ Tootsville.Game.Nav.CAMERA_MOVE_SPEED = Tootsville.Game.Nav.RUN_SPEED * 4;
  *
  * TODO Restrict movement when riding a vehicle.
  */
-Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed)
+Tootsville.Game.Nav.walkTheLine = function (avatar, destinationPoint, speed=0.1)
 { if (! avatar) { console.warn ("nobody can't walk"); return; }
   if (! avatar.model) { Tootsville.Gossip.Parrot.say ("Something is awry",
                                                       "You need a body to walk");
@@ -106,8 +106,7 @@ Tootsville.Game.Nav.buildWTL = function ()
                  endPoint: point,
                  startTime: Tootsville.Game.now + Tootsville.Game.lag,
                  speed: .1 }; } }
-  if (! (facing))
-  { facing = 0; }
+  if (!(facing)) facing = 0;
   return { course: course, facing: facing }; };
 
 /**

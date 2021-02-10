@@ -34,8 +34,6 @@
 if (! ("Tank" in Tootsville)) { Tootsville.Tank = { avatars: {} }; }
 if (! ("avatars" in Tootsville.Tank)) { Tootsville.Tank.avatars = {}; }
 
-if (!('BABYLON' in window)) var BABYLON; // make Closure Compiler Happy
-
 /**
  * Indicates whether the 2D overlay attachments need updating.
  *
@@ -169,9 +167,7 @@ Tootsville.Tank.initPlayerToot = function ()
   { Tootsville.Util.infinity ("finger", { 0: Tootsville.character.name });
     return; }
   Tootsville.AvatarBuilder.build (
-      Tootsville.Tank.avatars [ Tootsville.character ], Tootsville.Tank.scene// ,
-      // model => { Tootsville.Tank.camera.lockedTarget = model; }
-  ); };
+      Tootsville.Tank.avatars [ Tootsville.character ], Tootsville.Tank.scene); };
 
 /**
  * Update the avatar model for avatarName, by looking up its description
