@@ -183,11 +183,13 @@ Tootsville.FurnitureBuilder.setMaterialVectorTexture = function (material, textu
 /**
  * Set ``material'' to a video texture.
  *
- * Three files will be used:
+ * Four files will be used:
  *
  * @itemize
  * @item
  * The base filename ending in @code{mp4},
+ * @item
+ * The base filename ending in @code{webm},
  * @item
  * The base filename ending in @code{ogv},
  * @item
@@ -196,8 +198,21 @@ Tootsville.FurnitureBuilder.setMaterialVectorTexture = function (material, textu
  * @end itemize
  */
 Tootsville.FurnitureBuilder.setMaterialVideoTexture = function (material, texture, scene) {
-    // UNIMPLEMENTED special texture video
-};
+    material.diffuseColor = null;
+    let base = texture.match(/^(.*)\.(mp4|ogv|webm)$/)[1];
+    material.diffuseTexture = new BABYLON.VideoTexture (
+        texture,
+        [ 'https://jumbo.tootsville.org/Assets/Textures/5/' + base + '.mp4',
+          'https://jumbo.tootsville.org/Assets/Textures/5/' + base + '.webm',
+          'https://jumbo.tootsville.org/Assets/Textures/5/' + base + '.ogv' ],
+        scene, /* mipmap */ true, /* invertY */ false,
+        /* sampling mode */ TRILINEAR_SAMPLINGMODE,
+        /* settings */
+        { autoPlay: true,
+          loop: true,
+          poster: 'https://jumbo.tootsville.org/Assets/Textures/5/' + base + '.jpg',
+          muted: true });
+    return material; };
 
 /**
  * UNIMPLEMENTED special handling for Theater in Toot Square West screen
@@ -224,14 +239,14 @@ Tootsville.FurnitureBuilder.theaterWestVideoTexture = function (material, scene)
  * in @code{.svg}.
  *
  * The special texture may also be a video stream, which will be
- * played on a silent loop, when its name ends in @code{.mp4}
- * or @code{.ogv}.  Note that we will attempt to load @emph{both} the
- * MPEG 4 and OGG Vorbis forms of the video simultaneously in
- * different browsers, so it is not defined which of the two will be
- * loaded by any particular user (due to CODEC issues in browsers).  A
- * third file, in @code{JPEG} format and named ending in @code{.jpg}
- * will be used as the ``poster'' image texture until the video has
- * loaded.
+ * played on a silent loop, when its name ends
+ * in @code{.mp4}, @code{.webm}, or @code{.ogv}.  Note that we will
+ * attempt to load @emph{all} of the MPEG 4, WebM, and OGG Vorbis
+ * forms of the video simultaneously in different browsers, so it is
+ * not defined which of the two will be loaded by any particular user
+ * (due to CODEC issues in browsers).  A third file, in @code{JPEG}
+ * format and named ending in @code{.jpg} will be used as the
+ * ``poster'' image texture until the video has loaded.
  *
  * @subsection Very Special Special Textures
  *
@@ -261,7 +276,7 @@ Tootsville.FurnitureBuilder.setMaterialTexture = function (material, texture, sc
         Tootsville.FurnitureBuilder.setMaterialPixmapTexture (material, texture, scene);
     else if (/\.svg$/.test(texture))
         Tootsville.FurnitureBuilder.setMaterialVectorTexture (material, texture, scene);
-    else if (/\.(ogv|mp4)$/.test(texture))
+    else if (/\.(ogv|mp4|webm)$/.test(texture))
         Tootsville.FurnitureBuilder.setMaterialVideoTexture (material, texture, scene);
     else if ('#theater-west' === texture)
         Tootsville.FurnitureBuilder.theaterWestVideoTexture (material, scene);
