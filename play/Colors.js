@@ -77,3 +77,24 @@ if (!('UI' in Tootsville)) Tootsville.UI = {};
         return tootColorMapping[name.toLowerCase()] || name;
     };
 })();
+
+/**
+ * Convert an HTML-type color code into a BABYLON.Color3 object.
+ *
+ * Understands #rgb and #rrggbb notations (only).
+ *
+ * Signals an error if the format does not match.
+ */
+Tootsville.UI.htmlColorToBabylon = function (htmlColor) {
+    if (4 === htmlColor.length && '#' == htmlColor.substr(0,1))
+    { return new BABYLON.Color3(
+        parseInt("0x" + htmlColor.substr(1,1) + htmlColor.substr(1,1)),
+        parseInt("0x" + htmlColor.substr(2,1) + htmlColor.substr(2,1)),
+        parseInt("0x" + htmlColor.substr(3,1) + htmlColor.substr(3,1))); }
+    else if (7 === htmlColor.length && '#' == htmlColor.substr(0,1))
+    { return new BABYLON.Color3(
+        parseInt('0x' + htmlColor.substr(1,2)),
+        parseInt('0x' + htmlColor.substr(3,2)),
+        parseInt('0x' + htmlColor.substr(5,2))); }
+    else throw "Can't convert color to Babylon color: " + htmlColor;
+};
