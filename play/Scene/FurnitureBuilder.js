@@ -150,3 +150,39 @@ Tootsville.FurnitureBuilder.build = function (item, scene=undefined, finish=unde
   { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else
   { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };
+
+
+
+
+/*----------------------------------------*/
+
+/**
+ * Make a colorizer function for a material for ``furniture''.
+ */
+Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture) {
+    return function (material) {
+        if (!(material.name)) return;
+        if ('base' == material.name.toLower ())
+            Tootsville.FurnitureBuilder.assignPatternToMaterial (material, furniture);
+        else if ('pad' == material.name.toLower ())
+            Tootsville.ModelLoader.setMaterialColor (material, furniture.padColor); }; };
+
+/**
+ * Make a colorizer function for ``furniture'' for `Tootsville.ModelLoader.loadAndColorize'
+ */
+Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture) {
+    let colorizeMaterial = Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial (furniture);
+    return function (node) {
+        if (!(node.materials)) return;
+        for (let i = 0; i < node.materials.length; ++i)
+            colorizeMaterial (node.materials [i]); }; };
+
+/**
+ *
+ */
+Tootsville.FurnitureBuilder.buildNew = function (furniture, scene=null, finish=null)
+{ if (!scene) { scene = Tootsville.Tank.scene; }
+  let colorizer = Tootsville.FurnitureBuilder.makeFurnitureColorizer (furniture);
+  Tootsville.ModelLoader.loadAndColorize ('Furnitures', furniture.avatar, colorizer,
+                                          scene);
+  /* TODO call ModelLoader with an furniture colorizer function */  };
