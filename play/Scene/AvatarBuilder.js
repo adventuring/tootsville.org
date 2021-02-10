@@ -258,6 +258,24 @@ Tootsville.AvatarBuilder.build = function (avatar, scene=null, finish=null)
 /*----------------------------------------*/
 
 /**
+ * Assign a Toot pattern to a material
+ *
+ * XXX keep a cache for identical textures on different avatars, with
+ * a reference count for manual garbage collection.
+ */
+Tootsville.AvatarBuilder.assignPatternToMaterial = function (material, avatar) {
+    const patternTexture = new BABYLON.DynamicTexture (avatar.baseColor + "/" + avatar.pattern + "/" + avatar.patternColor,
+                                                       1024 /* resolution */,
+                                                       scene);
+    const canvas = patternTexture.getContext ();
+    Tootsville.AvatarBuilder.drawPatternOnCanvas (avatar, canvas);
+    patternTexture.update ();
+    material.diffuseColor = null;
+    material.diffuseTexture = patternTexture;
+    return material;
+};
+
+/**
  * Make a colorizer function for a material for ``avatar''.
  */
 Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar) {
@@ -284,6 +302,5 @@ Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
 Tootsville.AvatarBuilder.buildNew = function (avatar, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   let colorizer = Tootsville.AvatarBuilder.makeAvatarColorizer (avatar);
-  Tootsville.ModelLoader.loadAndColorize ('Avatars', avatar.avatar, colorizer,
-                                          scene);
-  /* TODO call ModelLoader with an avatar colorizer function */  };
+  return Tootsville.ModelLoader.loadAndColorize ('Avatars', avatar.avatar,
+                                                 colorizer, scene); };
