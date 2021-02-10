@@ -289,9 +289,9 @@ Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar, scene) {
 /**
  * Make a colorizer function for ``avatar'' for `Tootsville.ModelLoader.loadAndColorize'
  */
-Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
-    let colorizeMaterial = Tootsville.AvatarBuilder.makeAvatarColorizeMaterial (avatar);
-    return function (node, scene) {
+Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar, scene) {
+    let colorizeMaterial = Tootsville.AvatarBuilder.makeAvatarColorizeMaterial (avatar, scene);
+    return function (node) {
         if (!(node.materials)) return;
         for (let i = 0; i < node.materials.length; ++i)
             colorizeMaterial (node.materials [i], scene); }; };
@@ -301,6 +301,6 @@ Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
  */
 Tootsville.AvatarBuilder.buildNew = function (avatar, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
-  let colorizer = Tootsville.AvatarBuilder.makeAvatarColorizer (avatar);
+  let colorizer = Tootsville.AvatarBuilder.makeAvatarColorizer (avatar, scene);
   return Tootsville.ModelLoader.loadAndColorize ('Avatars', avatar.avatar,
                                                  colorizer, scene); };

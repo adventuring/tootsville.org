@@ -291,8 +291,8 @@ Tootsville.FurnitureBuilder.setMaterialTexture = function (material, texture, sc
  * name on that path is given by @code{specialTexture}. It can be a
  * PNG, JPEG, or SVG file. See @code{setMaterialTexture} for details.
  */
-Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture) {
-    return function (material, scene) {
+Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture, scene) {
+    return function (material) {
         if (!(material.name)) return;
         if ('base' == material.name.toLower () && furniture.baseColor)
             Tootsville.ModelLoader.setMaterialColor (material, furniture.baseColor);
@@ -306,9 +306,9 @@ Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture)
 /**
  * Make a colorizer function for ``furniture'' for `Tootsville.ModelLoader.loadAndColorize'
  */
-Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture) {
-    let colorizeMaterial = Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial (furniture);
-    return function (node, scene) {
+Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture, scene) {
+    let colorizeMaterial = Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial (furniture, scene);
+    return function (node) {
         if (!(node.materials)) return;
         for (let i = 0; i < node.materials.length; ++i)
             colorizeMaterial (node.materials [i], scene); }; };
@@ -318,6 +318,6 @@ Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture) {
  */
 Tootsville.FurnitureBuilder.buildNew = function (furniture, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
-  let colorizer = Tootsville.FurnitureBuilder.makeFurnitureColorizer (furniture);
+  let colorizer = Tootsville.FurnitureBuilder.makeFurnitureColorizer (furniture, scene);
   return Tootsville.ModelLoader.loadAndColorize ('Items', furniture.avatar,
                                                  colorizer, scene); };
