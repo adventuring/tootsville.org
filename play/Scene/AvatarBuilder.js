@@ -154,7 +154,7 @@ Tootsville.AvatarBuilder.postBuild = function (avatar, model, scene)
   { console.warn ("Canceling AvatarBuilder.postBuild for " + avatar.userName + " because found one existing");
     return; }
   // TODO set scaling
-  try {Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
+  try { Tootsville.AvatarBuilder.rememberAvatar (avatar, model, scene); } catch (e) { console.error (e); }
   let a = Tootsville.Tank.avatars [avatar.name];
   if (!a) { return; }
   try { Tootsville.AvatarBuilder.addNameTag (a, model, scene); } catch (e) { console.error (e); }
@@ -209,7 +209,7 @@ Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
   loadTask.onError = function (task, message, e)
   { console.error ("Error " + task.name + ": " + message + ": " +
                    e.message + " in " + e.filename + ":"  + e.lineNumber, task, e); };
-  loadTask.onSuccess = task => { Tootsville.AvatarBuilder.afterLoading (task, avatar, scene, finish) };
+  loadTask.onSuccess = task => { Tootsville.AvatarBuilder.afterLoading (task, avatar, scene, finish); };
   assetsManager.load (); };
 
 /**
