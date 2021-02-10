@@ -163,9 +163,13 @@ Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture)
     return function (material) {
         if (!(material.name)) return;
         if ('base' == material.name.toLower ())
-            Tootsville.FurnitureBuilder.assignPatternToMaterial (material, furniture);
-        else if ('pad' == material.name.toLower ())
-            Tootsville.ModelLoader.setMaterialColor (material, furniture.padColor); }; };
+            Tootsville.ModelLoader.setMaterialColor (material, furniture.baseColor);
+        else if ('alt' == material.name.toLower ())
+            Tootsville.ModelLoader.setMaterialColor (material, furniture.altColor);
+        else if ('map' == material.name.toLower ())
+            /* FIXME texturize */
+            return;
+    }; };
 
 /**
  * Make a colorizer function for ``furniture'' for `Tootsville.ModelLoader.loadAndColorize'
@@ -183,6 +187,5 @@ Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture) {
 Tootsville.FurnitureBuilder.buildNew = function (furniture, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   let colorizer = Tootsville.FurnitureBuilder.makeFurnitureColorizer (furniture);
-  Tootsville.ModelLoader.loadAndColorize ('Furnitures', furniture.avatar, colorizer,
-                                          scene);
-  /* TODO call ModelLoader with an furniture colorizer function */  };
+  return Tootsville.ModelLoader.loadAndColorize ('Items', furniture.avatar,
+                                                 colorizer, scene); };
