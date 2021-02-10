@@ -98,3 +98,12 @@ Tootsville.UI.htmlColorToBabylon = function (htmlColor) {
         parseInt('0x' + htmlColor.substr(5,2))); }
     else throw "Can't convert color to Babylon color: " + htmlColor;
 };
+
+/**
+ * Return a lighter form of the Color3 passed in
+ */
+Tootsville.UI.lightenColor = function (color3) {
+    return new BABYLON.Color3 (
+        Math.min(0xff, color3.red * 1.5),
+        Math.min(0xff, color3.green * 1.5),
+        Math.min(0xff, color3.blue * 1.5)); };
