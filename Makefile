@@ -38,6 +38,10 @@ deploy: all deploy-www deploy-play git-tag-deployment deploy-docs
 	>> ~/.sbclrc
 	>.deps~
 
+####################
+
+JSC=java -jar bin/closure-compiler-v20210202.jar
+
 #################### vars
 
 # To target alternate clusters:
@@ -123,7 +127,7 @@ worker:	dist/worker.js
 
 dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.js
 	mkdir -p dist/
-	closure-compiler --create_source_map dist/worker.map \
+	$(JSC) --create_source_map dist/worker.map \
                     $$(< build/closure-compiler.opts)           \
 		--js worker/TootsvilleWorker.js            \
 		--js worker/Worker.js                      \
@@ -148,7 +152,7 @@ dist/node-adopt.js:	build/node-adopt.js \
 
 dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	mkdir -p dist/play/
-	closure-compiler --create_source_map dist/play/play.map   \
+	$(JSC) --create_source_map dist/play/play.map   \
                     $$(< build/closure-compiler.opts)                \
 		--source_map_location_mapping 'play/|/play/'        \
 		$$(< build/js.order )                            \
@@ -365,13 +369,13 @@ mesh:	dist/play.$(clusterorg)/play/mesh.min.js \
 	dist/play.$(clusterorg)/play/jscl.min.js
 
 dist/play.$(clusterorg)/play/jscl.min.js: jscl/jscl.js
-	closure-compiler \
+	$(JSC) \
                     $$(< build/closure-compiler.opts)           \
 		--js jscl/jscl.js   \
 		--js_output_file $@
 
 dist/play.$(clusterorg)/play/mesh.min.js: dist/mesh.js
-	closure-compiler \
+	$(JSC) \
                     $$(< build/closure-compiler.opts)           \
 		--js dist/mesh.js   \
 		--js_output_file $@
