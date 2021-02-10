@@ -238,7 +238,7 @@ Tootsville.AvatarBuilder.update = function (avatar, model, scene, finish)
  *
  * A duplicate of an existing avatar will not be created, but it may be updated.
  */
-Tootsville.AvatarBuilder.build = function (avatar, scene, finish=null)
+Tootsville.AvatarBuilder.build = function (avatar, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   if (scene === Tootsville.Tank.scene)
   { if (Tootsville.Tank.avatars &&
@@ -257,7 +257,7 @@ Tootsville.AvatarBuilder.build = function (avatar, scene, finish=null)
 /*----------------------------------------*/
 
 /**
- *
+ * Make a colorizer function for a material for ``avatar''.
  */
 Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar) {
     return function (material) {
@@ -268,7 +268,7 @@ Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar) {
             Tootsville.ModelLoader.setMaterialColor (material, avatar.padColor); }; };
 
 /**
- *
+ * Make a colorizer function for ``avatar'' for `Tootsville.ModelLoader.loadAndColorize'
  */
 Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
     let colorizeMaterial = Tootsville.AvatarBuilder.makeAvatarColorizeMaterial (avatar);
@@ -280,7 +280,7 @@ Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
 /**
  *
  */
-Tootsville.AvatarBuilder.buildNewForm = function (avatar, scene, finish)
+Tootsville.AvatarBuilder.build2 = function (avatar, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   let colorizer = Tootsville.AvatarBuilder.makeAvatarColorizer (avatar);
   Tootsville.ModelLoader.loadAndColorize ('Avatars', avatar.avatar, colorizer,
