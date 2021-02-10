@@ -40,9 +40,9 @@ if (!('itemTemplates' in Tootsville.FurnitureBuilder)) { Tootsville.FurnitureBui
  */
 Tootsville.FurnitureBuilder.colorize = function (item, model, scene, finish)
 { const baseMaterial = new BABYLON.StandardMaterial (item.baseColor, scene);
-  baseMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (item.baseColor));
+  baseMaterial.diffuseColor = new BABYLON.Color3.FromHexString (Tootsville.UI.interpretTootColor (item.baseColor));
   const altMaterial = new BABYLON.StandardMaterial (item.padColor, scene);
-  altMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (item.altColor));
+  altMaterial.diffuseColor = new BABYLON.Color3.FromHexString (Tootsville.UI.interpretTootColor (item.altColor));
   const meshes = model.getChildMeshes ();
   for (let i = 0; i < meshes.length; ++i)
   { const mesh = meshes [i];

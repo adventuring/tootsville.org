@@ -31,8 +31,11 @@
  *
  */
 
+if (!('Tootsville' in window)) Tootsville = {UI:{}};
+if (!('UI' in Tootsville)) Tootsville.UI = {};
+
 (function () {
-    var tootColorMapping = {
+    const tootColorMapping = {
         silver: "#ddd",
         charcoal: "#333",
         white: "#fff",
@@ -68,7 +71,7 @@
      * Strings which are not recognized as color names are
      * expected to already be an HTML-style hex code.
      */
-    window.interpretTootColor = function (name) {
+    Tootsville.UI.interpretTootColor = function (name) {
         if (null === name || undefined === name)
         { return '#000'; }
         return tootColorMapping[name.toLowerCase()] || name;

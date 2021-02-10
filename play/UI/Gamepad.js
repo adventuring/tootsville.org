@@ -187,7 +187,7 @@ Tootsville.UI.Gamepad.scanGamepads = function ()
                        : []));
   for (var i = 0; i < gamepads.length; i++)
   { if (gamepads [i])
-    { if (! (gamepads [i].index in controllers))
+    { if (! (gamepads [i].index in Tootsville.UI.Gamepad.controllers))
       { Tootsville.UI.Gamepad.addGamepad (gamepads [i]); }
       else
       { Tootsville.UI.Gamepad.controllers [gamepads [i].index] = gamepads [i]; }}}};

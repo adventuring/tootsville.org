@@ -34,6 +34,8 @@
 if (! ("Tank" in Tootsville)) { Tootsville.Tank = { avatars: {} }; }
 if (! ("avatars" in Tootsville.Tank)) { Tootsville.Tank.avatars = {}; }
 
+if (!('BABYLON' in window)) var BABYLON; // make Closure Compiler Happy
+
 /**
  * Indicates whether the 2D overlay attachments need updating.
  *

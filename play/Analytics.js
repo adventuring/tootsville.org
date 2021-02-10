@@ -37,16 +37,18 @@ Tootsville.trace = function (event, details)
 Tootsville.inform = function (event, details)
 { console.info.apply(console, arguments);
   // ga('send', arguments[0], Array.prototype.join(arguments.splice(1), "\n"));
-  if (('Rollbar' in window) && Rollbar.info)
-  { Rollbar.info (arguments); } };
+  if (('Rollbar' in window) && window.Rollbar.info)
+      window.Rollbar.info (arguments); };
 
 Tootsville.warn = function (message)
 { console.warn.apply(console, arguments);
-  ga('send', 'warning', Array.prototype.join(arguments, "\n"));
-  if (('Rollbar' in window) && Rollbar.warn)
-  { Rollbar.warn (arguments); } };
+  if ('ga' in window)
+      window.ga('send', 'warning', Array.prototype.join(arguments, "\n"));
+  if (('Rollbar' in window) && window.Rollbar.warn)
+      window.Rollbar.warn (arguments); };
 
 Tootsville.error = function (message)
 { console.error.apply(console, arguments);
-  ga('send', 'error', Array.prototype.join(arguments, "\n"));
+  if ('ga' in window)
+      window.ga('send', 'error', Array.prototype.join(arguments, "\n"));
   throw new Error(message); };

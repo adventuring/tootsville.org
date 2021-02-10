@@ -223,16 +223,16 @@ Tootsville.Gossip.send = function (c, d, r, a, v)
  * Ensure that we have an unique public/private key pair for this session
  */
 Tootsville.Gossip.ensureKeyPair = function ()
-{ if (! (Tootsville.Gossip.keyPair) )
-  { Tootsville.Gossip.keyPair = forge.rsa.generateKeyPair (); } };
+{ if (! (Tootsville.Gossip.keyPair))
+    Tootsville.Gossip.keyPair = window.forge.rsa.generateKeyPair (); };
 
 /**
  * Sign a packet with our private key
  */
 Tootsville.Gossip.signPacket = function (c, d, r)
 { let payload = JSON.stringify ({ c: c, d: d, r: r });
-  let signature = forge.rsa.encrypt (
-      forge.sha256.create ().start ().update (payload).digest ().data,
+  let signature = window.forge.rsa.encrypt (
+      window.forge.sha256.create ().start ().update (payload).digest ().data,
       Tootsville.Gossip.keyPair.privateKey ); };
 
 /**

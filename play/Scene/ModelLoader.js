@@ -52,11 +52,11 @@ Tootsville.ModelLoader.loadPromise = async (path, file, scene) => {
  *
  */
 Tootsville.ModelLoader.loadModelOnce = async (kind, file, scene) => {
-    let found = Tootsville.ModelLoader.avatarCache [kind + '/' +avatar];
+    let found = Tootsville.ModelLoader.avatarCache [kind + '/' + file];
     if (found) return found;
     let assets = await Tootsville.ModelLoader.loadPromise ('https://jumbo.tootsville.org/Assets/' + kind + '/5/',
                                                              file + '.glb', scene);
-    Tootsville.ModelLoader.avatarCache[kind + '/' + avatar] = assets;
+    Tootsville.ModelLoader.avatarCache[kind + '/' + file] = assets;
     return assets; };
 
 /**

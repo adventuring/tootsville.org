@@ -18,8 +18,6 @@ play/Gossip/Gossip.js
 
 play/Login/Login.js
 
-play/lib/adapter.js/adapter.js
-
 play/Game/UserLists.js
 play/Game/Credits.js
 play/Game/Wardrobe.js

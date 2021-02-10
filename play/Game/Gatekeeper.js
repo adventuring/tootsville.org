@@ -205,7 +205,7 @@ Tootsville.Game.Gatekeeper.getAwardRankings = function (gram)
 Tootsville.Game.Gatekeeper.getApple = function (gram)
 { if (gram.status)
   { let apple = gram.apple;
-    let sha1 = forge.md.sha1.create ();
+    let sha1 = window.forge.md.sha1.create ();
     sha1.update (apple);
     sha1.update (Tootsville.childCode);
     Tootsville.Util.infinity ("login", { userName: Tootsville.character,

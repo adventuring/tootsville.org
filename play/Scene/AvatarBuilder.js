@@ -56,7 +56,7 @@ Tootsville.AvatarBuilder.rainbowColor = function (baseColor)
   { return color; } };
 
 Tootsville.AvatarBuilder.drawPatternOnCanvas = function (avatar, canvas)
-{ canvas.fillStyle = interpretTootColor (avatar.baseColor);;
+{ canvas.fillStyle = Tootsville.UI.interpretTootColor (avatar.baseColor);;
   canvas.fillRect (0, 0, 1024, 1024);
   let i = 0;
   for (let x = 0; x < 1023; x += 192)
@@ -68,7 +68,7 @@ Tootsville.AvatarBuilder.drawPatternOnCanvas = function (avatar, canvas)
       if ('rainbow' === avatar.patternColor.toLowerCase ())
       { canvas.fillStyle = Tootsville.AvatarBuilder.rainbowColor (avatar.baseColor); }
       else
-      { canvas.fillStyle = interpretTootColor (avatar.patternColor); }
+      { canvas.fillStyle = Tootsville.UI.interpretTootColor (avatar.patternColor); }
       let path = Tootsville.AvatarBuilder.getPathForPattern (avatar.pattern);
       if (Array.isArray (path))
       { path = path [ i % path.length ]; }
@@ -91,7 +91,7 @@ Tootsville.AvatarBuilder.colorize = function (avatar, model, scene, finish)
   
   const padMaterial = new BABYLON.StandardMaterial (avatar.padColor,
                                                     scene);
-  padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (interpretTootColor (avatar.padColor));
+  padMaterial.diffuseColor = new BABYLON.Color3.FromHexString (Tootsville.UI.interpretTootColor (avatar.padColor));
   const eyeMaterial = new BABYLON.StandardMaterial ("eye", scene);
   eyeMaterial.diffuseColor = new BABYLON.Color3.FromHexString ('#000000');
   const meshes = model.getChildMeshes ();

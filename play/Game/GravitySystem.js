@@ -43,7 +43,7 @@ if (!('entities' in Tootsville.Game.GravitySystem))
  */
 Tootsville.Game.GravitySystem.register = function (entity)
 { if (!(entity.model))
-  { throw new Exception ("Can't apply gravity to entity without model"); }
+    throw "Can't apply gravity to entity without model";
   Tootsville.Game.GravitySystem.entities.push (entity); };
 
 /**

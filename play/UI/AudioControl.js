@@ -68,7 +68,7 @@ Tootsville.UI.Audio.updateVolumeUI = function ()
  */
 Tootsville.UI.Audio.setVolume = function (newVolume)
 { Tootsville.UI.Audio.currentVolume = newVolume;
-  localStorage.setItem('volume', newVolume);
+  window.localStorage.setItem('volume', newVolume);
   const allAudio = document.getElementsByTagName ('AUDIO');
   for (var i = 0; i < allAudio.length; ++i)
   { allAudio[i].volume = newVolume/100; }

@@ -35,6 +35,7 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {Nav: {}}; }
 if (!('Nav' in Tootsville.Game)) { Tootsville.Game.Nav= {}; }
 if (!('now' in Tootsville.Game)) { Tootsville.Game.now = 0; }
 
+
 /**
  * The walk speed of a Toot. Currently a constant.
  */

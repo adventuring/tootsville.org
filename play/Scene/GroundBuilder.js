@@ -48,7 +48,7 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
   const groundTexture = new BABYLON.DynamicTexture ("ground",
                                                   1024, Tootsville.Tank.scene);
   const groundCanvas = groundTexture.getContext ();
-  groundCanvas.fillStyle = interpretTootColor ('green');
+  groundCanvas.fillStyle = Tootsville.UI.interpretTootColor ('green');
   groundCanvas.fillRect (0, 0, 1024, 1024);
   const groundMaterial = new BABYLON.StandardMaterial ("ground",
                                                        Tootsville.Tank.scene);
@@ -81,7 +81,7 @@ Tootsville.GroundBuilder.kinds =
 *
 */
 Tootsville.GroundBuilder.colorForPlace = function (kind)
-{ return interpretTootColor ( Tootsville.GroundBuilder.kinds [ kind ] ); };
+{ return Tootsville.UI.interpretTootColor ( Tootsville.GroundBuilder.kinds [ kind ] ); };
 
 /**
  *

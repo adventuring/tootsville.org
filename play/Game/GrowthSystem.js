@@ -71,7 +71,7 @@ Tootsville.Game.GrowthSystem.grow = function (entity)
  */
 Tootsville.Game.GrowthSystem.updateGrowth = function ()
 { for (let i = 0; i < Tootsville.Game.GrowthSystem.allGrowing.length; ++i)
-  { Toosville.Game.GrowthSystem.grow (Tootsville.Game.GrowthSystem.allGrowing [i]); } };
+  { Tootsville.Game.GrowthSystem.grow (Tootsville.Game.GrowthSystem.allGrowing [i]); } };
 
 /**
  * Simulate the passage of Δt time (in seconds)

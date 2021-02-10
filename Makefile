@@ -124,7 +124,7 @@ worker:	dist/worker.js
 dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.js
 	mkdir -p dist/
 	closure-compiler --create_source_map dist/worker.map \
-                    $(< build/closure-compiler.opts)           \
+                    $$(< build/closure-compiler.opts)           \
 		--js worker/TootsvilleWorker.js            \
 		--js worker/Worker.js                      \
 		--js worker/WorkerStart.js                 \
@@ -149,15 +149,12 @@ dist/node-adopt.js:	build/node-adopt.js \
 dist/play/play.js:	build/js.order $(shell cat build/js.order)
 	mkdir -p dist/play/
 	closure-compiler --create_source_map dist/play/play.map   \
-		--third_party                                   \
-                    $(< build/closure-compiler.opts)                \
+                    $$(< build/closure-compiler.opts)                \
 		--source_map_location_mapping 'play/|/play/'        \
-		--language_in ECMASCRIPT6                        \
-		--language_out ECMASCRIPT5_STRICT                \
 		$$(< build/js.order )                            \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
-	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ -i $@
+	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ $@ > ...$$ && mv -f ...$$ $@
 
 dist/version.js:	build/version
 	echo "Tootsville.version = \"$$(< build/version)\";" > dist/version.js
@@ -369,13 +366,13 @@ mesh:	dist/play.$(clusterorg)/play/mesh.min.js \
 
 dist/play.$(clusterorg)/play/jscl.min.js: jscl/jscl.js
 	closure-compiler \
-                    $(< build/closure-compiler.opts)           \
+                    $$(< build/closure-compiler.opts)           \
 		--js jscl/jscl.js   \
 		--js_output_file $@
 
 dist/play.$(clusterorg)/play/mesh.min.js: dist/mesh.js
 	closure-compiler \
-                    $(< build/closure-compiler.opts)           \
+                    $$(< build/closure-compiler.opts)           \
 		--js dist/mesh.js   \
 		--js_output_file $@
 

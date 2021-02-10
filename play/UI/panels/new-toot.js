@@ -125,7 +125,7 @@ Tootsville.UI.NewToot.setColor = function (targetColor, value)
     widget.style.backgroundColor = ""; }
   else
   { widget.style.backgroundImage = "";
-    widget.style.backgroundColor = interpretTootColor (value); }
+    widget.style.backgroundColor = Tootsville.UI.interpretTootColor (value); }
   widget.setAttribute ('data-color', value);
   Tootsville.UI.NewToot.updateAvatar (targetColor, value);
   Tootsville.UI.NewToot.changeColor (targetColor, value); };
@@ -140,14 +140,14 @@ Tootsville.UI.NewToot.randomPatternColor = function ()
   if ( ('Rainbow' === color) ||
        (color === document.getElementById ("new-toot-base-color").getAttribute ("data-color")) )
   { return Tootsville.UI.NewToot.randomPatternColor (); };
-  return interpretTootColor (color);};
+  return Tootsville.UI.interpretTootColor (color);};
 
 Tootsville.UI.NewToot.randomPadColor = function ()
 { var padColors = Tootsville.UI.NewToot.colors.pad;
   var color = padColors[ Math.floor (Math.random () * padColors.length) ];
   if (color === document.getElementById ("new-toot-base-color").getAttribute ("data-color"))
   { return Tootsville.UI.NewToot.randomPadColor (); };
-  return interpretTootColor (color);};
+  return Tootsville.UI.interpretTootColor (color);};
 
 /**
  *
@@ -155,11 +155,11 @@ Tootsville.UI.NewToot.randomPadColor = function ()
 Tootsville.UI.NewToot.applyPatternColor = function ()
 { var patternWidget = document.getElementById ("new-toot-pattern");
   var patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
-  patternWidget.style.backgroundColor = interpretTootColor (document.getElementById ("new-toot-base-color").getAttribute ("data-color"));
+  patternWidget.style.backgroundColor = Tootsville.UI.interpretTootColor (document.getElementById ("new-toot-base-color").getAttribute ("data-color"));
   if (0 === patternWidget.children.length) { return; }
   for (var i = 0; i < 3; ++i)
   { patternWidget.children[0].children[3].children[i].style = "fill:" +
-    (  ('Rainbow' === patternColor) ? Tootsville.UI.NewToot.randomPatternColor () : interpretTootColor (patternColor)  )+
+    (  ('Rainbow' === patternColor) ? Tootsville.UI.NewToot.randomPatternColor () : Tootsville.UI.interpretTootColor (patternColor)  )+
     ";fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"; }};
 
 /**
@@ -341,7 +341,7 @@ Tootsville.UI.NewToot.createColorPicker = function (name, button)
     if ("Rainbow" === color) {
         label.style.backgroundImage = Tootsville.UI.NewToot.rainbowGradient;
     } else {
-        label.style.backgroundColor = interpretTootColor (color.toLowerCase ());
+        label.style.backgroundColor = Tootsville.UI.interpretTootColor (color.toLowerCase ());
     }
     picker.appendChild (colorButton);
     picker.appendChild (label); }

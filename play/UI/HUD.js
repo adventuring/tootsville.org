@@ -178,7 +178,7 @@ Tootsville.UI.HUD.loadHUDPanel = function (panelName, finish)
                                               "for now. ☹");
                 Tootsville.error ("No DIV <DIV ID=\"" + panelName +
                                   "\"> in HTML fragment " + panelName); }
-              var hud = document.getElementById ('hud');
+              const hud = document.getElementById ('hud');
               var spinner = document.getElementById(panelName + '-loading');
               if (spinner)
               { console.debug ("Loaded " + panelName + ", removing spinner ", spinner);
@@ -522,11 +522,14 @@ Tootsville.UI.HUD.refreshTimeLeft = function ()
     if (remainMin < 10) { remainMin = '0' + remainMin; }
     document.getElementById ('time-left').innerText = '⌚' + remainHour + ':' + remainMin;
     if (remainHour > 0)
-    { document.getElementById ('time-left').style.color = interpretTootColor ('spring-green'); }
+    { document.getElementById ('time-left').style.color =
+      Tootsville.UI.interpretTootColor ('spring-green'); }
     else if (remainMin > 15)
-    { document.getElementById ('time-left').style.color = interpretTootColor ('yellow'); }
+    { document.getElementById ('time-left').style.color = 
+      Tootsville.UI.interpretTootColor ('yellow'); }
     else
-    { document.getElementById ('time-left').style.color = interpretTootColor ('red'); }
+    { document.getElementById ('time-left').style.color = 
+      Tootsville.UI.interpretTootColor ('red'); }
   }
   else
   { document.getElementById('time-left').innerText = ''; } };
@@ -840,7 +843,7 @@ Tootsville.UI.HUD.nameTagClicked = function (event)
 /**
  * Show the player's mobile device
  */
-Tootsville.UI.HUD.showMobile = function ()
+Tootsville.UI.HUD.showMobile = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showHUDPanel ('mobile'); };
 
@@ -848,13 +851,13 @@ Tootsville.UI.HUD.showMobile = function ()
 /**
  * Show the camera widget
  */
-Tootsville.UI.HUD.showCamera = function ()
+Tootsville.UI.HUD.showCamera = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showHUDPanel ('camera'); };
 
 /**
  * Show the control panel menu
  */
-Tootsville.UI.HUD.showControlPanel = function ()
+Tootsville.UI.HUD.showControlPanel = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showHUDPanel ('control-panel'); };

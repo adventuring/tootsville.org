@@ -52,7 +52,7 @@ Tootsville.AvatarViewer.createScene = function (canvas)
 { canvas.engine = new BABYLON.Engine (canvas, true, { preserveDrawingBuffer: true, stencil: true,
                                                       height: 256, width: 256 } );
   canvas.scene = new BABYLON.Scene (canvas.engine);
-  canvas.scene.clearColor = new BABYLON.Color3.FromHexString (interpretTootColor ('periwinkle')); };
+  canvas.scene.clearColor = new BABYLON.Color3.FromHexString (Tootsville.UI.interpretTootColor ('periwinkle')); };
 
 /**
  * Create a camera through which to observe the Avatar Viewer

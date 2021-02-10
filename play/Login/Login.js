@@ -289,9 +289,11 @@ Tootsville.Login.loginDone = function ()
   Tootsville.Login.endLoginMusic ();
   Tootsville.UI.HUD.closePanel ();
   if ('Rollbar' in window)
-  { Rollbar.configure({ payload: { person: { id: Tootsville.characterUUID,
-                                             username: Tootsville.character,
-                                             email: Tootsville.player && Tootsville.player.eMail }}}); }
+  { window.Rollbar.configure(
+      { payload:
+        { person: { id: Tootsville.characterUUID,
+                    username: Tootsville.character,
+                    email: Tootsville.player && Tootsville.player.eMail }}}); }
   document.title = Tootsville.character + " in Tootsville";
   Tootsville.UI.HUD.refreshHUD (); };
 
@@ -463,10 +465,10 @@ Tootsville.Login.doneEditingSettings = function ()
  * Start the Firebase login system
  */
 Tootsville.Login.firebaseLogin = function (loginPanel)
-{ var ui = new firebaseui.auth.AuthUI(firebase.auth());
+{ var ui = new window.firebaseui.auth.AuthUI(window.firebase.auth());
   Tootsville.trace ("Starting Firebase login");
 
-  let yahoo = new firebase.auth.OAuthProvider('yahoo.com');
+  let yahoo = new window.firebase.auth.OAuthProvider('yahoo.com');
   yahoo.setCustomParameters({ prompt: 'login' });
   document.getElementById ('login-13').innerHTML += `
 <center>
@@ -476,26 +478,26 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
   document.getElementById ('firebase-sign-in-with-yahoo').addEventListener (
       'click',
       function () {
-          firebase.auth().signInWithPopup (yahoo).then
+          window.firebase.auth().signInWithPopup (yahoo).then
           (result => {
               console.info ("Got Yahoo! login", result);
               Tootsville.Login.storeCredentialInfo (result);
           },
            error => {
-               console.error ("Error with Yahoo! login", result);
+               console.error ("Error with Yahoo! login", error);
                alert ("Error with Yahoo! login");
            }); });
-  let twitter = new firebase.auth.TwitterAuthProvider ();
+  let twitter = new window.firebase.auth.TwitterAuthProvider ();
   document.getElementById ('firebase-sign-in-with-twitter').addEventListener (
       'click',
       function () {
-          firebase.auth().signInWithPopup (twitter).then
+          window.firebase.auth().signInWithPopup (twitter).then
           (result => {
               console.info ("Got Twitter login", result);
               Tootsville.Login.storeCredentialInfo (result);
           },
            error => {
-               console.error ("Error with Twittter login", result);
+               console.error ("Error with Twittter login", error);
                alert ("Error with Twitter login");
            }); });
   ui.start(
@@ -508,7 +510,7 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
         tosUrl: 'https://wiki.tootsville.org/wiki/Core:ToS',
         privacyPolicyUrl: 'https://wiki.tootsville.org/wiki/Core:Privacy',
         signInOptions:
-        [ { provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        [ { provider: window.firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             scopes:
             [ 'https://www.googleapis.com/auth/plus.login' ],
             customParameters:
@@ -555,7 +557,7 @@ Tootsville.Login.storeCredentialInfo = function (result)
    * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
    * 'tootsville-v.firebaseapp.com', uid (≠ providerData[0].uid)*/
 
-  firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
+  window.firebase.auth ().currentUser.getIdToken(/* forceRefresh */ true).
   then ((id) => { Tootsville.Login.finishSignIn (id); }).
   catch (function(error) {
       // Handle error TODO
@@ -590,7 +592,7 @@ Tootsville.Login.quit = function ()
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
-  firebase.auth().signOut().then(Tootsville.Login.start);
+  window.firebase.auth().signOut().then(Tootsville.Login.start);
   /* the above does not work properly, so */
   location.reload ();
 };
