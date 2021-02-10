@@ -254,6 +254,7 @@ Tootsville.AvatarBuilder.build = function (avatar, scene=null, finish=null)
       return; } }
   Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };
 
+
 /*----------------------------------------*/
 
 /**
@@ -280,7 +281,7 @@ Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
 /**
  *
  */
-Tootsville.AvatarBuilder.build2 = function (avatar, scene=null, finish=null)
+Tootsville.AvatarBuilder.buildNew = function (avatar, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   let colorizer = Tootsville.AvatarBuilder.makeAvatarColorizer (avatar);
   Tootsville.ModelLoader.loadAndColorize ('Avatars', avatar.avatar, colorizer,
