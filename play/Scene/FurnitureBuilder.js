@@ -170,8 +170,15 @@ Tootsville.FurnitureBuilder.setMaterialPixmapTexture = function (material, textu
  * Set ``material'' to an SVG image
  */
 Tootsville.FurnitureBuilder.setMaterialVectorTexture = function (material, texture, scene) {
-     // UNIMPLEMENTED special texture SVG
-};
+    const vectorTexture = new BABYLON.DynamicTexture(texture, 1024, scene);
+    const canvas = vectorTexture.getContext ();
+    const image = new Image ();
+    image.onload = function () { context.drawImage (image, 0, 0); };
+    image.width = image.height = 1024;
+    image.src = 'https://jumbo.tootsville.org/Assets/Textures/5/' + texture;
+    material.diffuseColor = null;
+    material.diffuseTexture = vectorTexture;
+    return material; };
 
 /**
  * Set ``material'' to a video texture.
