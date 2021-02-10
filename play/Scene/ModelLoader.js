@@ -47,7 +47,7 @@ Tootsville.ModelLoader.loadPromise = async (path, file, scene) => {
             result (container); }); }); };
 
 /**
- *
+ * Load the model ``kind''/5/``file''.glb only once, using a cache
  */
 Tootsville.ModelLoader.loadModelOnce = async (kind, file, scene) => {
     let found = Tootsville.ModelLoader.avatarCache [kind + '/' + file];
@@ -58,7 +58,7 @@ Tootsville.ModelLoader.loadModelOnce = async (kind, file, scene) => {
     return assets; };
 
 /**
- *
+ * Recursive function used to apply ``colorizer'' to material children of ``node''
  */
 Tootsville.ModelLoader.recursiveColorize = function (node, colorizer) {
     for (let i = 0; i < node.children.length; ++i)
@@ -67,7 +67,9 @@ Tootsville.ModelLoader.recursiveColorize = function (node, colorizer) {
         else if (node.children [i].children)
             Tootsville.ModelLoader.recursiveColorize (node, colorizer); };
 /**
+ * Load the ``file'' from /Assets/``kind''/5/ and apply ``colorizer''.
  *
+ * Returns the asset collection loaded into ``scene''.
  */
 Tootsville.ModelLoader.loadAndColorize = async (kind, file, colorizer, scene) => {
     let assets = await Tootsville.ModelLoader.loadModelOnce (kind, file, scene);
@@ -76,11 +78,17 @@ Tootsville.ModelLoader.loadAndColorize = async (kind, file, colorizer, scene) =>
         Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer);
     return assets; };
 
-
 /**
+ * Set the color of ``material'' to the Tootsville color ``colorName''
  *
+ * This is used by eg. the AvatarBuilder or FurnitureBuilder as a
+ * shared convenience function in the implementation of their own
+ * colorizers.
  */
 Tootsville.ModelLoader.setMaterialColor = function (material, colorName) {
-    material.diffuseColor = Tootsville.UI.htmlColorToBabylon
-    (Tootsville.UI.interpretTootColor (colorName));
+    const diffuseColor = Tootsville.UI.htmlColorToBabylon(
+        Tootsville.UI.interpretTootColor (colorName));
+    material.diffuseColor = diffuseColor;
+    material.specularColor = Tootsville.UI.lightenColor(diffuseColor);
+    return material;
 };
