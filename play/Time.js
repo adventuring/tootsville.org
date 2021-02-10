@@ -34,7 +34,7 @@
 if (!("Tootsville" in window)) { window.Tootsville = {}; }
 
 /**
- * The difference between Universal time and Unix time.
+ * The difference between Universal time and ``performance'' time.
  */
 Tootsville.universalTimeOffset = ((((new Date()).valueOf()/1000) + 2208988800) - (performance.now()/1000));
 
