@@ -1,4 +1,6 @@
 --third_party
 --language_in ECMASCRIPT_2020
 --language_out ECMASCRIPT_2018
---compilation_level ADVANCED_OPTIMIZATIONS
+--compilation_level SIMPLE
+--charset UTF-8
+--continue_after_errors
