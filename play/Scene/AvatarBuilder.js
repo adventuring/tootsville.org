@@ -278,23 +278,23 @@ Tootsville.AvatarBuilder.assignPatternToMaterial = function (material, avatar) {
 /**
  * Make a colorizer function for a material for ``avatar''.
  */
-Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar) {
+Tootsville.AvatarBuilder.makeAvatarColorizeMaterial = function (avatar, scene) {
     return function (material) {
         if (!(material.name)) return;
         if ('base' == material.name.toLower ())
-            Tootsville.AvatarBuilder.assignPatternToMaterial (material, avatar);
+            Tootsville.AvatarBuilder.assignPatternToMaterial (material, avatar, scene);
         else if ('pad' == material.name.toLower ())
-            Tootsville.ModelLoader.setMaterialColor (material, avatar.padColor); }; };
+            Tootsville.ModelLoader.setMaterialColor (material, avatar.padColor, scene); }; };
 
 /**
  * Make a colorizer function for ``avatar'' for `Tootsville.ModelLoader.loadAndColorize'
  */
 Tootsville.AvatarBuilder.makeAvatarColorizer = function (avatar) {
     let colorizeMaterial = Tootsville.AvatarBuilder.makeAvatarColorizeMaterial (avatar);
-    return function (node) {
+    return function (node, scene) {
         if (!(node.materials)) return;
         for (let i = 0; i < node.materials.length; ++i)
-            colorizeMaterial (node.materials [i]); }; };
+            colorizeMaterial (node.materials [i], scene); }; };
 
 /**
  *

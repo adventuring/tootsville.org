@@ -60,12 +60,12 @@ Tootsville.ModelLoader.loadModelOnce = async (kind, file, scene) => {
 /**
  * Recursive function used to apply ``colorizer'' to material children of ``node''
  */
-Tootsville.ModelLoader.recursiveColorize = function (node, colorizer) {
+Tootsville.ModelLoader.recursiveColorize = function (node, colorizer, scene) {
     for (let i = 0; i < node.children.length; ++i)
         if (node.children [i].material)
-            colorizer (node.children[i]);
+            colorizer (node.children[i], scene);
         else if (node.children [i].children)
-            Tootsville.ModelLoader.recursiveColorize (node, colorizer); };
+            Tootsville.ModelLoader.recursiveColorize (node, colorizer, scene); };
 /**
  * Load the ``file'' from /Assets/``kind''/5/ and apply ``colorizer''.
  *
@@ -75,7 +75,7 @@ Tootsville.ModelLoader.loadAndColorize = async (kind, file, colorizer, scene) =>
     let assets = await Tootsville.ModelLoader.loadModelOnce (kind, file, scene);
     let clone = assets.instantiateModelsToScene ();
     for (let i = 0; i < clone.rootNodes.length; ++i)
-        Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer);
+        Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer, scene);
     return assets; };
 
 /**

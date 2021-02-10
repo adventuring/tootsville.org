@@ -159,14 +159,17 @@ Tootsville.FurnitureBuilder.build = function (item, scene=undefined, finish=unde
 /**
  * Set ``material'' to a pixmap (PNG or JPEG) image
  */
-Tootsville.FurnitureBuilder.setMaterialPixmapTexture = function (material, texture) {
-    // UNIMPLEMENTED special texture pixmap
+Tootsville.FurnitureBuilder.setMaterialPixmapTexture = function (material, texture, scene) {
+    material.diffuseColor = null;
+    material.diffuseTexture = new BABYLON.Texture (
+        'https://jumbo.tootsville.org/Assets/Textures/5/' + texture,
+        scene);
 };
 
 /**
  * Set ``material'' to an SVG image
  */
-Tootsville.FurnitureBuilder.setMaterialVectorTexture = function (material, texture) {
+Tootsville.FurnitureBuilder.setMaterialVectorTexture = function (material, texture, scene) {
      // UNIMPLEMENTED special texture SVG
 };
 
@@ -185,14 +188,14 @@ Tootsville.FurnitureBuilder.setMaterialVectorTexture = function (material, textu
  * ending in @code{jpg}.
  * @end itemize
  */
-Tootsville.FurnitureBuilder.setMaterialVideoTexture = function (material, texture) {
+Tootsville.FurnitureBuilder.setMaterialVideoTexture = function (material, texture, scene) {
     // UNIMPLEMENTED special texture video
 };
 
 /**
  * UNIMPLEMENTED special handling for Theater in Toot Square West screen
  */
-Tootsville.FurnitureBuilder.theaterWestVideoTexture = function (material) {
+Tootsville.FurnitureBuilder.theaterWestVideoTexture = function (material, scene) {
     // UNIMPLEMENTED Theater West video texture
 };
 
@@ -244,17 +247,17 @@ Tootsville.FurnitureBuilder.theaterWestVideoTexture = function (material) {
  *
  * Third, the film plays with sound enabled.
  */
-Tootsville.FurnitureBuilder.setMaterialTexture = function (material, texture) {
+Tootsville.FurnitureBuilder.setMaterialTexture = function (material, texture, scene) {
     if (/\.png$/.test(texture))
-        Tootsville.FurnitureBuilder.setMaterialPixmapTexture (material, texture);
+        Tootsville.FurnitureBuilder.setMaterialPixmapTexture (material, texture, scene);
     else if (/\.jpe?g$/.test(texture))
-        Tootsville.FurnitureBuilder.setMaterialPixmapTexture (material, texture);
+        Tootsville.FurnitureBuilder.setMaterialPixmapTexture (material, texture, scene);
     else if (/\.svg$/.test(texture))
-        Tootsville.FurnitureBuilder.setMaterialVectorTexture (material, texture);
+        Tootsville.FurnitureBuilder.setMaterialVectorTexture (material, texture, scene);
     else if (/\.(ogv|mp4)$/.test(texture))
-        Tootsville.FurnitureBuilder.setMaterialVideoTexture (material, texture);
+        Tootsville.FurnitureBuilder.setMaterialVideoTexture (material, texture, scene);
     else if ('#theater-west' === texture)
-        Tootsville.FurnitureBuilder.theaterWestVideoTexture (material);
+        Tootsville.FurnitureBuilder.theaterWestVideoTexture (material, scene);
     else
         console.warn ("Unsupported specialTexture value:", texture); };
 
@@ -289,14 +292,14 @@ Tootsville.FurnitureBuilder.setMaterialTexture = function (material, texture) {
  * PNG, JPEG, or SVG file. See @code{setMaterialTexture} for details.
  */
 Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture) {
-    return function (material) {
+    return function (material, scene) {
         if (!(material.name)) return;
         if ('base' == material.name.toLower () && furniture.baseColor)
             Tootsville.ModelLoader.setMaterialColor (material, furniture.baseColor);
         else if ('alt' == material.name.toLower () && furniture.altColor)
             Tootsville.ModelLoader.setMaterialColor (material, furniture.altColor);
         else if ('map' == material.name.toLower () && furniture.specialTexture)
-            Tootsville.FurnitureBuilder.setMaterialTexture (material, furniture.specialTexture);
+            Tootsville.FurnitureBuilder.setMaterialTexture (material, furniture.specialTexture, scene);
             return;
     }; };
 
@@ -305,10 +308,10 @@ Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial = function (furniture)
  */
 Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture) {
     let colorizeMaterial = Tootsville.FurnitureBuilder.makeFurnitureColorizeMaterial (furniture);
-    return function (node) {
+    return function (node, scene) {
         if (!(node.materials)) return;
         for (let i = 0; i < node.materials.length; ++i)
-            colorizeMaterial (node.materials [i]); }; };
+            colorizeMaterial (node.materials [i], scene); }; };
 
 /**
  *
