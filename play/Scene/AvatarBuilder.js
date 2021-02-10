@@ -192,17 +192,26 @@ Tootsville.AvatarBuilder.afterLoading = function (task, avatar, scene, finish)
     Tootsville.AvatarBuilder.colorize (avatar, modelRoot, scene, finish); };
 
 /**
+ *
+ */
+Tootsville.AvatarBuilder.assetProgress = function (left, total, last) {
+    console.info (`Loading ${left} more assets of ${total}, last ${last}`);
+};
+
+/**
  * Load the base avatar model from Jumbo.
  */
 Tootsville.AvatarBuilder.loadAvatarBase = function (avatar, scene, finish)
 { var assetsManager = scene.assetManager;
   if (! assetsManager)
-  { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene); }
-  assetsManager.useDefaultLoadingScreen = false;
+  { assetsManager = scene.assetsManager = new BABYLON.AssetsManager (scene);
+    assetsManager.useDefaultLoadingScreen = false;
+    assetsManager.onProgress = (left, total, last) => { Tootsville.AvatarBuilder.assetProgress (left, total, last); }; }
   if (scene === Tootsville.Tank.scene)
   { if (Tootsville.Tank.avatars [ avatar.name ] && Tootsville.Tank.avatars [ avatar.name ].model)
     { console.warn ("Almost re-loaded avatar model for " + avatar.name);
       return; /* XXX finish? */ } }
+  BABYLON.GLTFFileLoader.IncrementalLoading = false;
   var loadTask = assetsManager.addMeshTask ("loading " + avatar.avatar, null,
                                             "https://jumbo.tootsville.org/Assets/Avatars/5/",
                                             avatar.avatar + ".glb");
@@ -244,3 +253,12 @@ Tootsville.AvatarBuilder.build = function (avatar, scene, finish)
       Tootsville.AvatarBuilder.update (avatar, Tootsville.Tank.avatars [avatar.name].model, scene, finish);
       return; } }
   Tootsville.AvatarBuilder.loadAvatarBase (avatar, scene, finish); };
+
+/*----------------------------------------*/
+
+/**
+ *
+ */
+Tootsville.AvatarBuilder.buildNewForm = function (avatar, scene, funish)
+{ if (!scene) { scene = Tootsville.Tank.scene; }
+  /* TODO call ModelLoader with an avatar colorizer function */  };

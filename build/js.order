@@ -61,6 +61,7 @@ play/UI/Keys.js
 
 play/UI/Commands.js
 
+play/Scene/ModelLoader.js
 play/Scene/AvatarBuilder.js
 play/Scene/Patterns.js
 play/Scene/FurnitureBuilder.js

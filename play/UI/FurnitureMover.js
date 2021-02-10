@@ -120,6 +120,7 @@ Tootsville.UI.FurnitureMover.destroyDecorations = function () {
  * Add the move and rotate decorations to ``item''
  */
 Tootsville.UI.FurnitureMover.addDecorations = function (item) {
+   
     // TODO
 };
 
