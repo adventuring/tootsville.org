@@ -76,3 +76,11 @@ Tootsville.ModelLoader.loadAndColorize = async (kind, file, colorizer, scene) =>
         Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer);
     return assets; };
 
+
+/**
+ *
+ */
+Tootsville.ModelLoader.setMaterialColor = function (material, colorName) {
+    material.diffuseColor = Tootsville.UI.htmlColorToBabylon
+    (Tootsville.UI.interpretTootColor (colorName));
+};
