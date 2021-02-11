@@ -122,6 +122,7 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
     return;
     case "~inspect3d":
     Tootsville.Tank.scene.debugLayer.show ();
+    return;
     case "~d20":
     let roll = (Math.floor (Math.random () * 20) + 1);
     Tootsville.UI.say ("I rolled a " + roll + " on a d20." + (1 === roll ? " Critical failure!" : 20 === roll ? " Critical success!" : ""),
