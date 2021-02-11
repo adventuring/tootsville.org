@@ -85,7 +85,8 @@ Tootsville.AvatarViewer.createViewerReally = function (toot, canvas, container)
 { Tootsville.AvatarViewer.createScene (canvas);
   Tootsville.AvatarViewer.createCamera (canvas, toot.name);
   Tootsville.AvatarViewer.createLight (canvas);
-  Tootsville.AvatarBuilder.build (toot, canvas.scene, function () {
+  Tootsville.AvatarBuilder.build (toot, canvas.scene, function (model) {
+      console.debug ("Loaded model for AvatarViewer", model);
       canvas.scene.render ();
       BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
                                       (data) =>

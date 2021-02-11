@@ -341,5 +341,8 @@ Tootsville.FurnitureBuilder.makeFurnitureColorizer = function (furniture, scene)
 Tootsville.FurnitureBuilder.buildNew = function (furniture, scene=null, finish=null)
 { if (!scene) { scene = Tootsville.Tank.scene; }
   let colorizer = Tootsville.FurnitureBuilder.makeFurnitureColorizer (furniture, scene);
-  return Tootsville.ModelLoader.loadAndColorize ('Items', furniture.avatar,
-                                                 colorizer, scene); };
+  const loaded = Tootsville.ModelLoader.loadAndColorize (
+      'Items', furniture.avatar,
+      colorizer, scene);
+  if (finish) finish (loaded);
+  return loaded; };

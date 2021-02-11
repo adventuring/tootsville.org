@@ -52,8 +52,10 @@ Tootsville.ModelLoader.loadPromise = async (path, file, scene) => {
 Tootsville.ModelLoader.loadModelOnce = async (kind, file, scene) => {
     let found = Tootsville.ModelLoader.avatarCache [kind + '/' + file];
     if (found) return found;
+    console.debug("Loading " + kind + "/5/" + file + ".glb");
     let assets = await Tootsville.ModelLoader.loadPromise ('https://jumbo.tootsville.org/Assets/' + kind + '/5/',
                                                              file + '.glb', scene);
+    console.debug("Loaded " + kind + "/5/" + file + ".glb", assets);
     Tootsville.ModelLoader.avatarCache[kind + '/' + file] = assets;
     return assets; };
 
@@ -61,11 +63,23 @@ Tootsville.ModelLoader.loadModelOnce = async (kind, file, scene) => {
  * Recursive function used to apply ``colorizer'' to material children of ``node''
  */
 Tootsville.ModelLoader.recursiveColorize = function (node, colorizer) {
-    for (let i = 0; i < node.children.length; ++i)
-        if (node.children [i].material)
-            colorizer (node.children[i]);
-        else if (node.children [i].children)
-            Tootsville.ModelLoader.recursiveColorize (node, colorizer); };
+    if (!(node)) return;
+    const children = node.getChildren ();
+    if (!(children)) return;
+    for (let i = 0; i < children.length; ++i) {
+        if (children [i].material)
+            colorizer (children[i]);
+        Tootsville.ModelLoader.recursiveColorize (children [i], colorizer); }};
+
+/**
+ *  Register the object to cast a shadow
+ */
+Tootsville.ModelLoader.enableShadows = function (object, scene) {
+    if (!(Tootsville.Tank.shadowGenerator)) return;
+    Tootsville.Tank.shadowGenerator.addShadowCaster (object);
+    Tootsville.Tank.shadowGenerator.getShadowMap ().renderList.push (
+        Tootsville.Tank.getLargestChildMesh (object)); };
+
 /**
  * Load the ``file'' from /Assets/``kind''/5/ and apply ``colorizer''.
  *
@@ -73,10 +87,17 @@ Tootsville.ModelLoader.recursiveColorize = function (node, colorizer) {
  */
 Tootsville.ModelLoader.loadAndColorize = async (kind, file, colorizer, scene) => {
     let assets = await Tootsville.ModelLoader.loadModelOnce (kind, file, scene);
+    console.debug ("Assets loaded for " + kind + "/5/" + file, assets);
+    assets.addAllToScene ();
     let clone = assets.instantiateModelsToScene ();
-    for (let i = 0; i < clone.rootNodes.length; ++i)
-        Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[i], colorizer);
-    return assets; };
+    console.debug ("Cloned assets into scene " + kind + "/5/" + file + "; " + clone.rootNodes.length + " root nodes");
+    if (0 === clone.rootNodes.length) {
+        console.warn ("Cloned assets set is empty, clearing caché and trying again " + kind + "/5/" + file);
+        delete Tootsville.ModelLoader.avatarCache [kind + '/' + file];
+        return Tootsville.ModelLoader.loadAndColorize (kind, file, colorizer, scene); }
+    Tootsville.ModelLoader.recursiveColorize (clone.rootNodes[0], colorizer);
+    Tootsville.ModelLoader.enableShadows (clone, scene);
+    return clone; };
 
 /**
  * Set the color of ``material'' to the Tootsville color ``colorName''
