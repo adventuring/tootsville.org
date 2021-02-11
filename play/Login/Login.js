@@ -524,10 +524,11 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
 Tootsville.Login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in");
   Tootsville.Login.storeCredentialInfo (result);
-  document.getElementById('login-kid').style.display = 'none';
-  document.getElementById('login-13').style.display = 'none';
-  document.getElementById('sign-in').style.display = 'none';
-  document.getElementById('login-ready-13').style.display = 'block';
+  Tootsville.Tank.prepareFor3D ().then (function () {
+      document.getElementById('login-kid').style.display = 'none';
+      document.getElementById('login-13').style.display = 'none';
+      document.getElementById('sign-in').style.display = 'none';
+      document.getElementById('login-ready-13').style.display = 'block'; });
   return false; };
 
 /**
