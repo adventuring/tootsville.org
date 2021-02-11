@@ -660,8 +660,7 @@ Tootsville.UI.HUD.sortSpeechByCTime = function (avatars) {
         if (avatars[i].speech) unsorted = unsorted.concat (avatars[i].speech);
     return unsorted.sort( (a,b) => {
         if (a.ctime > b.ctime) return 1; else return -1;
-    });
-};
+    }); };
 
 /**
  * A generalized boolean as to whether a overlaps b
@@ -674,8 +673,7 @@ Tootsville.UI.HUD.overlappingP = function (a, b) {
     return (!(rect1.right < rect2.left || 
               rect1.left > rect2.right || 
               rect1.bottom < rect2.top || 
-              rect1.top > rect2.bottom));
-};
+              rect1.top > rect2.bottom)); };
 
 /**
  * If array[index] overlaps array[0..index-1], return the offending overlapper.
@@ -704,7 +702,7 @@ Tootsville.UI.HUD.bumpSpeech = function (bumped, keeper) {
                                Math.max(keepRect.bottom, 30)) + "px";
     else
         bumped.style.top = Math.min(window.innerHeight - 64,
-                               Math.max(keepRect.top /* - bumpRect.height */, 30)) + "px"; };
+                               Math.max(keepRect.top - bumpRect.height, 30)) + "px"; };
 
 /**
  * Try to move speech balloons so they don't overlap
@@ -716,8 +714,7 @@ Tootsville.UI.HUD.arrangeSpeechBalloons = function (avatars) {
         let overlapper = Tootsville.UI.HUD.speechOverlaps (sorted, i);
         if (overlapper)
             Tootsville.UI.HUD.bumpSpeech (overlapper, sorted[i]);
-    }
-};
+    }};
 
 /**
  * Refresh all 2D attachment overlays to follow the 3D scene.
