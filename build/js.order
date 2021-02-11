@@ -58,6 +58,7 @@ play/UI/WaWa.js
 play/UI/FullscreenPolyfill.js
 play/UI/AudioControl.js
 play/UI/Keys.js
+play/UI/FurnitureMover.js
 
 play/UI/Commands.js
 
