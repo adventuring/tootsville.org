@@ -350,6 +350,7 @@ Tootsville.Tank.findAvatar = function (avatarName)
   { if (Tootsville.Tank.scene.meshes [ i ].name === "avatar/" + avatarName)
     { return Tootsville.Tank.scene.meshes [ i ]; } }
   return null; };
+
 /**
  * Shut down the 3D environment cleanly.
  */

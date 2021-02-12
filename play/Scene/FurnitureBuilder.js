@@ -85,6 +85,10 @@ Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
   model.scaling = new BABYLON.Vector3 (parseFloat(item.scale.x),
                                        parseFloat(item.scale.y),
                                        parseFloat(item.scale.z));
+  model.position.x = parseFloat(item.position.x);
+  model.position.y = parseFloat(item.position.y);
+  model.position.z = parseFloat(item.position.z);
+  model.rotate (BABYLON.Axis.Y, parseFloat(item.facing));
   model.checkCollisions = true;
   try { Tootsville.FurnitureBuilder.rememberItem (item, model, scene); } catch (e) { console.error (e); }
   try { Tootsville.FurnitureBuilder.enableShadows (model, scene); } catch (e) { console.error (e); }
@@ -92,6 +96,25 @@ Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
   if (item.growth)
   { try { Tootsville.Game.GrowthSystem.register (item); } catch (e) { console.error (e); } }
 };
+
+/**
+*
+*/
+Tootsville.FurnitureBuilder.onLoadedTemplate = function (task, item, scene, finish)
+{ const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
+  for (let i = 0; i < task.loadedMeshes.length; ++i)
+  { modelRoot.addChild (task.loadedMeshes [i]);
+    task.loadedMeshes [i].renderOutline = true;
+    task.loadedMeshes [i].outlineColor = BABYLON.Color3.Black ();  }
+  for (let i = 0; i < task.loadedParticleSystems.length; ++i)
+      modelRoot.addChild (task.loadedParticleSystems [i]);
+  for (let i = 0; i < task.loadedSkeletons.length; ++i)
+      modelRoot.addChild (task.loadedSkeletons [i]);
+  console.debug ("Finished loading " + item.template.avatar + " with " +
+                 task.loadedMeshes.length + " meshes, " +
+                 task.loadedParticleSystems.length + " particle systems,  and " +
+                 task.loadedSkeletons.length + " skeletons.");
+  Tootsville.FurnitureBuilder.build2 (item, modelRoot, scene, finish); };
 
 /**
  * Load an item template avatar from the assets server.
@@ -106,26 +129,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
       "loading " + item.template.name, null,
       "https://jumbo.tootsville.org/Assets/Models/5/" + item.template.avatar + "/",
       item.template.avatar + ".glb");
-  loadTask.onSuccess = function (task)
-  { const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
-    let i;
-    modelRoot.position = new BABYLON.Vector3 (parseFloat(item.position.x),
-                                              parseFloat(item.position.y),
-                                              parseFloat(item.position.z));
-    modelRoot.rotate (BABYLON.Axis.Y, parseFloat(item.facing));
-    for (i = 0; i < task.loadedMeshes.length; ++i)
-    { modelRoot.addChild (task.loadedMeshes [i]);
-      task.loadedMeshes [i].renderOutline = true;
-      task.loadedMeshes [i].outlineColor = BABYLON.Color3.Black ();  }
-    for (i = 0; i < task.loadedParticleSystems.length; ++i)
-    { modelRoot.addChild (task.loadedParticleSystems [i]); }
-    for (i = 0; i < task.loadedSkeletons.length; ++i)
-    { modelRoot.addChild (task.loadedSkeletons [i]); }
-    console.debug ("Loaded item template avatar " + item.template.avatar + " with " +
-                   task.loadedMeshes.length + " meshes, " +
-                   task.loadedParticleSystems.length + " particle systems,  and " +
-                   task.loadedSkeletons.length + " skeletons.");
-    Tootsville.FurnitureBuilder.build2 (item, modelRoot, scene, finish); };
+  loadTask.onSuccess = task => { Tootsville.FurnitureBuilder.onLoadedTemplate (task, item, scene, finish); };
   assetsManager.load (); };
 
 /**
