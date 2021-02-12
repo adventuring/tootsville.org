@@ -503,7 +503,7 @@ Tootsville.UI.Keys.arrowUp = function (event)
   { Tootsville.UI.takeOneStep (0, 1); } };
 
 /**
- *
+ * Handle the down arrow key
  */
 Tootsville.UI.Keys.arrowDown = function (event)
 { if (document.activeElement === Tootsville.UI.talkSpeak)
@@ -516,7 +516,9 @@ if (!('textHistory' in Tootsville.UI)) Tootsville.UI.textHistory = [];
 if (!('textHistoryIndex' in Tootsville.UI)) Tootsville.UI.textHistoryIndex = 0;
 
 /**
-*
+* Recall the text at the next line of the history buffer in the direction indicated by δ
+ * 
+* -1 brings up the previous line, +1 the next.
 */
 Tootsville.UI.recallText = function (δ) {
     Tootsville.UI.textHistoryIndex += δ;
@@ -529,7 +531,7 @@ Tootsville.UI.recallText = function (δ) {
     return ''; };
 
 /**
-*
+* Add the line ``text'' to the end of the text history buffer
 */
 Tootsville.UI.addToHistory = function (text) {
     Tootsville.UI.textHistoryIndex = 0;
