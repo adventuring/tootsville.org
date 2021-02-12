@@ -189,7 +189,9 @@ Tootsville.UI.NewToot.setPattern = function (value)
   Tootsville.UI.NewToot.changePattern (value); };
 
 Tootsville.UI.NewToot.notReady = function (reasons)
-{ alert ("You're not quite ready yet." + reasons); }; // FIXME soft dialog
+{ Tootsville.UI.makePrettyDialog ("You're not quite ready yet.",
+                                  reasons,
+                                  "Go Back"); };
 
 /**
  *

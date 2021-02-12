@@ -485,7 +485,9 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
           },
            error => {
                console.error ("Error with Yahoo! login", error);
-               alert ("Error with Yahoo! login");
+               Tootsville.UI.makePrettyDialog ("Error with Yahoo! login",
+                                               "Something went wrong ☹",
+                                               "Go Back");
            }); });
   let twitter = new window.firebase.auth.TwitterAuthProvider ();
   document.getElementById ('firebase-sign-in-with-twitter').addEventListener (
@@ -498,7 +500,9 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
           },
            error => {
                console.error ("Error with Twittter login", error);
-               alert ("Error with Twitter login");
+               Tootsville.UI.makePrettyDialog ("Error with Twitter login",
+                                               "Something went wrong ☹",
+                                               "Go Back");
            }); });
   ui.start(
       '#firebaseui-auth-container',
