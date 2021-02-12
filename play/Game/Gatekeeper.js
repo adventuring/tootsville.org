@@ -167,12 +167,19 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
  * should be discarded.
  *
  * TODO UNIMPLEMENTED
+ *
+ * @subsection Packet Format
+ *
+ * WRITEME
  */
 Tootsville.Game.Gatekeeper.beam = function (gram)
-{ let world = gram.room;
-  let x = gram.x;
-  let y = gram.y;
-  let z = gram.z;
+{ let world = gram.world;
+  let latitude = gram.latitude;
+  let longitude = gram.longitude;
+  let altitude = gram.altitude;
+  let x = gram.x || 0;
+  let y = gram.y || 0;
+  let z = gram.z || 0;
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
