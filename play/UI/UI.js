@@ -54,7 +54,7 @@ Tootsville.UI.makeIDFromTitle = function (title)
  * Make  a basic  dialog  box  with a  title,  text,  accept and  cancel
  * buttons, and call resolve function with user input later.
  */
-Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
+Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel=null,resolve=null)
 { let dialog = document.createElement ('DIALOG');
   dialog.id = Tootsville.UI.makeIDFromTitle (title);
   let caption = document.createElement ('H3');
@@ -63,20 +63,21 @@ Tootsville.UI.makePrettyDialog = function (title,text,accept,cancel,resolve)
   dialog.appendChild (Tootsville.UI.makeDivOrParagraph (text));
   let buttons = document.createElement ('DIV');
   buttons.className = 'button-box';
-  let cancelButton = document.createElement ('BUTTON');
-  cancelButton.className = 'cancel-button';
-  cancelButton.innerHTML = cancel;
-  cancelButton.addEventListener('click', ()=> {
-      const hud = document.getElementById ('hud');
-      hud.removeChild(dialog);
-      resolve(false); });
-  buttons.appendChild(cancelButton);
+  if (cancel) {
+      let cancelButton = document.createElement ('BUTTON');
+      cancelButton.className = 'cancel-button';
+      cancelButton.innerHTML = cancel;
+      cancelButton.addEventListener('click', ()=> {
+          const hud = document.getElementById ('hud');
+          hud.removeChild(dialog);
+          if (resolve) resolve(false); });
+      buttons.appendChild(cancelButton); }
   let acceptButton = document.createElement ('BUTTON');
   acceptButton.className = 'accept-button';
   acceptButton.innerHTML = accept;
   acceptButton.addEventListener('click', () => {
       document.getElementById("hud").removeChild(dialog);
-      resolve(true); });
+      if (resolve) resolve(true); });
   buttons.appendChild (acceptButton);
   dialog.appendChild (buttons);
   return dialog; };
