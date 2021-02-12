@@ -34,9 +34,13 @@
 if (!('Game' in Tootsville)) { Tootsville.Game = { UserLists: {} }; }
 if (!('UserLists' in Tootsville.Game)) { Tootsville.Game.UserLists = {}; }
 
-Tootsville.Game.UserLists.addContactAsBuddy = function (name) {};
-Tootsville.Game.UserLists.removeContactAsBuddy = function (name) {};
-Tootsville.Game.UserLists.addContactAsIgnore = function (name) {};
-Tootsville.Game.UserLists.removeContactAsIgnore = function (name) {};
+Tootsville.Game.UserLists.addContactAsBuddy = function (name) {
+    Tootsville.Util.infinity ('requestBuddy', { buddy: name }); };
+Tootsville.Game.UserLists.removeContactAsBuddy = function (name) {
+    Tootsville.Util.infinity ('removeFromList', { buddy: name }); };
+Tootsville.Game.UserLists.addContactAsIgnore = function (name) {
+    Tootsville.Util.infinity ('addToList', { ignore: name }); };
+Tootsville.Game.UserLists.removeContactAsIgnore = function (name) {
+    Tootsville.Util.infinity ('removeFromList', { ignore: name }); };
 Tootsville.Game.UserLists.starBuddy = function (name) {};
 Tootsville.Game.UserLists.unstarBuddy = function (name) {};
