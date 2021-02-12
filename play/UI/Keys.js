@@ -396,7 +396,7 @@ Tootsville.UI.Keys.killWord = function (event)
  * TODO. Currently just clears the input box.
  */
 Tootsville.UI.Keys.nextHistoryLine = function (event)
-{ document.getElementById('talk-speak').value = ''; };
+{ document.getElementById('talk-speak').value = Tootsville.UI.recallText (1); };
 
 /**
  * Sets the C-c prefix
@@ -416,7 +416,7 @@ Tootsville.UI.Keys.prefixCx = function (event)
  * TODO. Currently only recalls the last submitted text.
  */
 Tootsville.UI.Keys.priorHistoryLine = function (event)
-{ document.getElementById ('talk-speak').value = Tootsville.UI.recallText; };
+{ document.getElementById ('talk-speak').value = Tootsville.UI.recallText (-1); };
 
 /**
  * Select the entire buffer
@@ -433,7 +433,7 @@ Tootsville.UI.Keys.speakLine = function (event)
 { let el = document.getElementById ('talk-speak');
   Tootsville.UI.say (el.value);
   console.info ("Speaking: «" + el.value + "»");
-  Tootsville.UI.recallText = el.value;
+  Tootsville.UI.addToHistory (el.value);
   el.value = ''; };
 
 /**
@@ -510,3 +510,29 @@ Tootsville.UI.Keys.arrowDown = function (event)
   { Tootsville.UI.Keys.nextHistoryLine (event); }
   else
   { Tootsville.UI.takeOneStep (0, -1); } };
+
+
+if (!('textHistory' in Tootsville.UI)) Tootsville.UI.textHistory = [];
+if (!('textHistoryIndex' in Tootsville.UI)) Tootsville.UI.textHistoryIndex = 0;
+
+/**
+*
+*/
+Tootsville.UI.recallText = function (δ) {
+    Tootsville.UI.textHistoryIndex += δ;
+    if (Tootsville.UI.textHistoryIndex >= 0)
+        Tootsville.UI.textHistoryIndex = 0;
+    else if (Tootsville.UI.textHistoryIndex > -Tootsville.UI.textHistory.length)
+        return Tootsville.UI.textHistory [Toosville.UI.textHistory.length - Tootsville.UI.textHistoryIndex];
+    else
+        Tootsville.UI.textHistoryIndex = -Tootsville.UI.textHistory.length;
+    return ''; };
+
+/**
+*
+*/
+Tootsville.UI.addToHistory = function (text) {
+    Tootsville.UI.textHistoryIndex = 0;
+    Tootsville.UI.textHistory = Tootsville.UI.textHistory.concat ([text]);
+    if (Tootsville.UI.textHistory.length > 100)
+        Tootsville.UI.textHistory = Tootsville.UI.textHistory.splice (1); };
