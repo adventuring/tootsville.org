@@ -523,7 +523,7 @@ Tootsville.UI.recallText = function (δ) {
     if (Tootsville.UI.textHistoryIndex >= 0)
         Tootsville.UI.textHistoryIndex = 0;
     else if (Tootsville.UI.textHistoryIndex > -Tootsville.UI.textHistory.length)
-        return Tootsville.UI.textHistory [Toosville.UI.textHistory.length - Tootsville.UI.textHistoryIndex];
+        return Tootsville.UI.textHistory [Tootsville.UI.textHistory.length + Tootsville.UI.textHistoryIndex];
     else
         Tootsville.UI.textHistoryIndex = -Tootsville.UI.textHistory.length;
     return ''; };
