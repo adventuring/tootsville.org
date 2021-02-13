@@ -79,6 +79,8 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
 /**
  * Finish construction  of the object  after it  has been loaded  by the
  * asset manager.
+ *
+ * Called from `Tootsville.FurnitureBuilder.onLoadedTemplate'
  */
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building furniture " + item.template.name + " " + item.uuid);
