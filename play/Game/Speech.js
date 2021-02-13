@@ -107,6 +107,8 @@ Tootsville.Game.Speech.updateSpeech = function ()
  * Simulate rolling a d20 and speak aloud the results.
  * @item ~credits
  * Display the client's credits.
+ * @item ~inspect3d
+ * Inspect the 3D scene with the BabylonJS utilities
  * @item ~version
  * Display the version of the client 
  * @end table
