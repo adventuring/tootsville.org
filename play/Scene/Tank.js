@@ -370,15 +370,15 @@ Tootsville.Tank.shutDown = function ()
 */
 Tootsville.Tank.clearSceneExceptPlayer = function () {
     for (let avatar in Tootsville.Tank.avatars)
-        if (avatar !== Tootsville.character)
+        if (avatar !== Tootsville.character) {
             const a = Tootsville.Tank.avatars[avatar];
-            if (a.model) {
+            if (a.model)
                 a.model.dispose ();
-                if (a.speech) 
-                    a.speech.parentNode.removeChild (a.speech);
-                if (a.nameTag)
-                    a.nameTag.parentNode.removeChild (a.nameTag);
-                delete Tootsville.Tank.avatars[avatar]; }
+            if (a.speech) 
+                a.speech.parentNode.removeChild (a.speech);
+            if (a.nameTag)
+                a.nameTag.parentNode.removeChild (a.nameTag);
+            delete Tootsville.Tank.avatars[avatar]; }
     for (let item in Tootsville.Tank.scene.items)
         if (Tootsville.Tank.scene.items[item].model) {
             Tootsville.Tank.scene.items[item].model.dispose ();

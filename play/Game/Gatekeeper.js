@@ -896,6 +896,7 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
     if (gram.wtl)
     { Tootsville.Tank.avatars [ Tootsville.character ].course = gram.wtl.course;
       Tootsville.Tank.avatars [ Tootsville.character ].facing = gram.wtl.facing; }
+    else console.warn ("No WTL received in burgeon packet"); 
     if (gram.d3) { console.warn ("d₃ packet ignored while burgeoning"); }
     Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
     Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
