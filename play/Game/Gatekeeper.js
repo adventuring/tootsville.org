@@ -917,3 +917,10 @@ Tootsville.Game.Gatekeeper.migrate = function (gram)
         Tootsville.Util.checkStream ();
     Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
     Tootsville.Util.Websocket.close (1001, "migrate"); } };
+
+Tootsville.Game.Gatekeeper.roomJoin = function (gram)
+{ if (gram.status) {
+    Tootsville.activity.lat = gram.lat;
+    Tootsville.activity.long = gram.long;
+    Tootsville.activity.alt = gram.alt;
+    Tootsville.activity.world = gram.world; } };
