@@ -130,9 +130,9 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
     break;;
     case "~credits":
     Tootsville.UI.confirmPretty("Credits",
-                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p><p>For server credits, try “,credits”.</p>",
-                                "O.K.");
-    return;
+                                "<p>The Tootsville V web application is by Bruce-Robert Pocock.</p>",
+                                "Server Credits", "Done").then(
+                                    confirm => { Tootsville.Util.infinity ('speak', { speech: ",credits" }); });
     case '~lag':
     Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s",
                                 'whisper');
