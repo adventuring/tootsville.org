@@ -189,6 +189,7 @@ Tootsville.AvatarBuilder.afterLoading = function (task, avatar, scene, finish)
     { Tootsville.AvatarBuilder.postBuild (avatar, modelRoot, scene); }
     modelRoot.rotationQuaternion = undefined;
     modelRoot.rotation = BABYLON.Vector3.Zero ();
+    modelRoot.rotation.y = Math.PI;
     Tootsville.AvatarBuilder.colorize (avatar, modelRoot, scene, finish); };
 
 /**
