@@ -364,3 +364,14 @@ Tootsville.Tank.shutDown = function ()
   if (Tootsville.Tank.engine)
   { Tootsville.Tank.engine.dispose ();
     Tootsville.Tank.engine = null;}};
+
+/**
+* 
+*/
+Tootsville.Tank.clearSceneExceptPlayer = function () {
+    for (let avatar in Tootsville.Tank.avatars)
+        if (avatar.name !== Tootsville.character)
+            avatar.model.dispose ();
+    for (let item in Tootsville.Tank.scene.items)
+        item.model.dispose (); 
+};
