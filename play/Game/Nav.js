@@ -308,9 +308,9 @@ Tootsville.Game.Nav.updateCamera = function ()
  */
 Tootsville.Game.Nav.positionTootAt = function (x, y, z) {
     const avatar = Tootsville.Tank.avatars [ Tootsville.character ];
-    avatar.course = { startPosition: new BABYLON.Vector3 (x, y, z),
+    avatar.course = { startPoint: new BABYLON.Vector3 (x, y, z),
                       startTime: Tootsville.Game.now,
-                      endPosition: new BABYLON.Vector3 (x, y, z),
+                      endPoint: new BABYLON.Vector3 (x, y, z),
                       endTime: Tootsville.Game.now,
                       speed: 1 };
     Tootsville.Game.Nav.sendWTL ();
