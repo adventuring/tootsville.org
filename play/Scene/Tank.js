@@ -371,9 +371,13 @@ Tootsville.Tank.shutDown = function ()
 Tootsville.Tank.clearSceneExceptPlayer = function () {
     for (let avatar in Tootsville.Tank.avatars)
         if (avatar !== Tootsville.character)
-            if (Tootsville.Tank.avatars[avatar].model)
+            if (Tootsville.Tank.avatars[avatar].model) {
                 Tootsville.Tank.avatars[avatar].model.dispose ();
+                delete Tootsville.Tank.avatars[avatar]; }
     for (let item in Tootsville.Tank.scene.items)
-        if (Tootsville.Tank.scene.items[item].model)
-            Tootsville.Tank.scene.items[item].model.dispose (); 
-};
+        if (Tootsville.Tank.scene.items[item].model) {
+            Tootsville.Tank.scene.items[item].model.dispose ();
+            delete Tootsville.Tank.scene.items[item]; }
+    if (Tootsville.Tank.ground) {
+        Tootsville.Tank.ground.dispose ();
+        Tootsville.Tank.ground = null; } };
