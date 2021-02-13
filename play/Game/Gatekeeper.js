@@ -180,10 +180,7 @@ Tootsville.Game.Gatekeeper.beam = function (gram)
   let x = gram.x || 0;
   let y = gram.y || 0;
   let z = gram.z || 0;
-  /* TODO: Send a join request */
-  /* TODO: clear the area */
-  /* TODO: reposition the Toot to x,y,z in the new area */
-  };
+  Tootsville.Game.Nav.enterArea (latitude, longitude, altitude, world, x, y, z); };
 
 /**
  * Player has received money (peanuts) or fairy dust.
