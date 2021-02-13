@@ -502,16 +502,16 @@ Tootsville.Game.Gatekeeper.buddyRequest = function (gram)
   let signature = gram.sign;
   if (sender === Tootsville.character)
       return;
-  Tootsville.UI.confirmPretty (
-      "Contact Request",
-      sender + " wants to add you as a Contact.",
-      "Add Contact", "Don't Add").then (
-          outcome => {
-              if (outcome)
-                  Tootsville.Util.infinity ('requestBuddy',
-                                            { buddy: sender,
-                                              sign: signature });
-          });};
+  else
+      Tootsville.UI.confirmPretty (
+          "Contact Request",
+          sender + " wants to add you as a Contact.",
+          "Add Contact", "Don't Add").then (
+              outcome => {
+                  if (outcome)
+                      Tootsville.Util.infinity ('requestBuddy',
+                                                { buddy: sender,
+                                                  sign: signature });});};
 
 /**
  * General out-of-band messaging between users. Typically used for
