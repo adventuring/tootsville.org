@@ -302,3 +302,26 @@ Tootsville.Game.Nav.updateCamera = function ()
   cameraPosition = Tootsville.Game.Nav.updateCameraDolly (model, cameraPosition);
   cameraPosition = Tootsville.Game.Nav.updateCameraTruck (model, cameraPosition);
   Tootsville.Tank.camera.position = cameraPosition; };
+
+/**
+ * Make the character position be precisely x, y, z local
+ */
+Tootsville.Game.Nav.positionTootAt = function (x, y, z) {
+    const avatar = Tootsville.Tank.avatars [ Tootsville.character ];
+    avatar.course = { startPosition: new BABYLON.Vector3 (x, y, z),
+                      startTime: Tootsville.Game.now,
+                      endPosition: new BABYLON.Vector3 (x, y, z),
+                      endTime: Tootsville.Game.now,
+                      speed: 1 };
+    Tootsville.Game.Nav.sendWTL ();
+    Tootsville.Game.Nav.gamepadMovementP = false; };
+
+/**
+ * Enter a new latitude, longitude, altitude area at local x, y, z in world world
+ */
+Tootsville.Game.Nav.enterArea = function (latitude, longitude, altitude, world, x, y, z) {
+    Tootsville.Util.infinity ('join', { lat: latitude, long: longitude,
+                                        alt: altitude, world: world });
+    Tootsville.Tank.clearSceneExceptPlayer ();
+    Tootsville.Game.Nav.positionTootAt (x, y, z);
+};
