@@ -370,8 +370,10 @@ Tootsville.Tank.shutDown = function ()
 */
 Tootsville.Tank.clearSceneExceptPlayer = function () {
     for (let avatar in Tootsville.Tank.avatars)
-        if (avatar.name !== Tootsville.character)
-            avatar.model.dispose ();
+        if (avatar !== Tootsville.character)
+            if (Tootsville.Tank.avatars[avatar].model)
+                Tootsville.Tank.avatars[avatar].model.dispose ();
     for (let item in Tootsville.Tank.scene.items)
-        item.model.dispose (); 
+        if (Tootsville.Tank.scene.items[item].model)
+            Tootsville.Tank.scene.items[item].model.dispose (); 
 };
