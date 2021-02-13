@@ -35,7 +35,10 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { UserLists: {} }; }
 if (!('UserLists' in Tootsville.Game)) { Tootsville.Game.UserLists = {}; }
 
 Tootsville.Game.UserLists.addContactAsBuddy = function (name) {
-    Tootsville.Util.infinity ('requestBuddy', { buddy: name }); };
+    Tootsville.Util.infinity ('requestBuddy', { buddy: name });
+    Tootsville.UI.confirmPretty ("Add Contact",
+                                 "Asking " + name + " to exchange contact information.",
+                                 "OK", null); };
 Tootsville.Game.UserLists.removeContactAsBuddy = function (name) {
     Tootsville.Util.infinity ('removeFromList', { buddy: name }); };
 Tootsville.Game.UserLists.addContactAsIgnore = function (name) {
