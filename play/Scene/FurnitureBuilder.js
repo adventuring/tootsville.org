@@ -98,8 +98,10 @@ Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 };
 
 /**
-*
-*/
+ * Move the loaded template meshes and skeletons into the scene and call build2
+ *
+ * See `Tootsville.FurnitureBuilder.build2', `Tootsville.FurnitureBuilder.loadItemTemplate'
+ */
 Tootsville.FurnitureBuilder.onLoadedTemplate = function (task, item, scene, finish)
 { const modelRoot = new BABYLON.Mesh ("item/" + item.template.name + '#' + item.uuid, scene);
   for (let i = 0; i < task.loadedMeshes.length; ++i)
@@ -118,6 +120,8 @@ Tootsville.FurnitureBuilder.onLoadedTemplate = function (task, item, scene, fini
 
 /**
  * Load an item template avatar from the assets server.
+ *
+ * Passes it off to `Tootsville.FurnitureBuilder.onLoadedTemplate'
  */
 Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
 { let assetsManager = scene.assetManager;
@@ -136,8 +140,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  * WRITEME … TODO update furniture …
  */
 Tootsville.FurnitureBuilder.update = function (item, model, scene, finish=undefined)
-{ /* TODO */
-    if (finish) { finish (model); } };
+{ Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); };
 
 /**
  * Given an item's description, load, colorize, and position its model.
