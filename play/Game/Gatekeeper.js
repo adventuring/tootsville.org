@@ -920,7 +920,7 @@ Tootsville.Game.Gatekeeper.migrate = function (gram)
     Tootsville.Util.Websocket.close (1001, "migrate"); } };
 
 /**
- * roomJoin
+ * roomJoin WRITEME
  */
 Tootsville.Game.Gatekeeper.roomJoin = function (gram)
 { if (gram.status) {
