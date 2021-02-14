@@ -56,7 +56,6 @@ Tootsville.Game.lag = 100;
 Tootsville.Game.update = function ()
 { Tootsville.Game.now = (new Date).getTime ();
   Tootsville.Game.Nav.updateAvatars ();
-  Tootsville.Game.Nav.updateCamera ();
   Tootsville.Game.Speech.updateSpeech ();
   Tootsville.UI.Gamepad.updateStatus ();
   Tootsville.Game.BallSystem.updateBalls ();
