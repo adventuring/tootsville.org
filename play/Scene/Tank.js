@@ -375,6 +375,7 @@ Tootsville.Tank.clearSceneExceptPlayer = function () {
         if (Tootsville.Tank.scene.items[item].model) {
             Tootsville.Tank.scene.items[item].model.dispose ();
             delete Tootsville.Tank.scene.items[item]; }
+    Tootsville.SceneBuilder.places = {};
     if (Tootsville.Tank.ground) {
         Tootsville.Tank.ground.dispose ();
         Tootsville.Tank.ground = null; } };
