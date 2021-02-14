@@ -245,12 +245,10 @@ Tootsville.Tank.prepareFor3D = function ()
  * Enqueue some foley sound effects that will be used in the scene.
  */
 Tootsville.Tank.loadUISounds = function ()
-{ var squawk = new BABYLON.Sound (
+{ Tootsville.Gossip.Parrot.squawk = new BABYLON.Sound (
     "parrot-squawk",
     "https://jumbo.tootsville.org/Assets/Voices/parrot-squawk.wav",
-    Tootsville.Tank.scene,
-    function ()
-    { Tootsville.Gossip.Parrot.squawk = squawk; }); };
+    Tootsville.Tank.scene ); };
 
 /**
  * Start the 3D engine, after doing any necessary preparatory work.
@@ -274,10 +272,10 @@ Tootsville.Tank.start3DReal = function ()
             setTimeout ( () => { Tootsville.Tank.initOTSCamera ();
                                  Tootsville.Tank.scene.activeCamera = Tootsville.Tank.camera; }, 100);
             Tootsville.Tank.startRenderLoop ();
+            Tootsville.Tank.loadUISounds ();
             /* FIXME this seems to miss many resize events? */
             window.addEventListener ('resize',
                                      (ev) => { Tootsville.Tank.engine.resize (); }); } );
-
   return true; };
 
 
