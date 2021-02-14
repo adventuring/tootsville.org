@@ -31,9 +31,8 @@
  *
  */
 
-if (!('GroundBuilder' in Tootsville)) { Tootsville.GroundBuilder = {}; }
-
-
+if (!('Tootsville' in window)) Tootsville = { GroundBuilder: {} };
+if (!('GroundBuilder' in Tootsville)) Tootsville.GroundBuilder = {};
 
 /**
  * Initialize the ground plane.
@@ -62,8 +61,8 @@ Tootsville.GroundBuilder.initGroundPlane = function ()
   return groundCanvas; };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.GroundBuilder.kinds =
     { grass: 'green',
       tallGrass: 'green',
@@ -78,8 +77,8 @@ Tootsville.GroundBuilder.kinds =
     };
 
 /**
-*
-*/
+ *
+ */
 Tootsville.GroundBuilder.colorForPlace = function (kind)
 { return Tootsville.UI.interpretTootColor ( Tootsville.GroundBuilder.kinds [ kind ] ); };
 
@@ -99,9 +98,9 @@ Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
     { const shape = shapes [ j ];
       console.debug ("Drawing shape on ground", shape);
       groundCanvas.beginPath ();
-      for (let ii = 0; ii < shape.length; ++ii)
-      { const point = shape [ ii ];
-        if (0 === ii) { groundCanvas.moveTo (point.x, point.z); }
+      for (let n = 0; n < shape.length; ++n)
+      { const point = shape [ n ];
+        if (0 === n) { groundCanvas.moveTo (point.x, point.z); }
         else { groundCanvas.lineTo (point.x, point.z); } }
       groundCanvas.fill (); } }
   Tootsville.Tank.groundTexture.update (); };
