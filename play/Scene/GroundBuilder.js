@@ -94,7 +94,7 @@ Tootsville.GroundBuilder.paintPlaces = function (lat, long, alt)
     groundCanvas.setTransform (1, 0, 0, 1, 512, 512);
     groundCanvas.scale (1024/3000, 1024/3000);
     groundCanvas.fillStyle = Tootsville.GroundBuilder.colorForPlace (kind);
-    for (let j = 0; j < places.length; ++j)
+    for (let j = 0; j < shapes.length; ++j)
     { const shape = shapes [ j ];
       console.debug ("Drawing shape on ground", shape);
       groundCanvas.beginPath ();
