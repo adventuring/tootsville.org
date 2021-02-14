@@ -218,6 +218,7 @@ Tootsville.Tank.createScene = function ()
 Tootsville.Tank.startRenderLoop = function ()
 { console.log ("Starting render loop for scene ", Tootsville.Tank.scene,
                " with render function ", Tootsville.Tank.scene.render);
+  Tootsville.Tank.CameraManager.updateCamera ();
   setTimeout (function ()
               { Tootsville.Tank.engine.runRenderLoop ( function ()
                                                        { try { Tootsville.Tank.scene.render (); }
