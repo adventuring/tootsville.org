@@ -72,7 +72,9 @@ Tootsville.Tank.CameraManager.CAMERA_TRUCK_SPEED = .4;
 Tootsville.Tank.CameraManager.updateCameraDolly = function (model, cameraPosition)
 { const δPosition = Tootsville.Tank.camera.position.subtract (model.position);
   const absZ = Math.abs (δPosition.z);
-  if (absZ > 100)
+  if ((absZ < 400) || (absZ > 400))
+      cameraPosition = model.position.subtract (new BABYLON.Vector3 (0, -10, 100));
+  else if (absZ > 100)
       cameraPosition = cameraPosition.add (new BABYLON.Vector3 (0, 0, Tootsville.Tank.CameraManager.CAMERA_DOLLY_SPEED));
   else if (absZ < 50)
       cameraPosition = cameraPosition.subtract (new BABYLON.Vector3 (0, 0, Tootsville.Tank.CameraManager.CAMERA_DOLLY_SPEED));
