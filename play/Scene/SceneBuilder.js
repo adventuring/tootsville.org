@@ -46,23 +46,7 @@ Tootsville.SceneBuilder.makeBallPit = function (scene)
  * Affects Tootsville.Tank.scene
  */
 Tootsville.SceneBuilder.build = function (x, y, z)
-{ const scene = Tootsville.Tank.scene;
-  // Tootsville.FurnitureBuilder.build (
-  //     { uuid: 'fountain1',
-  //       template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 0 },
-  //       baseColor: 'periwinkle', altColor: 'yellow', position: { x: -10, y: 0, z: -50 }, facing: 0 },
-  //     scene);
-  // Tootsville.FurnitureBuilder.build (
-  //     { uuid: 'fountain2',
-  //       template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 0 },
-  //       baseColor: 'periwinkle', altColor: 'yellow', position: { x: 50, y: 0, z: 50 }, facing: Math.PI * 2/3 },
-  //     scene);
-  // Tootsville.FurnitureBuilder.build (
-  //     { uuid: 'fountain3',
-  //       template: { name: 'Fountain', avatar: 'TootSquare/FountainToot', weight: 0 },
-  //       baseColor: 'periwinkle', altColor: 'yellow', position: { x: -10, y: 0, z: 50 }, facing: Math.PI * 4/3 },
-  //     scene);
-};
+{ const scene = Tootsville.Tank.scene; };
 
 /**
  *
