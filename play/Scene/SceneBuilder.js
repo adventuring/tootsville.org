@@ -33,6 +33,9 @@
 
 if (!('SceneBuilder' in Tootsville)) { Tootsville.SceneBuilder = {}; }
 
+/**
+ *
+ */
 Tootsville.SceneBuilder.makeBallPit = function (scene)
 {  for (let i = 1; i < 100; ++i)
    { let sphere = BABYLON.Mesh.CreateSphere("sphere" * i, 4, 2 + 10 * i / 100, scene);
