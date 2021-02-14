@@ -334,7 +334,7 @@ Tootsville.Tank.destroyAvatar = function (avatar)
   if (avatar.nameTag)
   { avatar.nameTag.parentNode.removeChild (avatar.nameTag); }
   if (avatar.model)
-  { avatar.model.dispose (); } };
+  { avatar.model.dispose (); }};
 
 /**
  * Find an avatar by name; may return null if we don't know about that
@@ -369,15 +369,8 @@ Tootsville.Tank.shutDown = function ()
 */
 Tootsville.Tank.clearSceneExceptPlayer = function () {
     for (let avatar in Tootsville.Tank.avatars)
-        if (avatar !== Tootsville.character) {
-            const a = Tootsville.Tank.avatars[avatar];
-            if (a.model)
-                a.model.dispose ();
-            if (a.speech) 
-                a.speech.parentNode.removeChild (a.speech);
-            if (a.nameTag)
-                a.nameTag.parentNode.removeChild (a.nameTag);
-            delete Tootsville.Tank.avatars[avatar]; }
+        if (avatar !== Tootsville.character)
+            Tootsville.Tank.destroyAvatar (Tootsville.Tank.avatars [avatar]);
     for (let item in Tootsville.Tank.scene.items)
         if (Tootsville.Tank.scene.items[item].model) {
             Tootsville.Tank.scene.items[item].model.dispose ();
