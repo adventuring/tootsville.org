@@ -250,7 +250,7 @@ Tootsville.UI.NewToot.afterCreate = function (reply)
     { case 400:
       console.log(reply);
       Tootsville.Gossip.Parrot.say ("Program trouble!",
-                                    "The server could not understand our request. One of the colors or the pattern chosen don't work together, perhaps.");
+                                    "The server could not understand our request. " + reply.response.json ().error);
       break;;
       case 409:
       Tootsville.Gossip.Parrot.say ("Name already taken",
