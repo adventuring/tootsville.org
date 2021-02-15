@@ -146,56 +146,102 @@ Tootsville.Game.Nav.collisionP = function (model, start, end)
     return hit.pickedMesh; };
 
 /**
+ * Ensure that the course data seems sane. 
+ *
+ * Calculate missing bits.
+ */
+Tootsville.Game.Nav.validateCourse = function (course) {
+    if (course.startTime > Tootsville.Game.now) { return false; }
+    if (! course.endPoint)
+    { console.debug (entity.name + " done walking, no endpoint");
+      return true; }
+    if (! course.endPoint.subtract)
+    { course.endPoint = new BABYLON.Vector3 (course.endPoint.x,
+                                             course.endPoint.y,
+                                             course.endPoint.z);
+      course.startPoint = new BABYLON.Vector3 (course.startPoint.x,
+                                               course.startPoint.y,
+                                               course.startPoint.z); }
+    if (! (course.walkΔ && course.walkΔ.subtract))
+    { course.walkΔ = course.endPoint.subtract (course.startPoint); }
+    if ((! (course.endTime)) || isNaN(course.endTime))
+    { course.endTime = course.startTime + course.walkΔ.length () / course.speed; }
+    return course;
+};
+
+Tootsville.Game.Nav.SECTOR_SIZE = 512; /* length of each side = 2 × this value */
+
+/**
+*
+*/
+Tootsville.Game.Nav.moveToNextSector = function (position) {
+    let lat = Tootsville.activity.lat;
+    let long = Tootsville.activity.long;
+    if (position.x < -Tootsville.Game.Nav.SECTOR_SIZE) {
+        position.x += 2 * Tootsville.Game.Nav.SECTOR_SIZE;
+        --lat;
+    } else if (position.x > Tootsville.Game.Nav.SECTOR_SIZE) {
+        position.x -= 2 * Tootsville.Game.Nav.SECTOR_SIZE;
+        ++lat;
+    }
+    if (position.z < -Tootsville.Game.Nav.SECTOR_SIZE) {
+        position.z += 2* Tootsville.Game.Nav.SECTOR_SIZE;
+        ++long;
+    } else if (position.z > Tootsville.Game.Nav.SECTOR_SIZE) {
+        position.z -= 2 * Tootsville.Game.Nav.SECTOR_SIZE;
+        --long;
+    }
+    Tootsville.Game.Nav.enterArea (lat, long, 0, Tootsville.activity.world, position.x, position.y, position.z);
+    return position;
+};
+
+/**
  * Move an entity  along a course, until its movement  is interrupted by
  * colliding with something else.
  *
  * returns true when the course has been completed
  */
 Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
-{ if (course.startTime > Tootsville.Game.now) { return false; }
-  if (! course.endPoint)
-  { console.debug (entity.name + " done walking, no endpoint");
-    return true; }
-  if (! course.endPoint.subtract)
-  { course.endPoint = new BABYLON.Vector3 (course.endPoint.x,
-                                           course.endPoint.y,
-                                           course.endPoint.z);
-    course.startPoint = new BABYLON.Vector3 (course.startPoint.x,
-                                             course.startPoint.y,
-                                             course.startPoint.z); }
-  if (! (course.walkΔ && course.walkΔ.subtract))
-  { course.walkΔ = course.endPoint.subtract (course.startPoint); }
-  if ((! (course.endTime)) || isNaN(course.endTime))
-  { course.endTime = course.startTime + course.walkΔ.length () / course.speed; }
-  if (course.endTime < Tootsville.Game.now)
-  { console.debug (entity.name + " done walking, time is up");
-    entity.model.position = new BABYLON.Vector3 (course.endPoint.x, course.endPoint.y, course.endPoint.z);
-    return true; }
-  if (!entity.model)
-  { console.debug (entity.name + " not gonna walk, no model present");
-    return true; }
+{/* First make sure that the course data is sane.*/
+    course = Tootsville.Game.Nav.validateCourse (course);
+    if (course.endTime < Tootsville.Game.now)
+    { console.debug (entity.name + " done walking, time is up");
+      entity.model.position = new BABYLON.Vector3 (course.endPoint.x, course.endPoint.y, course.endPoint.z);
+      return true; }
+    if (!entity.model)
+    { console.debug (entity.name + " not gonna walk, no model present");
+      return true; }
 
-  const goalPosition = course.startPoint.
-        add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
-                                 / (course.endTime - course.startTime)));
+    /* Where should we be after this step? */
+    let goalPosition = course.startPoint.
+          add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
+                                   / (course.endTime - course.startTime)));
+    
+    if (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z))
+    { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
+      return true; }
 
-  if (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z))
-  { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
-    return true; }
+    const hit = Tootsville.Game.Nav.collisionP (entity.model, entity.model.position, goalPosition);
+    if (hit && "ground" != hit.name)
+    { entity.course = null;
+      console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
+      return true; }
 
-  // goalPosition.subtract (entity.model.position);
-  const hit = Tootsville.Game.Nav.collisionP (entity.model, entity.model.position, goalPosition);
-  if (hit && "ground" != hit.name)
-  { entity.course = null;
-    console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
-    return true; }
+    if ((goalPosition.x < -Tootsville.Game.Nav.SECTOR_SIZE) ||
+        (goalPosition.x > Tootsville.Game.Nav.SECTOR_SIZE) ||
+        (goalPosition.z < -Tootsville.Game.Nav.SECTOR_SIZE) ||
+        (goalPosition.z > Tootsville.Game.Nav.SECTOR_SIZE)) {
+        goalPosition = Tootsville.Game.Nav.moveToNextSector (goalPosition);
+        course.startPosition = course.endPosition = goalPosition;
+        course.startTime = course.endTime = Tootsville.Game.now;
+    }
 
-  entity.model.position = new BABYLON.Vector3 (goalPosition.x, goalPosition.y, goalPosition.z);
+    entity.model.position = new BABYLON.Vector3 (goalPosition.x, goalPosition.y, goalPosition.z);
 
-  if (entity.nameTag || entity.speech)
-  { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
+    if (entity.nameTag || entity.speech)
+    { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
 
-  return false; };
+    return false; };
 
 /**
  * Update the avatar's facing direction to match desired direction.
