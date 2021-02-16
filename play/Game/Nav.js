@@ -150,11 +150,7 @@ Tootsville.Game.Nav.collisionP = function (model, start, end)
  *
  * Calculate missing bits.
  */
-Tootsville.Game.Nav.validateCourse = function (course) {
-    if (course.startTime > Tootsville.Game.now) { return false; }
-    if (! course.endPoint)
-    { console.debug (entity.name + " done walking, no endpoint");
-      return true; }
+Tootsville.Game.Nav.validateCourse = function (course, entity) {
     if (! course.endPoint.subtract)
     { course.endPoint = new BABYLON.Vector3 (course.endPoint.x,
                                              course.endPoint.y,
@@ -195,6 +191,20 @@ Tootsville.Game.Nav.moveToNextSector = function (position) {
     return position;
 };
 
+Tootsville.Game.Nav.leftSector = function (goalPosition) {
+    return (goalPosition.x < -Tootsville.Game.Nav.SECTOR_SIZE) ||
+        (goalPosition.x > Tootsville.Game.Nav.SECTOR_SIZE) ||
+        (goalPosition.z < -Tootsville.Game.Nav.SECTOR_SIZE) ||
+        (goalPosition.z > Tootsville.Game.Nav.SECTOR_SIZE); };
+
+Tootsville.Game.Nav.takeAStep = function (course) {
+    return course.startPoint.
+        add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
+                                 / (course.endTime - course.startTime))); };
+
+Tootsville.Game.Nav.invalidCoordsP = function (goalPosition) {
+    return (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z)); };
+
 /**
  * Move an entity  along a course, until its movement  is interrupted by
  * colliding with something else.
@@ -203,21 +213,21 @@ Tootsville.Game.Nav.moveToNextSector = function (position) {
  */
 Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
 {/* First make sure that the course data is sane.*/
-    course = Tootsville.Game.Nav.validateCourse (course);
-    if (course.endTime < Tootsville.Game.now)
-    { console.debug (entity.name + " done walking, time is up");
-      entity.model.position = new BABYLON.Vector3 (course.endPoint.x, course.endPoint.y, course.endPoint.z);
+    entity.course = course = Tootsville.Game.Nav.validateCourse (course, entity);
+    if (course.startTime > Tootsville.Game.now) { return false; }
+    if (! course.endPoint)
+    { console.debug (entity.name + " done walking, no endpoint");
       return true; }
     if (!entity.model)
     { console.debug (entity.name + " not gonna walk, no model present");
       return true; }
 
+    if (0 === course.walkΔ.length ()) return true;
+
     /* Where should we be after this step? */
-    let goalPosition = course.startPoint.
-          add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
-                                   / (course.endTime - course.startTime)));
+    let goalPosition = Tootsville.Game.Nav.takeAStep (course);
     
-    if (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z))
+    if (Tootsville.Game.Nav.invalidCoordsP (goalPosition))
     { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
       return true; }
 
@@ -227,14 +237,16 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
       console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
       return true; }
 
-    if ((goalPosition.x < -Tootsville.Game.Nav.SECTOR_SIZE) ||
-        (goalPosition.x > Tootsville.Game.Nav.SECTOR_SIZE) ||
-        (goalPosition.z < -Tootsville.Game.Nav.SECTOR_SIZE) ||
-        (goalPosition.z > Tootsville.Game.Nav.SECTOR_SIZE)) {
+    if (Tootsville.Game.Nav.leftSector (goalPosition)) {
         goalPosition = Tootsville.Game.Nav.moveToNextSector (goalPosition);
         course.startPosition = course.endPosition = goalPosition;
         course.startTime = course.endTime = Tootsville.Game.now;
     }
+
+    if (course.endTime < Tootsville.Game.now)
+    { console.debug (entity.name + " done walking, time is up");
+      entity.model.position = new BABYLON.Vector3 (course.endPoint.x, course.endPoint.y, course.endPoint.z);
+      return true; }
 
     entity.model.position = new BABYLON.Vector3 (goalPosition.x, goalPosition.y, goalPosition.z);
 
