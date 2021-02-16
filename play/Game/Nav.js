@@ -268,18 +268,12 @@ Tootsville.Game.Nav.updateFacing = function (avatar)
   avatar.model.rotation.y -= δRotation / 8; };
 
 /**
- * Update avatar's rotation & position.
+ * Finish moving
  */
-Tootsville.Game.Nav.updateAvatar = function (avatar)
-{ if (Tootsville.Tank.scene)
-  { if (! Tootsville.Tank.avatars )
-    { Tootsville.Tank.avatars = {}; }
-    if (avatar.model)
-    { if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
-      { Tootsville.Game.Nav.updateFacing (avatar); }
-      if (avatar.course)
-      { let done = Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
-        if (done) { console.debug (avatar.name + " finished course ", avatar.course, " at " + Tootsville.Game.now );
+Tootsville.Game.Nav.finishMovingAvatar = function (avatar) 
+{ console.debug (avatar.name + " finished course ",
+                                   avatar.course,
+                                   " at " + Tootsville.Game.now );
                     if (avatar.course)
                     { Tootsville.Tank.avatars [ avatar.name ].model.position =
                       new BABYLON.Vector3 (avatar.course.endPoint.x,
@@ -287,7 +281,23 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
                                            avatar.course.endPoint.z); }
                     delete avatar['course'];
                     if (avatar.name === Tootsville.character)
-                    { Tootsville.Game.Nav.sendWTL (); }}}}}};
+  { Tootsville.Game.Nav.sendWTL (); }};
+
+/**
+ * Update avatar's rotation & position.
+ */
+Tootsville.Game.Nav.updateAvatar = function (avatar)
+{ if (!(Tootsville.Tank.scene)) return;
+  if (! Tootsville.Tank.avatars )
+      Tootsville.Tank.avatars = {};
+  if (avatar.model)
+  { if (Math.abs (avatar.model.rotation.y - avatar.facing) > .01)
+      Tootsville.Game.Nav.updateFacing (avatar);
+    if (avatar.course)
+    { const done =
+            Tootsville.Game.Nav.moveEntityOnCourse (avatar, avatar.course);
+      if (done)
+          Tootsville.Game.Nav.finishMovingAvatar (avatar); }}};
 
 /**
  * Merge keys of an object safely
@@ -304,7 +314,8 @@ Tootsville.Game.Nav.updateAvatars = function ()
 { if ((!Tootsville.Tank.scene) || (!Tootsville.Tank.avatars)) { return; }
   const avatars = Object.values(Tootsville.Tank.avatars);
   for (let i = 0; i < avatars.length; ++i)
-  { try { Tootsville.Game.Nav.updateAvatar (avatars [i]); } catch (e) { console.error (e); } } };
+  { try { Tootsville.Game.Nav.updateAvatar (avatars [i]); }
+    catch (e) { console.error (e); } } };
 
 /**
  * Make the character position be precisely x, y, z local
@@ -326,5 +337,4 @@ Tootsville.Game.Nav.enterArea = function (latitude, longitude, altitude, world, 
     Tootsville.Util.infinity ('join', { lat: latitude, long: longitude,
                                         alt: altitude, world: world });
     Tootsville.Tank.clearSceneExceptPlayer ();
-    Tootsville.Game.Nav.positionTootAt (x, y, z);
-};
+    Tootsville.Game.Nav.positionTootAt (x, y, z); };
