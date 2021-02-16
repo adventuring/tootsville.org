@@ -50,7 +50,9 @@ Tootsville.Game.bootstrap = function ()
         document.getElementById ('control-panel-icon').style.width = '7vw';
     }, 1000);
 
-    console.info ("\n\n\n This version of Tootsville is version: " + Tootsville.version + " Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
+    console.info ("\n\n\n This version of Tootsville is version: " +
+                  Tootsville.version +
+                  " Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
 
     window.addEventListener ('click', Tootsville.UI.onFirstClick);
     document.addEventListener ('fullscreenchange',
@@ -65,6 +67,10 @@ Tootsville.Game.bootstrap = function ()
     if (! isNaN(savedVolume))
         Tootsville.UI.Audio.currentVolume = savedVolume;
 
+    let savedHistory = window.localStorage.getItem('textHistory');
+    if (savedHistory && 0 < savedHistory.length)
+        Tootsville.UI.textHistory = savedHistory.split("\n");
+
     Tootsville.UI.setBackgroundMusic ("bensound-adventure");
 
     Tootsville.UI.HUD.initHUD ();
@@ -77,7 +83,6 @@ Tootsville.Game.bootstrap = function ()
     Tootsville.Tank.prepareFor3D ();
 
     Tootsville.Util.ensureServersReachable ();
-
 };
 
 
