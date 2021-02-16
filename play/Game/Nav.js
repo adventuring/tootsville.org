@@ -168,8 +168,11 @@ Tootsville.Game.Nav.validateCourse = function (course, entity) {
 Tootsville.Game.Nav.SECTOR_SIZE = 512; /* length of each side = 2 × this value */
 
 /**
-*
-*/
+ * The player has entered a new sector.
+ *
+ * Update the lat & long and call `Tootsville.Game.Nav.enterArea' to
+ * get the new room vars.
+ */
 Tootsville.Game.Nav.moveToNextSector = function (position) {
     let lat = Tootsville.activity.lat;
     let long = Tootsville.activity.long;
@@ -187,27 +190,43 @@ Tootsville.Game.Nav.moveToNextSector = function (position) {
         position.z -= 2 * Tootsville.Game.Nav.SECTOR_SIZE;
         --long;
     }
-    Tootsville.Game.Nav.enterArea (lat, long, 0, Tootsville.activity.world, position.x, position.y, position.z);
+    Tootsville.Game.Nav.enterArea (lat, long, 0, Tootsville.activity.world,
+                                   position.x, position.y, position.z);
     return position;
 };
 
-Tootsville.Game.Nav.leftSector = function (goalPosition) {
+/**
+ * Has the entity left the sector?
+ */
+Tootsville.Game.Nav.leftSectorP = function (goalPosition) {
     return (goalPosition.x < -Tootsville.Game.Nav.SECTOR_SIZE) ||
         (goalPosition.x > Tootsville.Game.Nav.SECTOR_SIZE) ||
         (goalPosition.z < -Tootsville.Game.Nav.SECTOR_SIZE) ||
         (goalPosition.z > Tootsville.Game.Nav.SECTOR_SIZE); };
 
+/**
+ * Compute one step along the movement line of the course
+ */
 Tootsville.Game.Nav.takeAStep = function (course) {
     return course.startPoint.
         add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
                                  / (course.endTime - course.startTime))); };
 
+/**
+ * Detect whether the coördinates passed are invalid
+ * 
+ * Currently just checks for NaN axes
+ */
 Tootsville.Game.Nav.invalidCoordsP = function (goalPosition) {
-    return (isNaN(goalPosition.x) || isNaN(goalPosition.y) || isNaN(goalPosition.z)); };
+    return (isNaN(goalPosition.x) ||
+            isNaN(goalPosition.y) ||
+            isNaN(goalPosition.z)); };
 
 /**
- * Move an entity  along a course, until its movement  is interrupted by
- * colliding with something else.
+ * Move an entity  along a course
+ *
+ * Stop if its movement is interrupted by colliding with something
+ * else.
  *
  * returns true when the course has been completed
  */
@@ -237,10 +256,14 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
       console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
       return true; }
 
-    if (Tootsville.Game.Nav.leftSector (goalPosition)) {
-        goalPosition = Tootsville.Game.Nav.moveToNextSector (goalPosition);
+    if (Tootsville.Game.Nav.leftSectorP (goalPosition))
+    { if (entity === Tootsville.Tank.avatars[Tootsville.character])
+      { goalPosition = Tootsville.Game.Nav.moveToNextSector (goalPosition);
         course.startPosition = course.endPosition = goalPosition;
         course.startTime = course.endTime = Tootsville.Game.now;
+      } else {
+          /* TODO what about other entities */
+      }
     }
 
     if (course.endTime < Tootsville.Game.now)
@@ -331,7 +354,9 @@ Tootsville.Game.Nav.positionTootAt = function (x, y, z) {
     Tootsville.Game.Nav.gamepadMovementP = false; };
 
 /**
- * Enter a new latitude, longitude, altitude area at local x, y, z in world world
+ * Enter a new sector of the game world
+ *
+ * ...at latitude, longitude, altitude at local x, y, z in world world
  */
 Tootsville.Game.Nav.enterArea = function (latitude, longitude, altitude, world, x, y, z) {
     Tootsville.Util.infinity ('join', { lat: latitude, long: longitude,
