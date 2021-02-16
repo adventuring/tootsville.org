@@ -38,11 +38,12 @@ if (!("Util" in Tootsville)) { Tootsville.Util = {}; }
  * May attempt to re-connect if the stream does not seem to be alive.
  */
 Tootsville.Util.checkStream = function () {
-    if (Tootsville.Util.WebSocket)
-    { if (Tootsville.Util.WebSocket.readyState === WebSocket.OPEN)
-      { Tootsville.Util.infinity ("ping", { pingStarted: Tootsville.Game.now } ); }
-      else if (! (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING) )
-      { Tootsville.Util.connectWebSocket (); } } };
+    if (!(Tootsville.Util.WebSocket))
+        return;
+    if (Tootsville.Util.WebSocket.readyState === WebSocket.OPEN)
+        Tootsville.Util.infinity ("ping", { pingStarted: Tootsville.Game.now } );
+    else if (! (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING) )
+        Tootsville.Util.connectWebSocket (); };
 
 /**
  * Connect the WebSocket stream to the game host
@@ -60,12 +61,17 @@ Tootsville.Util.connectWebSocket = function () {
     let uri = Tootsville.host.stream;
     console.log ("Connecting WebSocket to " + uri);
     Tootsville.Util.WebSocket = new WebSocket (uri);
-    Tootsville.Util.WebSocket.onopen = (event) => { Tootsville.Util.openWebSocket (event); };
-    Tootsville.Util.WebSocket.onclose = (event) => { Tootsville.Util.closeWebSocket (event); };
-    Tootsville.Util.WebSocket.onmessage = (event) => { Tootsville.Util.messageFromWebSocket (event); };
-    Tootsville.Util.WebSocket.onerror = (event) => { Tootsville.Util.errorFromWebSocket (event); };
+    Tootsville.Util.WebSocket.onopen =
+        event => { Tootsville.Util.openWebSocket (event); };
+    Tootsville.Util.WebSocket.onclose =
+        event => { Tootsville.Util.closeWebSocket (event); };
+    Tootsville.Util.WebSocket.onmessage =
+        event => { Tootsville.Util.messageFromWebSocket (event); };
+    Tootsville.Util.WebSocket.onerror =
+        event => { Tootsville.Util.errorFromWebSocket (event); };
     if (! Tootsville.Util.checkStreamRunning)
-    { Tootsville.Util.checkStreamRunning = setInterval (Tootsville.Util.checkStream, 300000); } };
+        Tootsville.Util.checkStreamRunning =
+        setInterval (Tootsville.Util.checkStream, 300000); };
 
 /**
  * Send raw ``json'' data down stream connection.
@@ -75,35 +81,40 @@ Tootsville.Util.connectWebSocket = function () {
 Tootsville.Util.stream = function (json)
 { console.debug ("WebSocket stream send command " + json.c, json);
   if (Tootsville.Util.WebSocket.readyState === WebSocket.CONNECTING)
-  { setTimeout ( () => Tootsville.Util.stream (json), 10 ); }
-  Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
+      setTimeout ( () => Tootsville.Util.stream (json), 10 );
+  else
+      Tootsville.Util.WebSocket.send (JSON.stringify(json)); };
 
 /**
  * Upon connection, log in with Auth/∞/ℵ₀ method or child code
  */
 Tootsville.Util.openWebSocket = function (event) {
     if (Tootsville.Login.firebaseAuth)
-    { Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
-                                provider: "Firebase",
-                                token: Tootsville.Login.firebaseAuth,
-                                userName: Tootsville.character }); }
+        Tootsville.Util.stream ({ c: "Auth/∞/ℵ₀",
+                                  provider: "Firebase",
+                                  token: Tootsville.Login.firebaseAuth,
+                                  userName: Tootsville.character });
     else if (Tootsville.character && Tootsville.childCode)
-    { Tootsville.Util.stream ({ c: "getApple" }); } };
+        Tootsville.Util.stream ({ c: "getApple" }); };
 
 /**
  * When the WebSocket is closed, warn the user but try also to reconnect.
  */
 Tootsville.Util.closeWebSocket = function (event)
-{if (Tootsville.Gossip.closeAndQuitP) return;
- console.warn ("WebSocket closed unexpectedly", event);
- if (1006 === event.code)
-     Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
-                                   `<p>The server stream connection was lost without warning.</p> <p>Your
-Internet connection might not be working.</p>`);
- else
-     Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
-                                   "The server stream connection went down. Are we off-line?");
- Tootsville.Util.checkStream (); };
+{ if (Tootsville.Gossip.closeAndQuitP) return;
+  console.warn ("WebSocket closed unexpectedly", event);
+  if (1006 === event.code)
+      Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
+                                    `
+<p>The server stream connection was lost without warning.</p> <p>We
+may be having trouble getting through.</p>`);
+  else
+      Tootsville.Gossip.Parrot.say (
+          "Lost Connection to Servers",
+          "The server stream connection went down." +
+              navigator.onLine? ""
+              : " We seem to be off-line. Check your network settings on your computer or device.");
+  Tootsville.Util.checkStream (); };
 
 /**
  * Handle incoming WebSocket datagram
@@ -114,8 +125,7 @@ Tootsville.Util.messageFromWebSocket = function (event)
       data = JSON.parse (event.data);
   } catch (e) {
       console.warn ("Error in JSON data received", e, event.data);
-      return;
-  }
+      return; }
   console.debug ("Received data from " + data.from, data);
   Tootsville.Gossip.gatekeeperAccept (null, { data: data } ); };
 
@@ -147,4 +157,5 @@ Tootsville.Util.infinityAwaits = function (command, fromType, params={}) {
  * See `DEFINFINITY' for a discussion of Infinity Mode.
  */
 Tootsville.Util.infinity = function (command, params={}) {
-    Tootsville.Util.stream (Tootsville.Gossip.createPacket (command, params || {}) ); };
+    Tootsville.Util.stream (Tootsville.Gossip.createPacket (command,
+                                                            params || {}) ); };
