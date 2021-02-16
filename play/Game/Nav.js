@@ -304,8 +304,8 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
  */
 Tootsville.Game.Nav.mergeObjects = function (into, from)
 { for (let key in from)
-  { if (from.hasOwnProperty (key))
-    { into [ key ] = from [ key ] ; } } };
+    if (from.hasOwnProperty (key))
+        into [ key ] = from [ key ]; };
 
 /**
  * Update the position & rotation of every avatar
