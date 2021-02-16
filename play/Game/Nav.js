@@ -250,10 +250,13 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
     { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
       return true; }
 
-    const hit = Tootsville.Game.Nav.collisionP (entity.model, entity.model.position, goalPosition);
+    const hit = Tootsville.Game.Nav.collisionP (entity.model,
+                                                entity.model.position,
+                                                goalPosition);
     if (hit && "ground" != hit.name)
     { entity.course = null;
-      console.debug (entity.name + " ran into an obstacle, stopping due to " + hit.name);
+      console.debug (entity.name + " ran into an obstacle, stopping due to " +
+                     hit.name);
       return true; }
 
     if (Tootsville.Game.Nav.leftSectorP (goalPosition))
@@ -268,10 +271,14 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
 
     if (course.endTime < Tootsville.Game.now)
     { console.debug (entity.name + " done walking, time is up");
-      entity.model.position = new BABYLON.Vector3 (course.endPoint.x, course.endPoint.y, course.endPoint.z);
+      entity.model.position = new BABYLON.Vector3 (course.endPoint.x,
+                                                   course.endPoint.y,
+                                                   course.endPoint.z);
       return true; }
 
-    entity.model.position = new BABYLON.Vector3 (goalPosition.x, goalPosition.y, goalPosition.z);
+    entity.model.position = new BABYLON.Vector3 (goalPosition.x,
+                                                 goalPosition.y,
+                                                 goalPosition.z);
 
     if (entity.nameTag || entity.speech)
     { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
