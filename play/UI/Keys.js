@@ -537,4 +537,6 @@ Tootsville.UI.addToHistory = function (text) {
     Tootsville.UI.textHistoryIndex = 0;
     Tootsville.UI.textHistory = Tootsville.UI.textHistory.concat ([text]);
     if (Tootsville.UI.textHistory.length > 100)
-        Tootsville.UI.textHistory = Tootsville.UI.textHistory.splice (1); };
+        Tootsville.UI.textHistory = Tootsville.UI.textHistory.splice (1);
+    window.localStorage.setItem('textHistory',
+                                Tootsville.UI.textHistory.join("\n"));};
