@@ -101,7 +101,7 @@ Tootsville.Game.Nav.buildWTL = function ()
       course = { startPoint: point,
                  endPoint: point,
                  startTime: Tootsville.Game.now + Tootsville.Game.lag,
-                 speed: .1 }; } }
+                 speed: Tootsville.Game.Nav.WALK_SPEED }; } }
   if (!(facing)) facing = 0;
   return { course: course, facing: facing }; };
 
@@ -315,7 +315,7 @@ Tootsville.Game.Nav.positionTootAt = function (x, y, z) {
                       startTime: Tootsville.Game.now,
                       endPoint: new BABYLON.Vector3 (x, y, z),
                       endTime: Tootsville.Game.now,
-                      speed: 1 };
+                      speed: Tootsville.Game.Nav.WALK_SPEED };
     Tootsville.Game.Nav.sendWTL ();
     Tootsville.Game.Nav.gamepadMovementP = false; };
 
