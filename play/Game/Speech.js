@@ -36,6 +36,8 @@ if (!('Speech' in Tootsville.Game)) { Tootsville.Game.Speech = {}; }
 
 /**
  * Create a speech balloon containing ``words'' with CSS class ``extraClass''.
+ *
+ * Handles inserting the Ⓣ logo graphic as well.
  */
 Tootsville.Game.Speech.createBalloon = function (words, extraClass)
 { const balloon = document.createElement ('DIV');
