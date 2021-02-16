@@ -324,6 +324,11 @@ Tootsville.Game.Nav.updateAvatar = function (avatar)
 
 /**
  * Merge keys of an object safely
+ *
+ * This really belongs in a utility namespace and may not even be as
+ * correct as it could be under extreme conditions.
+ *
+ * XXX unclear if this is even used any more?
  */
 Tootsville.Game.Nav.mergeObjects = function (into, from)
 { for (let key in from)
@@ -342,6 +347,8 @@ Tootsville.Game.Nav.updateAvatars = function ()
 
 /**
  * Make the character position be precisely x, y, z local
+ *
+ * Eliminates movement and sends a WTL packet
  */
 Tootsville.Game.Nav.positionTootAt = function (x, y, z) {
     const avatar = Tootsville.Tank.avatars [ Tootsville.character ];
@@ -358,7 +365,8 @@ Tootsville.Game.Nav.positionTootAt = function (x, y, z) {
  *
  * ...at latitude, longitude, altitude at local x, y, z in world world
  */
-Tootsville.Game.Nav.enterArea = function (latitude, longitude, altitude, world, x, y, z) {
+Tootsville.Game.Nav.enterArea = function (latitude, longitude, altitude,
+                                          world, x, y, z) {
     Tootsville.Util.infinity ('join', { lat: latitude, long: longitude,
                                         alt: altitude, world: world });
     Tootsville.Tank.clearSceneExceptPlayer ();
