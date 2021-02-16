@@ -58,12 +58,12 @@ Tootsville.Login.start = function ()
  * Clear the login Toots list
  */
 Tootsville.Login.clearTootsList = function ()
-{ var spin = document.querySelector ('.toots-list-loading-spinner');
+{ let spin = document.querySelector ('.toots-list-loading-spinner');
   if (spin)
-  { spin.parentNode.removeChild (spin); }
-  var toots = document.querySelectorAll ('.toot');
-  for (var i = 0; i < toots.length; ++i)
-  { toots[i].parentNode.removeChild (toots[i]); } };
+      spin.parentNode.removeChild (spin);
+  let toots = document.querySelectorAll ('.toot');
+  for (let i = 0; i < toots.length; ++i)
+      toots[i].parentNode.removeChild (toots[i]); };
 
 /**
  * Is the login panel currently presenting account settings mode?
@@ -88,7 +88,7 @@ if (!('toots' in Tootsville.Login)) { Tootsville.Login.toots = {}; }
  * Create a Toot List item for the given Toot JSON object.
  */
 Tootsville.Login.createTootListItem = function (toot)
-{ var li = document.createElement ('LI');
+{ let li = document.createElement ('LI');
   li.innerHTML = '';
   li ['data-toot'] = toot;
   li.className = 'toot';
@@ -169,7 +169,7 @@ Tootsville.Login.populateTootsList = function ()
 /**
  * Launch the New Toot panel.
  *
- * To     get    the     Gossip     Parrot     prompt    first,     call
+ * To get the Gossip Parrot prompt first, call
  * `Tootsville.Login.startCharacterCreation' instead.
  */
 Tootsville.Login.generateNewToot = function ()
@@ -187,12 +187,12 @@ name, colors, and pattern to be what you like. </p>`).
   then(Tootsville.Login.generateNewToot); };
 
 /**
- * Dim all the Toot characters other than the one who was PICKED.
+ * Dim all the Toot characters other than the one who was ``picked''.
  */
 Tootsville.Login.dimUnpickedCharacters = function (picked)
-{ var allItems = document.querySelectorAll ('#toots-list li');
-  for (var i = 0; i < allItems.length; i++)
-  { if (allItems[i] != picked)
+{ let allItems = document.querySelectorAll ('#toots-list li');
+  for (let i = 0; i < allItems.length; i++)
+  { if (allItems[i] !== picked)
     { allItems[i].style.opacity = .25;
       allItems[i].style.filter = 'grayscale(1)'; } } };
 
@@ -309,7 +309,7 @@ Tootsville.Login.serverLinkTokenToCharacter = function (character)
  * Remove the Child flag from a LI
  */
 Tootsville.Login.removeChildFlag = function (li)
-{ var child = li.querySelector ('.child');
+{ let child = li.querySelector ('.child');
   if (child) { li.removeChild (child); } };
 
 /**
@@ -317,10 +317,10 @@ Tootsville.Login.removeChildFlag = function (li)
  * selection list.
  */
 Tootsville.Login.findLIForToot = function (name)
-{ var toots = document.querySelectorAll ('#toots-list>.toot');
-  for (var i = 0; i < toots.length; ++i)
-  { if (toots [i]['data-toot'].name === name)
-    { return toots[i]; } }
+{ let toots = document.querySelectorAll ('#toots-list>.toot');
+  for (let i = 0; i < toots.length; ++i)
+      if (toots [i]['data-toot'].name === name)
+          return toots[i];
   throw new Error ("Altered a non-existent Toot"); };
 
 /**
@@ -450,7 +450,7 @@ Tootsville.Login.addChildFlag = function (li)
  * Leave the Child Settings mode; return to login selection
  */
 Tootsville.Login.doneEditingSettings = function ()
-{ var toots = document.querySelectorAll ('#toots-list>.toot');
+{ let toots = document.querySelectorAll ('#toots-list>.toot');
   document.querySelector ('#toots-list').style.backgroundColor = '#ba9dca';
   document.querySelector ('#toots-list>#add-toot').style.display =
   ( ((toots.length < 5) || Tootsville.enableMoreTootsP) ? 'block' : 'none');
@@ -465,7 +465,7 @@ Tootsville.Login.doneEditingSettings = function ()
  * Start the Firebase login system
  */
 Tootsville.Login.firebaseLogin = function (loginPanel)
-{ var ui = new window.firebaseui.auth.AuthUI(window.firebase.auth());
+{ let ui = new window.firebaseui.auth.AuthUI(window.firebase.auth());
   Tootsville.trace ("Starting Firebase login");
 
   let yahoo = new window.firebase.auth.OAuthProvider('yahoo.com');
@@ -549,14 +549,14 @@ Tootsville.Login.finishSignIn = function (idToken)
  * Get credential information back from Firebase
  */
 Tootsville.Login.storeCredentialInfo = function (result)
-{ var cred = result.credential;
+{ let cred = result.credential;
   /* .accessToken,  idToken, providerId, signInMethod */
-  var addl = result.additionalUserInfo;
+  let addl = result.additionalUserInfo;
   /*   →  isNewUser: true,  providerId, profile:  {email, family_name,
    * gender:  "male",  given_name,   hd:  "star-hope.org",  id,  link:
    * google+ URI, locale: "en-GB", name, picture: URL, verified_email:
    * true} */
-  var user = result.user;
+  let user = result.user;
   /* o: "[DEFAULT]", refreshToken,  displayName, email, emailVerified,
    * isAnonymous, phoneNumber, photoURL, providerData = [{displayName,
    * email,   phoneNumber,   photoURL,   providerId,   uid}…],   u   =
