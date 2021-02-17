@@ -124,7 +124,8 @@ Tootsville.Tank.initScene = function ()
  * been rendered.
  */
 Tootsville.Tank.afterRender = function ()
-{ Tootsville.Tank.updateCamera (); };
+{ Tootsville.Tank.updateCamera ();
+  Tootsville.UI.HUD.refreshAttachmentOverlays ();};
 
 /**
  * Initialize the 3D engine, including Babylon 3D.
