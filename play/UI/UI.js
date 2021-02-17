@@ -213,10 +213,10 @@ Tootsville.UI.takeOneStep = function (δx, δz)
 { const avatar = Tootsville.Tank.avatars [Tootsville.character];
   const model = avatar.model;
   Tootsville.Game.Nav.walkTheLine (avatar,
-                                   new BABYLON.Vector3 (model.position.x + δx,
-                                                        model.position.y,
-                                                        model.position.z + δz));
-};
+                                   new BABYLON.Vector3 (
+                                       model.position.x + δx * 10,
+                                       model.position.y,
+                                       model.position.z + δz * 10)); };
 
 /**
  * WRITEME — this function is not yet documented.
