@@ -54,7 +54,9 @@ Tootsville.Game.lag = 100;
  * Update everything that operates on the 50Hz Game Tick clock.
  */
 Tootsville.Game.update = function ()
-{ Tootsville.Game.now = (new Date).getTime ();
+{ const newNow = (new Date).getTime ();
+  Tootsville.Game.tick = newNow - Tootsville.Game.now;
+  Tootsville.Game.now = newNow;
   Tootsville.Game.Nav.updateAvatars ();
   Tootsville.Game.Speech.updateSpeech ();
   Tootsville.UI.Gamepad.updateStatus ();
