@@ -139,9 +139,15 @@ Tootsville.Game.Nav.collisionP = function (model, start, end)
 { // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
   //                                                      model.getWorldMatrix () );
   if (!Tootsville.Tank.scene) return null;
-    const step = end.subtract (start);
+    const highStart = new BABYLON.Vector3 (start.x,
+                                           model.getBoundingInfo().boundingSphere.centerWorld.y,
+                                           start.z);
+    const highEnd = new BABYLON.Vector3 (end.x,
+                                       highStart.y,
+                                       end.z);
+    const step = highEnd.subtract (highStart);
     const direction = BABYLON.Vector3.Normalize (step) ;
-    const ray = new BABYLON.Ray (start, direction, step.length);
+    const ray = new BABYLON.Ray (highStart, direction, step.length);
     const hit = Tootsville.Tank.scene.pickWithRay (ray);
     return hit.pickedMesh; };
 
