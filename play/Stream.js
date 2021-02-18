@@ -121,9 +121,14 @@ may be having trouble getting through.</p>`).then(
           "Lost Connection to Servers",
           "The server stream connection went down." +
               (navigator.onLine? ""
-               : `<p> We seem  to be off-line. Check  your network settings on  your computer
- or device.</p>
-<blockquote> <a href="https://wiki.tootsville.org/wiki/Network_Offline">Learn More...</a> </blockquote>`)).then(
+               : `
+<p> We seem to be off-line. Check your network settings on your
+ computer or device and we'll try to continue.</p> 
+
+<blockquote> <a
+ href="https://wiki.tootsville.org/wiki/Network_Offline">Learn
+ More...</a> </blockquote>
+`)).then(
     () => { Tootsville.Util.checkStream (); });;
    };
 
