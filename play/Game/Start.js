@@ -41,6 +41,8 @@ window.onGoogleYoloLoad = function ()
 if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
 
 /**
+ * Pull up the game by its own bootstraps
+ *
  * Start up the game systems, end the loader phase, and start up the login
  * process. This is the main "entry point" for the game.
  */
