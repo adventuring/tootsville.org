@@ -107,14 +107,18 @@ Tootsville.Util.closeWebSocket = function (event)
       Tootsville.Gossip.Parrot.say ("Lost Connection to Servers",
                                     `
 <p>The server stream connection was lost without warning.</p> <p>We
-may be having trouble getting through.</p>`);
+may be having trouble getting through.</p>`).then(
+    () => { Tootsville.Util.checkStream (); });
   else
       Tootsville.Gossip.Parrot.say (
           "Lost Connection to Servers",
           "The server stream connection went down." +
-              navigator.onLine? ""
-              : " We seem to be off-line. Check your network settings on your computer or device.");
-  Tootsville.Util.checkStream (); };
+              (navigator.onLine? ""
+               : `<p> We seem  to be off-line. Check  your network settings on  your computer
+ or device.</p>
+<blockquote> <a href="https://wiki.tootsville.org/wiki/Network_Offline">Learn More...</a> </blockquote>`)).then(
+    () => { Tootsville.Util.checkStream (); });;
+   };
 
 /**
  * Handle incoming WebSocket datagram
