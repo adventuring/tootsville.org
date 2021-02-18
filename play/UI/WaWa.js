@@ -47,17 +47,20 @@ Tootsville.UI.WaWa.playShifted = function (file, speed=1, after=undefined) {
     let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let source = audioCtx.createBufferSource();
     let request = new XMLHttpRequest();
+    let gainNode = audioCtx.createGain ();
+    gainNode.gain.setValueAtTime (Tootsville.UI.Audio.currentVolume / 100,
+                                  audioCtx.currentTime);
     request.open('GET', file, true);
     request.responseType = 'arraybuffer';
     request.onload = function() {
         var audioData = request.response;
-
+        
         audioCtx.decodeAudioData(audioData, function(buffer) {
             let myBuffer = buffer;
             source.buffer = myBuffer;
-            // TODO set volume here?
             source.playbackRate.value = speed;
-            source.connect(audioCtx.destination);
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
             source.loop = false;
         }, function(e) {
             console.warn ("Error with decoding audio data" + e.error); }); };
