@@ -85,6 +85,14 @@ Tootsville.Game.bootstrap = function ()
     Tootsville.Tank.prepareFor3D ();
 
     Tootsville.Util.ensureServersReachable ();
+
+    if ('GamepadEvent' in window)
+    { window.addEventListener ("gamepadconnected",
+                               Tootsville.UI.Gamepad.connectHandler);
+      window.addEventListener ("gamepaddisconnected",
+                               Tootsville.UI.Gamepad.disconnectHandler); }
+    else
+        setInterval (Tootsville.UI.Gamepad.scanGamepads, 333);
 };
 
 
