@@ -96,8 +96,8 @@ Tootsville.Util.openWebSocket = function (event) {
                                   userName: Tootsville.character });
     else if (Tootsville.character && Tootsville.childCode)
         Tootsville.Util.stream ({ c: "getApple" });
-    Tootsville.infinity ('clientInfo',
-                         { client: 'Tootsville V Web',
+    Tootsville.infinity ('userAgent',
+                         { agent: 'Tootsville V Web',
                            version: Tootsville.version,
                            forRomance: 2.0 }); };
 
