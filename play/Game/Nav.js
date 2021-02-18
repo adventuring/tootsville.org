@@ -149,7 +149,9 @@ Tootsville.Game.Nav.collisionP = function (model, end)
     const direction = BABYLON.Vector3.Normalize (step) ;
     const ray = new BABYLON.Ray (highStart, direction, step.length);
     const hit = Tootsville.Tank.scene.pickWithRay (ray);
-    return hit.pickedMesh; };
+    if (hit.distance < step.length ())
+        return hit.pickedMesh;
+    else return null};
 
 /**
  * Ensure that the course data seems sane. 
@@ -215,7 +217,7 @@ Tootsville.Game.Nav.leftSectorP = function (goalPosition) {
  */
 Tootsville.Game.Nav.takeAStep = function (course) {
     return course.startPoint.
-        add (course.walkΔ.scale ((Tootsville.Game.now - course.startTime)
+        add (course.walkΔ.scale ((Math.min(Tootsville.Game.now, course.endTime) - course.startTime)
                                  / (course.endTime - course.startTime))); };
 
 /**
@@ -251,7 +253,7 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
 
     /* Where should we be after this step? */
     let goalPosition = Tootsville.Game.Nav.takeAStep (course);
-    
+
     if (Tootsville.Game.Nav.invalidCoordsP (goalPosition))
     { console.error ("Course fail, ", entity.course, " yields ", goalPosition);
       return true; }
