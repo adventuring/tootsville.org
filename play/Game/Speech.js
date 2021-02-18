@@ -48,6 +48,17 @@ Tootsville.Game.Speech.createBalloon = function (words, extraClass)
   balloon.innerHTML = words;
   return balloon; };
 
+if (!('chatHistory' in Tootsville.Game.Speech))
+    Tootsville.Game.Speech.chatHistory = [];
+
+/**
+ * Add dialog to the chat history log
+ */
+Tootsville.Game.Speech.addToChatHistory = function (speaker, words, volume) {
+    chatHistory = chatHistory.concat({ s: speaker, w: words, v: volume });
+    if (chatHistory.length > 1000)
+        chatHistory = chatHistory.splice(1); };
+
 /**
  * Someone (maybe us) has spoken, so put up a speech balloon and play wawa.
  *
@@ -61,11 +72,13 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker=null)
                        extraClass = Tootsville.Game.Speech.loudness || 'talk'; }
   if (! extraClass) extraClass = 'talk';
   if ((! words) || (0 === words.length)) return;
+  Tootsville.Game.Speech.addToChatHistory (speaker, words, extraClass);
   let balloon = Tootsville.Game.Speech.createBalloon (words, extraClass);
   const avatar = Tootsville.Tank.avatars [ speaker ];
   if (! avatar)
   { console.warn ("Surprised to hear from " + speaker);
     Tootsville.Util.infinity ("finger", { talkie: speaker });
+    // TODO: stash speech and retry posting it?
     return; }
   if (avatar.speech)
       avatar.speech.parentNode.removeChild (avatar.speech);
