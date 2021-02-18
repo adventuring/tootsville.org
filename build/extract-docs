@@ -21,6 +21,7 @@ while (<>) {
       my $iobj = $obj; $iobj =~ s/^Tootsville\.//; $iobj =~ s/\./. /g;
       if ($val =~ m/function *(\(.*?\))/) {
         my $ll = $1;
+        $ll =~ s/\{/\@\{/g; $ll =~ s/\}/\@\}/g;
         if ('()' eq $ll) {
           $doc{$obj} = "
 \@page
