@@ -507,7 +507,6 @@ Tootsville.UI.HUD.refreshHUD = function ()
   setTimeout ( () => { Tootsville.UI.HUD.refreshTalkStatus (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshWallet (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshPaperdoll (); }, 4);
-  setTimeout ( () => { Tootsville.UI.HUD.refreshAttachmentOverlays (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshTimeLeft (); }, 4);};
 
 /**
