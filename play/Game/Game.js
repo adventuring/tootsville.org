@@ -89,3 +89,12 @@ Tootsville.Game.clickedOnItem = function (itemNameString, pickedEvent)
  */
 Tootsville.Game.pivotItemTemplate = function (entity)
 { /* TODO */ };
+
+/**
+ * Is there any child or sensitive player present?
+ */
+Tootsville.Game.anyAvatarSensitiveP = function ()
+{ for (let i = 0; i < Tootsville.Tank.avatars.length; ++i)
+  { const avatar = Tootsville.Tank.avatars[i];
+    if (avatar.childP || avatar.sensitiveP) return true; }
+  return false; };
