@@ -353,7 +353,7 @@ dist/play.$(clusterorg)/play/system-check/index.html: play/system-check/index.ht
 
 dist/play.$(clusterorg)/play/UI/panels/control-panel.html:	$(shell ls -1 play/UI/panels/*)
 	mkdir -p dist/play.$(clusterorg)/play/UI/panels
-	cp -ar play/UI/panels/*.{html,js} dist/play.$(clusterorg)/play/UI/panels
+	cp -a play/UI/panels/*.{html,js} dist/play.$(clusterorg)/play/UI/panels
 
 dist/play.$(clusterorg):	worker htaccess mesh \
 	dist/play.$(clusterorg)/play/tootsville.js \
@@ -372,8 +372,8 @@ dist/play.$(clusterorg):	worker htaccess mesh \
 
 #################### mesh
 
-mesh:	dist/play.$(clusterorg)/play/mesh.min.js \
-	dist/play.$(clusterorg)/play/jscl.min.js
+mesh:	dist/play.$(clusterorg)/play/mesh.$(VERSION).min.js \
+	dist/play.$(clusterorg)/play/jscl.$(VERSION).min.js
 
 dist/play.$(clusterorg)/play/jscl.$(VERSION).min.js: jscl/jscl.js
 	$(JSC) $$(< build/closure-compiler.opts)           \
