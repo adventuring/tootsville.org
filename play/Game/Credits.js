@@ -44,10 +44,11 @@ Tootsville.Game.credits = function () {
  <p> Copyright © 2008-2017,  Bruce-Robert Pocock; Copyright © 2018-2021,
 The Corporation for Inter-World Tourism and Adventuring. </p>
 
-<p>    This     program    is     Free    Software;    you     can    <a
+<p>    This     program    is     Free    Software;    you     can    <a target="_new"
 href="https://www.gnu.org/licenses/agpl-3.0.en.html">copy and  alter the
 program</a>, but  you may not  use the Tootsville  characters, graphics,
-sound, music, etc without permission. </p>`,
+sound, music, etc without permission. </p>
+`,
                                 "Server Credits", "Done").then
     (
         confirm => { if (confirm)
