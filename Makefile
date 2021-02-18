@@ -42,6 +42,9 @@ deploy: all deploy-www deploy-play git-tag-deployment deploy-docs
 
 JSC=java -jar bin/closure-compiler-v20210202.jar
 
+BUILD=$$(date +%Y%m%d%H%M%S)
+VERSION=$$(< build/version)
+
 #################### vars
 
 # To target alternate clusters:
@@ -128,7 +131,7 @@ worker:	dist/worker.js
 dist/worker.js:	worker/Worker.js worker/WorkerStart.js worker/TootsvilleWorker.js
 	mkdir -p dist/
 	$(JSC) --create_source_map dist/worker.map \
-                    $$(< build/closure-compiler.opts)           \
+		$$(< build/closure-compiler.opts)           \
 		--js worker/TootsvilleWorker.js            \
 		--js worker/Worker.js                      \
 		--js worker/WorkerStart.js                 \
@@ -158,7 +161,7 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 		$$(< build/js.order )                            \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
-	sed -e s/@@BUILD@@/$$(date +%Y%m%d%H%M%S)/ $@ > ...$$ && mv -f ...$$ $@
+	sed -e s/@@BUILD@@/$(BUILD)/ $@ > ...$$ && mv -f ...$$ $@
 
 dist/version.js:	build/version
 	echo "Tootsville.version = \"$$(< build/version)\";" > dist/version.js
@@ -293,9 +296,9 @@ dist/play.$(clusterorg)/play/tootsville.js:	$(shell cat build/js.order)
 	   cp $$file dist/play.$(clusterorg)/$$file ; \
 	done
 
-dist/play.$(clusterorg)/play/play.js:	dist/play/play.js
+dist/play.$(clusterorg)/play/play.$(VERSION).js:	dist/play/play.js
 	mkdir -p dist/play.$(clusterorg)/play/
-	cp dist/play/play.js dist/play.$(clusterorg)/play/
+	cp $< $@
 
 dist/play.$(clusterorg)/play/game/start.js:	$(shell cat build/js.order)
 	mkdir -p dist/play.$(clusterorg)/play/
@@ -338,7 +341,9 @@ dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 	cp $(errordocs) dist/play.$(clusterorg)/error/
 
 dist/play.$(clusterorg)/play/index.html: play/index.html
+	mkdir -p dist/play.$(clusterorg)/play/
 	cp $< $@
+	sed -e s/@@VERSION@@/$(VERSION)/g -i $@
 
 dist/play.$(clusterorg)/play/system-check/index.html: play/system-check/index.html
 	mkdir -p dist/play.$(clusterorg)/play/system-check/
@@ -346,7 +351,7 @@ dist/play.$(clusterorg)/play/system-check/index.html: play/system-check/index.ht
 
 dist/play.$(clusterorg)/play/UI/panels/control-panel.html:	$(shell ls -1 play/UI/panels/*)
 	mkdir -p dist/play.$(clusterorg)/play/UI/panels
-	cp -ar play/UI/panels/* dist/play.$(clusterorg)/play/UI/panels
+	cp -ar play/UI/panels/*.{html,js} dist/play.$(clusterorg)/play/UI/panels
 
 dist/play.$(clusterorg):	worker htaccess mesh \
 	dist/play.$(clusterorg)/play/tootsville.js \
@@ -354,7 +359,7 @@ dist/play.$(clusterorg):	worker htaccess mesh \
 	dist/play.$(clusterorg)/play/UI/panels/control-panel.html \
 	dist/play.$(clusterorg)/play/play.css \
 	dist/play.$(clusterorg)/play/play.css.map \
-	dist/play.$(clusterorg)/play/play.js \
+	dist/play.$(clusterorg)/play/play.$(VERSION).js \
 	dist/play.$(clusterorg)/play/game/start.js \
 	dist/play.$(clusterorg)/play/play.map \
 	dist/play.$(clusterorg)/play/index.html \
@@ -368,16 +373,14 @@ dist/play.$(clusterorg):	worker htaccess mesh \
 mesh:	dist/play.$(clusterorg)/play/mesh.min.js \
 	dist/play.$(clusterorg)/play/jscl.min.js
 
-dist/play.$(clusterorg)/play/jscl.min.js: jscl/jscl.js
-	$(JSC) \
-                    $$(< build/closure-compiler.opts)           \
-		--js jscl/jscl.js   \
+dist/play.$(clusterorg)/play/jscl.$(VERSION).min.js: jscl/jscl.js
+	$(JSC) $$(< build/closure-compiler.opts)           \
+		--js $<  \
 		--js_output_file $@
 
-dist/play.$(clusterorg)/play/mesh.min.js: dist/mesh.js
-	$(JSC) \
-                    $$(< build/closure-compiler.opts)           \
-		--js dist/mesh.js   \
+dist/play.$(clusterorg)/play/mesh.$(VERSION).min.js: dist/mesh.js
+	$(JSC) $$(< build/closure-compiler.opts)           \
+		--js $< \
 		--js_output_file $@
 
 dist/mesh.js: $(find mesh -name \*.lisp)
@@ -484,7 +487,6 @@ bump-next-version:
 	git commit -m "bump version number for next build"
 
 git-tag-deployment:	../tootsville.net/Tootsville ../tootsville.net/tootsville.asd
-	VERSION=$$(< build/version) ;\
 	now=$$(date +%Y-%m-%d) ;\
 	msg="Deployed v$$VERSION to $(clusterorg) $$now" ;\
 	if git rev-parse v$$VERSION &>/dev/null ;\
