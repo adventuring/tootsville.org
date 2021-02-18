@@ -95,7 +95,11 @@ Tootsville.Util.openWebSocket = function (event) {
                                   token: Tootsville.Login.firebaseAuth,
                                   userName: Tootsville.character });
     else if (Tootsville.character && Tootsville.childCode)
-        Tootsville.Util.stream ({ c: "getApple" }); };
+        Tootsville.Util.stream ({ c: "getApple" });
+    Tootsville.infinity ('clientInfo',
+                         { client: 'Tootsville V Web',
+                           version: Tootsville.version,
+                           forRomance: 2.0 }); };
 
 /**
  * When the WebSocket is closed, warn the user but try also to reconnect.
