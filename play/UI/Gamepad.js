@@ -142,7 +142,7 @@ Tootsville.UI.Gamepad.buttonEvent = function (controllerIndex, buttonIndex, valu
       break;
 
       case 10: // L stick click
-      Tootsville.Tank.playerAvatar ().facing = new BABYLON.Vector3 (0, 0, 0);
+      Tootsville.Tank.playerAvatar ().facing = Math.PI;
       break;
 
       default:
