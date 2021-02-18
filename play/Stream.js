@@ -87,6 +87,8 @@ Tootsville.Util.stream = function (json)
 
 /**
  * Upon connection, log in with Auth/∞/ℵ₀ method or child code
+ *
+ * Also sends the userAgent packet (See `INFINITY-USER-AGENT').
  */
 Tootsville.Util.openWebSocket = function (event) {
     if (Tootsville.Login.firebaseAuth)
