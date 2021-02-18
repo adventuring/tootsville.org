@@ -99,6 +99,7 @@ Tootsville.Util.openWebSocket = function (event) {
     Tootsville.infinity ('userAgent',
                          { agent: 'Tootsville V Web',
                            version: Tootsville.version,
+                           navigator: navigator.userAgent,
                            forRomance: 2.0 }); };
 
 /**
