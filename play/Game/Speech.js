@@ -83,7 +83,8 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker=null)
   if (avatar.speech)
       avatar.speech.parentNode.removeChild (avatar.speech);
   avatar.speech = balloon;
-  Tootsville.UI.WaWa.build (words, () => { balloon.parentNode.removeChild (balloon); } );
+  Tootsville.UI.WaWa.build (words,
+                            () => { balloon.parentNode.removeChild (balloon); } );
   Tootsville.UI.HUD.refreshSpeechAttachment (avatar.model, balloon);
   document.getElementById('hud').append (balloon); };
 
