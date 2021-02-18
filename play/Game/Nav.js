@@ -135,13 +135,13 @@ Tootsville.Game.Nav.runTo = function (avatar, destinationPoint)
 /**
  * Detect a collision between ``model'' on the line from ``start'' to ``end''
  */
-Tootsville.Game.Nav.collisionP = function (model, start, end)
+Tootsville.Game.Nav.collisionP = function (model, end)
 { // const forward = BABYLON.Vector3.TransformCoordinates ( new BABYLON.Vector3 (0,0,1),
   //                                                      model.getWorldMatrix () );
   if (!Tootsville.Tank.scene) return null;
-    const highStart = new BABYLON.Vector3 (start.x,
+    const highStart = new BABYLON.Vector3 (model.position.x,
                                            model.getBoundingInfo().boundingSphere.centerWorld.y,
-                                           start.z);
+                                           model.position.z);
     const highEnd = new BABYLON.Vector3 (end.x,
                                        highStart.y,
                                        end.z);
@@ -257,7 +257,6 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
       return true; }
 
     const hit = Tootsville.Game.Nav.collisionP (entity.model,
-                                                entity.model.position,
                                                 goalPosition);
     if (hit && "ground" != hit.name)
     { entity.course = null;
