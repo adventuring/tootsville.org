@@ -135,20 +135,7 @@ Tootsville.Game.Speech.dispatchCommand = function (commandLine)
                        ( (1 === roll || 20 === roll) ? 'shout' : 'talk' ));
     break;;
     case "~credits":
-    Tootsville.UI.confirmPretty("Credits",
-                                `
-<p>The Tootsville V web application is by Bruce-Robert Pocock.</p> <p>
-Copyright © 2008-2017, Bruce-Robert Pocock; Copyright © 2018-2021, The
-Corporation for Inter-World Tourism and Adventuring. </p> 
-
-<p> This program is Free Software; you can <a
-href="https://www.gnu.org/licenses/agpl-3.0.en.html">copy and alter
-the program</a>, but you may not use the Tootsville characters,
-graphics, sound, music, etc without permission. </p>`,
-                                "Server Credits", "Done").then
-    (
-        confirm => { if (confirm)
-            Tootsville.Util.infinity ('speak', { speech: ",credits" }); });
+    Tootsville.Game.showCredits ();
     case '~lag':
     Tootsville.Game.Speech.say ("My lag is " + Tootsville.Game.lag / 1000 + "s",
                                 'whisper');
@@ -161,3 +148,25 @@ graphics, sound, music, etc without permission. </p>`,
     default:
     Tootsville.Game.Speech.say ("I don't recognize " + words[0] + " as a magic word.",
                                'whisper'); }; };
+
+/**
+ * Display the client credits and offer to fetch the server credits
+ */
+Tootsville.Game.showCredits = function () {
+        Tootsville.UI.confirmPretty("Credits",
+                                `
+<p> Tootsville V version ${ Tootsville.version } </p>
+
+<p>The Tootsville V web application is by Bruce-Robert Pocock.</p>
+
+ <p> Copyright © 2008-2017,  Bruce-Robert Pocock; Copyright © 2018-2021,
+The Corporation for Inter-World Tourism and Adventuring. </p>
+
+<p>    This     program    is     Free    Software;    you     can    <a
+href="https://www.gnu.org/licenses/agpl-3.0.en.html">copy and  alter the
+program</a>, but  you may not  use the Tootsville  characters, graphics,
+sound, music, etc without permission. </p>`,
+                                "Server Credits", "Done").then
+    (
+        confirm => { if (confirm)
+            Tootsville.Util.infinity ('speak', { speech: ",credits" }); }); };
