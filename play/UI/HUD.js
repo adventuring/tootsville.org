@@ -448,11 +448,18 @@ Tootsville.UI.HUD.switchActiveItem = function ()
  */
 Tootsville.UI.HUD.refreshTalkStatus = function ()
 { if (Tootsville.Gossip.connectedP () && Tootsville.character)
-  { document.getElementById ('talk-box').className = 'talk-connected';
-    document.getElementById ('talk-speak').placeholder = "Press HOME or CONTROL+E to talk"; }
+  { if (Tootsville.Game.anyAvatarSensitiveP ())
+    { document.getElementById ('talk-box').className = 'talk-warning';
+      document.getElementById ('talk-speak').placeholder = "◆ (Mind your manners)";
+      document.getElementById ('talk-speak').title = 'There may be children or sensitive players nearby. Please use appropriate language.'; }
+    else
+    { document.getElementById ('talk-box').className = 'talk-connected';
+      document.getElementById ('talk-speak').placeholder = "Press HOME or CONTROL+E to talk";
+      document.getElementById ('talk-speak').title = 'Click here to talk';  } }
   else
   { document.getElementById ('talk-box').className = 'talk-disconnected';
-    document.getElementById ('talk-speak').placeholder = 'disconnected'; }};
+    document.getElementById ('talk-speak').placeholder = 'disconnected';
+    document.getElementById ('talk-speak').title = 'You appear to be off-line.'; }};
 
 /**
  * Refresh  the wallet  display, both  in the  HUD and  (if loaded)  the
