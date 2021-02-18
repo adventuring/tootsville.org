@@ -45,7 +45,8 @@ JSC=java -jar bin/closure-compiler-v20210202.jar
 BUILD=$(shell date +%Y%m%d%H%M%S)
 VERSION=$(shell cat build/version)
 
-SED=$(shell if which gsed; then echo gsed; else echo sed; fi)
+SED=$(shell which gsed || echo sed)
+LESSC=$(shell which lessc || echo ~/.nvm/versions/node/*/lib/node_modules/lessc/node_modules/less/bin/lessc)
 
 #################### vars
 
@@ -178,7 +179,7 @@ PLAYLESSDEPS=$(wildcard play/*.less play/**/*.less)
 
 dist/play/play.css:	$(PLAYLESSDEPS)
 	mkdir -p dist/play/
-	lessc --math=strict --source-map play/play.less dist/play/play.css
+	$(LESSC) --math=strict --source-map play/play.less dist/play/play.css
 
 dist/play/play.css.map:	dist/play/play.css
 
@@ -236,7 +237,7 @@ jscl/jscl.js: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**
 #################### www
 
 dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
-	lessc --math=strict --source-map www/2019.less dist/www/2019.css
+	$(LESSC) --math=strict --source-map www/2019.less dist/www/2019.css
 
 #################### devel-test
 
