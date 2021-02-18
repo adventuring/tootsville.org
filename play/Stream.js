@@ -134,6 +134,8 @@ may be having trouble getting through.</p>`).then(
 
 /**
  * Handle incoming WebSocket datagram
+ *
+ * If properly formatted, send it to `Tootsville.Gossip.gatekeeperAccept'
  */
 Tootsville.Util.messageFromWebSocket = function (event)
 { let data;
