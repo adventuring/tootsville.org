@@ -42,8 +42,10 @@ deploy: all deploy-www deploy-play git-tag-deployment deploy-docs
 
 JSC=java -jar bin/closure-compiler-v20210202.jar
 
-BUILD=$$(date +%Y%m%d%H%M%S)
-VERSION=$$(< build/version)
+BUILD=$(shell date +%Y%m%d%H%M%S)
+VERSION=$(shell cat build/version)
+
+SED=$(shell if which gsed; then echo gsed; else echo sed; fi)
 
 #################### vars
 
