@@ -192,12 +192,3 @@ Tootsville.UI.Gamepad.scanGamepads = function ()
       else
       { Tootsville.UI.Gamepad.controllers [gamepads [i].index] = gamepads [i]; }}}};
 
-(function ()
- { if ('GamepadEvent' in window)
-   { window.addEventListener ("gamepadconnected", Tootsville.UI.Gamepad.connectHandler);
-     window.addEventListener ("gamepaddisconnected", Tootsville.UI.Gamepad.disconnectHandler); }
-   else if ('WebKitGamepadEvent' in window)
-   { window.addEventListener ("webkitgamepadconnected", Tootsville.UI.Gamepad.connectHandler);
-     window.addEventListener ("webkitgamepaddisconnected", Tootsville.UI.Gamepad.disconnectHandler); }
-   else
-   { setInterval (Tootsville.UI.Gamepad.scanGamepads, 333); } }) ();
