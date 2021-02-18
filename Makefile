@@ -99,7 +99,7 @@ doc/texi/tootsville-js.texi:	doc/texi/TootsvilleJS.texi
 		< doc/texi/TootsvilleJS.texi > doc/texi/tootsville-js.texi
 
 doc/conf.py:	build/doc.conf.py ./build/version
-	sed -e "s/@@VERSION@@/$$(< build/version)/g" \
+	$(SED) -e "s/@@VERSION@@/$$(< build/version)/g" \
 		build/doc.conf.py > doc/conf.py
 
 doc/texi/TootsvilleJS.texi: doc/rst/index.rst doc/conf.py
@@ -163,7 +163,7 @@ dist/play/play.js:	build/js.order $(shell cat build/js.order)
 		$$(< build/js.order )                            \
 		--js_output_file $@
 	echo '//# sourceMappingURL=/play/play.map' >> $@
-	sed -e s/@@BUILD@@/$(BUILD)/ $@ > ...$$ && mv -f ...$$ $@
+	$(SED) -e s/@@BUILD@@/$(BUILD)/ $@ > ...$$ && mv -f ...$$ $@
 
 dist/version.js:	build/version
 	echo "Tootsville.version = \"$$(< build/version)\";" > dist/version.js
@@ -345,7 +345,7 @@ dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 dist/play.$(clusterorg)/play/index.html: play/index.html
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp $< $@
-	sed -e s/@@VERSION@@/$(VERSION)/g -i $@
+	$(SED) -e s/@@VERSION@@/$(VERSION)/g -i $@
 
 dist/play.$(clusterorg)/play/system-check/index.html: play/system-check/index.html
 	mkdir -p dist/play.$(clusterorg)/play/system-check/
