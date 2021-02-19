@@ -97,5 +97,13 @@ Tootsville.Game.bootstrap = function ()
         setInterval (Tootsville.UI.Gamepad.scanGamepads, 333);
 };
 
-
 window.addEventListener ('load', Tootsville.Game.bootstrap);
+
+Tootsville.Game.warnUnload = function (event) {
+    if (Tootsville.character) {
+        event.preventDefault ();
+        event.returnValue = "If you leave this page, you'll leave Tootsville";
+        return "If you leave this page, you'll leave Tootsville"; }
+    else return null; };
+
+window.addEventListener ('beforeunload', Tootsville.Game.warnUnload);
