@@ -186,17 +186,17 @@ Tootsville.Game.Nav.moveToNextSector = function (position) {
     let long = Tootsville.activity.long;
     if (position.x < -Tootsville.Game.Nav.SECTOR_SIZE) {
         position.x += 2 * Tootsville.Game.Nav.SECTOR_SIZE;
-        --lat;
+        --long;
     } else if (position.x > Tootsville.Game.Nav.SECTOR_SIZE) {
         position.x -= 2 * Tootsville.Game.Nav.SECTOR_SIZE;
-        ++lat;
+        ++long;
     }
     if (position.z < -Tootsville.Game.Nav.SECTOR_SIZE) {
         position.z += 2* Tootsville.Game.Nav.SECTOR_SIZE;
-        ++long;
+        ++lat;
     } else if (position.z > Tootsville.Game.Nav.SECTOR_SIZE) {
         position.z -= 2 * Tootsville.Game.Nav.SECTOR_SIZE;
-        --long;
+        --lat;
     }
     Tootsville.Game.Nav.enterArea (lat, long, 0, Tootsville.activity.world,
                                    position.x, position.y, position.z);
