@@ -152,7 +152,7 @@ Tootsville.Login.setSensitiveP = function ()
  * Build the Toots List display from the Toots List in memory.
  */
 Tootsville.Login.populateTootsList = function ()
-{ if (Tootsville.character ||
+{ if ((Tootsville.character && '$new toot' !== Tootsville.character) ||
       ('block' !== document.getElementById ('login').style.display))
     return;
   Tootsville.Login.clearTootsList ();
