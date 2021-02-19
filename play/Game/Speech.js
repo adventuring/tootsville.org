@@ -55,9 +55,10 @@ if (!('chatHistory' in Tootsville.Game.Speech))
  * Add dialog to the chat history log
  */
 Tootsville.Game.Speech.addToChatHistory = function (speaker, words, volume) {
-    chatHistory = chatHistory.concat({ s: speaker, w: words, v: volume });
-    if (chatHistory.length > 1000)
-        chatHistory = chatHistory.splice(1); };
+    Tootsville.Game.Speech.chatHistory =
+        Tootsville.Game.Speech.chatHistory.concat({ s: speaker, w: words, v: volume });
+    if (Tootsville.Game.Speech.chatHistory.length > 1000)
+        Tootsville.Game.Speech.chatHistory = Tootsville.Game.Speech.chatHistory.splice(1); };
 
 /**
  * Someone (maybe us) has spoken, so put up a speech balloon and play wawa.
