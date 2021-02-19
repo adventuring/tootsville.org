@@ -188,10 +188,15 @@ Tootsville.UI.NewToot.setPattern = function (value)
   widget.setAttribute ('data-pattern', value);
   Tootsville.UI.NewToot.changePattern (value); };
 
+/**
+ *
+ */
 Tootsville.UI.NewToot.notReady = function (reasons)
-{ Tootsville.UI.makePrettyDialog ("You're not quite ready yet.",
-                                  reasons,
-                                  "Go Back"); };
+{ Tootsville.UI.confirmPretty ("You're not quite ready yet.",
+                               reasons,
+                               "Go Back").
+  then ( confirm => { if (!confirm) 
+      Tootsville.UI.HUD.showHUDPanel ('login'); } );};
 
 /**
  *
