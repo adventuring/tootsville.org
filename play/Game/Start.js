@@ -63,6 +63,9 @@ Tootsville.Game.bootstrap = function ()
     Tootsville.Game.hideWhenGameReady ();
     Tootsville.Game.stopSlowLoadingWatchdogs ();
 
+    const keepWaitingDialog = document.querySelector('dialog#keep-waiting');
+    if (keepWaitingDialog) keepWaitingDialog.parentNode.removeChild (keepWaitingDialog);
+
     Tootsville.Login.start ();
 
     let savedVolume = parseInt(window.localStorage.getItem('volume'));
