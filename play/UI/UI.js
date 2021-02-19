@@ -124,11 +124,13 @@ Tootsville.UI.makePrompt = function (prompt, resolve)
  * one  button;  the negative  button  will  read ``Cancel''  unless  the
  * ``accept'' text reads ``Yes,'' in which case it will read ``No.''
  */
-Tootsville.UI.confirmPretty = function (title,text,accept,cancel='Cancel')
+Tootsville.UI.confirmPretty = function (title,text,accept,cancel='Cancel',id=null)
 { let hud = document.getElementById('hud');
   return new Promise(resolve => {
       if ('Yes' === accept && 'Cancel' === cancel) cancel = 'No';
-      hud.appendChild(Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve)); }); };
+      const dialog = Tootsville.UI.makePrettyDialog(title,text,accept,cancel,resolve);
+      if (id) dialog.id = id;
+      hud.appendChild(dialog); }); };
 
 /**
  * Quit without prompting
@@ -199,7 +201,7 @@ Tootsville.UI.slowLoadingWatchdog = function ()
     ( "Loading seems to be taking a long time. You might have trouble " +
       "playing the game if your connection is very bad. Do you want to " +
       "wait and see if it improves?" ),
-    "Keep Waiting", "Read Troubleshooting Tips").then
+    "Keep Waiting", "Read Troubleshooting Tips", 'keep-waiting').then
   ( waitP =>
     { if (! waitP)
       { document.location = 'https://wiki.tootsville.org/wikiki/PlayNotLoading'; } }); };
