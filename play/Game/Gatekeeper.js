@@ -463,7 +463,9 @@ Tootsville.Game.Gatekeeper.getUserLists = function (gram)
   Tootsville.ignoreList = gram.ignoreList || [];
   let starredContacts = document.getElementById ('starred-contacts');
   let unstarredContacts = document.getElementById ('unstarred-contacts');
-  if (starredContacts)
+  if (starredContacts) {
+      starredContacts.innerHTML = '';
+      unstarredContacts.innerHTML = '';
       for (let i = 0; i < Tootsville.buddyList.length; ++i) {
           let buddy = Tootsville.buddyList [ i ];
           let buddyLI = document.createElement ('LI');
@@ -471,14 +473,14 @@ Tootsville.Game.Gatekeeper.getUserLists = function (gram)
           if (buddy.starredP)
               starredContacts.appendChild (buddyLI);
           else
-              unstarredContacts.appendChild (buddyLI); }};
+              unstarredContacts.appendChild (buddyLI); }}};
 
 /**
- * WRITEME — this function is not yet documented.
+ * Display a notification about a buddy list action
  */
 Tootsville.Game.Gatekeeper.buddyList = function (gram)
 { let notice = gram.notice;
-  Tootsville.warn ("unhandled datagram", gram);};
+  Tootsville.UI.confirmPretty ("Contacts", notice, "O.K.", null);};
 
 /**
  * You have been requested to be someone's buddy.
