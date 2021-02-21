@@ -85,7 +85,8 @@
           <a href="https://wiki.Tootsville.org/wiki/Create_Child_Toot" target="_blank" >What does this do?</a> </div>
         <div>
           <label> The secret code my child will type to sign in is:
-            <input type="text" name="child-code" id="new-toot-child-code" value="" size="12"> </label>
+            <input type="text" name="child-code" id="new-toot-child-code" value="" size="12"
+            pattern="[ -~]{6,12}"> </label>
         </div>
       </div>
       <div id="new-toot-ready-box">
