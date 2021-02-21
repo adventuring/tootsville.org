@@ -343,7 +343,7 @@ dist/play.$(clusterorg)/error/404.var:	$(errordocs)
 	mkdir -p dist/play.$(clusterorg)/error/
 	cp $(errordocs) dist/play.$(clusterorg)/error/
 
-dist/play.$(clusterorg)/play/index.html: play/index.html
+dist/play.$(clusterorg)/play/index.html: play/index.html build/version
 	mkdir -p dist/play.$(clusterorg)/play/
 	cp $< $@
 	$(SED) -e s/@@VERSION@@/$(VERSION)/g -i $@
