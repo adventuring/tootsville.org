@@ -272,7 +272,6 @@ p {
     margin: 1rem;
     padding: .5rem;
     background-color: white;
-    cursor: pointer;
     vertical-align: top;
     transition: .25s;
 
@@ -562,4 +561,9 @@ strong.green-plus {
         1px -1px 0 #000,
         -1px 1px 0 #000,
         1px 1px 0 #000;
+}
+
+.child-code.error, .child-code:invalid {
+    color: white;
+    background-color: @red;
 }
