@@ -216,8 +216,7 @@ Tootsville.UI.NewToot.ready = function ()
     if (name.length > 0)
     { notReady += "\n(The name you have entered is not valid. Check the rules.)"; } };
   if (document.getElementById ("new-toot-childp").checked)
-  { if (document.getElementById('new-toot-child-code').value.length < 6 ||
-        document.getElementById('new-toot-child-code').value.length > 12)
+  { if (!(/^[ -~]{6,12}$/.test(document.getElementById('new-toot-child-code').value)))
     { notReady += "\n\nA Child Toot must have a secret code between 6 and 12 characters long."; } }
   if (baseColor && baseColor === padColor)
   { notReady += ("\n\nYour base color and pad color should be different."); }
