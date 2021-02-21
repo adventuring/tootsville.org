@@ -398,32 +398,39 @@ strong.green-plus {
     overflow-y: auto;
 }
 
-#new-toot-base-color, #new-toot-pad-color, #new-toot-pattern-color, #new-toot-pattern, #new-toot-t-shirt-color {
+#new-toot-base-color, #new-toot-pad-color, #new-toot-pattern-color, #new-toot-pattern, #new-toot-t-shirt-color
+{
     .color-picker;
     position: absolute;
 }
 
-#new-toot-base-color {
+#new-toot-color-picker-base, #new-toot-color-picker-pad, #new-toot-color-picker-pattern, #new-toot-pattern-picker, #new-toot-color-picker-t-shirt
+{
+    position: absolute;
+    width: 50vw;
+}
+
+#new-toot-base-color, #new-toot-color-picker-base {
     top: 3rem;
     left: 0;
 }
 
-#new-toot-pad-color {
+#new-toot-pad-color, #new-toot-color-picker-pad {
     top: 9rem;
     left: 0;
 }
 
-#new-toot-pattern-color {
+#new-toot-pattern-color, #new-toot-color-picker-pattern {
     top: 3rem;
     right: 1rem;
 }
 
-#new-toot-pattern {
+#new-toot-pattern, #new-toot-pattern-picker {
     top: 8rem;
     right: 1rem;
 }
 
-#new-toot-t-shirt-color {
+#new-toot-t-shirt-color, #new-toot-color-picker-t-shirt {
     top: 5rem;
     right: 6rem;
 }

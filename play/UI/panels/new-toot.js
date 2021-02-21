@@ -23,18 +23,21 @@ Tootsville.UI.NewToot.patterns =
  * Change the pattern selection for the new Toot
  */
 Tootsville.UI.NewToot.changePattern = function (button)
-{ var picker = document.getElementById ("new-toot-pattern-picker");
+{ let picker = document.getElementById ("new-toot-pattern-picker");
   if (picker) { picker.opacity = 0;
                 setTimeout ( function () { picker.style.display = 'none';
                                            picker.parentElement.removeChild (picker); }, 100 ); }
   else { Tootsville.UI.NewToot.createPatternPicker (name, button); } };
 
+/**
+ * Change color by popping up color picker for ``name'' on click of ``button''
+ */
 Tootsville.UI.NewToot.changeColor = function (name, button)
-{ var picker = document.getElementById ("new-toot-color-picker-" + name);
+{ let picker = document.getElementById ("new-toot-color-picker-" + name);
   if (picker) { picker.opacity = 0;
                 setTimeout ( function () { picker.style.display = 'none';
                                            picker.parentElement.removeChild (picker); }, 100 ); }
-  else { Tootsville.UI.NewToot.createColorPicker (name, button); } };
+  else { Tootsville.UI.NewToot.createColorPicker (name, button); }};
 
 /**
 *
@@ -47,33 +50,6 @@ Tootsville.UI.NewToot.avatarViewerUpdate = function ()
   Tootsville.AvatarViewer.createViewerInCanvas (Tootsville.UI.NewToot.avatar,
                                                 canvas,
                                                 document.getElementById ("new-toot-paperdoll")); };
-
-
-if (!('avatar' in Tootsville.UI.NewToot))
-{ let tShirt = { uuid: 'new-T', slot: 'new-T',
-                 baseColor: 'white', altColor: '',
-                 template: {},
-                 energy: 1, health: 1, avatarScale: { x: 1.0, y: 1.0, z: 1.0 },
-                 rarity: 'FIXME', position: { x: 0, y: 0, z: 0 },
-                 location: { x: 0, y: 0, z: 0 },
-                 itemType: 'tShirt', title: 'tShirt', itemID: 1,
-                 inRoom: '@Eden', ownerID: 'new-toot', isActive: true,
-                 equipType: 'FIXME' };
-  Tootsville.UI.NewToot.avatar =
-  { name: 'New Toot', userName: 'Your New Toot',
-    avatar: 'UltraToot', chatFG: 'black', chatBG: 'white',
-    avatarClass: { id: 1, title: 'UltraToot', filename: 'UltraToot',
-                   forFree: true, forPaid: false },
-    format: 'UltraToot', inRoom: '@Eden', vars: [],
-    clothes: { tShirt: tShirt,
-               pattern: { unused: 'unused' } },
-    gameItem: [],
-    uuid: 'new-toot', id: 'new-toot',
-    equip: [ tShirt ],
-    childP: false, childCode: [], sensitiveP: false,
-    baseColor: 'violet', padColor: 'yellow',
-    patternColor: 'yellow', pattern: 'lightning' };
-  Tootsville.UI.NewToot.avatarViewerUpdate (); };
 
 
 /**
@@ -109,17 +85,17 @@ Tootsville.UI.NewToot.rainbowGradient =
     "linear-gradient(to bottom, #ff0000 0%,#ff9900 13%,#ffff00 28%,#00ff00 45%,#0033ff 63%,#3300ff 80%,#9900ff 100%)";
 
 Tootsville.UI.NewToot.pickedColor = function (event)
-{ var button = event.target;
-  var picker = button.parentElement;
-  var targetColor = picker.getAttribute ("data-target-color");
+{ let button = event.target;
+  let picker = button.parentElement;
+  let targetColor = picker.getAttribute ("data-target-color");
   Tootsville.UI.NewToot.setColor (targetColor, button.value);
   picker.style.display = 'none'; };
 
 /**
- *
+ * Set the color named ``targetColor'' to ``value''
  */
 Tootsville.UI.NewToot.setColor = function (targetColor, value)
-{ var widget = document.getElementById ("new-toot-" + targetColor + "-color");
+{ let widget = document.getElementById ("new-toot-" + targetColor + "-color");
   if ("Rainbow" === value)
   { widget.style.backgroundImage = Tootsville.UI.NewToot.rainbowGradient;
     widget.style.backgroundColor = ""; }
@@ -127,34 +103,38 @@ Tootsville.UI.NewToot.setColor = function (targetColor, value)
   { widget.style.backgroundImage = "";
     widget.style.backgroundColor = Tootsville.UI.interpretTootColor (value); }
   widget.setAttribute ('data-color', value);
-  Tootsville.UI.NewToot.updateAvatar (targetColor, value);
-  Tootsville.UI.NewToot.changeColor (targetColor, value); };
+  if ('base' === targetColor || 'pattern' === targetColor)
+      Tootsville.UI.NewToot.applyPatternColor ();
+  Tootsville.UI.NewToot.updateAvatar (targetColor, value); };
 
 /**
- *
+ * Select a random color for the pattern color
  */
 Tootsville.UI.NewToot.randomPatternColor = function ()
-{ var patternColors = Tootsville.UI.NewToot.colors.pattern;
-  var color = 'Rainbow';
+{ let patternColors = Tootsville.UI.NewToot.colors.pattern;
+  let color = 'Rainbow';
   color = patternColors[ Math.floor (Math.random () * patternColors.length) ];
   if ( ('Rainbow' === color) ||
        (color === document.getElementById ("new-toot-base-color").getAttribute ("data-color")) )
   { return Tootsville.UI.NewToot.randomPatternColor (); };
   return Tootsville.UI.interpretTootColor (color);};
 
+/**
+ * Select a random color for the pad color
+ */
 Tootsville.UI.NewToot.randomPadColor = function ()
-{ var padColors = Tootsville.UI.NewToot.colors.pad;
-  var color = padColors[ Math.floor (Math.random () * padColors.length) ];
+{ let padColors = Tootsville.UI.NewToot.colors.pad;
+  let color = padColors[ Math.floor (Math.random () * padColors.length) ];
   if (color === document.getElementById ("new-toot-base-color").getAttribute ("data-color"))
   { return Tootsville.UI.NewToot.randomPadColor (); };
   return Tootsville.UI.interpretTootColor (color);};
 
 /**
- *
+ * Apply pattern color to the new Toot
  */
 Tootsville.UI.NewToot.applyPatternColor = function ()
-{ var patternWidget = document.getElementById ("new-toot-pattern");
-  var patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
+{ let patternWidget = document.getElementById ("new-toot-pattern");
+  let patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
   patternWidget.style.backgroundColor = Tootsville.UI.interpretTootColor (document.getElementById ("new-toot-base-color").getAttribute ("data-color"));
   if (0 === patternWidget.children.length) { return; }
   for (var i = 0; i < 3; ++i)
@@ -163,19 +143,19 @@ Tootsville.UI.NewToot.applyPatternColor = function ()
     ";fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"; }};
 
 /**
- *
+ * Fired when the user selects a pattern
  */
 Tootsville.UI.NewToot.pickedPattern = function (event)
-{ var button = event.target;
+{ let button = event.target;
   Tootsville.UI.NewToot.setPattern (button.value);
   Tootsville.UI.NewToot.avatar.pattern = button.value;
   Tootsville.UI.NewToot.avatarViewerUpdate (); };
 
 /**
- *
+ * Set the new Toot's pattern
  */
 Tootsville.UI.NewToot.setPattern = function (value)
-{ var widget = document.getElementById ("new-toot-pattern");
+{ let widget = document.getElementById ("new-toot-pattern");
   fetch("https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + value + ".svg").then (
       (response) =>
           { response.text ().then (
@@ -185,8 +165,7 @@ Tootsville.UI.NewToot.setPattern = function (value)
                     widget.children[0].setAttribute ('height', widget.clientHeight);
                     Tootsville.UI.NewToot.applyPatternColor ();
                   } ); } );
-  widget.setAttribute ('data-pattern', value);
-  Tootsville.UI.NewToot.changePattern (value); };
+  widget.setAttribute ('data-pattern', value);};
 
 /**
  *
@@ -194,7 +173,8 @@ Tootsville.UI.NewToot.setPattern = function (value)
 Tootsville.UI.NewToot.notReady = function (reasons)
 { Tootsville.UI.confirmPretty ("You're not quite ready yet.",
                                reasons,
-                               "Go Back").
+                               "Go Back",
+                               "Don't Create").
   then ( confirm => { if (!confirm) 
       Tootsville.UI.HUD.showHUDPanel ('login'); } );};
 
@@ -202,13 +182,13 @@ Tootsville.UI.NewToot.notReady = function (reasons)
  *
  */
 Tootsville.UI.NewToot.ready = function ()
-{ var name = document.getElementById ("new-toot-name").value;
-  var baseColor = document.getElementById ("new-toot-base-color").getAttribute ("data-color");
-  var padColor = document.getElementById ("new-toot-pad-color").getAttribute ("data-color");
-  var patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
-  var tShirtColor = document.getElementById ("new-toot-t-shirt-color").getAttribute ("data-color");
-  var pattern = document.getElementById ("new-toot-pattern").getAttribute ("data-pattern");
-  var notReady = "";
+{ let name = document.getElementById ("new-toot-name").value;
+  let baseColor = document.getElementById ("new-toot-base-color").getAttribute ("data-color");
+  let padColor = document.getElementById ("new-toot-pad-color").getAttribute ("data-color");
+  let patternColor = document.getElementById ("new-toot-pattern-color").getAttribute ("data-color");
+  let tShirtColor = document.getElementById ("new-toot-t-shirt-color").getAttribute ("data-color");
+  let pattern = document.getElementById ("new-toot-pattern").getAttribute ("data-pattern");
+  let notReady = "";
   if (! ( (/^[A-Za-z]-?([A-Za-z]+-?)*[A-Za-z]*-?[0-9]?[0-9]?$/.test (name)) &&
           (name.length >= 3) && (name.length <= 32) &&
           ! (/[a-z]\1\1/.test (name.toLowerCase ())) ))
@@ -273,7 +253,7 @@ Tootsville.UI.NewToot.afterCreate = function (reply)
  *
  */
 Tootsville.UI.NewToot.checkName = function ()
-{ var name = document.getElementById ("new-toot-name").value;
+{ let name = document.getElementById ("new-toot-name").value;
   document.getElementById("new-toot-name-problem-3-32").style.color =
   ( (name.length < 3 || name.length > 32) ? "red" : "black" );
   document.getElementById("new-toot-name-problem-begins-with-letter").style.color =
@@ -286,23 +266,23 @@ Tootsville.UI.NewToot.checkName = function ()
   ( /[a-z]\1\1/.test (name.toLowerCase ()) ? "red" : "black" ); };
 
 /**
- *
+ * Create a picker for the Toot's pattern
  */
 Tootsville.UI.NewToot.createPatternPicker = function (button)
-{ var picker = document.createElement ("DIV");
+{ let picker = document.createElement ("DIV");
   picker.setAttribute ("ID", "new-toot-pattern-picker");
   picker.className = 'new-toot-pattern-picker';
   for (var n = 0; n < Tootsville.UI.NewToot.patterns.length; ++n)
-  { var pattern = Tootsville.UI.NewToot.patterns[ n ];
-    var patternButton = document.createElement ("INPUT");
+  { let pattern = Tootsville.UI.NewToot.patterns[ n ];
+    let patternButton = document.createElement ("INPUT");
     patternButton.setAttribute ("TYPE", "RADIO");
     patternButton.setAttribute ("VALUE", pattern);
     patternButton.setAttribute ("NAME", "new-toot-pattern-picker");
     patternButton.setAttribute ("ID", "new-toot-pattern-picker-" + pattern);
     patternButton.onchange = Tootsville.UI.NewToot.pickedPattern;
     patternButton.className = "pattern-picker-button";
-    var label = document.createElement ("LABEL");
-    var image = document.createElement ("IMG");
+    let label = document.createElement ("LABEL");
+    let image = document.createElement ("IMG");
     image.src = "https://jumbo.tootsville.org/Assets/Avatars/5/Patterns/" + pattern + ".svg";
     image.style.height = '1in';
     image.style.width = '1in';
@@ -310,8 +290,8 @@ Tootsville.UI.NewToot.createPatternPicker = function (button)
     label.htmlFor = "new-toot-pattern-picker-" + pattern;
     picker.appendChild (patternButton);
     picker.appendChild (label); }
-  var buttonBox = document.createElement ("DIV");
-  var okButton = document.createElement ("BUTTON");
+  let buttonBox = document.createElement ("DIV");
+  let okButton = document.createElement ("BUTTON");
   okButton.innerText = "OK";
   okButton.onclick = function ()
   { picker.style.opacity = 0;
@@ -322,23 +302,26 @@ Tootsville.UI.NewToot.createPatternPicker = function (button)
   document.getElementById ('hud').appendChild (picker); };
 
 /**
- *
+ * Create a color picker for the ``name'' color associated with ``button''
  */
 Tootsville.UI.NewToot.createColorPicker = function (name, button)
-{ var picker = document.createElement ("DIV");
+{ let picker = document.createElement ("DIV");
   picker.setAttribute ("ID", "new-toot-color-picker-" + name);
   picker.className = 'new-toot-color-picker';
   picker.setAttribute ("data-target-color", name);
+  picker.innerHTML = `
+<p> Pick a color for your ${name}: </p>
+`;
   for (var n = 0; n < Tootsville.UI.NewToot.colors[ name ].length; ++n)
-  { var color = Tootsville.UI.NewToot.colors[ name ][ n ];
-    var colorButton = document.createElement ("INPUT");
+  { let color = Tootsville.UI.NewToot.colors[ name ][ n ];
+    let colorButton = document.createElement ("INPUT");
     colorButton.setAttribute ("TYPE", "RADIO");
     colorButton.setAttribute ("VALUE", color);
     colorButton.setAttribute ("NAME", "new-toot-color-picker-" + name);
     colorButton.setAttribute ("ID", "new-toot-color-picker-" + name + "-" + color);
     colorButton.onchange = Tootsville.UI.NewToot.pickedColor;
     colorButton.className = "color-picker-button";
-    var label = document.createElement ("LABEL");
+    let label = document.createElement ("LABEL");
     label.appendChild (document.createTextNode (color));
     label.htmlFor = "new-toot-color-picker-" + name + "-" + color;
     if ("White" === color || "Yellow" === color || "Cyan" === color) {
@@ -351,8 +334,8 @@ Tootsville.UI.NewToot.createColorPicker = function (name, button)
     }
     picker.appendChild (colorButton);
     picker.appendChild (label); }
-  var buttonBox = document.createElement ("DIV");
-  var okButton = document.createElement ("BUTTON");
+  let buttonBox = document.createElement ("DIV");
+  let okButton = document.createElement ("BUTTON");
   okButton.innerText = "OK";
   okButton.onclick = function ()
   { picker.style.opacity = 0;
@@ -362,3 +345,30 @@ Tootsville.UI.NewToot.createColorPicker = function (name, button)
   picker.appendChild (buttonBox);
   document.getElementById ('hud').appendChild (picker); };
 
+
+if (!('avatar' in Tootsville.UI.NewToot))
+{ let tShirt = { uuid: 'new-T', slot: 'new-T',
+                 baseColor: 'white', altColor: '',
+                 template: {},
+                 energy: 1, health: 1, avatarScale: { x: 1.0, y: 1.0, z: 1.0 },
+                 rarity: 'FIXME', position: { x: 0, y: 0, z: 0 },
+                 location: { x: 0, y: 0, z: 0 },
+                 itemType: 'tShirt', title: 'tShirt', itemID: 1,
+                 inRoom: '@Eden', ownerID: 'new-toot', isActive: true,
+                 equipType: 'FIXME' };
+  Tootsville.UI.NewToot.avatar =
+  { name: 'New Toot', userName: 'Your New Toot',
+    avatar: 'UltraToot', chatFG: 'black', chatBG: 'white',
+    avatarClass: { id: 1, title: 'UltraToot', filename: 'UltraToot',
+                   forFree: true, forPaid: false },
+    format: 'UltraToot', inRoom: '@Eden', vars: [],
+    clothes: { tShirt: tShirt,
+               pattern: { unused: 'unused' } },
+    gameItem: [],
+    uuid: 'new-toot', id: 'new-toot',
+    equip: [ tShirt ],
+    childP: false, childCode: [], sensitiveP: false,
+    baseColor: 'violet', padColor: 'yellow',
+    patternColor: 'yellow', pattern: 'lightning' };
+  Tootsville.UI.NewToot.randomize ();
+  Tootsville.UI.NewToot.avatarViewerUpdate (); };

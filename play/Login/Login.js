@@ -174,7 +174,8 @@ Tootsville.Login.populateTootsList = function ()
  */
 Tootsville.Login.generateNewToot = function ()
 { Tootsville.character = "$new toot";
-  Tootsville.UI.HUD.showHUDPanel('new-toot'); };
+  Tootsville.UI.HUD.showHUDPanel('new-toot').then (
+      () => {Tootsville.UI.NewToot.randomize (); } ); };
 
 /**
  * Start the New Toot creation process.
