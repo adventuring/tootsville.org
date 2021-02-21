@@ -78,22 +78,9 @@
     </p>
 
     <p> The transition to management under <a href="https://ciwta.org/">the
-        Corporation for Inter-World Tourism and Adventuring</a> is underway.
-      Repositories, task boards, and more will be changing rapidly during
-      February, 2018.</p>
+        Corporation for Inter-World Tourism and Adventuring</a> is complete.</p>
 
     <section id="repos">
-      <h3> Next Milestone Progress </h3>
-      <p> These values will be incorrect due to the CIWTA transition. </p>
-      <ul>
-        <li> Milestone <q><span id="milestone-name"><i class="fa fa-gear
-                                                              fa-spin"></i> ?</span></q> — progress <span
-                                                                                                       id="milestone-progress"><i class="fa fa-gear
-                                                                                                                                         fa-spin"></i> ?</span>% (<span
-                                                                                                                                                                     id="milestone-open-issues"><i class="fa fa-gear
-                                                                                                                                                                                                          fa-spin"></i> ?</span> issues still open)</li>
-        <li id="milestone-fetch">(Loading from GitHub<noscript>, will not work without JavaScript</noscript>)</li>
-      </ul>
 
       <h3> Project Boards </h3>
 
@@ -116,21 +103,14 @@
                                href="https://wiki.tootsville.org/wiki/Builder:Pages">Builder:Pages</a></li>
       </ul>
 
-      <h3> <img src="https://jumbo.tootsville.org/Assets/Partners/BrowserStack.svg"
-                style="height: 1.3333em" alt="BrowserStack"> Integration
-        Tests </h3>
 
-      <p> We are working with
-        <a href="https://browserstack.com/">BrowserStack</a> to obtain a free
-        account to begin  integration testing with their  service. This space
-        will  be   updated  with   more  information   as  those   tests  are
-        readied. </p>
+      <h3> Developer Documentation </h3>
 
-      <p>   The   integration  tests   system   is   being  designed   around
-        the
-        <a href="https://www.seleniumhq.com/"
-           ><img src="http://www.seleniumhq.org/images/big-logo.png"
-                 style="height:1.333em" alt="">Selenium</a> test automation system. </p>
+      <ul>
+        <li>
+          <a href="https://goethe.tootsville.org/devel/docs/Tootsville/0.6.11/"> Developer Documentation </a>
+        </li>
+      </ul>
 
       <h3> GitHub repos </h3>
 
@@ -138,42 +118,15 @@
 
         <li>
           <a href="https://github.com/adventuring/tootsville.org"><i class="fa
-                                                                            fa-github"></i> Tootsville.org (web pages)</a>
-          <a href="https://travis-ci.org/romance-ii/violet-volts/branches#">
-            <img
-               src="https://cdn.travis-ci.com/images/logos/Tessa-pride-4.svg"
-               style="height:1.5em">
-            <img src="https://api.travis-ci.org/romance-ii/violet-volts.svg?branch=tootstest"
-                 style="height:1.25rem; margin-left:  2rem" alt="(Travis
-                                                                 CI)"></a>
-          <a href="https://circleci.com/gh/romance-ii/violet-volts/tree/tootstest"><img src="https://circleci.com/gh/romance-ii/violet-volts/tree/tootstest.svg?style=shield"
-                                                                                        alt="(Circle-CI)"></a>
-          <a             href="https://app.codeship.com/projects/181513"
-                         ><img
-                             src="https://app.codeship.com/projects/fd770bf0-7dde-0134-f263-22f53c89765f/status?branch=tootstest"
-                             alt="(CodeShip)">
-          </a>
-          <!-- a href="http://violet-volts.rtfd.io/"><img
-                                                    src="https://readthedocs.org/projects/violet-volts/badge/?version=latest"
-               alt="Read the Docs"></a -->
+                                                                            fa-github"></i> Tootsville.org (web app)</a>
+        </li>
+        <li>
+          <a href="https://github.com/adventuring/tootsville.net"><i class="fa
+                                                                            fa-github"></i> Tootsville.net (server)</a>
         </li>
 
       </ul>
     </section>
-
-    <script>
-      function milestone(read) {
-          if (! read.data) { return; }
-          var github = read.data;
-          document.getElementById("milestone-name").innerHTML = github.title;
-          document.getElementById("milestone-progress").innerHTML = Math.round((github.closed_issues / (github.open_issues + github.closed_issues)) * 100);
-          document.getElementById("milestone-open-issues").innerHTML = github.open_issues;
-          document.getElementById("milestone-fetch").style.display = "none";
-      }
-    </script>
-    <script
-       src="https://api.github.com/repos/adventuring/tootsvillev/milestones/1?callback=milestone">
-    </script>
 
   </body>
 </html>
