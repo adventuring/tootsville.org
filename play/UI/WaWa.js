@@ -35,6 +35,14 @@ if (!('WaWa' in Tootsville.UI)) { Tootsville.UI.WaWa = {}; }
 
 
 /**
+ * Set up for wa-wa sounds
+ */
+Tootsville.UI.WaWa.prepareForWaWa = function () {
+    Tootsville.UI.WaWa.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    Tootsville.UI.WaWa.gainNode = Tootsville.UI.WaWa.audioCtx.createGain ();
+    Tootsville.UI.WaWa.gainNode.connect(Tootsville.UI.WaWa.audioCtx.destination); };
+
+/**
 * Play a sound sample pitch-shifted by the speed difference given.
 */
 Tootsville.UI.WaWa.playShifted = function (file, speed=1, after=undefined) {
@@ -44,23 +52,20 @@ Tootsville.UI.WaWa.playShifted = function (file, speed=1, after=undefined) {
       https://github.com/mdn/webaudio-examples/tree/master/decode-audio-data
       https://www.w3schools.com/jsref/prop_audio_loop.asp
     */
-    let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let source = audioCtx.createBufferSource();
-    let request = new XMLHttpRequest();
-    let gainNode = audioCtx.createGain ();
-    gainNode.gain.setValueAtTime (Tootsville.UI.Audio.currentVolume / 100,
-                                  audioCtx.currentTime);
+    const source = audioCtx.createBufferSource();
+    const request = new XMLHttpRequest();
+    Tootsville.UI.WaWa.gainNode.gain.setValueAtTime (Tootsville.UI.Audio.currentVolume / 100,
+                                                     Tootsville.UI.WaWa.audioCtx.currentTime);
     request.open('GET', file, true);
     request.responseType = 'arraybuffer';
     request.onload = function() {
         var audioData = request.response;
         
-        audioCtx.decodeAudioData(audioData, function(buffer) {
+        Tootsville.UI.WaWa.audioCtx.decodeAudioData(audioData, function(buffer) {
             let myBuffer = buffer;
             source.buffer = myBuffer;
             source.playbackRate.value = speed;
-            source.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            source.connect(Tootsville.UI.WaWa.gainNode);
             source.loop = false;
         }, function(e) {
             console.warn ("Error with decoding audio data" + e.error); }); };

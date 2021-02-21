@@ -91,6 +91,8 @@ Tootsville.Game.bootstrap = function ()
 
     Tootsville.Util.ensureServersReachable ();
 
+    Tootsville.UI.WaWa.prepareForWaWa ();
+
     if ('GamepadEvent' in window)
     { window.addEventListener ("gamepadconnected",
                                Tootsville.UI.Gamepad.connectHandler);
