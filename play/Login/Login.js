@@ -327,7 +327,7 @@ Tootsville.Login.findLIForToot = function (name)
  * Determines whether ``string'' might be a valid Child Code.
  */
 Tootsville.Login.validChildCode = function (string)
-{ return (string.match (/^[a-z]{4,6}$/)) ? string : false; };
+{ return (string.match (/^[ -~]{6,12}$/)) ? string : false; };
 
 /**
  * Set ``name'' to be a Child Toot.
@@ -336,12 +336,18 @@ Tootsville.Login.enableChildMode = function (name)
 { let li = this.findLIForToot (name);
   li ['data-toot'].childP = true;
   let code = li.querySelector ('INPUT.child-code');
-  if (code) { li ['data-toot'].childCode = code.value; }
-  Tootsville.Login.populateTootsList ();
-  let childCode = code && this.validChildCode (code.value);
-  if (childCode)
-  { Tootsville.Util.rest ('PUT', 'toots/' + name,
-                          { key: 'childCode', newValue: childCode }); } };
+  if (code) {
+      if (RegExp(code.pattern).test (code.value)) {
+          code.cssClass = 'child-code';
+          li ['data-toot'].childCode = code.value;
+      } else {
+          code.cssClass = 'child-code error';
+          code = null; }
+      Tootsville.Login.populateTootsList ();
+      let childCode = code && this.validChildCode (code.value);
+      if (childCode)
+      { Tootsville.Util.rest ('PUT', 'toots/' + name,
+                              { key: 'childCode', newValue: childCode }); } } };
 
 /**
  * Set ``name'' to no longer be a Child Toot.
@@ -434,9 +440,17 @@ Tootsville.Login.addChildFlag = function (li)
 { let toot = li ['data-toot'];
   if (Tootsville.Login.settingsP)
   { if (toot.childP)
-    { li.innerHTML += '<BR><LABEL><INPUT TYPE="checkbox" CHECKED onchange="Tootsville.Login.disableChildMode(' + "'" + toot.name + "'" + ')"><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL><BR>Child sign-in code: <INPUT PATTERN="^[a-z]{4,6}$" TYPE="text" SIZE=6 VALUE="' + (toot.childCode || '') + '" CLASS="child-code" onchange="Tootsville.Login.enableChildMode(' + "'" + toot.name + "'" + ')">'; }
+    { li.innerHTML += `<BR>
+<LABEL><INPUT TYPE="checkbox" CHECKED onchange="Tootsville.Login.disableChildMode('${toot.name}')">
+<SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I>
+ Child Account</SPAN></LABEL><BR>
+Child sign-in code: <INPUT PATTERN="^[ -~]{6,12}$" TYPE="text" SIZE=12 VALUE="` +
+      (toot.childCode || '') +
+      `" CLASS="child-code" onchange="Tootsville.Login.enableChildMode('${toot.name}')">`; }
     else
-    { li.innerHTML += '<BR><LABEL><INPUT TYPE="checkbox" onchange="Tootsville.Login.enableChildMode(' + "'" + toot.name + "'" + ')"><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL>'; } }
+    { li.innerHTML += `<BR>
+<LABEL><INPUT TYPE="checkbox" onchange="Tootsville.Login.enableChildMode('${toot.name}')"
+><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN></LABEL>`; } }
   else
   { if (toot.childP)
     { li.innerHTML += '<BR><SPAN CLASS="child"><I CLASS="fas fa-child fa-fw"></I> Child Account</SPAN>';
