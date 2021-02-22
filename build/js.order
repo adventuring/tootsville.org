@@ -18,6 +18,7 @@ play/Gossip/Gossip.js
 
 play/Login/Login.js
 
+play/Game/Minigame.js
 play/Game/UserLists.js
 play/Game/Credits.js
 play/Game/Wardrobe.js
