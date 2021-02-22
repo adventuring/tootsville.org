@@ -473,6 +473,10 @@ Tootsville.Game.Gatekeeper.getUserLists = function (gram)
               buddyLI.innerHTML = `<B>${buddy.n}</B>`;
           else
               buddyLI.innerHTML = buddy.n;
+          buddyLI.setAttribute('data-buddy', buddy.n);
+          buddyLI.setAttribute('data-online-p', buddy.onlineP);
+          buddyLI.setAttribute('data-starred-p', buddy.starredP);
+          buddyLI.onclick = event => { Tootsville.Game.buddyClicked (event); };
           if (buddy.starredP)
               starredContacts.appendChild (buddyLI);
           else

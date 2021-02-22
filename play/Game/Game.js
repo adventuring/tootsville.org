@@ -98,3 +98,21 @@ Tootsville.Game.anyAvatarSensitiveP = function ()
   { const avatar = Tootsville.Tank.avatars[avatarName];
     if (avatar.childP || avatar.sensitiveP) return true; }
   return false; };
+
+/**
+ * Event handler for clicking a buddy in the buddy list
+ *
+ * Pulls up Player Card for that player
+ */
+Tootsville.Game.buddyClicked = function (event) {
+    const name = event.target.getAttribute('data-buddy');
+    if (Tootsville.Tank.avatars [name].userName) {
+        Tootsville.UI.HUD.showPlayerCard (name);
+        return;
+    }
+    Tootsville.Util.infinityAwaits('finger', 'avatars',
+                                   { contact: name }).then
+    ( avatars => {
+        if (avatars.avatars && avatars.avatars.contact &&
+            avatars.avatars.contact.name === name)
+            Tootsville.UI.HUD.showPlayerCard (name); }); };
