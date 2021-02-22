@@ -41,6 +41,35 @@ Tootsville.UI.endBackgroundMusic = function ()
   setTimeout ( function () { backgroundMusic.volume = 0; }, 1000 );
   setTimeout ( function () { backgroundMusic.parentNode.removeChild (backgroundMusic); }, 1050 ); };
 
+/**
+ *
+ */
+Tootsville.UI.setMusicForArea = function (m)
+{ const bgMusic = document.querySelector ('#background-music');
+  if (bgMusic) Tootsville.UI.endBackgroundMusic ();
+  const musicFooter = document.querySelector ('#music-footer');
+  if (musicFooter) musicFooter.parentNode.removeChild (musicFooter);
+  setTimeout (
+      () => {
+          console.log (`Starting music “${m.title}” by ${m.artist}`);
+          let musicFooter = document.createElement('P');
+          musicFooter.outerHTML = `<P ID="music-footer">
+Music: <A TARGET="background-music" HREF="${m.link}">
+<Q>${m.title}</Q> by ${m.artist}</A></P>`;
+          let audio = document.createElement('AUDIO');
+          audio.outerHTML = `
+<AUDIO ID="background-music" AUTOPLAY LOOP VOLUME="${(Tootsville.UI.Audio.currentVolume / 100)}">
+<SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.mp3">
+<SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.ogg">
+<SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.webm">
+</AUDIO>`;
+          document.getElementById ('hud').appendChild (musicFooter);
+      },
+      150 ); };
+
+/**
+ * 
+*/
 Tootsville.UI.setBackgroundMusic = function (song)
 { let backgroundMusic = document.querySelector("#background-music");
   if (backgroundMusic)
