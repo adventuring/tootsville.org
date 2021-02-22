@@ -34,13 +34,13 @@
 if (!('tootnix' in Tootsville))
 { Tootsville.tootnix = {}; }
 
-Tootsville.tootnix.calendar_app_calendar_load = function ()
+Tootsville.tootnix.calendarAppLoad = function ()
 { var calDiv = document.getElementById("calendar-app-calendar");
   if (!calDiv) { return; };
-  Tootsville.UI.HUD.loadHTML ("http://localhost:5000/world/clock/calendar/now/fragment.html"). // FIXME
+  Tootsville.UI.HUD.loadHTML ("http://localhost:5000/world/clock/calendar/now/fragment.html"). 
   then ( htmlf => { calDiv.innerHTML = '';
                     var cal = htmlf.getElementsByTagName ("TABLE")[0];
                     console.log (cal);
                     calDiv.appendChild (cal); } ); };
 
-Tootsville.tootnix.calendar_app_calendar_load();
+Tootsville.tootnix.calendarAppLoad ();
