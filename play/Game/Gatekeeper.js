@@ -814,7 +814,8 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
  *
  * Currently, the client supports the following room variable types:
  *
- * @code{s}ky, @code{w}eather, @code{f}loor (ignored), @code{item}, @code{itm2},
+ * @code{s}ky,                @code{w}eather,               @code{f}loor
+ * (ignored), @code{m}usic, @code{item}, @code{itm2},
  * @code{furn}iture, @code{text}, @code{zone} (place).
  *
  * Destruction of objects is UNIMPLEMENTED in the client currently (TODO)
@@ -823,6 +824,7 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
  *
  * `INFINITY-GET-ROOM-VARS', `Tootsville.SkyBuilder.buildMatchingSky',
  * `Tootsville.SkyBuilder.buildMatchingWeather',
+ * `Tootsville.UI.Music.setMusicForArea',
  * `Tootsville.SceneBuilder.addItem1',
  * `Tootsville.SceneBuilder.addItem2',
  * `Tootsville.SceneBuilder.addFurn',
@@ -835,6 +837,7 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
     { if ('s' === key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
       else if ('w' === key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
       else if ('f' === key) {}
+      else if ('m' === key) { Tootsville.UI.Music.setMusicForArea (gram.var.m); }
       else if (key.startsWith ("itm2")) { Tootsville.SceneBuilder.addItem2 (gram.var [ key ]); }
       else if (key.startsWith ("item")) { Tootsville.SceneBuilder.addItem1 (gram.var [ key ]); }
       else if (key.startsWith ('furn')) { Tootsville.SceneBuilder.addFurn (gram.var [ key ]); }
