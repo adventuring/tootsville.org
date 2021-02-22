@@ -78,8 +78,10 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker=null)
   const avatar = Tootsville.Tank.avatars [ speaker ];
   if (! avatar)
   { console.warn ("Surprised to hear from " + speaker);
-    Tootsville.Util.infinity ("finger", { talkie: speaker });
-    // TODO: stash speech and retry posting it?
+    Tootsville.Util.infinityAwaits ("finger", 'avatars', { talkie: speaker }).
+    then (gram => {
+        if (gram.avatars.talkie)
+            Tootsville.Game.Speech.say (words, extraClass, speaker); });
     return; }
   if (avatar.speech)
       avatar.speech.parentNode.removeChild (avatar.speech);
