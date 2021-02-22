@@ -469,7 +469,10 @@ Tootsville.Game.Gatekeeper.getUserLists = function (gram)
       for (let i = 0; i < Tootsville.buddyList.length; ++i) {
           let buddy = Tootsville.buddyList [ i ];
           let buddyLI = document.createElement ('LI');
-          buddyLI.innerText = buddy.n;
+          if (Tootsville.buddyList [i].onlineP)
+              buddyLI.innerHTML = `<B>${buddy.n}</B>`;
+          else
+              buddyLI.innerHTML = buddy.n;
           if (buddy.starredP)
               starredContacts.appendChild (buddyLI);
           else
