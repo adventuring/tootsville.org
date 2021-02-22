@@ -32,13 +32,15 @@
  */
 
 (function () {
-    var xhr = new XMLHttpRequest;
-    xhr.open('GET', 'https://www.tootsbook.com/tootsbook/feed?format=rss');
-    xhr.onload = function (feed) {
-        var latest = feed.getElementsByTagName('item')[0];
-        document.querySelector('#tootsbook-feed').innerHTML = '<small>Latest News on Tootsbook: &nbsp; </small>' +
-            '<a href="' + latest.querySelector('link').innerText + '">' +
-            latest.querySelector('title').innerText + '</a>';
-    };
-    xhr.send();
-})();
+    fetch('https://www.tootsbook.com/tootsbook/feed/?format=rss',
+          { method: 'GET', Accept: 'application/rss+xml' }).then 
+    ( response => { if (response.ok) return response.text (); }).then
+    ( text => new window.DOMParser().parseFromString(text, 'text/xml')).then
+    ( feed => {
+        const latest = feed.querySelector('item');
+        if (latest)
+            document.querySelector('#tootsbook-feed').innerHTML = `
+<small>Latest News on Tootsbook: &nbsp; </small> 
+<a href="${ latest.querySelector('link').innerHTML }"
+>${ latest.querySelector('title').innerHTML }</a>`;   
+    });})();
