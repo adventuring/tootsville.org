@@ -96,7 +96,13 @@ Tootsville.Game.pivotItemTemplate = function (entity)
 Tootsville.Game.anyAvatarSensitiveP = function ()
 { for (let avatarName in Tootsville.Tank.avatars)
   { const avatar = Tootsville.Tank.avatars[avatarName];
-    if (avatar.childP || avatar.sensitiveP) return true; }
+    if (avatar.position &&
+        avatar.position.latitude === Tootsville.activity.latitude &&
+        avatar.position.longitude === Tootsville.activity.longitude &&
+        avatar.position.altitude === Tootsville.activity.altitude &&
+        avatar.position.world === Tootsville.activity.world &&
+        (avatar.childP || avatar.sensitiveP))
+        return true; }
   return false; };
 
 /**
