@@ -116,17 +116,22 @@ Tootsville.Game.Gatekeeper.passport = function (gram)
   Tootsville.warn ("ancient datagram now ignored", gram); };
 
 /**
- * Mostly just for fountains, now
+ * Mostly just for fountains and shops, now
  *
  * UNIMPLEMENTED
  */
 Tootsville.Game.Gatekeeper.startEvent = function (gram)
-{ let eventMoniker = gram.moniker;
-  let eventID = gram.eventID;
-  let scriptLanguage = gram.script || 'ActionScript';
-  let scriptVersion = gram.asVersion;
-  let vitOnlyP = gram.vitOnly;
-  let successP = gram.status;
+{ if (!(gram.status)) return;
+  if (gram.asVersion) {
+      if ('html5' === gram.asVersion)
+          Tootsville.Game.startMinigameEvent (gram);
+      else
+          Tootsville.UI.confirmPretty(
+              "Can't perform event",
+              `The event requires a processor for ${gram.asVersion},
+which is not available.`,
+              'O.K.', null); }
+
   Tootsville.warn ("unhandled datagram", gram); };
 
 /**
@@ -135,10 +140,10 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
  * UNIMPLEMENTED. Display the rank and score in an overlay.
  */
 Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
-{ let successP = gram.status;
+{ const successP = gram.status;
   if (! successP ) { return; }
-  let rank = gram.place;
-  let score = gram.score;
+  const rank = gram.place;
+  const score = gram.score;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
@@ -149,19 +154,19 @@ Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
  * UNIMPLEMENTED. See also `Tootsville.Game.Gatekeeper.earning'
  */
 Tootsville.Game.Gatekeeper.endEvent = function (gram)
-{ let successP = gram.status;
+{ const successP = gram.status;
   if (! successP ) { return; }
-  let eventID = gram.eventID;
-  let peanuts = gram.peanuts;
-  let totalPeanuts = gram.totalPeanuts;
-  let canceledP = gram.canceled;
+  const eventID = gram.eventID;
+  const peanuts = gram.peanuts;
+  const totalPeanuts = gram.totalPeanuts;
+  const canceledP = gram.canceled;
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Not currently in use. UNIMPLEMENTED.
  */
 Tootsville.Game.Gatekeeper.gameAction = function (gram)
-{ let data = gram.data;
+{ const data = gram.data;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
@@ -179,13 +184,13 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.beam = function (gram)
-{ let world = gram.world;
-  let latitude = gram.latitude;
-  let longitude = gram.longitude;
-  let altitude = gram.altitude;
-  let x = gram.x || 0;
-  let y = gram.y || 0;
-  let z = gram.z || 0;
+{ const world = gram.world;
+  const latitude = gram.latitude;
+  const longitude = gram.longitude;
+  const altitude = gram.altitude;
+  const x = gram.x || 0;
+  const y = gram.y || 0;
+  const z = gram.z || 0;
   Tootsville.Game.Nav.enterArea (latitude, longitude, altitude, world, x, y, z); };
 
 /**
@@ -274,12 +279,26 @@ Tootsville.Game.Gatekeeper.parentApproval = function (gram)
                                   "You do not have permission to play in Tootsville right now. Talk to your parent or guardian."); } };
   
 /**
- * No longer used.
+ * A store item has been clicked on; ask the user if they want to buy it.
+ *
  */
 Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
-{ let totalPeanuts = gram.totalPeanuts;
-  let stores = gram.stores;
-  Tootsville.warn ("ancient datagram now ignored", gram);};
+{ const totalPeanuts = gram.totalPeanuts;
+  // XXX check the datagram layout
+  const stores = gram.stores;
+  const item = gram.stores[0].storeItems[0];
+  const currency = ( (item.currency === 'X-TvPn')
+                  ? '🥜' :
+                  (item.currency === 'X-FaDu')
+                     ? '⁂' : item.currency );
+  Tootsville.UI.confirmPretty (
+      'Buy Item?',
+      `Do you want to buy <Q>${item.n}</Q> for ${item.price} ${currency}?`,
+      "Buy", "Don't Buy").then
+  (confirm => {
+      if (confirm)
+          // XXX check the params layout
+          Tootsville.Util.infinity('startEvent', {d: {buy: item.id }});});};
 
 /**
  * Public message (speech)
