@@ -74,6 +74,10 @@ Tootsville.Game.Gatekeeper.logOK = function (gram)
  * Receive a list of avatar info that describes an area of the world.
  *
  * This is one observer's set of nearby avatars or objects.
+ *
+ * FIXME --- these avatars may not necessarily be nearby. Need to
+ * determine if they are online and nearby before building models for
+ * them.
  */
 Tootsville.Game.Gatekeeper.avatars = function (gram)
 { let world = gram.inRoom;
