@@ -75,9 +75,6 @@ Tootsville.Game.Gatekeeper.logOK = function (gram)
  *
  * This is one observer's set of nearby avatars or objects.
  *
- * FIXME --- these avatars may not necessarily be nearby. Need to
- * determine if they are online and nearby before building models for
- * them.
  */
 Tootsville.Game.Gatekeeper.avatars = function (gram)
 { let world = gram.inRoom;
@@ -95,7 +92,12 @@ Tootsville.Game.Gatekeeper.avatars = function (gram)
     { Tootsville.Game.Nav.mergeObjects (orig, avatar); }
     else { console.warn ("New avatar info for " + avatar.name);
            Tootsville.Tank.avatars [ avatar.name ] = avatar; }
-    Tootsville.Tank.updateAvatarFor (avatar.name);} };
+    if (avatar.position &&
+        avatar.position.lat === Tootsville.activity.lat &&
+        avatar.position.long === Tootsville.activity.long &&
+        avatar.position.alt === Tootsville.activity.alt &&
+        avatar.position.world === Tootsville.activity.world)
+        Tootsville.Tank.updateAvatarFor (avatar.name);} };
 
 /**
  * No longer used.
