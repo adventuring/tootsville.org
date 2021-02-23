@@ -30,3 +30,7 @@
  * USA
  *
  */
+
+(function () {
+    Tootsville.UI.HUD.refreshMapPointer ();
+})();

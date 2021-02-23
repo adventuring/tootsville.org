@@ -514,7 +514,22 @@ Tootsville.UI.HUD.refreshHUD = function ()
   setTimeout ( () => { Tootsville.UI.HUD.refreshTalkStatus (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshWallet (); }, 4);
   setTimeout ( () => { Tootsville.UI.HUD.refreshPaperdoll (); }, 4);
-  setTimeout ( () => { Tootsville.UI.HUD.refreshTimeLeft (); }, 4);};
+  setTimeout ( () => { Tootsville.UI.HUD.refreshTimeLeft (); }, 4);
+  setTimeout ( () => { Tootsville.UI.HUD.refreshMapPointer (); }, 4); };
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.refreshMapPointer = function ()
+{ const crosshairs = document.getElementById ('tootanga-pointer');
+  const map = document.getElementById ('tootanga-map');
+  if (!(crosshairs)) return;
+  const left = map.offsetLeft + ((Tootsville.activity.long + 400)/800) * map.offsetWidth;
+  const top = map.offsetTop + ((Tootsville.activity.lat + 300)/600) * map.offsetHeight;
+  console.log ('left,top', left, top);
+  // crosshairs.style.top = top + 'px';
+  // crosshairs.style.left = left + 'px';
+};
 
 /**
  * Refresh the time remaining indicator for a child player
