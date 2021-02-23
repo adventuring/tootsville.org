@@ -518,14 +518,14 @@ Tootsville.UI.HUD.refreshHUD = function ()
   setTimeout ( () => { Tootsville.UI.HUD.refreshMapPointer (); }, 4); };
 
 /**
- * WRITEME
+ * When the map app is open, position the crosshairs over the player's position
  */
 Tootsville.UI.HUD.refreshMapPointer = function ()
 { const crosshairs = document.getElementById ('tootanga-pointer');
   const map = document.getElementById ('tootanga-map');
   if (!(crosshairs)) return;
-  const left = map.offsetLeft + ((Tootsville.activity.long + 400)/800) * map.offsetWidth;
-  const top = map.offsetTop + ((Tootsville.activity.lat + 300)/600) * map.offsetHeight;
+  const left = map.offsetLeft + ((Tootsville.activity.long + 400)/800) * map.offsetWidth - crosshairs.offsetWidth/2;
+  const top = map.offsetTop + ((Tootsville.activity.lat + 300)/600) * map.offsetHeight - crosshairs.offsetHeight/2;
   crosshairs.style.top = top + 'px';
   crosshairs.style.left = left + 'px';
 };
