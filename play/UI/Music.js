@@ -68,6 +68,11 @@ Music: <A TARGET="background-music" HREF="${m.link}">
 <SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.webm">`;
           document.getElementById ('hud').appendChild (musicFooter);
           document.getElementById ('hud').appendChild (audio);
+          setTimeout ( function ()
+                       { document.getElementById ("music-footer").style.opacity = 0;
+                         setTimeout ( () => { musicFooter.style.display = 'none'; },
+                                      150);},
+                       10000 );
       },
       150 ); };
 
