@@ -179,10 +179,10 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   const item = gram.item;
   const canceledP = gram.canceled;
   Tootsville.UI.confirmPretty ("Event Finished!",
-                               'You finished' +
+                               '<P>You finished' +
                                (peanuts > 0 ? ` and earned ${peanuts} 🥜` : '') +
                                (fairyDust > 0 ? ` and earned ${fairyDust} ⁂` : '') +
-                               (item != '' ? ` and got ${item.name} <P> ${item.description} </P>` : ''),
+                               (item != '' ? ` and got ${item.name}. </P><P> ${item.description} </P>` : '.</P>'),
                                'Cool', null);};
 
 /**
