@@ -167,8 +167,8 @@ Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
  */
 Tootsville.Game.Gatekeeper.endEvent = function (gram)
 { if (! (gram.status) ) {
-      Tootsville.UI.confirmPretty ("Event Error",
-                                   `Error: ${gram.error}
+      Tootsville.UI.confirmPretty ("Can't do that",
+                                   `<large>${gram.error}</large>
 <P> Code: ${gram.err} </P>`,
                                    'Sorry', null);
       return; }
@@ -181,7 +181,7 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
                                '<P>You finished' +
                                (peanuts > 0 ? ` and earned ${peanuts} 🥜` : '') +
                                (fairyDust > 0 ? ` and earned ${fairyDust} ⁂` : '') +
-                               (item != '' ? ` and got ${item.name}. </P><P> ${item.description} </P>` : '.</P>'),
+                               (item && item != '' ? ` and got ${item.name}. </P><P> ${item.description} </P>` : '.</P>'),
                                'Cool', null);};
 
 /**
