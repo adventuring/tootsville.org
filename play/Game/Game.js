@@ -111,8 +111,8 @@ Tootsville.Game.anyAvatarSensitiveP = function ()
  * Pulls up Player Card for that player
  */
 Tootsville.Game.buddyClicked = function (event) {
-    const name = event.target.getAttribute('data-buddy');
-    if (Tootsville.Tank.avatars [name].userName) {
+    const name = event.target.getAttribute('data-buddy') || event.target.parentNode.getAttribute('data-buddy');
+    if (Tootsville.Tank.avatars [name] && Tootsville.Tank.avatars [name].userName) {
         Tootsville.UI.HUD.showPlayerCard (name);
         return;
     }
