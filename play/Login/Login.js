@@ -279,7 +279,7 @@ Tootsville.Login.startSignIn = function ()
  * Stop playing the login music and start playing game background music.
  */
 Tootsville.Login.endLoginMusic = function ()
-{ Tootsville.UI.setBackgroundMusic ("bensound-smile"); };
+{ };
 
 /**
  * Login has completed; clean up and set up for the game.
