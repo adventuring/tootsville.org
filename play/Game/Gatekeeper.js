@@ -178,6 +178,7 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   const fairyDust = gram.fairyDust;
   const item = gram.item;
   const canceledP = gram.canceled;
+  if (canceledP) return;
   Tootsville.UI.confirmPretty ("Event Finished!",
                                '<P>You finished' +
                                (peanuts > 0 ? ` and earned ${peanuts} 🥜` : '') +
