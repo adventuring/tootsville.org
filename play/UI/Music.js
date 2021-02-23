@@ -54,6 +54,7 @@ Tootsville.UI.setMusicForArea = function (m)
           console.log (`Starting music “${m.title}” by ${m.artist}`);
           let musicFooter = document.createElement('P');
           musicFooter.id = 'music-footer';
+          musicFooter.style.opacity = 1;
           musicFooter.innerHTML = `
 Music: <A TARGET="background-music" HREF="${m.link}">
 <Q>${m.title}</Q> by ${m.artist}</A>`;
