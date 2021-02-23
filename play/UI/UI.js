@@ -246,9 +246,10 @@ Tootsville.UI.useActiveItem = function (entity)
  * WRITEME — this function is not yet documented.
  */
 Tootsville.UI.clickedOnItem = function (meshName, picked)
-{ /* TODO: Identify owning entity and call Tootsville.UI.interact (entity) */
-    console.log ("Click on " + meshName, picked);
-};
+{ Tootsville.Util.infinity('click', { on: meshName.split('#')[1],
+                                      x: picked.pickedPoint.x,
+                                      y: picked.pickedPoint.y,
+                                      z: picked.pickedPoint.z }); };
 
 Tootsville.UI.getSpeechVolume = function ()
 { return Tootsville.Game.Speech.loudness || 'talk'; };
