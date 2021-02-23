@@ -53,17 +53,21 @@ Tootsville.UI.setMusicForArea = function (m)
       () => {
           console.log (`Starting music “${m.title}” by ${m.artist}`);
           let musicFooter = document.createElement('P');
-          musicFooter.outerHTML = `<P ID="music-footer">
+          musicFooter.id = 'music-footer';
+          musicFooter.innerHTML = `
 Music: <A TARGET="background-music" HREF="${m.link}">
-<Q>${m.title}</Q> by ${m.artist}</A></P>`;
+<Q>${m.title}</Q> by ${m.artist}</A>`;
           let audio = document.createElement('AUDIO');
-          audio.outerHTML = `
-<AUDIO ID="background-music" AUTOPLAY LOOP VOLUME="${(Tootsville.UI.Audio.currentVolume / 100)}">
+          audio.id = 'background-music';
+          audio.loop = true;
+          audio.autoplay = true;
+          audio.volume = Tootsville.UI.Audio.currentVolume / 100;
+          audio.innerHTML = `
 <SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.mp3">
 <SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.ogg">
-<SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.webm">
-</AUDIO>`;
+<SOURCE SRC="https://jumbo.tootsville.org/Assets/Music/5/${m.file}.webm">`;
           document.getElementById ('hud').appendChild (musicFooter);
+          document.getElementById ('hud').appendChild (audio);
       },
       150 ); };
 
