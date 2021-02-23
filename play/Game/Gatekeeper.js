@@ -166,19 +166,17 @@ Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
  *
  */
 Tootsville.Game.Gatekeeper.endEvent = function (gram)
-{ const successP = gram.status;
-  if (! successP ) {
+{ if (! (gram.status) ) {
       Tootsville.UI.confirmPretty ("Event Error",
                                    `Error: ${gram.error}
 <P> Code: ${gram.err} </P>`,
                                    'Sorry', null);
       return; }
+  if (gram.canceled) return;
   const eventID = gram.eventID;
   const peanuts = gram.peanuts;
   const fairyDust = gram.fairyDust;
   const item = gram.item;
-  const canceledP = gram.canceled;
-  if (canceledP) return;
   Tootsville.UI.confirmPretty ("Event Finished!",
                                '<P>You finished' +
                                (peanuts > 0 ? ` and earned ${peanuts} 🥜` : '') +
