@@ -164,16 +164,26 @@ Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
  *
  * Earn peanuts for event participation.
  *
- * UNIMPLEMENTED. See also `Tootsville.Game.Gatekeeper.earning'
  */
 Tootsville.Game.Gatekeeper.endEvent = function (gram)
 { const successP = gram.status;
-  if (! successP ) { return; }
+  if (! successP ) {
+      Tootsville.UI.confirmPretty ("Event Error",
+                                   `Error: ${gram.error}
+<P> Code: ${gram.err} </P>`,
+                                   'Sorry', null);
+      return; }
   const eventID = gram.eventID;
   const peanuts = gram.peanuts;
-  const totalPeanuts = gram.totalPeanuts;
+  const fairyDust = gram.fairyDust;
+  const item = gram.item;
   const canceledP = gram.canceled;
-  Tootsville.warn ("unhandled datagram", gram);};
+  Tootsville.UI.confirmPretty ("Event Finished!",
+                               'You finished' +
+                               (peanuts > 0 ? ` and earned ${peanuts} 🥜` : '') +
+                               (fairyDust > 0 ? ` and earned ${fairyDust} ⁂` : '') +
+                               (item != '' ? ` and got ${item.name} <P> ${item.description} </P>` : ''),
+                               'Cool', null);};
 
 /**
  * Not currently in use. UNIMPLEMENTED.
