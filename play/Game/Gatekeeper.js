@@ -122,6 +122,20 @@ Tootsville.Game.Gatekeeper.passport = function (gram)
  */
 Tootsville.Game.Gatekeeper.startEvent = function (gram)
 { if (!(gram.status)) return;
+  if (gram.handler) {
+      if ('fountain' == gram.handler) {
+          Tootsville.UI.confirmPretty (
+              "Fountain",
+              "Make a wish?",
+              "Make a wish", "No wish").then
+          ( confirm => {
+              Tootsville.Util.infinity
+              ('endEvent',
+               { eventID: gram.eventID,
+                 status: confirm ? "cmp" : "cxl" });});
+          return;
+      }
+  }
   if (gram.asVersion) {
       if ('html5' === gram.asVersion)
           Tootsville.Game.startMinigameEvent (gram);
@@ -131,7 +145,6 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
               `The event requires a processor for ${gram.asVersion},
 which is not available.`,
               'O.K.', null); }
-
   Tootsville.warn ("unhandled datagram", gram); };
 
 /**
