@@ -773,7 +773,8 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
              else
                  contactKind = 'buddy'; };
            for (let i = 0; i < Tootsville.ignoreList.length; ++i)
-               contactKind = 'ignore';
+               if (Tootsville.ignoreList[i].n === name)
+                   contactKind = 'ignore';
            if (null === contactKind)
                contactStatus.innerHTML = `
 <button id="add-contact-as-buddy">Add Contact</button>
