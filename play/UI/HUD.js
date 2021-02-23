@@ -526,9 +526,8 @@ Tootsville.UI.HUD.refreshMapPointer = function ()
   if (!(crosshairs)) return;
   const left = map.offsetLeft + ((Tootsville.activity.long + 400)/800) * map.offsetWidth;
   const top = map.offsetTop + ((Tootsville.activity.lat + 300)/600) * map.offsetHeight;
-  console.log ('left,top', left, top);
-  // crosshairs.style.top = top + 'px';
-  // crosshairs.style.left = left + 'px';
+  crosshairs.style.top = top + 'px';
+  crosshairs.style.left = left + 'px';
 };
 
 /**
