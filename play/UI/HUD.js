@@ -782,12 +782,12 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
            else if ('buddy' === contactKind)
                contactStatus.innerHTML = `
 <button id="remove-contact-as-buddy">Remove Contact</button>
-<button id="star-buddy">Star Contact</button>
+<button id="star-buddy">★ Star Contact</button>
 <button id="add-contact-as-ignore">Ignore</button>`;
            else if ('starred' === contactKind)
                contactStatus.innerHTML = `
 <button id="remove-contact-as-buddy">Remove Contact</button>
-<button id="unstar-buddy">Unstar Contact</button>
+<button id="unstar-buddy">☆ Unstar Contact</button>
 <button id="add-contact-as-ignore">Ignore</button>`;
            else
                contactStatus.innerHTML = `
