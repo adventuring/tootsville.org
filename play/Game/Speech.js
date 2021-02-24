@@ -83,7 +83,7 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker=null)
         if (gram.avatars.talkie)
             Tootsville.Game.Speech.say (words, extraClass, speaker); });
     return; }
-  if (avatar.speech)
+  if (avatar.speech && avatar.speech.parentNode)
       avatar.speech.parentNode.removeChild (avatar.speech);
   avatar.speech = balloon;
   Tootsville.UI.WaWa.build (words,
