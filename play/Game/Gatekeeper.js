@@ -224,8 +224,9 @@ Tootsville.Game.Gatekeeper.beam = function (gram)
  * TODO: update wallet displays with an animation.
  */
 Tootsville.Game.Gatekeeper.earning = function (gram)
-{
-    Tootsville.warn ("unhandled datagram", gram);};
+{ if (!gram.status) return;
+  Tootsville.Tank.avatars[Tootsville.character].peanuts = parseInt(gram.currency['X-TVPN']);
+  Tootsville.Tank.avatars[Tootsville.character].fairyDust = parseInt(gram.currency['X-FADU']);};
 
 /**
  * No longer used. Ignored.
