@@ -52,7 +52,7 @@ Tootsville.UI.WaWa.playShifted = function (file, speed=1, after=undefined) {
       https://github.com/mdn/webaudio-examples/tree/master/decode-audio-data
       https://www.w3schools.com/jsref/prop_audio_loop.asp
     */
-    const source = audioCtx.createBufferSource();
+    const source = Tootsville.UI.WaWa.audioCtx.createBufferSource();
     const request = new XMLHttpRequest();
     Tootsville.UI.WaWa.gainNode.gain.setValueAtTime (Tootsville.UI.Audio.currentVolume / 100,
                                                      Tootsville.UI.WaWa.audioCtx.currentTime);
