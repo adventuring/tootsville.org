@@ -71,6 +71,8 @@ Tootsville.Game.Speech.say = function (words, extraClass, speaker=null)
 { if (! speaker) { speaker = Tootsville.character;
                    if (!extraClass)
                        extraClass = Tootsville.Game.Speech.loudness || 'talk'; }
+  if (Tootsville.ignoreList.indexOf(speaker) > -1)
+      return; // ignoring that user
   if (! extraClass) extraClass = 'talk';
   if ((! words) || (0 === words.length)) return;
   Tootsville.Game.Speech.addToChatHistory (speaker, words, extraClass);
