@@ -179,10 +179,12 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   const item = gram.item;
   Tootsville.UI.confirmPretty ("Event Finished!",
                                '<P>You finished' +
-                               (peanuts > 0 ? ` and earned ${peanuts} 🥜` : '') +
-                               (fairyDust > 0 ? ` and earned ${fairyDust} ⁂` : '') +
+                               (peanuts != 0 ? ` and earned ${peanuts} 🥜` : '') +
+                               (fairyDust != 0 ? ` and earned ${fairyDust} ⁂` : '') +
                                (item && item != '' ? ` and got ${item.name}. </P><P> ${item.description} </P>` : '.</P>'),
-                               'Cool', null);};
+                               'Cool', null);
+  if ((peanuts != 0) || (fairyDust != 0))
+      Tootsville.Util.infinity('getWallet'); };
 
 /**
  * Not currently in use. UNIMPLEMENTED.
@@ -199,11 +201,12 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
  * The author must have the privilege to beam this player, or the signal
  * should be discarded.
  *
- * TODO UNIMPLEMENTED
- *
  * @subsection Packet Format
  *
- * WRITEME
+ * @verbatim
+ * { world: WORLD, latitude: LAT, longitude: LONG, altitude: ALT,
+ *   x: X, y: Y, z: Z }
+ * @end verbatim
  */
 Tootsville.Game.Gatekeeper.beam = function (gram)
 { const world = gram.world;
