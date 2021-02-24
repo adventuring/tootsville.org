@@ -118,3 +118,23 @@ Tootsville.SceneBuilder.addPlace  = function (key, info)
   shapes = [ shape ];
   let place = { kind: kind, shapes: shapes };
   Tootsville.SceneBuilder.places [ key ] = place; };
+
+/**
+ * WRITEME
+ */
+Tootsville.SceneBuilder.buildMistScene = function ()
+{ Tootsville.FurnitureBuilder.build ({
+    uuid: "mist",
+    position: { x: 0, y: 0, z: 0 },
+    facing: 0,
+    baseColor: 'black', altColor: 'black',
+    energy: 0, scale: { x: 1, y: 1, z: 1 },
+    world: { world: Tootsville.activity.world,
+             lat: Tootsville.activity.lat,
+             long: Tootsville.activity.long,
+             alt: Tootsville.activity.alt },
+    template: { id: -1, name: 'mist', description: 'mist',
+                trade: 'N',
+                avatar: 'MIST',
+                energyKind: null, energyMax: 1, onZero: null,
+                wearSlot: null, weight: 0 }}); };
