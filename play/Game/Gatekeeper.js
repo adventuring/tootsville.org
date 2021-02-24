@@ -899,7 +899,10 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
       else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (key, gram.var [ key ]); }
       else
       { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}
-    Tootsville.GroundBuilder.build (); }};
+    Tootsville.GroundBuilder.build (); }
+  else {
+      if (gram.var.mist)
+          Tootsville.SceneBuilder.buildMistScene (); }};
 
 
 /**
