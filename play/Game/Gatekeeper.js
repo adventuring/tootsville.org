@@ -510,7 +510,10 @@ Tootsville.Game.Gatekeeper.postman = function (gram)
  * @end table
  */
 Tootsville.Game.Gatekeeper.getUserLists = function (gram)
-{ Tootsville.buddyList = gram.buddyList || [];
+{ const hudPanel = Tootsville.UI.HUD.getOpenPanel ();
+  if (hudPanel && 'player-card' === hudPanel.id)
+      Tootsville.UI.HUD.showPlayerCard (hudPanel.querySelector ('h2').getAttribute ('data-player-name'));
+  Tootsville.buddyList = gram.buddyList || [];
   Tootsville.ignoreList = gram.ignoreList || [];
   let starredContacts = document.getElementById ('starred-contacts');
   let unstarredContacts = document.getElementById ('unstarred-contacts');
