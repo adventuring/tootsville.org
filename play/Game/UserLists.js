@@ -35,15 +35,23 @@ if (!('Game' in Tootsville)) { Tootsville.Game = { UserLists: {} }; }
 if (!('UserLists' in Tootsville.Game)) { Tootsville.Game.UserLists = {}; }
 
 Tootsville.Game.UserLists.addContactAsBuddy = function (name) {
+    Tootsville.UI.HUD.closePanel ();
     Tootsville.Util.infinity ('requestBuddy', { buddy: name });
     Tootsville.UI.confirmPretty ("Add Contact",
                                  "Asking " + name + " to exchange contact information.",
                                  "OK", null); };
 Tootsville.Game.UserLists.removeContactAsBuddy = function (name) {
+    Tootsville.UI.HUD.closePanel ();
     Tootsville.Util.infinity ('removeFromList', { buddy: name }); };
 Tootsville.Game.UserLists.addContactAsIgnore = function (name) {
+    Tootsville.UI.HUD.closePanel ();
     Tootsville.Util.infinity ('addToList', { ignore: name }); };
 Tootsville.Game.UserLists.removeContactAsIgnore = function (name) {
+    Tootsville.UI.HUD.closePanel ();
     Tootsville.Util.infinity ('removeFromList', { ignore: name }); };
-Tootsville.Game.UserLists.starBuddy = function (name) {};
-Tootsville.Game.UserLists.unstarBuddy = function (name) {};
+Tootsville.Game.UserLists.starBuddy = function (name) {
+    Tootsville.UI.HUD.closePanel ();
+};
+Tootsville.Game.UserLists.unstarBuddy = function (name) {
+    Tootsville.UI.HUD.closePanel ();
+};
