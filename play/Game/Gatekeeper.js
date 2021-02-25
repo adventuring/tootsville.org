@@ -135,6 +135,20 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
                  status: confirm ? "cmp" : "cxl" });});
           return;
       }
+      if ('vitem' == gram.handler) {
+          Tootsville.UI.confirmPretty (
+              "A Discovery",
+              `<p>You have made a discovery.</p>
+<h4>${gram.vitem.name}</h4>
+<p>${gram.vitem.description}</p>`,
+              'Take', "Don't Take").then
+          ( confirm => {
+              Tootsville.Util.infinity
+              ('endEvent',
+               { eventID: gram.eventID,
+                 status: confirm ? 'cmp' : 'cxl' });});
+          return;
+      }
   }
   if (gram.asVersion) {
       if ('html5' === gram.asVersion)
