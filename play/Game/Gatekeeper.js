@@ -179,8 +179,8 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   const item = gram.item;
   Tootsville.UI.confirmPretty ("Event Finished!",
                                '<P>You finished' +
-                               (peanuts != 0 ? ` and earned ${peanuts} 🥜` : '') +
-                               (fairyDust != 0 ? ` and earned ${fairyDust} ⁂` : '') +
+                               (peanuts && peanuts != 0 ? ` and earned ${peanuts} 🥜` : '') +
+                               (fairyDust && fairyDust != 0 ? ` and earned ${fairyDust} ⁂` : '') +
                                (item && item != '' ? ` and got ${item.name}. </P><P> ${item.description} </P>` : '.</P>'),
                                'Cool', null);
   if ((peanuts != 0) || (fairyDust != 0))
