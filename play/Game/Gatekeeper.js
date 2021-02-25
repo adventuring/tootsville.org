@@ -191,11 +191,11 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   const peanuts = gram.peanuts;
   const fairyDust = gram.fairyDust;
   const item = gram.item;
-  Tootsville.UI.confirmPretty ("Event Finished!",
+  Tootsville.UI.confirmPretty ("Success!",
                                '<P>You finished' +
                                (peanuts && peanuts != 0 ? ` and earned ${peanuts} 🥜` : '') +
                                (fairyDust && fairyDust != 0 ? ` and earned ${fairyDust} ⁂` : '') +
-                               (item && item != '' ? ` and got ${item.name}. </P><P> ${item.description} </P>` : '.</P>'),
+                               (item && item != '' ? ` and got ${item.template.name}. </P><P> ${item.template.description} </P>` : '.</P>'),
                                'Cool', null);
   if ((peanuts != 0) || (fairyDust != 0))
       Tootsville.Util.infinity('getWallet'); };
