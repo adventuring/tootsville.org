@@ -842,7 +842,10 @@ Tootsville.Game.Gatekeeper.bye = function (gram)
   Tootsville.Tank.destroyAvatar (avatar); };
 
 /**
- * WRITEME — this function is not yet documented.
+ * Handle and report errors from the command processor to the user.
+ * 
+ * This may be removed in the final release, but it's mighty convenient for debugging now.
+ * These errors should also be reported to 
  */
 Tootsville.Game.Gatekeeper.c = function (gram)
 { if (gram.status)
@@ -850,7 +853,7 @@ Tootsville.Game.Gatekeeper.c = function (gram)
   else {
       console.error ("Command processor reports error", gram);
       Tootsville.Gossip.Parrot.say ("Server error", `
-<P>The server reports that this game made a mistake: </P>
+<P>The server reports that this game made a mistake while trying to <q>${gram.command}:</q> </P>
 <BLOCKQUOTE ID="error-text-for-parrot"></BLOCKQUOTE>
 <A HREF="https://wiki.tootsville.org/wiki/Server_command_processor_error">Learn more…</A>
 `);
