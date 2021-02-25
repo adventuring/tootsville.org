@@ -786,27 +786,30 @@ Tootsville.UI.HUD.showPlayerCard = function (name)
                contactKind = 'starred';
              else
                  contactKind = 'buddy'; };
+           let ignore = `<button id="add-contact-as-ignore">Ignore</button>`;
            for (let i = 0; i < Tootsville.ignoreList.length; ++i)
                if (Tootsville.ignoreList[i].n === name)
-                   contactKind = 'ignore';
+                   ignore = `<button id="remove-contact-as-ignore">Stop Ignoring</button>`;
+           
            if (null === contactKind)
                contactStatus.innerHTML = `
 <button id="add-contact-as-buddy">Add Contact</button>
-<button id="add-contact-as-ignore">Ignore</button>`;
+${ignore}`;
            else if ('buddy' === contactKind)
                contactStatus.innerHTML = `
 <button id="remove-contact-as-buddy">Remove Contact</button>
 <button id="star-buddy">★ Star Contact</button>
-<button id="add-contact-as-ignore">Ignore</button>`;
+${ignore}`;
            else if ('starred' === contactKind)
                contactStatus.innerHTML = `
 <button id="remove-contact-as-buddy">Remove Contact</button>
 <button id="unstar-buddy">☆ Unstar Contact</button>
-<button id="add-contact-as-ignore">Ignore</button>`;
+${ignore}`;
            else
                contactStatus.innerHTML = `
 <button id="add-contact-as-buddy">Add Contact</button>
-<button id="remove-contact-as-ignore">Stop Ignoring</button>`;
+${ignore}`;
+
            const addContactAsBuddy = document.getElementById('add-contact-as-buddy');
            if (addContactAsBuddy)
                addContactAsBuddy.addEventListener ('click',
