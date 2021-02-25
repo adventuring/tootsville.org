@@ -994,3 +994,12 @@ Tootsville.Game.Gatekeeper.roomJoin = function (gram)
     Tootsville.activity.long = gram.long;
     Tootsville.activity.alt = gram.alt;
     Tootsville.activity.world = gram.world; } };
+
+/**
+ *WRITEME
+ */
+Tootsville.Game.Gatekeeper.addToList = function (gram)
+{ if (gram.status && gram.ignore)
+    Tootsville.UI.confirmPretty ('Ignore',
+                                 'Now ignoring ' + gram.ignore,
+                                 'Ssh!', null); };
