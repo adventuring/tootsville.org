@@ -1007,3 +1007,22 @@ Tootsville.Game.Gatekeeper.addToList = function (gram)
       Tootsville.UI.confirmPretty ('Ignore',
                                    gram.error,
                                    'Ssh!', null); };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper.removeFromList = function (gram)
+{ if (gram.status)
+  { if (gram.ignore)
+    Tootsville.UI.confirmPretty ('Ignore',
+                                 'You are now paying attention to ' + gram.ignore,
+                                 'O.K.', null);
+    else if (gram.buddy)
+    Tootsville.UI.confirmPretty ('Contact',
+                                 'Removed ' + gram.buddy + ' from your Contacts' ,
+                                 'Bye!', null);
+  }
+  else
+      Tootsville.UI.confirmPretty ("Can't Remove",
+                                   gram.error,
+                                   'Oops!', null); };
