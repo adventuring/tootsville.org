@@ -1002,4 +1002,8 @@ Tootsville.Game.Gatekeeper.addToList = function (gram)
 { if (gram.status && gram.ignore)
     Tootsville.UI.confirmPretty ('Ignore',
                                  'Now ignoring ' + gram.ignore,
-                                 'Ssh!', null); };
+                                 'Ssh!', null);
+  if (!(gram.status))
+      Tootsville.UI.confirmPretty ('Ignore',
+                                   gram.error,
+                                   'Ssh!', null); };
