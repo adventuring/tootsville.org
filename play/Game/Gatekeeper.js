@@ -149,6 +149,22 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
                  status: confirm ? 'cmp' : 'cxl' });});
           return;
       }
+      if ('shop' == gram.handler) {
+          Tootsville.UI.confirmPretty (
+              "Purchase?",
+              `<p>Would you like to buy this?</p>
+<p> Price: ${ gram.item.price } 🥜 </p>
+<hr>
+<h4>${gram.item.name}</h4>
+<p>${gram.item.description}</p>`,
+              `Buy for ${gram.item.price}🥜`,
+              "Don't Buy").then
+          ( confirm => {
+              Tootsville.Util.infinity
+              ('endEvent',
+               { eventID: gram.eventID,
+                 status: confirm ? 'cmp' : 'cxl' });});
+      }
   }
   if (gram.asVersion) {
       if ('html5' === gram.asVersion)
