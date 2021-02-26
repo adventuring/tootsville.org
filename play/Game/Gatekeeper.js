@@ -912,7 +912,8 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
  */
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
-  { for (let key in gram.var)
+  { Tootsville.SceneBuilder.startRefresh ();
+    for (let key in gram.var)
     { if ('s' === key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
       else if ('w' === key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
       else if ('f' === key) {}
@@ -924,7 +925,8 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
       else if (key.startsWith ('zone')) { Tootsville.SceneBuilder.addPlace (key, gram.var [ key ]); }
       else
       { console.warn ("Unrecognized room var: " + key, gram [ key ]); }}
-    Tootsville.GroundBuilder.build (); }
+    Tootsville.GroundBuilder.build ();
+    Tootsville.SceneBuilder.endRefresh (); }
   else {
       if (gram.var.mist)
           Tootsville.SceneBuilder.buildMistScene (); }};
