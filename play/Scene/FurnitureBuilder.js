@@ -46,9 +46,9 @@ Tootsville.FurnitureBuilder.colorize = function (item, model, scene, finish)
   const meshes = model.getChildMeshes ();
   for (let i = 0; i < meshes.length; ++i)
   { const mesh = meshes [i];
-    if (mesh.name.indexOf ('Base') >= 0)
+    if (mesh.material && mesh.material.name.toLowerCase().indexOf ('base') >= 0)
     { mesh.material = baseMaterial; }
-    else if (mesh.name.indexOf ('Alt') >= 0)
+    else if (mesh.material && mesh.material.name.toLowerCase().indexOf ('Alt') >= 0)
     { mesh.material = altMaterial; }
     else if (mesh.name.indexOf ('LightSource') >= 0)
     { mesh.material = mesh.material.clone ();
@@ -81,12 +81,12 @@ Tootsville.FurnitureBuilder.rememberItem = function (item, model, scene)
  * asset manager.
  *
  * Called from `Tootsville.FurnitureBuilder.onLoadedTemplate'
- */
+*/
 Tootsville.FurnitureBuilder.build2 = function (item, model, scene, finish)
 { console.debug ("Building furniture " + item.template.name + " " + item.uuid);
-  model.scaling = new BABYLON.Vector3 (parseFloat(item.scale.x),
-                                       parseFloat(item.scale.y),
-                                       parseFloat(item.scale.z));
+  model.scaling.x = parseFloat(item.scale.x);
+  model.scaling.y = parseFloat(item.scale.y);
+  model.scaling.z = parseFloat(item.scale.z);
   model.position.x = parseFloat(item.position.x);
   model.position.y = parseFloat(item.position.y);
   model.position.z = parseFloat(item.position.z);
@@ -142,7 +142,7 @@ Tootsville.FurnitureBuilder.loadItemTemplate = function (item, scene, finish)
  * WRITEME … TODO update furniture …
  */
 Tootsville.FurnitureBuilder.update = function (item, model, scene, finish=undefined)
-{ Tootsville.FurnitureBuilder.colorize (item, model, scene, finish); };
+{ Tootsville.FurnitureBuilder.build2 (item, model, scene, finish); };
 
 /**
  * Given an item's description, load, colorize, and position its model.
