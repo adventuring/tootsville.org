@@ -155,10 +155,22 @@ Tootsville.FurnitureBuilder.build = function (item, scene=undefined, finish=unde
 { if (!scene) scene = Tootsville.Tank.scene;
   if (!scene) { console.error ("Can't build furniture without a scene", item);
                 return; }
+  Tootsville.SceneBuilder.noteRefresh (item.uuid);
   if (scene.items && scene.items [item.uuid] && ('model' in scene.items [item.uuid]))
   { Tootsville.FurnitureBuilder.update (item, scene.items [item.uuid].model, scene, finish); }
   else
   { Tootsville.FurnitureBuilder.loadItemTemplate (item, scene, finish); } };
+
+/**
+ * WRITEME
+ */
+Tootsville.FurnitureBuilder.destroy = function (uuid) {
+    let item = Tootsville.Tank.scene.items[ uuid ];
+    if (item && item.model) {
+        item.model.dispose ();
+        Tootsville.Tank.scene.items[ uuid ] = null;
+    }
+};
 
 
 
