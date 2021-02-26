@@ -543,6 +543,7 @@ Tootsville.Login.acceptSignedIn = function(result)
 { Tootsville.trace ("User signed in");
   Tootsville.Login.storeCredentialInfo (result);
   Tootsville.Tank.prepareFor3D ().then (function () {
+      document.getElementById('toolbox-mobile-phone').style.visibility = 'visible';
       document.getElementById('login-kid').style.display = 'none';
       document.getElementById('login-13').style.display = 'none';
       document.getElementById('sign-in').style.display = 'none';
