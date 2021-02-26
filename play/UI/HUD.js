@@ -54,7 +54,6 @@ Tootsville.UI.HUD.getOpenPanel = function ()
  * Close (hide) the active HUD panel.
  */
 Tootsville.UI.HUD.closePanel = function ()
-
 { let foundAny = false;
   let panelPopup = Tootsville.UI.HUD.getOpenPanel ();
   if (panelPopup)
@@ -72,6 +71,8 @@ Tootsville.UI.HUD.closePanel = function ()
     foundAny = true; }
   if (! Tootsville.character)
   { Tootsville.Login.start (); }
+  if ('$new toot' == Tootsville.character)
+  { Tootsville.UI.HUD.loadHUDPanel ('new-toot'); }
   return foundAny; };
 
 /**
