@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- -*- web -*- -->
+<html>
+  <meta charset="utf-8">
+
+  <!-- ./play/ui/panels/mail-support.html is part of Tootsville
+
+       Copyright  © 2008-2017  Bruce-Robert   Pocock;  ©  2018-2021  The
+       Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+
+       This  program is  Free Software:  you can  redistribute it  and/or
+       modify it under the terms of the GNU Affero General Public License
+       as published by the Free  Software Foundation; either version 3 of
+       the License, or (at your option) any later version.
+
+       This program  is distributed in the  hope that it will  be useful,
+       but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
+       MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
+       Affero General Public License for more details.
+
+       You should have  received a copy of the GNU  Affero General Public
+       License    along    with    this     program.    If    not,    see
+       <https://www.gnu.org/licenses/>.
+
+       You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+       PO Box 23095
+
+       Oakland Park, FL 33307-3095
+
+       USA
+
+  -->
+  <body>
+    <b> This is a panel loaded by the UI. </b>
+    <div id="mail-support">
+      <p> You can send an eMail to Customer Service. They will mail
+        you back later. </p>
+      <section>
+        <hr>
+        <label>
+          Subject:
+          <input type="text" name="mail-support-subject"
+                 id="mail-support-subject" size="72"
+                 maxlength="72">
+        </label>
+        <fieldset>
+          <legend>
+            <label for="mail-support-body">Message:</label>
+          </legend>
+          <textarea name="mail-support-body" id="mail-support-body"
+                    rows="6" cols="72" wrap></textarea>
+        </fieldset>
+        <hr>
+        <p><small>This eMail will be sent from the eMail address you
+            used to sign in.</small></p>
+      </section>
+      <button onclick="Tootsville.UI.HUD.closePanel();">✗ Cancel</button>
+      <button onclick="Tootsville.UI.MailSupport.send();">Send</button>
+    </div>
+  </body>
+</html>
