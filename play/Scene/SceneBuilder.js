@@ -138,3 +138,27 @@ Tootsville.SceneBuilder.buildMistScene = function ()
                 avatar: 'MIST',
                 energyKind: null, energyMax: 1, onZero: null,
                 wearSlot: null, weight: 0 }}); };
+
+/**
+ * WRITEME
+ */
+Tootsville.SceneBuilder.beginRefresh = function () {
+    Tootsville.SceneBuilder.refreshInfo = {};
+};
+
+/**
+ * WRITEME
+ */
+Tootsville.SceneBuilder.noteRefresh = function (uuid) {
+    Tootsville.SceneBuilder.refreshInfo[ uuid ] = true;
+};
+
+/**
+ * WRITEME
+ */
+Tootsville.SceneBuilder.endRefresh = function () {
+    for (let uuid in Tootsville.Tank.scene.items)
+    { if (! Tootsville.SceneBuilder.refreshInfo[ uuid ])
+          Tootsville.FurnitureBuilder.destroy( uuid ); } };
+
+
