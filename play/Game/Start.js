@@ -52,9 +52,13 @@ Tootsville.Game.bootstrap = function ()
         document.getElementById ('control-panel-icon').style.width = '7vw';
     }, 1000);
 
-    console.info ("\n\n\n This version of Tootsville is version: " +
-                  Tootsville.version +
-                  " Build ID: @@BUILD@@\n ——————————————————————————————————————————————————————\n\n");
+    console.info
+    (`\n\n
+%cThis version of Tootsville is version: ${Tootsville.version} 
+Build ID: @@BUILD@@%c\n\n\n`,
+     `font-family: Acme, sans-serif; font-size: 2rem; color: navy; 
+border: 1pt solid navy; margin: 3rem; padding: 1rem`,
+                  '');
 
     window.addEventListener ('click', Tootsville.UI.onFirstClick);
     document.addEventListener ('fullscreenchange',
