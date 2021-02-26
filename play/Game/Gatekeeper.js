@@ -153,11 +153,11 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
           Tootsville.UI.confirmPretty (
               "Purchase?",
               `<p>Would you like to buy this?</p>
-<p> Price: ${ gram.item.price } 🥜 </p>
+<p> Price: ${ gram.price } 🥜 </p>
 <hr>
 <h4>${gram.item.name}</h4>
 <p>${gram.item.description}</p>`,
-              `Buy for ${gram.item.price}🥜`,
+              `Pay ${gram.price}🥜`,
               "Don't Buy").then
           ( confirm => {
               Tootsville.Util.infinity
