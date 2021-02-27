@@ -928,7 +928,7 @@ Tootsville.Game.Gatekeeper.ayt = function (gram)
  */
 Tootsville.Game.Gatekeeper.rv = function (gram)
 { if (gram.status)
-  { Tootsville.SceneBuilder.startRefresh ();
+  { Tootsville.SceneBuilder.beginRefresh ();
     for (let key in gram.var)
     { if ('s' === key) { Tootsville.SkyBuilder.buildMatchingSky (gram.var.s); }
       else if ('w' === key) { Tootsville.SkyBuilder.buildMatchingWeather (gram.var.w); }
