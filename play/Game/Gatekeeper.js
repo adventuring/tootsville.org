@@ -208,10 +208,12 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   const fairyDust = gram.fairyDust;
   const item = gram.item;
   let nn = (item && item.template && /^[aeiouhAEIOUH]/.test(item.template.name[0])) ? 'n' : '';
+  let earnedPeanuts = (peanuts && peanuts > 0) ? 'earned' : 'spent';
+  let earnedFairyDust = (fairyDust && fairyDust > 0) ? 'earned' : 'spent';
   Tootsville.UI.confirmPretty ("Success!",
                                '<P>You finished' +
-                               (peanuts && peanuts != 0 ? ` and earned ${peanuts} 🥜` : '') +
-                               (fairyDust && fairyDust != 0 ? ` and earned ${fairyDust} ⁂` : '') +
+                               (peanuts && peanuts != 0 ? ` and ${earnedPeanuts} ${Math.abs(peanuts)} 🥜` : '') +
+                               (fairyDust && fairyDust != 0 ? ` and ${earnedFairyDust} ${Math.abs(fairyDust)} ⁂` : '') +
                                (item && item != '' ? ` and got a${nn} ${item.template.name}. </P><P> ${item.template.description} </P>` : '.</P>'),
                                'Cool', null);
   if ((peanuts != 0) || (fairyDust != 0))
