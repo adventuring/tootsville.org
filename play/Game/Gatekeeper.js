@@ -116,9 +116,9 @@ Tootsville.Game.Gatekeeper.passport = function (gram)
   Tootsville.warn ("ancient datagram now ignored", gram); };
 
 /**
- * Mostly just for fountains and shops, now
+ * Mostly just for fountains and shops, now 
  *
- * UNIMPLEMENTED
+ * WRITEME
  */
 Tootsville.Game.Gatekeeper.startEvent = function (gram)
 { if (!(gram.status)) return;
