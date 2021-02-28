@@ -165,6 +165,17 @@ Tootsville.Game.Gatekeeper.startEvent = function (gram)
                { eventID: gram.eventID,
                  status: confirm ? 'cmp' : 'cxl' });});
       }
+      if ('download' == gram.handler) {
+          Tootsville.UI.confirmPretty (
+              'A Download!',
+              `<p>You can download a gift from here.</p>`,
+              'Download', "Don't Download").then
+          (confirm => {
+              Tootsville.Util.infinity
+              ('endEvent',
+               { eventID: gram.eventID,
+                 status: confirm ? "cmp" : "cxl" });});
+      }
   }
   if (gram.asVersion) {
       if ('html5' === gram.asVersion)
@@ -203,6 +214,14 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
                                    'Sorry', null);
       return; }
   if (gram.canceled) return;
+  if (gram.download) {
+      Tootsville.UI.confirmPretty ('Download',
+                                   `
+<p> You can <a href="${gram.download} target="download">download
+ this file</a> now. </p>`,
+                                   'Done', null);
+      return;
+  }
   const eventID = gram.eventID;
   const peanuts = gram.peanuts;
   const fairyDust = gram.fairyDust;
