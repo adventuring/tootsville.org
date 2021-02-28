@@ -742,6 +742,7 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
     Tootsville.character = gram.playWith;
     Tootsville.player = gram.player;
     Tootsville.Tank.start3D ();
+    document.getElementById('toolbox-mobile-phone').style.visibility = 'visible';
     Tootsville.Util.infinity('getUserLists'); }
   else
       Tootsville.Gossip.Parrot.say ("You can't play right now", gram.error); };
