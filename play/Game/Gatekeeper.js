@@ -217,7 +217,7 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
   if (gram.download) {
       Tootsville.UI.confirmPretty ('Download',
                                    `
-<p> You can <a href="${gram.download} target="download">download
+<p> You can <a href="${gram.download}" target="download">download
  this file</a> now. </p>`,
                                    'Done', null);
       return;
