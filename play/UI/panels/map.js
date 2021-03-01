@@ -33,4 +33,5 @@
 
 (function () {
     Tootsville.UI.HUD.refreshMapPointer ();
+    Tootsville.Util.infinity ('readMap');
 })();
