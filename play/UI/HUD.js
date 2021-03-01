@@ -532,6 +532,31 @@ Tootsville.UI.HUD.refreshMapPointer = function ()
 };
 
 /**
+ * WRITEME
+ */
+Tootsville.UI.HUD.setMapBadge = function (badge, position)
+{ if ((position.world != 'CHOR') || (position.alt != 0)) return;
+  const map = document.getElementById ('tootanga-map');
+  if (!(map)) return;
+  let badgeIcon = document.getElementById ('map-badge-' + badge);
+  if (!badgeIcon) {
+      badgeIcon = document.createElement ('IMG');
+      badgeIcon.src = 'https://jumbo.tootsville.org/Assets/Maps/5/Badges/' + badge + '.png';
+      badgeIcon.title = badge.replace ('-', ' ');
+      badgeIcon.style.position = 'absolute'; }
+  const left = map.offsetLeft + ((position.long + 400)/800) * map.offsetWidth - badgeIcon.offsetWidth/2;
+  const top = map.offsetTop + ((position.lat + 300)/600) * map.offsetHeight - badgeIcon.offsetHeight/2;
+  badgeIcon.style.top = top + 'px';
+  badgeIcon.style.left = left + 'px'; };
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.refreshMapBadges = function ()
+{ for (let badge in gram.badges)
+    Tootsville.UI.HUD.setMapBadge (badge, gram.badges [badge]); };
+
+/**
  * Refresh the time remaining indicator for a child player
  */
 Tootsville.UI.HUD.refreshTimeLeft = function ()
