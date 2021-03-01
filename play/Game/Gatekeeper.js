@@ -1087,3 +1087,13 @@ Tootsville.Game.Gatekeeper.removeFromList = function (gram)
       Tootsville.UI.confirmPretty ("Can't Remove",
                                    gram.error,
                                    'Oops!', null); };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper.readMap = function (gram) {
+    if (!gram.status) return;
+    Tootsville.activity.badges = gram.badges;
+    Tootsville.activity.spots = gram.spots;
+    Tootsville.UI.HUD.refreshMapBadges ();
+};
