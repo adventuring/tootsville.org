@@ -910,3 +910,41 @@ Tootsville.UI.HUD.showCamera = function (event)
 Tootsville.UI.HUD.showControlPanel = function (event)
 { event.stopPropagation ();
   Tootsville.UI.HUD.showHUDPanel ('control-panel'); };
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.refreshInventory = function () {
+    const toolbar = document.getElementById ('paperdoll-toolbar');
+    if (!toolbar) return;
+    toolbar.innerHTML = 'Inventory';
+    const page = document.getElementById ('inventory-page');
+    page.innerHTML = '';
+    for (let i in Tootsville.activity.inv) {
+        const item = document.createElement ('DIV');
+        const template = Tootsville.activity.inv[i].info.template;
+        const image = document.createElement ('IMG');
+        image.height = 256;
+        image.width = 256;
+        item.appendChild (image);
+        const canvas = document.createElement ('CANVAS');
+        setTimeout ( () => {
+            Tootsville.ItemViewer.createViewerInCanvas (template,
+                                                        canvas, image); },
+                     4);
+        const name = document.createElement ('SPAN');
+        name.innerText = template.name;
+        item.appendChild (name);
+        item.addEventListener (
+            'click',
+            event => { Tootsville.UI.HUD.inventoryClicked
+                       (event, item, template); }); }};
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, template) {
+    /* TODO: Equip, drop, &c. controls */
+    Tootsville.UI.confirmPretty (template.name,
+                                 `<P>${template.description}</P>`,
+                                 'O.K.', null); };
