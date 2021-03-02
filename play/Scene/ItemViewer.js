@@ -70,11 +70,11 @@ Tootsville.ItemViewer.createLight = function (canvas)
  * Then, grab a screenshot of it and put that into the image instead to
  * free up the WebGL context.
  */
-Tootsville.ItemViewer.createViewerReally = function (template, canvas, image)
+Tootsville.ItemViewer.createViewerReally = function (info, canvas, image)
 { Tootsville.ItemViewer.createScene (canvas);
-  Tootsville.ItemViewer.createCamera (canvas, template.name);
+  Tootsville.ItemViewer.createCamera (canvas, info.template.name);
   Tootsville.ItemViewer.createLight (canvas);
-  Tootsville.FurnitureBuilder.build (template, canvas.scene, function () {
+  Tootsville.FurnitureBuilder.build (info, canvas.scene, function () {
       canvas.scene.render ();
       BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
                                       (data) =>
@@ -88,9 +88,9 @@ Tootsville.ItemViewer.createViewerReally = function (template, canvas, image)
                                           canvas.camera = null;
                                           canvas.light = null; }, 4);
                                         image.src = data;
-                                        image.alt = template.name;
+                                        image.alt = info.template.name;
                                         canvas.style.display = 'none';
-                                        console.log ("Added ItemViewer for " + template.name);
+                                        console.log ("Added ItemViewer for " + info.template.name);
                                       },
                                       'image/png'); } ); };
 
@@ -101,6 +101,6 @@ Tootsville.ItemViewer.createViewerReally = function (template, canvas, image)
  * CANVAS element. Creates a Babylon 3D scene with just the item.
  *
  */
-Tootsville.ItemViewer.createViewerInCanvas = function (template, canvas, image)
+Tootsville.ItemViewer.createViewerInCanvas = function (info, canvas, image)
 { if (! canvas) { return; }
-  Tootsville.ItemViewer.createViewerReally (template, canvas, image); };
+  Tootsville.ItemViewer.createViewerReally (info, canvas, image); };
