@@ -67,7 +67,7 @@ Tootsville.ItemViewer.createLight = function (canvas)
 /**
  * Render the ItemViewer scene only once.
  *
- * Then, grab a screenshot of it and put that into the canvas instead to
+ * Then, grab a screenshot of it and put that into the image instead to
  * free up the WebGL context.
  */
 Tootsville.ItemViewer.createViewerReally = function (template, canvas, image)
