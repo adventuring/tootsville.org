@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/ui/ui.js is part of Tootsville
+ * play/UI/UI.js is part of Tootsville
  *
  * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
  * Corporation for Inter-World Tourism and Adventuring (ciwta.org).
