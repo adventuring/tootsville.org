@@ -70,6 +70,7 @@ play/Scene/SceneBuilder.js
 play/Scene/SkyBuilder.js
 play/Scene/CameraManager.js
 
+play/Scene/ItemViewer.js
 play/Scene/AvatarViewer.js
 play/Scene/Tank.js
 
