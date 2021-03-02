@@ -316,9 +316,9 @@ dist/play.$(clusterorg)/play/play.map:	dist/play/play.map
               cp $$file dist/play.$(clusterorg)/$$file ; \
 	done
 
-dist/play.$(clusterorg)/play/play.css:	dist/play/play.css
+dist/play.$(clusterorg)/play/play.$(VERSION).css:	dist/play/play.css
 	mkdir -p dist/play.$(clusterorg)/play/
-	cp dist/play/play.css dist/play.$(clusterorg)/play/
+	cp dist/play/play.css dist/play.$(clusterorg)/play/play.$(VERSION).css
 
 dist/play.$(clusterorg)/play/play.css.map:	dist/play/play.css.map
 	mkdir -p dist/play.$(clusterorg)/play/
