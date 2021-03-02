@@ -90,7 +90,7 @@ Tootsville.UI.makePrompt = function (prompt, resolve)
   dialog.id = "prompt-" + prompt.id;
   let caption  = document.createElement ("H3");
   let close = document.createElement ('SPAN');
-  close.innerText = "□";
+  close.innerText = "🗷";
   close.style.float = 'left';
   close.addEventListener ('click', () => {
         document.getElementById("hud").removeChild (dialog);
