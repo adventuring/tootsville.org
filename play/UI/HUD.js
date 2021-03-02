@@ -945,18 +945,17 @@ Tootsville.UI.HUD.refreshInventory = function () {
  * WRITEME
  */
 Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, item) {
-    /* TODO: Equip, drop, &c. controls */
-    let replies = { drop: { type: 'neg', label: 'Drop' },
-                    close: { type: 'neu', label: '✗ Close' } };
+    console.log ('got a click on inventory item ' + item.info.template.name);
+    let replies = { drop: { type: 'neg', label: 'Drop' } };
     if (item.isActive)
         replies.don = { type: 'aff',
-                          label: ([] === info.template.wearSlot ? 'Hold' : 'Wear') };
+                          label: ([] === item.info.template.wearSlot ? 'Hold' : 'Wear') };
     else
-        replies.doff = { type: 'neg', label: 'Put Away' },
-
+        replies.doff = { type: 'neg', label: 'Put Away' };
+    replies.close = { type: 'neu', label: '✗ Close' };
     Tootsville.UI.makePrompt ({
-        title: info.template.name,
-        msg: `<P>${info.template.description}</P>`,
+        title: item.info.template.name,
+        msg: `<P>${item.info.template.description}</P>`,
         replies: replies },
                               selection => { Tootsville.UI.HUD.inventoryAction (selection); } );};
 
