@@ -2,7 +2,7 @@
 
 /**@license
  *
- * ./play/ui/gamepad.js is part of Tootsville
+ * ./play/UI/Gamepad.js is part of Tootsville
  *
  * Copyright  © 2018-2021  The Corporation  for Inter-World  Tourism and
  * Adventuring (ciwta.org).
