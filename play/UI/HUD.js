@@ -277,7 +277,7 @@ Tootsville.UI.HUD.positionPaperdollMini = function ()
                  fig.style.height = halfHeight + "px";
                  fig.width = halfWidth;
                  fig.height = halfHeight;
-                 mini.style.zIndex = 1500; },
+                 mini.style.zIndex = 650; },
                5);
   setTimeout ( () =>
                { let halfWidth = (stage.offsetWidth / 2);
