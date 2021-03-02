@@ -938,14 +938,34 @@ Tootsville.UI.HUD.refreshInventory = function () {
         item.addEventListener (
             'click',
             event => { Tootsville.UI.HUD.inventoryClicked
-                       (event, item, info); });
+                       (event, item, Tootsville.activity.inv[i]); });
         page.appendChild (item); }};
 
 /**
  * WRITEME
  */
-Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, info) {
+Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, item) {
     /* TODO: Equip, drop, &c. controls */
-    Tootsville.UI.confirmPretty (info.template.name,
-                                 `<P>${info.template.description}</P>`,
-                                 'O.K.', null); };
+    let replies = { drop: { type: 'neg', label: 'Drop' },
+                    close: { type: 'neu', label: '✗ Close' } };
+    if (item.isActive)
+        replies.don = { type: 'aff',
+                          label: ([] === info.template.wearSlot ? 'Hold' : 'Wear') };
+    else
+        replies.doff = { type: 'neg', label: 'Put Away' },
+
+    Tootsville.UI.makePrompt ({
+        title: info.template.name,
+        msg: `<P>${info.template.description}</P>`,
+        replies: replies },
+                              selection => { Tootsville.UI.HUD.inventoryAction (selection); } );};
+
+/**
+ * WRITEME
+ */
+Tootsville.UI.HUD.inventoryAction = function (selection) {
+    if ('close' === selection) return;
+    if ('don' === selection) alert ('TODO: equip this item');
+    if ('doff' === selection) alert ('TODO: doff this item');
+    if ('drop' === selection) alert ('TODO: drop this item');
+};
