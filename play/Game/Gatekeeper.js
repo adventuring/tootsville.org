@@ -1103,5 +1103,5 @@ Tootsville.Game.Gatekeeper.readMap = function (gram) {
  */
 Tootsville.Game.Gatekeeper.getInventory = function (gram) {
     if (gram.status)
-        Tootsville.activity.inventory = gram.inv;
+        Tootsville.activity.inv = gram.inv;
     Tootsville.UI.HUD.refreshInventory (); };
