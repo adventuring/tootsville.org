@@ -920,31 +920,32 @@ Tootsville.UI.HUD.refreshInventory = function () {
     toolbar.innerHTML = 'Inventory';
     const page = document.getElementById ('inventory-page');
     page.innerHTML = '';
-    for (let i in Tootsville.activity.inv) {
+    for (let i = 0; i < Tootsville.activity.inv.length; ++i) {
         const item = document.createElement ('DIV');
-        const template = Tootsville.activity.inv[i].info.template;
+        const info = Tootsville.activity.inv[i].info;
         const image = document.createElement ('IMG');
         image.height = 256;
         image.width = 256;
         item.appendChild (image);
         const canvas = document.createElement ('CANVAS');
         setTimeout ( () => {
-            Tootsville.ItemViewer.createViewerInCanvas (template,
+            Tootsville.ItemViewer.createViewerInCanvas (info,
                                                         canvas, image); },
                      4);
         const name = document.createElement ('SPAN');
-        name.innerText = template.name;
+        name.innerText = info.template.name;
         item.appendChild (name);
         item.addEventListener (
             'click',
             event => { Tootsville.UI.HUD.inventoryClicked
-                       (event, item, template); }); }};
+                       (event, item, info); });
+        page.appendChild (item); }};
 
 /**
  * WRITEME
  */
-Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, template) {
+Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, info) {
     /* TODO: Equip, drop, &c. controls */
-    Tootsville.UI.confirmPretty (template.name,
-                                 `<P>${template.description}</P>`,
+    Tootsville.UI.confirmPretty (info.template.name,
+                                 `<P>${info.template.description}</P>`,
                                  'O.K.', null); };
