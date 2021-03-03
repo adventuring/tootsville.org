@@ -46,6 +46,7 @@ Tootsville.Game.UserLists.addContactAsIgnore = function (name) {
 Tootsville.Game.UserLists.removeContactAsIgnore = function (name) {
     Tootsville.Util.infinity ('removeFromList', { ignore: name }); };
 Tootsville.Game.UserLists.starBuddy = function (name) {
-};
+    Tootsville.Util.infinity ('addToList', { star: name });};
 Tootsville.Game.UserLists.unstarBuddy = function (name) {
-};
+    Tootsville.Util.infinity ('removeFromList', { star: name }); };
+
