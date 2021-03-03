@@ -252,13 +252,13 @@ devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
 devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
-	-notify-send -i document-new "Build Complete: play" "Finished building devel-play"
+	-notify-send -t 60000 -i document-new "Build Complete: play" "Finished building devel-play"
 
 devel-wwwtest:	devel-www
 	firefox --devtools --new-tab "http://localhost:5001/" </dev/null &>/dev/null &
 
 devel-www:	dist/www.$(clusterorg) dist/www/httpd.pid
-	-notify-send -i document-new "Build Complete: www" "Finished building devel-www"
+	-notify-send -t 60000 -i document-new "Build Complete: www" "Finished building devel-www"
 
 devel-www-watch:	devel-www
 	while inotifywait -e close_write -r www ; do $(MAKE) devel-www ; done
