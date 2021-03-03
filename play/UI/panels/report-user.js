@@ -57,3 +57,5 @@ and determine what actions to take next. </p>`,
                                 rule: rule });
     Tootsville.UI.HUD.closePanel ();
 };
+
+document.getElementById('report-user-send').addEventListener ('click', Tootsville.UI.ReportUser.send);
