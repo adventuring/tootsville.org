@@ -360,7 +360,7 @@ dist/play.$(clusterorg):	worker htaccess mesh \
 	dist/play.$(clusterorg)/play/tootsville.js \
 	dist/play.$(clusterorg)/.well-known/assetlinks.json \
 	dist/play.$(clusterorg)/play/UI/panels/control-panel.html \
-	dist/play.$(clusterorg)/play/play.css \
+	dist/play.$(clusterorg)/play/play.$(VERSION).css \
 	dist/play.$(clusterorg)/play/play.css.map \
 	dist/play.$(clusterorg)/play/play.$(VERSION).js \
 	dist/play.$(clusterorg)/play/game/start.js \
