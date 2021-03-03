@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- -*- web -*- -->
+<html>
+  <meta charset="utf-8">
+
+  <!-- ./play/ui/panels/report-user.html is part of Tootsville
+
+       Copyright  © 2008-2017  Bruce-Robert   Pocock;  ©  2018-2021  The
+       Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+
+       This  program is  Free Software:  you can  redistribute it  and/or
+       modify it under the terms of the GNU Affero General Public License
+       as published by the Free  Software Foundation; either version 3 of
+       the License, or (at your option) any later version.
+
+       This program  is distributed in the  hope that it will  be useful,
+       but WITHOUT  ANY WARRANTY;  without even  the implied  warranty of
+       MERCHANTABILITY or FITNESS  FOR A PARTICULAR PURPOSE.  See the GNU
+       Affero General Public License for more details.
+
+       You should have  received a copy of the GNU  Affero General Public
+       License    along    with    this     program.    If    not,    see
+       <https://www.gnu.org/licenses/>.
+
+       You can reach CIWTA at https://ciwta.org/, or write to us at:
+
+       PO Box 23095
+
+       Oakland Park, FL 33307-3095
+
+       USA
+
+  -->
+  <body>
+    <b> This is a panel loaded by the UI. </b>
+    <div id="report-user">
+      <p> Reporting user <span id="report-which-user"></span> for breaking the rules. </p>
+      <form id="report-user-form">
+      <section>
+        <fieldset>
+          <legend>
+            Which Rule?
+          </legend>
+          <p> Which rule was broken? </p>
+          <ul class="no-bullet">
+            <li><label>
+              <input type="radio"  name="rule" value="mean">
+              Don't be mean
+            </label></li>
+            <li><label>
+              <input type="radio" name="rule" value="nice">
+              Be nice
+            </label></li>
+            <li><label>
+              <input type="radio" name="rule" value="bully">
+              Don't bully others
+            </label></li>
+            <li><label>
+              <input type="radio" name="rule" value="cheat">
+              No cheating
+            </label></li>
+            <li><label>
+              <input type="radio" name="rule" value="diamond">
+              Don't use inappropriate language around a child or sensitive player with a ◆ before their name
+            </label></li>
+            <li><label>
+              <input type="radio" name="rule" value="parent">
+              Children under the age of 13 must have a parent's permission to play
+            </label></li>
+          </ul>
+        </fieldset>
+        <fieldset>
+          <legend>
+            <label for="report-user-note">Add a note:</label>
+          </legend>
+          <textarea name="report-user-note" id="report-user-note"
+                    rows="6" cols="72" wrap></textarea>
+        </fieldset>
+        <hr>
+        <p><small>Your Toot name and information will also be sent along
+        with your report. Someone from  our support staff may notify you
+        of the outcome of our investigation.</small></p>
+      </section>
+      <button onclick="Tootsville.UI.HUD.closePanel();">✗ Cancel</button>
+      <button onclick="Tootsville.UI.MailSupport.send();"
+              ><i class="fas fa-envelope"></i>Send</button>
+    </div>
+  </body>
+</html>
