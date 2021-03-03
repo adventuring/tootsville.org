@@ -30,3 +30,15 @@
  * USA
  *
  */
+
+if (!('Tootsville' in window)) Tootsville = { UI: { PlayerCard: {}}};
+if (!('UI' in Tootsville)) Tootsville.UI = { PlayerCard: {}};
+if (!('PlayerCard' in Tootsville.UI)) Tootsville.UI.PlayerCard = {};
+
+Tootsville.UI.PlayerCard.reportUser = function ()
+{ let playerName = document.getElementById('other-player-name').innerText;
+  if (playerName[0] === '◆')
+      playerName = playerName.substr(1);
+  Tootsville.UI.HUD.showHUDPanel('report-user').then
+  (() => { document.getElementById('report-user-name').innerText = playerName; });
+};

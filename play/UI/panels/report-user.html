@@ -33,7 +33,7 @@
   <body>
     <b> This is a panel loaded by the UI. </b>
     <div id="report-user">
-      <p> Reporting user <span id="report-which-user"></span> for breaking the rules. </p>
+      <p> Reporting user <span id="report-user-name"></span> for breaking the rules. </p>
       <form id="report-user-form">
       <section>
         <fieldset>
@@ -81,7 +81,7 @@
         of the outcome of our investigation.</small></p>
       </section>
       <button onclick="Tootsville.UI.HUD.closePanel();">✗ Cancel</button>
-      <button onclick="Tootsville.UI.MailSupport.send();"
+      <button onclick="Tootsville.UI.ReportUser.send();"
               ><i class="fas fa-envelope"></i>Send</button>
     </div>
   </body>
