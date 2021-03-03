@@ -329,7 +329,7 @@ Tootsville.UI.HUD.openPaperdoll = function (event=null)
   ('click', Tootsville.UI.HUD.openPaperdoll);
   Tootsville.UI.HUD.showHUDPanel ('paperdoll').
   then ( () =>
-      { if (!(Τootsville.activity.inv))
+      { if (!(Tootsville.activity.inv))
           Tootsville.Util.infinity('getInventory');
         Tootsville.UI.HUD.beginWatchingPaperdollWindowForClose ();
         Tootsville.UI.HUD.positionPaperdollMini (); });
