@@ -35,7 +35,8 @@ if (!('Tootsville' in window)) Tootsville = {UI: {ReportUser: {}}};
 if (!('UI' in Tootsville)) Tootsville.UI = {ReportUser: {}};
 if (!('ReportUser' in Tootsville.UI)) Tootsville.UI.ReportUser = {};
 
-Tootsville.UI.ReportUser.send = function () {
+Tootsville.UI.ReportUser.send = function (event) {
+    event.preventDefault(); /* do not submit form */
     let rule = '';
     const form = document.getElementById('report-user-form');
     const radios = form.querySelectorAll('input[type=radio]');
