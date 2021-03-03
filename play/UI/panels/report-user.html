@@ -35,54 +35,54 @@
     <div id="report-user">
       <p> Reporting user <span id="report-user-name"></span> for breaking the rules. </p>
       <form id="report-user-form">
-      <section>
-        <fieldset>
-          <legend>
-            Which Rule?
-          </legend>
-          <p> Which rule was broken? </p>
-          <ul class="no-bullet">
-            <li><label>
-              <input type="radio"  name="rule" value="mean">
-              Don't be mean
-            </label></li>
-            <li><label>
-              <input type="radio" name="rule" value="nice">
-              Be nice
-            </label></li>
-            <li><label>
-              <input type="radio" name="rule" value="bully">
-              Don't bully others
-            </label></li>
-            <li><label>
-              <input type="radio" name="rule" value="cheat">
-              No cheating
-            </label></li>
-            <li><label>
-              <input type="radio" name="rule" value="diamond">
-              Don't use inappropriate language around a child or sensitive player with a ◆ before their name
-            </label></li>
-            <li><label>
-              <input type="radio" name="rule" value="parent">
-              Children under the age of 13 must have a parent's permission to play
-            </label></li>
-          </ul>
-        </fieldset>
-        <fieldset>
-          <legend>
-            <label for="report-user-note">Add a note:</label>
-          </legend>
-          <textarea name="report-user-note" id="report-user-note"
+        <section>
+          <fieldset>
+            <legend>
+              Which Rule?
+            </legend>
+            <p> Which rule was broken? </p>
+            <ul class="no-bullet">
+              <li><label>
+                <input type="radio"  name="rule" value="mean">
+                Don't be mean
+              </label></li>
+              <li><label>
+                <input type="radio" name="rule" value="nice">
+                Be nice
+              </label></li>
+              <li><label>
+                <input type="radio" name="rule" value="bully">
+                Don't bully others
+              </label></li>
+              <li><label>
+                <input type="radio" name="rule" value="cheat">
+                No cheating
+              </label></li>
+              <li><label>
+                <input type="radio" name="rule" value="diamond">
+                Don't use inappropriate language around a child or sensitive player with a ◆ before their name
+              </label></li>
+              <li><label>
+                <input type="radio" name="rule" value="parent">
+                Children under the age of 13 must have a parent's permission to play
+              </label></li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <legend>
+              <label for="report-user-note">Add a note:</label>
+            </legend>
+            <textarea name="report-user-note" id="report-user-note"
                     rows="6" cols="72" wrap></textarea>
-        </fieldset>
-        <hr>
-        <p><small>Your Toot name and information will also be sent along
-        with your report. Someone from  our support staff may notify you
-        of the outcome of our investigation.</small></p>
-      </section>
-      <button onclick="Tootsville.UI.HUD.closePanel();">✗ Cancel</button>
-      <button onclick="Tootsville.UI.ReportUser.send();"
-              ><i class="fas fa-envelope"></i>Send</button>
+          </fieldset>
+          <hr>
+          <p><small>Your Toot name and information will also be sent along
+            with your report. Someone from  our support staff may notify you
+            of the outcome of our investigation.</small></p>
+        </section>
+        <button onclick="Tootsville.UI.HUD.closePanel();">✗ Cancel</button>
+        <button id="report-user-send"><i class="fas fa-envelope"></i>Send</button>
+      </form>
     </div>
   </body>
 </html>
