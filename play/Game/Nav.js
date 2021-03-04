@@ -151,7 +151,7 @@ Tootsville.Game.Nav.collisionP = function (model, end)
     const hit = Tootsville.Tank.scene.pickWithRay (ray);
     if (hit.distance < step.length ())
         return hit.pickedMesh;
-    else return null};
+    else return null; };
 
 /**
  * Ensure that the course data seems sane. 
@@ -281,6 +281,8 @@ Tootsville.Game.Nav.moveEntityOnCourse = function (entity, course)
       entity.model.position = new BABYLON.Vector3 (course.endPoint.x,
                                                    course.endPoint.y,
                                                    course.endPoint.z);
+      if (entity.nameTag || entity.speech)
+      { Tootsville.UI.HUD.refreshAttachmentsForAvatar (entity); }
       return true; }
 
     entity.model.position = new BABYLON.Vector3 (goalPosition.x,
