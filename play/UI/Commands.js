@@ -55,7 +55,13 @@ Tootsville.UI.commands =
         'capitalize-word': ev => { Tootsville.UI.Keys.capitalizeWord (ev); },
         'clear-hud': ev => { Tootsville.UI.HUD.clearHUD (ev); },
         'close-talk': ev => { Tootsville.UI.closeTalkBox (ev); },
-        'close-all-panels': ev => { Tootsville.UI.HUD.closePanel (); },
+        'close-all-panels': ev => {
+            ev.preventDefault ();
+            if (document.getElementById('parrot').style.display === 'block')
+                Tootsville.Gossip.Parrot.show (false);
+            else
+                Tootsville.UI.HUD.closePanel ();
+        },
         'contacts': ev => { Tootsville.UI.HUD.showContacts (ev); },
         'control-panel': ev => { Tootsville.UI.HUD.showControlPanel (ev); },
         'delete-backward-char': ev => { Tootsville.UI.Keys.deleteBackwardChar (ev); },
