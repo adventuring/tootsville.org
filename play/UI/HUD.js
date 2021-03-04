@@ -948,23 +948,22 @@ Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, item) {
     console.log ('got a click on inventory item ' + item.info.template.name);
     let replies = { drop: { type: 'neg', label: 'Drop' } };
     if (item.isActive)
-        replies.don = { type: 'aff',
-                          label: ([] === item.info.template.wearSlot ? 'Hold' : 'Wear') };
-    else
         replies.doff = { type: 'neg', label: 'Put Away' };
+    else
+        replies.don = { type: 'aff',
+                        label: ([] === item.info.template.wearSlot ?
+                                'Hold' : 'Wear') };
     replies.close = { type: 'neu', label: '✗ Close' };
-    Tootsville.UI.makePrompt ({
+    Tootsville.UI.makePrompt
+    ({
         title: item.info.template.name,
         msg: `<P>${item.info.template.description}</P>`,
         replies: replies },
-                              selection => { Tootsville.UI.HUD.inventoryAction (selection); } );};
+     selection => {
+         if ('close' === selection) return;
+         if ('don' === selection) Tootsville.Game.Items.don (item);
+         if ('doff' === selection) Tootsville.Game.Items.doff (item);
+         if ('drop' === selection) Tootsville.Game.Items.drop (item);
+         
+         ; } );};
 
-/**
- * WRITEME
- */
-Tootsville.UI.HUD.inventoryAction = function (selection) {
-    if ('close' === selection) return;
-    if ('don' === selection) alert ('TODO: equip this item');
-    if ('doff' === selection) alert ('TODO: doff this item');
-    if ('drop' === selection) alert ('TODO: drop this item');
-};
