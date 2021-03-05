@@ -258,7 +258,9 @@ Tootsville.Game.Gatekeeper.endEvent = function (gram)
  * Not currently in use. UNIMPLEMENTED.
  */
 Tootsville.Game.Gatekeeper.gameAction = function (gram)
-{ const data = gram.data;
+{ if (! gram.status)
+    Tootsville.Game.Gatekeeper._err (gram);
+  const data = gram.data;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
@@ -277,7 +279,9 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
  * @end verbatim
  */
 Tootsville.Game.Gatekeeper.beam = function (gram)
-{ const world = gram.world;
+{ if (! gram.status)
+    Tootsville.Game.Gatekeeper._err (gram);
+ const world = gram.world;
   const latitude = gram.latitude;
   const longitude = gram.longitude;
   const altitude = gram.altitude;
@@ -292,16 +296,19 @@ Tootsville.Game.Gatekeeper.beam = function (gram)
  * TODO: update wallet displays with an animation.
  */
 Tootsville.Game.Gatekeeper.earning = function (gram)
-{   if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-    Tootsville.Tank.avatars[Tootsville.character].peanuts = parseInt(gram.currency['X-TVPN']);
-    Tootsville.Tank.avatars[Tootsville.character].fairyDust = parseInt(gram.currency['X-FADU']);};
+  Tootsville.Tank.avatars[Tootsville.character].peanuts = parseInt(gram.currency['X-TVPN']);
+  Tootsville.Tank.avatars[Tootsville.character].fairyDust = parseInt(gram.currency['X-FADU']);
+  return true;};
 
 /**
  * No longer used. Ignored.
  */
 Tootsville.Game.Gatekeeper.getAwardRankings = function (gram)
-{ let ranks = gram.ranks;
+{ if (! gram.status)
+    Tootsville.Game.Gatekeeper._err (gram);
+  let ranks = gram.ranks;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
 /**
