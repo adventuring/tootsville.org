@@ -35,6 +35,19 @@ if (!('Game' in Tootsville)) { Tootsville.Game = {Gatekeeper: {}}; }
 if (!('Gatekeeper' in Tootsville.Game)) { Tootsville.Game.Gatekeeper = {}; }
 
 /**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper._err = function (gram) {
+    if (!(gram.status)) {
+        Tootsville.UI.confirmPretty ('Error',
+                                     `
+<p> There was an error: </p>
+<p> ${ gram.error } </p>
+<p><small> Error from ${ gram.from }, code ${ gram.err } </small></p>`,
+                                     'Oops', null); } };
+
+
+/**
  * Acknowledge a new player's login
  *
  * neighbor: next-hop neighbor's UUID for peer-to-peer connections
@@ -1126,11 +1139,24 @@ Tootsville.Game.Gatekeeper.getInventory = function (gram) {
     Tootsville.activity.inv = gram.inv;
     Tootsville.UI.HUD.refreshInventory (); };
 
-Tootsville.Game.Gatekeeper._err = function (gram) {
-    if (!(gram.status)) {
-        Tootsville.UI.confirmPretty ('Error',
-                                     `
-<p> There was an error: </p>
-<p> ${ gram.error } </p>
-<p><small> Error from ${ gram.from }, code ${ gram.err } </small></p>`,
-                                     'Oops', null); } };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper.don = function (gram) {
+    if (!gram.status)
+        return Tootsville.Game.Gatekeeper._err (gram); };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper.doff = function (gram) {
+    if (!gram.status)
+        return Tootsville.Game.Gatekeeper._err (gram); };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.Gatekeeper.drop = function (gram) {
+    if (!gram.status)
+        return Tootsville.Game.Gatekeeper._err (gram); };
