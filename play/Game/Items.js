@@ -31,14 +31,24 @@
 if (!('Game' in Tootsville)) Tootsville.Game = {Items: {}};
 if (!('Items' in Tootsville.Game)) Tootsville.Game.Items = {};
 
+/**
+ * WRITEME
+ */
 Tootsville.Game.Items.don = function (item) {
-    Tootsville.Util.infinity('don', { slot: item.uuid });
+    Tootsville.Util.infinity('don', { slot: item.id });
 };
 
+/**
+ * WRITEME
+ */
 Tootsville.Game.Items.doff = function (item) {
-    Tootsville.Util.infinity('doff', { slot: item.uuid });
+    console.log ("doff", item);
+    Tootsville.Util.infinity('doff', { slot: item.id });
 };
 
+/**
+ * WRITEME
+ */
 Tootsville.Game.Items.drop = function (item) {
-    Tootsville.Util.infinity('drop', { slot: item.uuid });
+    Tootsville.Util.infinity('drop', { slot: item.id });
 };
