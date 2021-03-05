@@ -74,12 +74,12 @@ Tootsville.decodeTime = function ()
   var hour = Math.floor((universalTime%64800)/3600);
   var min = Math.floor((universalTime%3600)/60);
   var sec = Math.floor(universalTime%60);
-  var julian = day+(month*30)+(year*270);
+  var julian = day+(month*30)+(year*360);
   var weekday = (3+julian)%9;
   var otherMonthDay = 1+(37+julian)%71;
   var pinkMonthDay = 1+(29+julian)%53;
   return { year: year, month: month, day: day, hour: hour, min: min, sec: sec,
-           julian: julian, weekday: weekday, otherMonthDay: otherMonthDay,
+           julian: julian%360, weekday: weekday, otherMonthDay: otherMonthDay,
            pinkMonthDay: pinkMonthDay }; };
 
 /**
