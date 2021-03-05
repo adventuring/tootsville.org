@@ -281,7 +281,7 @@ Tootsville.Game.Gatekeeper.gameAction = function (gram)
 Tootsville.Game.Gatekeeper.beam = function (gram)
 { if (! gram.status)
     Tootsville.Game.Gatekeeper._err (gram);
- const world = gram.world;
+  const world = gram.world;
   const latitude = gram.latitude;
   const longitude = gram.longitude;
   const altitude = gram.altitude;
@@ -536,10 +536,10 @@ Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
  * See `INFINITY-GET-MAIL-IN-BOX'
  */
 Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
-{   if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-    let mail = gram.mail;
-    Tootsville.warn ("unhandled datagram", gram);};
+  let mail = gram.mail;
+  Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Fetch one SMS message by UUID.
@@ -555,18 +555,18 @@ Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
  * See `INFINITY-GET-MAIL-IN-BOX'
  */
 Tootsville.Game.Gatekeeper.getMailMessage = function (gram)
-{   if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-    let message = gram.message;
-    Tootsville.warn ("unhandled datagram", gram); };
+  let message = gram.message;
+  Tootsville.warn ("unhandled datagram", gram); };
 
 /**
  * Confirmation that a message were sent.
  */
 Tootsville.Game.Gatekeeper.sendMailMessage = function (gram)
-{   if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-    Tootsville.warn ("unhandled datagram", gram);};
+  Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Notification of new SMS message(s)
@@ -1039,9 +1039,9 @@ Tootsville.Game.Gatekeeper.quiesce = function (gram)
  * TODO kick reason display
  */
 Tootsville.Game.Gatekeeper.kick = function (gram)
-{  if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-   Tootsville.Login.quit (); };
+  Tootsville.Login.quit (); };
 
 /**
  * Burgeon the Toot on logging back in.
@@ -1052,20 +1052,20 @@ Tootsville.Game.Gatekeeper.kick = function (gram)
  * course type for now.
  */
 Tootsville.Game.Gatekeeper.burgeon = function (gram)
-{   if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-    Tootsville.activity.world = gram.world;
-    Tootsville.activity.lat = gram.latitude;
-    Tootsville.activity.long = gram.longitude;
-    Tootsville.activity.alt = gram.altitude;
-    if (gram.wtl)
-    { Tootsville.Tank.avatars [ Tootsville.character ].course = gram.wtl.course;
-      Tootsville.Tank.avatars [ Tootsville.character ].facing = gram.wtl.facing; }
-    else console.warn ("No WTL received in burgeon packet");
-    if (gram.d3) { console.warn ("d₃ packet ignored while burgeoning"); }
-    Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
-    Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
-    if (gram.attribs) { console.warn ("burgeon extended attributes ignored"); } };
+  Tootsville.activity.world = gram.world;
+  Tootsville.activity.lat = gram.latitude;
+  Tootsville.activity.long = gram.longitude;
+  Tootsville.activity.alt = gram.altitude;
+  if (gram.wtl)
+  { Tootsville.Tank.avatars [ Tootsville.character ].course = gram.wtl.course;
+    Tootsville.Tank.avatars [ Tootsville.character ].facing = gram.wtl.facing; }
+  else console.warn ("No WTL received in burgeon packet");
+  if (gram.d3) { console.warn ("d₃ packet ignored while burgeoning"); }
+  Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
+  Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
+  if (gram.attribs) { console.warn ("burgeon extended attributes ignored"); } };
 
 /**
  * Migrate from the current websockets server to another one.
@@ -1076,26 +1076,26 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
  * care of things.
  */
 Tootsville.Game.Gatekeeper.migrate = function (gram)
-{  if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-   if (gram.newConnection && "#same" !== gram.newConnection)
-       Tootsville.host.game = gram.newConnection;
-   if (! Tootsville.Util.Websocket)
-       Tootsville.Util.checkStream ();
-   Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
-   Tootsville.Util.Websocket.close (1001, "migrate"); };
+  if (gram.newConnection && "#same" !== gram.newConnection)
+      Tootsville.host.game = gram.newConnection;
+  if (! Tootsville.Util.Websocket)
+      Tootsville.Util.checkStream ();
+  Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
+  Tootsville.Util.Websocket.close (1001, "migrate"); };
 
 /**
  * roomJoin WRITEME
  */
 Tootsville.Game.Gatekeeper.roomJoin = function (gram)
-{  if (! gram.status )
+{ if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-   Tootsville.activity.lat = gram.lat;
-   Tootsville.activity.long = gram.long;
-   Tootsville.activity.alt = gram.alt;
-   Tootsville.activity.world = gram.world;
-   return true; };
+  Tootsville.activity.lat = gram.lat;
+  Tootsville.activity.long = gram.long;
+  Tootsville.activity.alt = gram.alt;
+  Tootsville.activity.world = gram.world;
+  return true; };
 
 /**
  *WRITEME
