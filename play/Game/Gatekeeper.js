@@ -59,12 +59,12 @@ Tootsville.Game.Gatekeeper._err = function (gram) {
  *
  * Hides Toots view, if it was present.
  * Displays any @code{motd} on server connection.
- * 
+ *
  * UNIMPLEMENTED TODO peer connections.
  */
 Tootsville.Game.Gatekeeper.logOK = function (gram)
 { let neighbor = gram.neighbor;
-  if (gram.status ) 
+  if (gram.status )
   { console.log ("Logged in to servers");
     Tootsville.Gossip.ensureKeyPair ();
     if ('none' != document.getElementById ('sign-in').style.display)
@@ -129,78 +129,78 @@ Tootsville.Game.Gatekeeper.passport = function (gram)
   Tootsville.warn ("ancient datagram now ignored", gram); };
 
 /**
- * Mostly just for fountains and shops, now 
+ * Mostly just for fountains and shops, now
  *
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.startEvent = function (gram)
 {   if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-  if (gram.handler) {
-      if ('fountain' == gram.handler) {
-          Tootsville.UI.confirmPretty (
-              "Fountain",
-              "Make a wish?",
-              "Make a wish", "No wish").then
-          ( confirm => {
-              Tootsville.Util.infinity
-              ('endEvent',
-               { eventID: gram.eventID,
-                 status: confirm ? "cmp" : "cxl" });});
-          return;
-      }
-      if ('vitem' == gram.handler) {
-          Tootsville.UI.confirmPretty (
-              "A Discovery",
-              `<p>You have made a discovery.</p>
+    return Tootsville.Game.Gatekeeper._err (gram);
+    if (gram.handler) {
+        if ('fountain' == gram.handler) {
+            Tootsville.UI.confirmPretty (
+                "Fountain",
+                "Make a wish?",
+                "Make a wish", "No wish").then
+            ( confirm => {
+                Tootsville.Util.infinity
+                ('endEvent',
+                 { eventID: gram.eventID,
+                   status: confirm ? "cmp" : "cxl" });});
+            return;
+        }
+        if ('vitem' == gram.handler) {
+            Tootsville.UI.confirmPretty (
+                "A Discovery",
+                `<p>You have made a discovery.</p>
 <h4>${gram.vitem.name}</h4>
 <p>${gram.vitem.description}</p>`,
-              'Take', "Don't Take").then
-          ( confirm => {
-              Tootsville.Util.infinity
-              ('endEvent',
-               { eventID: gram.eventID,
-                 status: confirm ? 'cmp' : 'cxl' });});
-          return;
-      }
-      if ('shop' == gram.handler) {
-          Tootsville.UI.confirmPretty (
-              "Purchase?",
-              `<p>Would you like to buy this?</p>
+                'Take', "Don't Take").then
+            ( confirm => {
+                Tootsville.Util.infinity
+                ('endEvent',
+                 { eventID: gram.eventID,
+                   status: confirm ? 'cmp' : 'cxl' });});
+            return;
+        }
+        if ('shop' == gram.handler) {
+            Tootsville.UI.confirmPretty (
+                "Purchase?",
+                `<p>Would you like to buy this?</p>
 <p> Price: ${ gram.price } 🥜 </p>
 <hr>
 <h4>${gram.item.name}</h4>
 <p>${gram.item.description}</p>`,
-              `Pay ${gram.price}🥜`,
-              "Don't Buy").then
-          ( confirm => {
-              Tootsville.Util.infinity
-              ('endEvent',
-               { eventID: gram.eventID,
-                 status: confirm ? 'cmp' : 'cxl' });});
-      }
-      if ('download' == gram.handler) {
-          Tootsville.UI.confirmPretty (
-              'A Download!',
-              `<p>You can download a gift from here.</p>`,
-              'Download', "Don't Download").then
-          (confirm => {
-              Tootsville.Util.infinity
-              ('endEvent',
-               { eventID: gram.eventID,
-                 status: confirm ? "cmp" : "cxl" });});
-      }
-  }
-  if (gram.asVersion) {
-      if ('html5' === gram.asVersion)
-          Tootsville.Game.startMinigameEvent (gram);
-      else
-          Tootsville.UI.confirmPretty(
-              "Can't perform event",
-              `The event requires a processor for ${gram.asVersion},
+                `Pay ${gram.price}🥜`,
+                "Don't Buy").then
+            ( confirm => {
+                Tootsville.Util.infinity
+                ('endEvent',
+                 { eventID: gram.eventID,
+                   status: confirm ? 'cmp' : 'cxl' });});
+        }
+        if ('download' == gram.handler) {
+            Tootsville.UI.confirmPretty (
+                'A Download!',
+                `<p>You can download a gift from here.</p>`,
+                'Download', "Don't Download").then
+            (confirm => {
+                Tootsville.Util.infinity
+                ('endEvent',
+                 { eventID: gram.eventID,
+                   status: confirm ? "cmp" : "cxl" });});
+        }
+    }
+    if (gram.asVersion) {
+        if ('html5' === gram.asVersion)
+            Tootsville.Game.startMinigameEvent (gram);
+        else
+            Tootsville.UI.confirmPretty(
+                "Can't perform event",
+                `The event requires a processor for ${gram.asVersion},
 which is not available.`,
-              'O.K.', null); }
-  Tootsville.warn ("unhandled datagram", gram); };
+                'O.K.', null); }
+    Tootsville.warn ("unhandled datagram", gram); };
 
 /**
  * Used to be used for minigame scores; not currently used.
@@ -222,11 +222,11 @@ Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
  */
 Tootsville.Game.Gatekeeper.endEvent = function (gram)
 { if (! (gram.status) ) {
-      Tootsville.UI.confirmPretty ("Can't do that",
-                                   `<large>${gram.error}</large>
+    Tootsville.UI.confirmPretty ("Can't do that",
+                                 `<large>${gram.error}</large>
 <P> Code: ${gram.err} </P>`,
-                                   'Sorry', null);
-      return; }
+                                 'Sorry', null);
+    return; }
   if (gram.canceled) return;
   if (gram.download) {
       Tootsville.UI.confirmPretty ('Download',
@@ -291,9 +291,9 @@ Tootsville.Game.Gatekeeper.beam = function (gram)
  */
 Tootsville.Game.Gatekeeper.earning = function (gram)
 {   if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-  Tootsville.Tank.avatars[Tootsville.character].peanuts = parseInt(gram.currency['X-TVPN']);
-  Tootsville.Tank.avatars[Tootsville.character].fairyDust = parseInt(gram.currency['X-FADU']);};
+    return Tootsville.Game.Gatekeeper._err (gram);
+    Tootsville.Tank.avatars[Tootsville.character].peanuts = parseInt(gram.currency['X-TVPN']);
+    Tootsville.Tank.avatars[Tootsville.character].fairyDust = parseInt(gram.currency['X-FADU']);};
 
 /**
  * No longer used. Ignored.
@@ -324,7 +324,7 @@ Tootsville.Game.Gatekeeper.getApple = function (gram)
                                          zone: "$Eden" }); }
   else
   { Tootsville.Util.infinity ("getApple"); } };
-  
+
 /**
  * Response to a login attempt (for a child).
  *
@@ -370,7 +370,7 @@ Tootsville.Game.Gatekeeper.parentApproval = function (gram)
   else
   { Tootsville.Gossip.Parrot.say ("Sorry",
                                   "You do not have permission to play in Tootsville right now. Talk to your parent or guardian."); } };
-  
+
 /**
  * A store item has been clicked on; ask the user if they want to buy it.
  *
@@ -381,8 +381,8 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
   const stores = gram.stores;
   const item = gram.stores[0].storeItems[0];
   const currency = ( (item.currency === 'X-TvPn')
-                  ? '🥜' :
-                  (item.currency === 'X-FaDu')
+                     ? '🥜' :
+                     (item.currency === 'X-FaDu')
                      ? '⁂' : item.currency );
   Tootsville.UI.confirmPretty (
       'Buy Item?',
@@ -397,7 +397,7 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
  * Public message (speech)
  *
  * See `INFINITY-SPEAK' for how speech is generated, or `TOOT-SPEAK'.
- * 
+ *
  * The @code{pub} packet contains the speaker's name and UUID, the
  * text spoken, and (optionally) whether it was whispered or shouted.
  *
@@ -411,7 +411,7 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
  *   x: "whisper",
  *   id: "2259E5F5-CDED-4A6A-AE68-1C4BA481CB7C" }
  * @end verbatim
- * 
+ *
  */
 Tootsville.Game.Gatekeeper.pub = function (gram)
 { if (! gram.status )
@@ -503,7 +503,7 @@ Tootsville.Game.Gatekeeper.initUserRoom = function (gram)
  */
 Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
 { if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
+    return Tootsville.Game.Gatekeeper._err (gram);
   let lots = gram.lots;
   let houses = gram.houses;
   let neighborhood = gram.neighborhood;
@@ -524,13 +524,13 @@ Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
  *
  * UNIMPLEMENTED.
  *
- * See `INFINITY-GET-MAIL-IN-BOX' 
+ * See `INFINITY-GET-MAIL-IN-BOX'
  */
 Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
 {   if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-  let mail = gram.mail;
-  Tootsville.warn ("unhandled datagram", gram);};
+    return Tootsville.Game.Gatekeeper._err (gram);
+    let mail = gram.mail;
+    Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Fetch one SMS message by UUID.
@@ -547,17 +547,17 @@ Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
  */
 Tootsville.Game.Gatekeeper.getMailMessage = function (gram)
 {   if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-  let message = gram.message;
-  Tootsville.warn ("unhandled datagram", gram); };
+    return Tootsville.Game.Gatekeeper._err (gram);
+    let message = gram.message;
+    Tootsville.warn ("unhandled datagram", gram); };
 
 /**
  * Confirmation that a message were sent.
  */
 Tootsville.Game.Gatekeeper.sendMailMessage = function (gram)
 {   if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-  Tootsville.warn ("unhandled datagram", gram);};
+    return Tootsville.Game.Gatekeeper._err (gram);
+    Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Notification of new SMS message(s)
@@ -565,7 +565,7 @@ Tootsville.Game.Gatekeeper.sendMailMessage = function (gram)
 Tootsville.Game.Gatekeeper.postman = function (gram)
 { if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
-let newMailP = gram.newMail;
+  let newMailP = gram.newMail;
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
@@ -724,7 +724,7 @@ Tootsville.Game.Gatekeeper.admin = function (gram)
  */
 Tootsville.Game.Gatekeeper.serverTime = function (gram)
 { if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
+    return Tootsville.Game.Gatekeeper._err (gram);
   let serverTime = gram.serverTime;
   let gameTime = gram.gameTime;
   Tootsville.warn ("unhandled datagram", gram); };
@@ -804,7 +804,7 @@ Tootsville.Game.Gatekeeper.newScript = function (gram)
 { if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
   if (gram.script)
-    Tootsville.Util.loadScript (gram.script); };
+      Tootsville.Util.loadScript (gram.script); };
 
 /**
  * WRITEME — this function is not yet documented.
@@ -813,27 +813,27 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
 { if (! gram.status )
     return Tootsville.Game.Gatekeeper._err (gram);
   if (gram.uLs === Tootsville.characterUUID)
-    { console.log ("I have joined " + gram.r);
-      Tootsville.Util.infinity ("getRoomVars"); }
-    else
-    { console.log (gram.n + " has joined " + gram.r);
-      Tootsville.Game.Nav.sendWTL ();
-      if (Tootsville.Tank.avatars)
-      { if (Tootsville.Tank.avatars [ gram.n ])
-        { if (Tootsville.Tank.avatars [ gram.n ].model.course )
+  { console.log ("I have joined " + gram.r);
+    Tootsville.Util.infinity ("getRoomVars"); }
+  else
+  { console.log (gram.n + " has joined " + gram.r);
+    Tootsville.Game.Nav.sendWTL ();
+    if (Tootsville.Tank.avatars)
+    { if (Tootsville.Tank.avatars [ gram.n ])
+      { if (Tootsville.Tank.avatars [ gram.n ].model.course )
+          Tootsville.Util.infinity ("wtl4",
+                                    { u: gram.n,
+                                      course: Tootsville.Tank.avatars [ gram.n ].model.course,
+                                      facing: Tootsville.Tank.avatars [ gram.n ].model.facing });
+        else if ( Tootsville.Tank.avatars [ gram.n ].model.position )
             Tootsville.Util.infinity ("wtl4",
                                       { u: gram.n,
-                                        course: Tootsville.Tank.avatars [ gram.n ].model.course,
-                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing });
-          else if ( Tootsville.Tank.avatars [ gram.n ].model.position )
-              Tootsville.Util.infinity ("wtl4",
-                                        { u: gram.n,
-                                          course: { startPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
-                                                    endPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
-                                                    startTime: Tootsville.Game.now },
-                                          facing: Tootsville.Tank.avatars [ gram.n ].model.facing });}
-        else
-            Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}};
+                                        course: { startPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
+                                                  endPoint: Tootsville.Tank.avatars [ gram.n ].model.position,
+                                                  startTime: Tootsville.Game.now },
+                                        facing: Tootsville.Tank.avatars [ gram.n ].model.facing });}
+      else
+          Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}};
 
 /**
  * Walk The Line
@@ -867,23 +867,23 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
  */
 Tootsville.Game.Gatekeeper.wtl = function (gram)
 { if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
- let avatar = Tootsville.Tank.avatars [ gram.n ];
-    if (! avatar)
-    { console.warn ("Unexpected WTL from surprise user " + gram.n);
-      Tootsville.Tank.avatars [ gram.n ] = { name: gram.n,
-                                             uuid: gram.u,
-                                             course: gram.course,
-                                             facing: gram.facing };
-      Tootsville.Util.infinity("finger", { walker: gram.n });
-      return; }
-    if (! (avatar.uuid === gram.u))
-    { console.warn ("UUID mismatch, not walking the line", gram);
-      return; }
-    if (! avatar.model)
-        Tootsville.AvatarBuilder.build (avatar);
-    avatar.course = gram.course;
-    avatar.facing = gram.facing; };
+    return Tootsville.Game.Gatekeeper._err (gram);
+  let avatar = Tootsville.Tank.avatars [ gram.n ];
+  if (! avatar)
+  { console.warn ("Unexpected WTL from surprise user " + gram.n);
+    Tootsville.Tank.avatars [ gram.n ] = { name: gram.n,
+                                           uuid: gram.u,
+                                           course: gram.course,
+                                           facing: gram.facing };
+    Tootsville.Util.infinity("finger", { walker: gram.n });
+    return; }
+  if (! (avatar.uuid === gram.u))
+  { console.warn ("UUID mismatch, not walking the line", gram);
+    return; }
+  if (! avatar.model)
+      Tootsville.AvatarBuilder.build (avatar);
+  avatar.course = gram.course;
+  avatar.facing = gram.facing; };
 
 /**
  * The user has left the game.
@@ -906,9 +906,9 @@ Tootsville.Game.Gatekeeper.bye = function (gram)
 
 /**
  * Handle and report errors from the command processor to the user.
- * 
+ *
  * This may be removed in the final release, but it's mighty convenient for debugging now.
- * These errors should also be reported to 
+ * These errors should also be reported to
  */
 Tootsville.Game.Gatekeeper.c = function (gram)
 { if (gram.status)
@@ -932,8 +932,8 @@ Tootsville.Game.Gatekeeper.c = function (gram)
  */
 Tootsville.Game.Gatekeeper.goToWeb = function (gram)
 { if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-    document.location = gram.url; };
+    return Tootsville.Game.Gatekeeper._err (gram);
+  document.location = gram.url; };
 
 /**
  * Respond to AYT (Are You There) inquiry
@@ -1031,7 +1031,7 @@ Tootsville.Game.Gatekeeper.quiesce = function (gram)
  */
 Tootsville.Game.Gatekeeper.kick = function (gram)
 {  if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
+    return Tootsville.Game.Gatekeeper._err (gram);
    Tootsville.Login.quit (); };
 
 /**
@@ -1044,15 +1044,15 @@ Tootsville.Game.Gatekeeper.kick = function (gram)
  */
 Tootsville.Game.Gatekeeper.burgeon = function (gram)
 {   if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
- Tootsville.activity.world = gram.world;
+    return Tootsville.Game.Gatekeeper._err (gram);
+    Tootsville.activity.world = gram.world;
     Tootsville.activity.lat = gram.latitude;
     Tootsville.activity.long = gram.longitude;
     Tootsville.activity.alt = gram.altitude;
     if (gram.wtl)
     { Tootsville.Tank.avatars [ Tootsville.character ].course = gram.wtl.course;
       Tootsville.Tank.avatars [ Tootsville.character ].facing = gram.wtl.facing; }
-    else console.warn ("No WTL received in burgeon packet"); 
+    else console.warn ("No WTL received in burgeon packet");
     if (gram.d3) { console.warn ("d₃ packet ignored while burgeoning"); }
     Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
     Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
@@ -1068,24 +1068,24 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
  */
 Tootsville.Game.Gatekeeper.migrate = function (gram)
 {  if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
- if (gram.newConnection && "#same" !== gram.newConnection)
-      Tootsville.host.game = gram.newConnection;
-    if (! Tootsville.Util.Websocket)
-        Tootsville.Util.checkStream ();
-    Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
-    Tootsville.Util.Websocket.close (1001, "migrate"); };
+    return Tootsville.Game.Gatekeeper._err (gram);
+   if (gram.newConnection && "#same" !== gram.newConnection)
+       Tootsville.host.game = gram.newConnection;
+   if (! Tootsville.Util.Websocket)
+       Tootsville.Util.checkStream ();
+   Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
+   Tootsville.Util.Websocket.close (1001, "migrate"); };
 
 /**
  * roomJoin WRITEME
  */
 Tootsville.Game.Gatekeeper.roomJoin = function (gram)
 {  if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
-    Tootsville.activity.lat = gram.lat;
-    Tootsville.activity.long = gram.long;
-    Tootsville.activity.alt = gram.alt;
-    Tootsville.activity.world = gram.world; };
+    return Tootsville.Game.Gatekeeper._err (gram);
+   Tootsville.activity.lat = gram.lat;
+   Tootsville.activity.long = gram.long;
+   Tootsville.activity.alt = gram.alt;
+   Tootsville.activity.world = gram.world; };
 
 /**
  *WRITEME
@@ -1106,13 +1106,13 @@ Tootsville.Game.Gatekeeper.addToList = function (gram)
 Tootsville.Game.Gatekeeper.removeFromList = function (gram)
 { if (gram.status)
   { if (gram.ignore)
-    Tootsville.UI.confirmPretty ('Ignore',
-                                 'You are now paying attention to ' + gram.ignore,
-                                 'O.K.', null);
+      Tootsville.UI.confirmPretty ('Ignore',
+                                   'You are now paying attention to ' + gram.ignore,
+                                   'O.K.', null);
     else if (gram.buddy)
-    Tootsville.UI.confirmPretty ('Contact',
-                                 'Removed ' + gram.buddy + ' from your Contacts' ,
-                                 'Bye!', null);
+        Tootsville.UI.confirmPretty ('Contact',
+                                     'Removed ' + gram.buddy + ' from your Contacts' ,
+                                     'Bye!', null);
   }
   else
       Tootsville.UI.confirmPretty ("Can't Remove",
@@ -1123,8 +1123,8 @@ Tootsville.Game.Gatekeeper.removeFromList = function (gram)
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.readMap = function (gram) {
-  if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
+    if (! gram.status )
+        return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.badges = gram.badges;
     Tootsville.activity.spots = gram.spots;
     Tootsville.UI.HUD.refreshMapBadges ();
@@ -1134,8 +1134,8 @@ Tootsville.Game.Gatekeeper.readMap = function (gram) {
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.getInventory = function (gram) {
-  if (! gram.status )
-      return Tootsville.Game.Gatekeeper._err (gram);
+    if (! gram.status )
+        return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.inv = gram.inv;
     Tootsville.UI.HUD.refreshInventory (); };
 
