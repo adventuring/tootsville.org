@@ -51,7 +51,7 @@ if (!('Gatekeeper' in Tootsville.Game)) { Tootsville.Game.Gatekeeper = {}; }
  */
 Tootsville.Game.Gatekeeper.logOK = function (gram)
 { let neighbor = gram.neighbor;
-  if ( gram.status )
+  if (gram.status ) 
   { console.log ("Logged in to servers");
     Tootsville.Gossip.ensureKeyPair ();
     if ('none' != document.getElementById ('sign-in').style.display)
@@ -121,7 +121,8 @@ Tootsville.Game.Gatekeeper.passport = function (gram)
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.startEvent = function (gram)
-{ if (!(gram.status)) return;
+{   if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   if (gram.handler) {
       if ('fountain' == gram.handler) {
           Tootsville.UI.confirmPretty (
@@ -194,8 +195,8 @@ which is not available.`,
  * UNIMPLEMENTED. Display the rank and score in an overlay.
  */
 Tootsville.Game.Gatekeeper.scoreUpdate = function (gram)
-{ const successP = gram.status;
-  if (! successP ) { return; }
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
   const rank = gram.place;
   const score = gram.score;
   Tootsville.warn ("ancient datagram now ignored", gram);};
@@ -276,7 +277,8 @@ Tootsville.Game.Gatekeeper.beam = function (gram)
  * TODO: update wallet displays with an animation.
  */
 Tootsville.Game.Gatekeeper.earning = function (gram)
-{ if (!gram.status) return;
+{   if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   Tootsville.Tank.avatars[Tootsville.character].peanuts = parseInt(gram.currency['X-TVPN']);
   Tootsville.Tank.avatars[Tootsville.character].fairyDust = parseInt(gram.currency['X-FADU']);};
 
@@ -399,18 +401,20 @@ Tootsville.Game.Gatekeeper.getStoreItems = function (gram)
  * 
  */
 Tootsville.Game.Gatekeeper.pub = function (gram)
-{ if (gram.id === Tootsville.characterUUID)
-  { Tootsville.Game.Speech.say (gram.t, gram.x); }
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+  if (gram.id === Tootsville.characterUUID)
+      Tootsville.Game.Speech.say (gram.t, gram.x);
   else
-  { Tootsville.Game.Speech.say (gram.t, gram.x, gram.u); } };
+      Tootsville.Game.Speech.say (gram.t, gram.x, gram.u); };
 
 /**
  * Not currently used.
  */
 Tootsville.Game.Gatekeeper.purchase = function (gram)
 { let totalPeanuts = gram.totalPeanuts;
-  let successP = gram.status;
-  if (! successP ) { return; }
+  if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   let bought = gram.bought;
   Tootsville.warn ("ancient datagram now ignored", gram);};
 
@@ -485,8 +489,8 @@ Tootsville.Game.Gatekeeper.initUserRoom = function (gram)
  * @end table
  */
 Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
-{ let successP = gram.status;
-  if (! successP ) { return; }
+{ if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   let lots = gram.lots;
   let houses = gram.houses;
   let neighborhood = gram.neighborhood;
@@ -510,12 +514,9 @@ Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
  * See `INFINITY-GET-MAIL-IN-BOX' 
  */
 Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
-{ let successP = gram.status;
-  let mail;
-  if (successP)
-  { mail = gram.mail; }
-  else
-  { mail = []; }
+{   if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
+  let mail = gram.mail;
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
@@ -532,8 +533,8 @@ Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
  * See `INFINITY-GET-MAIL-IN-BOX'
  */
 Tootsville.Game.Gatekeeper.getMailMessage = function (gram)
-{ let successP = gram.status;
-  if (! successP ) { return; }
+{   if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   let message = gram.message;
   Tootsville.warn ("unhandled datagram", gram); };
 
@@ -541,14 +542,17 @@ Tootsville.Game.Gatekeeper.getMailMessage = function (gram)
  * Confirmation that a message were sent.
  */
 Tootsville.Game.Gatekeeper.sendMailMessage = function (gram)
-{ let successP = gram.status;
+{   if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
  * Notification of new SMS message(s)
  */
 Tootsville.Game.Gatekeeper.postman = function (gram)
-{ let newMailP = gram.newMail;
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+let newMailP = gram.newMail;
   Tootsville.warn ("unhandled datagram", gram);};
 
 /**
@@ -706,7 +710,8 @@ Tootsville.Game.Gatekeeper.admin = function (gram)
  * UNIMPLEMENTED. Should update estimated server lag?
  */
 Tootsville.Game.Gatekeeper.serverTime = function (gram)
-{ let successP = gram.status;
+{ if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
   let serverTime = gram.serverTime;
   let gameTime = gram.gameTime;
   Tootsville.warn ("unhandled datagram", gram); };
@@ -783,15 +788,18 @@ Tootsville.Game.Gatekeeper.playWith = function (gram)
  * packets.
  */
 Tootsville.Game.Gatekeeper.newScript = function (gram)
-{ if (gram.status && gram.script)
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+  if (gram.script)
     Tootsville.Util.loadScript (gram.script); };
 
 /**
  * WRITEME — this function is not yet documented.
  */
 Tootsville.Game.Gatekeeper.joinOK = function (gram)
-{ if (gram.status)
-  { if (gram.uLs === Tootsville.characterUUID)
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+  if (gram.uLs === Tootsville.characterUUID)
     { console.log ("I have joined " + gram.r);
       Tootsville.Util.infinity ("getRoomVars"); }
     else
@@ -812,7 +820,7 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
                                                     startTime: Tootsville.Game.now },
                                           facing: Tootsville.Tank.avatars [ gram.n ].model.facing });}
         else
-            Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}}};
+            Tootsville.Tank.avatars [ gram.n ] = { name: gram.n, uuid: gram.uLs }; }}};
 
 /**
  * Walk The Line
@@ -845,8 +853,9 @@ Tootsville.Game.Gatekeeper.joinOK = function (gram)
  * often.
  */
 Tootsville.Game.Gatekeeper.wtl = function (gram)
-{ if (gram.status)
-  { let avatar = Tootsville.Tank.avatars [ gram.n ];
+{ if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
+ let avatar = Tootsville.Tank.avatars [ gram.n ];
     if (! avatar)
     { console.warn ("Unexpected WTL from surprise user " + gram.n);
       Tootsville.Tank.avatars [ gram.n ] = { name: gram.n,
@@ -861,7 +870,7 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
     if (! avatar.model)
         Tootsville.AvatarBuilder.build (avatar);
     avatar.course = gram.course;
-    avatar.facing = gram.facing; } };
+    avatar.facing = gram.facing; };
 
 /**
  * The user has left the game.
@@ -871,7 +880,9 @@ Tootsville.Game.Gatekeeper.wtl = function (gram)
  * This destroys their avatar.
  */
 Tootsville.Game.Gatekeeper.bye = function (gram)
-{ let avatar = Tootsville.Tank.avatars [ gram.n ];
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+  let avatar = Tootsville.Tank.avatars [ gram.n ];
   if (gram.u === Tootsville.characterUUID || gram.n === Tootsville.character)
   { console.error ("Received a “bye” packet for myself", gram);
     return; }
@@ -907,7 +918,8 @@ Tootsville.Game.Gatekeeper.c = function (gram)
  * Tootsville.
  */
 Tootsville.Game.Gatekeeper.goToWeb = function (gram)
-{ if (gram.status)
+{ if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
     document.location = gram.url; };
 
 /**
@@ -918,8 +930,9 @@ Tootsville.Game.Gatekeeper.goToWeb = function (gram)
  * connection. We reply with a ping to show some activity.
  */
 Tootsville.Game.Gatekeeper.ayt = function (gram)
-{ if (gram.status)
-    Tootsville.Util.infinity ("ping"); };
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+  Tootsville.Util.infinity ("ping"); };
 
 /**
  * React to ``room variables''.
@@ -980,11 +993,12 @@ Tootsville.Game.Gatekeeper.rv = function (gram)
  * dialog builder.
  */
 Tootsville.Game.Gatekeeper.prompt = function (gram)
-{ if (gram.status)
-    Tootsville.UI.makePrompt (gram,
-                              reply => {
-                                  Tootsville.Util.infinity ('promptReply',
-                                                            { reply: reply, id: gram.id }); }); };
+{ if (! gram.status )
+    return Tootsville.Game.Gatekeeper._err (gram);
+  Tootsville.UI.makePrompt (gram,
+                            reply => {
+                                Tootsville.Util.infinity ('promptReply',
+                                                          { reply: reply, id: gram.id }); }); };
 
 /**
  * Respond to a request to quiesce.
@@ -1003,8 +1017,9 @@ Tootsville.Game.Gatekeeper.quiesce = function (gram)
  * TODO kick reason display
  */
 Tootsville.Game.Gatekeeper.kick = function (gram)
-{ if (gram.status)
-    Tootsville.Login.quit (); };
+{  if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
+   Tootsville.Login.quit (); };
 
 /**
  * Burgeon the Toot on logging back in.
@@ -1015,8 +1030,9 @@ Tootsville.Game.Gatekeeper.kick = function (gram)
  * course type for now.
  */
 Tootsville.Game.Gatekeeper.burgeon = function (gram)
-{ if (gram.status)
-  { Tootsville.activity.world = gram.world;
+{   if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
+ Tootsville.activity.world = gram.world;
     Tootsville.activity.lat = gram.latitude;
     Tootsville.activity.long = gram.longitude;
     Tootsville.activity.alt = gram.altitude;
@@ -1027,7 +1043,7 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
     if (gram.d3) { console.warn ("d₃ packet ignored while burgeoning"); }
     Tootsville.Tank.avatars [ Tootsville.character ].peanuts = 0 + gram.peanuts;
     Tootsville.Tank.avatars [ Tootsville.character ].fairyDust = 0 + gram.fairyDust;
-    if (gram.attribs) { console.warn ("burgeon extended attributes ignored"); } } };
+    if (gram.attribs) { console.warn ("burgeon extended attributes ignored"); } };
 
 /**
  * Migrate from the current websockets server to another one.
@@ -1038,23 +1054,25 @@ Tootsville.Game.Gatekeeper.burgeon = function (gram)
  * care of things.
  */
 Tootsville.Game.Gatekeeper.migrate = function (gram)
-{ if (gram.status)
-  { if (gram.newConnection && "#same" !== gram.newConnection)
+{  if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
+ if (gram.newConnection && "#same" !== gram.newConnection)
       Tootsville.host.game = gram.newConnection;
     if (! Tootsville.Util.Websocket)
         Tootsville.Util.checkStream ();
     Tootsville.Util.Websocket.onclose = (event) => { Tootsville.Util.connectWebSocket (); };
-    Tootsville.Util.Websocket.close (1001, "migrate"); } };
+    Tootsville.Util.Websocket.close (1001, "migrate"); };
 
 /**
  * roomJoin WRITEME
  */
 Tootsville.Game.Gatekeeper.roomJoin = function (gram)
-{ if (gram.status) {
+{  if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.lat = gram.lat;
     Tootsville.activity.long = gram.long;
     Tootsville.activity.alt = gram.alt;
-    Tootsville.activity.world = gram.world; } };
+    Tootsville.activity.world = gram.world; };
 
 /**
  *WRITEME
@@ -1092,7 +1110,8 @@ Tootsville.Game.Gatekeeper.removeFromList = function (gram)
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.readMap = function (gram) {
-    if (!gram.status) return;
+  if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.badges = gram.badges;
     Tootsville.activity.spots = gram.spots;
     Tootsville.UI.HUD.refreshMapBadges ();
@@ -1102,6 +1121,16 @@ Tootsville.Game.Gatekeeper.readMap = function (gram) {
  * WRITEME
  */
 Tootsville.Game.Gatekeeper.getInventory = function (gram) {
-    if (gram.status)
-        Tootsville.activity.inv = gram.inv;
+  if (! gram.status )
+      return Tootsville.Game.Gatekeeper._err (gram);
+    Tootsville.activity.inv = gram.inv;
     Tootsville.UI.HUD.refreshInventory (); };
+
+Tootsville.Game.Gatekeeper._err = function (gram) {
+    if (!(gram.status)) {
+        Tootsville.UI.confirmPretty ('Error',
+                                     `
+<p> There was an error: </p>
+<p> ${ gram.error } </p>
+<p><small> Error from ${ gram.from }, code ${ gram.err } </small></p>`,
+                                     'Oops', null); } };
