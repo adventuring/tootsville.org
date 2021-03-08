@@ -537,26 +537,31 @@ Tootsville.UI.HUD.refreshMapPointer = function ()
  * WRITEME
  */
 Tootsville.UI.HUD.setMapBadge = function (badge, position)
-{ if ((position.world != 'CHOR') || (position.alt != 0)) return;
+{ if ((position.world != 'CHOR') || (position.alt != 0)) return false;
   const map = document.getElementById ('tootanga-map');
-  if (!(map)) return;
+  if (!(map)) return false;
   let badgeIcon = document.getElementById ('map-badge-' + badge);
   if (!badgeIcon) {
       badgeIcon = document.createElement ('IMG');
       badgeIcon.src = 'https://jumbo.tootsville.org/Assets/Maps/5/Badges/' + badge + '.png';
       badgeIcon.title = badge.replace ('-', ' ');
-      badgeIcon.style.position = 'absolute'; }
+      badgeIcon.className = 'map-badge';
+      badgeIcon.id = 'map-badge-' + badge;
+      badgeIcon.style.position = 'absolute';
+      map.parentElement.appendChild (badgeIcon);
+      setTimeout (() => { Tootsville.UI.HUD.setMapBadge (badge, position); }, 4); }
   const left = map.offsetLeft + ((position.long + 400)/800) * map.offsetWidth - badgeIcon.offsetWidth/2;
   const top = map.offsetTop + ((position.lat + 300)/600) * map.offsetHeight - badgeIcon.offsetHeight/2;
   badgeIcon.style.top = top + 'px';
-  badgeIcon.style.left = left + 'px'; };
+  badgeIcon.style.left = left + 'px';
+  return true; };
 
 /**
  * WRITEME
  */
 Tootsville.UI.HUD.refreshMapBadges = function ()
-{ for (let badge in gram.badges)
-    Tootsville.UI.HUD.setMapBadge (badge, gram.badges [badge]); };
+{ for (let badge in Tootsville.activity.badges)
+    Tootsville.UI.HUD.setMapBadge (badge, Tootsville.activity.badges [badge]); };
 
 /**
  * Refresh the time remaining indicator for a child player
