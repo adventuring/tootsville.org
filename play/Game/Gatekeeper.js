@@ -1137,8 +1137,8 @@ Tootsville.Game.Gatekeeper.readMap = function (gram) {
         return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.badges = gram.badges;
     Tootsville.activity.spots = gram.spots;
-    Tootsville.UI.HUD.refreshMapBadges (gram);
-};
+    Tootsville.UI.HUD.refreshMapBadges ();
+    return true; };
 
 /**
  * WRITEME
