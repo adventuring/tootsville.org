@@ -1137,7 +1137,7 @@ Tootsville.Game.Gatekeeper.readMap = function (gram) {
         return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.badges = gram.badges;
     Tootsville.activity.spots = gram.spots;
-    Tootsville.UI.HUD.refreshMapBadges ();
+    Tootsville.UI.HUD.refreshMapBadges (gram);
 };
 
 /**
@@ -1147,7 +1147,8 @@ Tootsville.Game.Gatekeeper.getInventory = function (gram) {
     if (! gram.status )
         return Tootsville.Game.Gatekeeper._err (gram);
     Tootsville.activity.inv = gram.inv;
-    Tootsville.UI.HUD.refreshInventory (); };
+    Tootsville.UI.HUD.refreshInventory ();
+    return true;};
 
 
 /**
