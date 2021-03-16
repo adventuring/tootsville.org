@@ -422,12 +422,12 @@ Tootsville.UI.HUD.refreshPaperdoll = function ()
  * Refresh the display of the active equipment item.
  */
 Tootsville.UI.HUD.refreshEquipment = function ()
-{ if (!Tootsville.player || !Tootsville.player.activeItem)
+{ if (!Tootsville.activity || !Tootsville.activity.activeItem)
   { document.getElementById ('active-item-box').style.opacity = 0; }
   else
   { document.getElementById ('active-item-box').style.opacity = 1; 
     console.debug ("TODO: active item box"); }
-  if (!Tootsville.player || !Tootsville.player.inactiveItem)
+  if (!Tootsville.activity || !Tootsville.activity.inactiveItem)
   { document.getElementById ('inactive-item-box').style.opacity = 0; }
   else
   { document.getElementById ('inactive-item-box').style.opacity = 1;
@@ -437,11 +437,11 @@ Tootsville.UI.HUD.refreshEquipment = function ()
  * Switch the active item with the secondary item.
  */
 Tootsville.UI.HUD.switchActiveItem = function ()
-{ if (null === Tootsville.player || null === Tootsville.player.inactiveItem)
+{ if (null === Tootsville.activity || null === Tootsville.activity.inactiveItem)
   { return; }
-  let prior = Tootsville.player.activeItem;
+  let prior = Tootsville.activity.activeItem;
   if (prior) { Tootsville.Game.Wardrobe.doff (prior); }
-  Tootsville.Game.Wardrobe.don (Tootsville.player.inactiveItem);
+  Tootsville.Game.Wardrobe.don (Tootsville.activity.inactiveItem);
   if (prior) { Tootsville.Game.Wardrobe.don2 (prior); }
   console.debug ("TODO: cool rotate-and-swap animation between the two item boxes");
   Tootsville.UI.HUD.refreshEquipment (); };
