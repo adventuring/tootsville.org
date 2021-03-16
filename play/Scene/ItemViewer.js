@@ -79,10 +79,10 @@ Tootsville.ItemViewer.createViewerReally = function (info, canvas, image)
       BABYLON.Tools.CreateScreenshot (canvas.engine, canvas.camera, 256,
                                       (data) =>
                                       { setTimeout ( () => {
-                                          canvas.scene.dispose ();
-                                          canvas.camera.dispose ();
-                                          canvas.light.dispose ();
-                                          canvas.engine.dispose ();
+                                          if (canvas.scene) canvas.scene.dispose ();
+                                          if (canvas.camera) canvas.camera.dispose ();
+                                          if (canvas.light) canvas.light.dispose ();
+                                          if (canvas.engine) canvas.engine.dispose ();
                                           canvas.engine = null;
                                           canvas.scene = null;
                                           canvas.camera = null;
