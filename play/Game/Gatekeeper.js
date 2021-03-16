@@ -95,22 +95,7 @@ Tootsville.Game.Gatekeeper.avatars = function (gram)
   console.log ("Received info on " + avatars.length + " avatars");
   for (let i = 0; i < avatars.length; ++i)
   { let avatar = avatars [ i ];
-    console.log ("Got avatar info for " + avatar.name);
-    if (Tootsville.Login.toots [ avatar.name ])
-    { console.log (avatar.name + " is one of my Toots");
-      Tootsville.Game.Nav.mergeObjects (Tootsville.Login.toots [ avatar.name ], avatar);
-      Tootsville.Login.populateTootsList (); };
-    const orig = Tootsville.Tank.avatars [ avatar.name ];
-    if (orig)
-    { Tootsville.Game.Nav.mergeObjects (orig, avatar); }
-    else { console.warn ("New avatar info for " + avatar.name);
-           Tootsville.Tank.avatars [ avatar.name ] = avatar; }
-    if (avatar.position &&
-        avatar.position.lat === Tootsville.activity.lat &&
-        avatar.position.long === Tootsville.activity.long &&
-        avatar.position.alt === Tootsville.activity.alt &&
-        avatar.position.world === Tootsville.activity.world)
-        Tootsville.Tank.updateAvatarFor (avatar.name);} };
+    Tootsville.Game.acceptAvatar (avatar); } };
 
 /**
  * No longer used.
@@ -471,8 +456,7 @@ Tootsville.Game.Gatekeeper.getColorPalettes = function (gram)
  */
 Tootsville.Game.Gatekeeper.wardrobe = function (gram)
 { let avatar = gram.avatar;
-  let userName = gram.avatar.userName;
-  Tootsville.warn ("unhandled datagram", gram);};
+  Tootsville.Game.acceptAvatar (avatar); };
 
 /**
  * Add a room (including a first room) to a user's house/lot.

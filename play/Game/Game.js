@@ -122,3 +122,27 @@ Tootsville.Game.buddyClicked = function (event) {
         if (avatars.avatars && avatars.avatars.contact &&
             avatars.avatars.contact.name === name)
             Tootsville.UI.HUD.showPlayerCard (name); }); };
+
+/**
+ * WRITEME
+ */
+Tootsville.Game.acceptAvatar = function (avatar) {
+    if (!(avatar)) return;
+    console.log ("Got avatar info for " + avatar.name);
+    if (Tootsville.character === avatar.name)
+    {  }
+    if (Tootsville.Login.toots [ avatar.name ])
+    { console.log (avatar.name + " is one of my Toots");
+      Tootsville.Game.Nav.mergeObjects (Tootsville.Login.toots [ avatar.name ], avatar);
+      Tootsville.Login.populateTootsList (); };
+    const orig = Tootsville.Tank.avatars [ avatar.name ];
+    if (orig)
+    { Tootsville.Game.Nav.mergeObjects (orig, avatar); }
+    else { console.warn ("New avatar info for " + avatar.name);
+           Tootsville.Tank.avatars [ avatar.name ] = avatar; }
+    if (avatar.position &&
+        avatar.position.lat === Tootsville.activity.lat &&
+        avatar.position.long === Tootsville.activity.long &&
+        avatar.position.alt === Tootsville.activity.alt &&
+        avatar.position.world === Tootsville.activity.world)
+        Tootsville.Tank.updateAvatarFor (avatar.name); };
