@@ -958,7 +958,7 @@ Tootsville.UI.HUD.inventoryClicked = function (event, itemDiv, item) {
         replies.doff = { type: 'neg', label: 'Put Away' };
     else
         replies.don = { type: 'aff',
-                        label: ([] === item.info.template.wearSlot ?
+                        label: (null === item.info.template.wearSlot ?
                                 'Hold' : 'Wear') };
     replies.close = { type: 'neu', label: '✗ Close' };
     Tootsville.UI.makePrompt
