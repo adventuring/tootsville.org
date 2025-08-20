@@ -1,16 +1,154 @@
-* tootsville.net
+* tootsville.org
+** Tootsville Ⅴ Game
 
-* The Tootsville V game servers
+This package contains the working copy of the Tootsville V game, as it is
+being built / merged-into
 
-Tootsville V is a massively multiplayer online role-playing game
-(MMO-RPG) developed by Interworldly Adventuring, LLC of Portland, OR, USA.
+** Coding Style
 
-Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2021, 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
+Note a couple of things here.
 
-This package contains the game server. It provides services over REST
-and Websockets as well as having a peer-to-peer TCP/IP streaming
-protocol for clustering.
+*** Idempotent script loading.
 
-For full docs, `make doc/Tootsville.pdf'
+Scripts should be able to be reloaded on the fly idempotently; in
+particular, we want to never define something like
+
+Tootsville.Namespace = { a: function () {...}, b: ... }
+
+… because that might destroy e.g. Tootsville.Namespace.c that was
+created by someone else, but instead, we build namespaces safely so:
+
+if (!('Namespace' in Tootsville)) { Tootsville.Namespace = {}; };
+Tootsville.Namespace.a = function () {...};
+Tootsville.Namespace.b = function () {...};
+
+This is a little different than typical JavaScript style, but keep in
+mind that we sometimes push new JavaScripts out to running clients on
+the fly during the game.
+
+*** Late binding event handlers
+
+Wherever possible, we prefer:
+
+object.onevent = (event) => { Tootsville.handler (event); };
+
+over:
+
+object.onevent = Tootsville.handler;
+
+This is so that Tootsville.handler (eg) can be redefined later and the
+lambda function will call the new definition, but in the non-preferred
+style, the handler is bound at compile-time and cannot be altered
+without reassigning it.
+
+*** Many small functions
+
+We prefer many small functions over one large one. Wherever practical,
+each branch of an "if" or body of a "for" should probably be a
+distinct function call. A small caveat is given for simply logging and
+then calling another function. This is definitely something we have
+not so far lived up to, but the ideal is to reduce the cyclomatic
+complexity of each function as far as possible.
+
+** External Components
+
+The game system is essentially made up of 8 pillars, or main components.
+Three of these are completely external:
+
+*** The Wiki-wiki
+
+The Wiki-wiki is a Mediawiki installation and is used as an external source
+of documentation both within the game, and externally. The contents of the
+Wiki-wiki are not maintained in this repository.
+
+*** Jumbo
+
+The static game content, and larger or shared web content, are hosted on
+Jumbo, and are not maintained in this repo, either.
+
+*** Tootsbook
+
+Tootsbook is a Wordpress installation, and is likewise completely external.
+
+** Internal Components
+
+Within this repository are the main, "internal" components.
+
+*** Play
+
+The Play application is the "in-game" Javascript application that presents
+the 3D world and Heads-Up Display (HUD) overlays.
+
+The front-end components are, at least partially, in Javascript.
+
+**** Login
+
+The Login application manages user sign-up, character selection, and the
+like from the front-end. It interacts mostly with the Users service.
+
+**** Toot Management
+
+Pick a character
+
+**** Babylon.js integration
+
+**** Input handling
+
+- keyboard/mouse/GUI
+- Firefox gamepad support?
+- Bluetooth gamepads?
+
+**** Sound synth
+
+**** Peer-to-peer Gossip Network
+
+**** Asset fetch/share
+
+**** Worker thread
+
+*** Servers
+
+**** Load Balancer
+**** Users
+
+ The Users application is a REST server providing human and Toot user
+ information,   and   is  used   to   log   in,  and   identify   player
+ (Toot) inventory.
+
+***** Log in
+
+Autovivifies a new user profile when a Google auth token is received.
+
+If the  email address is  on file, there can  be an account  that exists
+without a known auth token. This is how we're implementing two features:
+
+****** Sending welcome gifts to new users before they first sign up
+
+****** Pre-registering Toot names for certain specific users
+
+***** Create new Toot
+
+**** Gossip
+
+ The Gossip application is a directory service used to initiate the Gossipnet
+ connections between players (by Play).
+
+**** World
+
+ The World application quiesces and burgeons  areas of the game world and
+ provides conflict resolution of user action lists.
+
+*** Operations
+
+ Deployment is spelled out in  the Makefile.  In general, the front-end
+ Javascript applications are compiled down, compressed, and sent off to
+ their respective ("dumb," static) servers.
+
+ The  back-end application  systems each  run  a respective  copy of  the
+ monolithic Tootsville  executable. This is a  single executable compiled
+ from   the  same   Common  Lisp   sources  on   each  host   (to  ensure
+ CPU-OS-Compiler-Library match-ups, allow  compile-time optimizations for
+ the host configuration, and avoid surprises).
 
  
+For full docs, `make doc/Tootsville.pdf'

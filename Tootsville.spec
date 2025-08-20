@@ -2,7 +2,7 @@
 
 # Maintainer: brpocock@tootsville.org
 
-# Copyright 2018, 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
+# Copyright 2018-2024, CIWTA; © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
 
 # Tootsville server is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public License
