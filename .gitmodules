@@ -1,7 +1,10 @@
-[submodule "jscl"]
-	path = jscl
-	url = git@github.com:adventuring/jscl
-	branch = .
 [submodule "ansi-test"]
 	path = jscl/ansi-test
 	url = https://gitlab.common-lisp.net/ansi-test/ansi-test.git
+[submodule "lib/jscl"]
+	path = lib/jscl
+	url = https://github.com/jscl-project/jscl.git
+[submodule "lib/tootsville.net"]
+	path = lib/tootsville.net
+	url = https://github.com/Interworldly-Adventuring/tootsville.net.git
+	branch = main
