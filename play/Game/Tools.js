@@ -3,7 +3,7 @@
  * play/Game/Tools.js is part of Tootsville
  *
  * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2021,
- * the Corporation for Inter-World Tourism and Adventuring (ciwta.org).
+ * the Interworldly Adventuring, LLC of Portland, OR, USA.
  *
  * This program is Free Software: you can redistribute it and/or modify
  * it  under the  terms of  the GNU  Affero General  Public License  as
