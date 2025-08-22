@@ -21,7 +21,7 @@ Tootsville.Game.Equipment.ShadowCaster = {
     description: "Throws black gummy 'Shaddow' energy/tar for fun effects",
     type: "tool",
     rarity: "rare",
-    icon: "🖤",
+    icon: "fixme-black-splat-mark",
     maxUses: 5,
     cooldown: 3000, // 3 seconds
     range: 20, // units
