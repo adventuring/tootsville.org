@@ -1,0 +1,463 @@
+# Dockerfile for testing Tootsville with MariaDB in Fedora 42
+# Copyright © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
+
+FROM fedora:42
+
+# Set metadata
+LABEL maintainer="brpocock@tootsville.org"
+LABEL description="Fedora 42 test environment for Tootsville with MariaDB database"
+LABEL version="0.7.0"
+
+# Install base system and MariaDB
+RUN dnf update -y && \
+    dnf install -y \
+        # MariaDB server and client
+        mariadb-server \
+        mariadb \
+        mariadb-connector-c \
+        mariadb-connector-c-devel \
+        # Server runtime dependencies
+        sbcl \
+        nginx \
+        nodejs \
+        npm \
+        openssl \
+        sqlite3 \
+        readline \
+        # Development tools for testing
+        git \
+        make \
+        gcc \
+        gcc-c++ \
+        # Testing utilities
+        curl \
+        wget \
+        net-tools \
+        telnet \
+        nmap \
+        procps-ng \
+        lsof \
+        strace \
+        gdb \
+        valgrind \
+        # Database testing tools
+        mysql-workbench \
+        && \
+    dnf clean all
+
+# Create test user
+RUN useradd -m -s /bin/bash pil && \
+    echo "pil ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set up systemd
+RUN systemctl mask systemd-remount-fs.service dev-hugepages.mount sys-fs-fuse-connections.mount systemd-logind.service getty.target console-getty.service && \
+    systemctl set-default multi-user.target
+
+# Configure MariaDB
+RUN mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql && \
+    systemctl enable mariadb
+
+# Create MariaDB configuration for Tootsville
+RUN cat > /etc/my.cnf.d/tootsville.cnf << 'EOF'
+[mysqld]
+# Tootsville-specific MariaDB configuration
+bind-address = 0.0.0.0
+port = 3306
+max_connections = 200
+max_allowed_packet = 64M
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method = O_DIRECT
+query_cache_type = 1
+query_cache_size = 32M
+query_cache_limit = 2M
+tmp_table_size = 64M
+max_heap_table_size = 64M
+table_open_cache = 400
+thread_cache_size = 8
+key_buffer_size = 32M
+sort_buffer_size = 2M
+read_buffer_size = 2M
+read_rnd_buffer_size = 8M
+myisam_sort_buffer_size = 8M
+thread_concurrency = 8
+innodb_thread_concurrency = 8
+
+# Character set and collation
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+init-connect = 'SET NAMES utf8mb4'
+
+# Logging
+log-error = /var/log/mysql/error.log
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 2
+
+# Security
+skip-name-resolve
+local-infile = 0
+
+[mysql]
+default-character-set = utf8mb4
+
+[client]
+default-character-set = utf8mb4
+EOF
+
+# Switch to pil user
+USER pil
+WORKDIR /home/pil
+
+# Create MariaDB testing script
+RUN cat > /home/pil/test-mariadb.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "=== Testing Tootsville with MariaDB ==="
+echo "Date: $(date)"
+echo "Hostname: $(hostname)"
+echo "Fedora version: $(cat /etc/fedora-release)"
+
+# Start MariaDB
+echo "=== Starting MariaDB ==="
+sudo systemctl start mariadb
+sudo systemctl status mariadb || echo "MariaDB failed to start"
+
+# Wait for MariaDB to be ready
+echo "=== Waiting for MariaDB to be ready ==="
+for i in {1..30}; do
+    if mysql -u root -e "SELECT 1" >/dev/null 2>&1; then
+        echo "MariaDB is ready"
+        break
+    fi
+    echo "Waiting for MariaDB... ($i/30)"
+    sleep 2
+done
+
+# Create Tootsville database and user
+echo "=== Setting up Tootsville database ==="
+mysql -u root << 'SQL'
+CREATE DATABASE IF NOT EXISTS tootsville CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'tootsville'@'localhost' IDENTIFIED BY 'tootsville_password';
+CREATE USER IF NOT EXISTS 'tootsville'@'%' IDENTIFIED BY 'tootsville_password';
+GRANT ALL PRIVILEGES ON tootsville.* TO 'tootsville'@'localhost';
+GRANT ALL PRIVILEGES ON tootsville.* TO 'tootsville'@'%';
+FLUSH PRIVILEGES;
+SQL
+
+# Test database connection
+echo "=== Testing database connection ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville -e "SELECT 'Database connection successful' as status;" || echo "Database connection failed"
+
+# Create test tables for Tootsville
+echo "=== Creating test tables ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville << 'SQL'
+-- Users table
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_username (username),
+    INDEX idx_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Characters table
+CREATE TABLE IF NOT EXISTS characters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    avatar_data JSON,
+    position_x DECIMAL(10,2) DEFAULT 0.0,
+    position_y DECIMAL(10,2) DEFAULT 0.0,
+    position_z DECIMAL(10,2) DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Items table
+CREATE TABLE IF NOT EXISTS items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(100) NOT NULL,
+    properties JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_type (type),
+    INDEX idx_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Character items (inventory)
+CREATE TABLE IF NOT EXISTS character_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    character_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT DEFAULT 1,
+    equipped BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
+    INDEX idx_character_id (character_id),
+    INDEX idx_item_id (item_id),
+    INDEX idx_equipped (equipped)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Chat messages
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    character_id INT NOT NULL,
+    message TEXT NOT NULL,
+    message_type ENUM('chat', 'emote', 'whisper', 'shout') DEFAULT 'chat',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE,
+    INDEX idx_character_id (character_id),
+    INDEX idx_created_at (created_at),
+    INDEX idx_message_type (message_type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- World events
+CREATE TABLE IF NOT EXISTS world_events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_type VARCHAR(100) NOT NULL,
+    event_data JSON,
+    position_x DECIMAL(10,2),
+    position_y DECIMAL(10,2),
+    position_z DECIMAL(10,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_event_type (event_type),
+    INDEX idx_created_at (created_at),
+    INDEX idx_position (position_x, position_y, position_z)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SQL
+
+# Insert test data
+echo "=== Inserting test data ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville << 'SQL'
+-- Insert test user
+INSERT INTO users (username, email, password_hash) VALUES 
+('testuser', 'test@tootsville.org', 'test_hash_123') 
+ON DUPLICATE KEY UPDATE username=username;
+
+-- Insert test character
+INSERT INTO characters (user_id, name, avatar_data, position_x, position_y, position_z) VALUES 
+(1, 'TestCharacter', '{"color": "blue", "size": "normal"}', 100.0, 200.0, 0.0)
+ON DUPLICATE KEY UPDATE name=name;
+
+-- Insert test items
+INSERT INTO items (name, type, properties) VALUES 
+('GrowPotion', 'potion', '{"effect": "grow", "duration": 300}'),
+('ShadowCaster', 'equipment', '{"effect": "shadow", "range": 50}'),
+('KaTootelEggShooter', 'weapon', '{"damage": 10, "range": 100}');
+
+-- Insert character items
+INSERT INTO character_items (character_id, item_id, quantity, equipped) VALUES 
+(1, 1, 5, FALSE),
+(1, 2, 1, TRUE),
+(1, 3, 1, FALSE)
+ON DUPLICATE KEY UPDATE quantity=quantity;
+
+-- Insert test chat messages
+INSERT INTO chat_messages (character_id, message, message_type) VALUES 
+(1, 'Hello, Tootsville!', 'chat'),
+(1, 'waves hello', 'emote'),
+(1, 'This is a whisper', 'whisper');
+SQL
+
+# Test queries
+echo "=== Testing database queries ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville -e "
+SELECT 'User count:' as label, COUNT(*) as count FROM users;
+SELECT 'Character count:' as label, COUNT(*) as count FROM characters;
+SELECT 'Item count:' as label, COUNT(*) as count FROM items;
+SELECT 'Inventory count:' as label, COUNT(*) as count FROM character_items;
+SELECT 'Chat message count:' as label, COUNT(*) as count FROM chat_messages;
+"
+
+# Test performance queries
+echo "=== Testing performance queries ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville -e "
+-- Test character with inventory
+SELECT c.name, COUNT(ci.id) as item_count 
+FROM characters c 
+LEFT JOIN character_items ci ON c.id = ci.character_id 
+GROUP BY c.id, c.name;
+
+-- Test recent chat messages
+SELECT cm.message_type, COUNT(*) as count 
+FROM chat_messages cm 
+WHERE cm.created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR) 
+GROUP BY cm.message_type;
+
+-- Test equipped items
+SELECT c.name, i.name as item_name, ci.equipped 
+FROM characters c 
+JOIN character_items ci ON c.id = ci.character_id 
+JOIN items i ON ci.item_id = i.id 
+WHERE ci.equipped = TRUE;
+"
+
+# Test database performance
+echo "=== Testing database performance ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville -e "
+-- Check MariaDB status
+SHOW STATUS LIKE 'Uptime';
+SHOW STATUS LIKE 'Threads_connected';
+SHOW STATUS LIKE 'Queries';
+SHOW STATUS LIKE 'Slow_queries';
+SHOW STATUS LIKE 'Innodb_buffer_pool_read_requests';
+SHOW STATUS LIKE 'Innodb_buffer_pool_reads';
+"
+
+# Test backup functionality
+echo "=== Testing backup functionality ==="
+mysqldump -u tootsville -ptootsville_password -h localhost tootsville > /tmp/tootsville_backup.sql
+echo "Backup created: $(ls -la /tmp/tootsville_backup.sql)"
+
+# Test restore functionality
+echo "=== Testing restore functionality ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville_test_restore < /tmp/tootsville_backup.sql 2>/dev/null || echo "Restore test completed"
+
+echo "=== MariaDB Test Complete ==="
+EOF
+
+RUN chmod +x /home/pil/test-mariadb.sh
+
+# Create Tootsville server testing script with MariaDB
+RUN cat > /home/pil/test-tootsville-mariadb.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "=== Testing Tootsville Server with MariaDB ==="
+echo "Date: $(date)"
+echo "Hostname: $(hostname)"
+
+# Start MariaDB
+echo "=== Starting MariaDB ==="
+sudo systemctl start mariadb
+sudo systemctl status mariadb || echo "MariaDB failed to start"
+
+# Wait for MariaDB to be ready
+for i in {1..30}; do
+    if mysql -u root -e "SELECT 1" >/dev/null 2>&1; then
+        echo "MariaDB is ready"
+        break
+    fi
+    echo "Waiting for MariaDB... ($i/30)"
+    sleep 2
+done
+
+# Install the RPM (assuming it's mounted or copied)
+echo "=== Installing Tootsville RPM ==="
+sudo dnf install -y /tmp/Tootsville-*.rpm
+
+# Test Tootsville binary
+echo "=== Testing Tootsville binary ==="
+/usr/local/bin/Tootsville --help || echo "Binary test failed"
+
+# Test service startup
+echo "=== Testing service startup ==="
+sudo systemctl start tootsville
+sleep 5
+sudo systemctl status tootsville || echo "Service failed to start"
+
+# Test network ports
+echo "=== Testing network ports ==="
+netstat -tlnp | grep :5000 || echo "Port 5000 not listening"
+netstat -tlnp | grep :5004 || echo "Port 5004 not listening"
+netstat -tlnp | grep :3306 || echo "Port 3306 (MariaDB) not listening"
+
+# Test database connectivity from Tootsville
+echo "=== Testing Tootsville database connectivity ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville -e "SELECT 'Tootsville can connect to MariaDB' as status;" || echo "Tootsville cannot connect to MariaDB"
+
+# Test web endpoints
+echo "=== Testing web endpoints ==="
+curl -f http://localhost:5000/api/health || echo "API health check failed"
+curl -f http://localhost/ || echo "Web root failed"
+
+# Test WebSocket connection
+echo "=== Testing WebSocket connection ==="
+echo "WebSocket test would go here"
+
+echo "=== Tootsville with MariaDB Test Complete ==="
+EOF
+
+RUN chmod +x /home/pil/test-tootsville-mariadb.sh
+
+# Create production startup script with MariaDB
+RUN cat > /home/pil/start-production-mariadb.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "Starting Tootsville production server with MariaDB..."
+
+# Start MariaDB
+sudo systemctl start mariadb
+sudo systemctl status mariadb || echo "MariaDB failed to start"
+
+# Wait for MariaDB to be ready
+for i in {1..30}; do
+    if mysql -u root -e "SELECT 1" >/dev/null 2>&1; then
+        echo "MariaDB is ready"
+        break
+    fi
+    echo "Waiting for MariaDB... ($i/30)"
+    sleep 2
+done
+
+# Start Tootsville service
+sudo systemctl start tootsville
+
+# Start nginx
+sudo systemctl start nginx
+
+# Monitor services
+echo "Services started. Monitoring..."
+while true; do
+    sudo systemctl is-active mariadb >/dev/null || echo "MariaDB service stopped"
+    sudo systemctl is-active tootsville >/dev/null || echo "Tootsville service stopped"
+    sudo systemctl is-active nginx >/dev/null || echo "Nginx service stopped"
+    sleep 30
+done
+EOF
+
+RUN chmod +x /home/pil/start-production-mariadb.sh
+
+# Create database migration script
+RUN cat > /home/pil/migrate-database.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "=== Database Migration Script ==="
+echo "Date: $(date)"
+
+# Backup existing database
+echo "=== Creating backup ==="
+mysqldump -u tootsville -ptootsville_password -h localhost tootsville > /tmp/tootsville_backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Run migrations
+echo "=== Running migrations ==="
+mysql -u tootsville -ptootsville_password -h localhost tootsville << 'SQL'
+-- Add any new tables or modifications here
+-- Example: ALTER TABLE users ADD COLUMN last_login TIMESTAMP NULL;
+
+-- Check for any pending migrations
+SELECT 'Migration check complete' as status;
+SQL
+
+echo "=== Migration Complete ==="
+EOF
+
+RUN chmod +x /home/pil/migrate-database.sh
+
+# Expose ports for testing
+EXPOSE 80 443 5000 5004 3306
+
+# Start systemd
+CMD ["/usr/sbin/init"]

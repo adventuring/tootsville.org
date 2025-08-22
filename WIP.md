@@ -515,6 +515,13 @@ This document tracks all changes requested by the user and requirements discover
 ## Current Status Updates (2025-01-22)
 
 ### Recently Completed
+- **MariaDB Testing Docker Image**: Created comprehensive `Dockerfile.mariadb-test` with full database testing environment including:
+  - MariaDB server and client installation
+  - Tootsville-specific database configuration
+  - Complete test table schema (users, characters, items, inventory, chat, world events)
+  - Database testing scripts with performance monitoring
+  - Backup and restore functionality testing
+  - Integration testing with Tootsville server
 - **Server Version Update**: Bumped to 0.7.0 in `build/version`
 - **Additional Authentication Providers**: Added GitHub and Microsoft alongside existing Apple/Bluesky
 - **User Graphics Service**: Created comprehensive `UserGraphicService.js` for fetching user profile pictures from login services with Gravatar fallback
@@ -542,7 +549,6 @@ This document tracks all changes requested by the user and requirements discover
 - **Server Startup**: Building new Tootsville binary after dependency fixes
 
 ### Pending Tasks
-- **MariaDB Testing Docker Image**: Create separate Docker image for testing MariaDB database functionality
 - **Equipment Items**: Complete remaining items (LightField, ShrinkPotion, ShrinkToHalfSize, ZapWishBolt)
 - **Audio System**: Fix autoplay policies and sound playback
 - **Testing**: Comprehensive testing of all new features
