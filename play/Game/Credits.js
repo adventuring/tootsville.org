@@ -2,8 +2,7 @@
 /**@license
  * play/Game/Credits.js is part of Tootsville
  *
- * Copyright © 2008-2017, Bruce-Robert  Pocock; Copyright © 2018-2021,
- * the Interworldly Adventuring, LLC of Portland, OR, USA.
+ * Copyright © 2008-2017, Bruce-Robert Pocock; © 2018-2024 CIWTA; © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA.
  *
  * This program is Free Software: you can redistribute it and/or modify
  * it  under the  terms of  the GNU  Affero General  Public License  as
@@ -19,13 +18,10 @@
  * License    along     with    this     program.    If     not,    see
  * <https://www.gnu.org/licenses/>.
  *
- * You can reach CIWTA at https://ciwta.org/, or write to us at:
+ * You can reach Interworldly Adventuring, LLC at https://interworldly.com/, or write to us at:
  *
- * PO Box 23095
- *
- * Oakland Park, FL 33307-3095
- *
- * USA
+ * Interworldly Adventuring, LLC
+ * Portland, OR, USA
  */
 
 if (!('Game' in Tootsville)) { Tootsville.Game = {}; }
@@ -41,8 +37,7 @@ Tootsville.Game.credits = function () {
 
 <p>The Tootsville V web application is by Bruce-Robert Pocock.</p>
 
-<p> Copyright © 2008-2017, Bruce-Robert Pocock; Copyright © 2018-2021,
-The Corporation for Inter-World Tourism and Adventuring. </p>
+<p> Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2021, 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA.</p>
 
 <p> This program is Free Software; you can <a target="_new"
 href="https://www.gnu.org/licenses/agpl-3.0.en.html">copy and alter

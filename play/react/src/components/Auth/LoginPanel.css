@@ -1,0 +1,95 @@
+/* LoginPanel.css */
+/* Copyright © 2025 Interworldly Adventuring, LLC. This program is Free Software; Refer to COPYING.AGPL for details. */
+
+.login-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 350px;
+  width: 100%;
+}
+
+.login-panel-title {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.login-panel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.panel-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.panel-form-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 13px;
+}
+
+.panel-form-input {
+  padding: 10px;
+  border: 2px solid #e1e5e9;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.panel-form-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.panel-login-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.panel-login-button:hover {
+  transform: translateY(-1px);
+}
+
+.panel-login-button:active {
+  transform: translateY(0);
+}
+
+.panel-error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.panel-success-message {
+  color: #27ae60;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .login-panel {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  .login-panel-title {
+    font-size: 18px;
+  }
+}

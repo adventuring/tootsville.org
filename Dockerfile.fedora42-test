@@ -1,0 +1,194 @@
+# Dockerfile for testing Tootsville RPM in Fedora 42
+# Copyright © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
+
+FROM fedora:42
+
+# Set metadata
+LABEL maintainer="brpocock@tootsville.org"
+LABEL description="Fedora 42 test environment for Tootsville RPM package"
+LABEL version="0.7.0"
+
+# Install base system and build tools
+RUN dnf update -y && \
+    dnf install -y \
+        rpm-build \
+        rpmdevtools \
+        mock \
+        systemd \
+        systemd-sysv \
+        sudo \
+        curl \
+        wget \
+        net-tools \
+        telnet \
+        nmap \
+        procps-ng \
+        lsof \
+        strace \
+        gdb \
+        valgrind \
+        # Server runtime dependencies
+        sbcl \
+        postgresql-server \
+        postgresql \
+        nginx \
+        nodejs \
+        npm \
+        openssl \
+        sqlite3 \
+        readline \
+        # Development tools for testing
+        git \
+        make \
+        gcc \
+        gcc-c++ \
+        && \
+    dnf clean all
+
+# Create test user
+RUN useradd -m -s /bin/bash pil && \
+    echo "pil ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set up systemd
+RUN systemctl mask systemd-remount-fs.service dev-hugepages.mount sys-fs-fuse-connections.mount systemd-logind.service getty.target console-getty.service && \
+    systemctl set-default multi-user.target
+
+# Switch to pil user
+USER pil
+WORKDIR /home/pil
+
+# Create a simple test script
+RUN cat > /home/pil/test-install.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "=== Testing Tootsville Installation ==="
+echo "Date: $(date)"
+echo "Hostname: $(hostname)"
+echo "Fedora version: $(cat /etc/fedora-release)"
+
+# Install the RPM (assuming it's mounted or copied)
+echo "=== Installing RPM ==="
+sudo dnf install -y /tmp/Tootsville-*.rpm
+
+# Check if services are installed
+echo "=== Checking installed services ==="
+systemctl list-unit-files | grep tootsville || echo "No tootsville services found"
+systemctl list-unit-files | grep httpd || echo "No httpd services found"
+
+# Check if binary is installed
+echo "=== Checking installed binaries ==="
+ls -la /usr/local/bin/Tootsville || echo "Tootsville binary not found"
+
+# Check if web content is installed
+echo "=== Checking web content ==="
+ls -la /usr/share/tootsville/www/ || echo "www content not found"
+ls -la /usr/share/tootsville/play/ || echo "play content not found"
+
+# Check if configuration files are installed
+echo "=== Checking configuration files ==="
+ls -la /etc/tootsville/ || echo "tootsville config not found"
+ls -la /etc/httpd/conf.d/ || echo "httpd config not found"
+
+# Check if user was created
+echo "=== Checking system user ==="
+id tootsville || echo "tootsville user not found"
+
+# Test service startup (without actually starting)
+echo "=== Testing service configuration ==="
+systemctl cat tootsville || echo "tootsville service not found"
+systemctl cat httpd || echo "httpd service not found"
+
+echo "=== Installation Test Complete ==="
+EOF
+
+RUN chmod +x /home/pil/test-install.sh
+
+# Create server testing script
+RUN cat > /home/testuser/test-server.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "=== Testing Tootsville Server Node ==="
+echo "Date: $(date)"
+echo "Hostname: $(hostname)"
+
+# Initialize PostgreSQL
+echo "=== Initializing PostgreSQL ==="
+sudo postgresql-setup --initdb
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+
+# Create database and user
+echo "=== Setting up database ==="
+sudo -u postgres createuser -s tootsville || true
+sudo -u postgres createdb -O tootsville tootsville || true
+
+# Test Tootsville binary
+echo "=== Testing Tootsville binary ==="
+/usr/local/bin/Tootsville --help || echo "Binary test failed"
+
+# Test service startup
+echo "=== Testing service startup ==="
+sudo systemctl start tootsville
+sleep 5
+sudo systemctl status tootsville || echo "Service failed to start"
+
+# Test network ports
+echo "=== Testing network ports ==="
+netstat -tlnp | grep :5000 || echo "Port 5000 not listening"
+netstat -tlnp | grep :5004 || echo "Port 5004 not listening"
+
+# Test nginx configuration
+echo "=== Testing nginx configuration ==="
+sudo nginx -t || echo "Nginx config test failed"
+sudo systemctl start nginx
+sleep 2
+sudo systemctl status nginx || echo "Nginx failed to start"
+
+# Test web endpoints
+echo "=== Testing web endpoints ==="
+curl -f http://localhost:5000/api/health || echo "API health check failed"
+curl -f http://localhost/ || echo "Web root failed"
+
+# Test WebSocket connection
+echo "=== Testing WebSocket connection ==="
+echo "WebSocket test would go here"
+
+echo "=== Server Test Complete ==="
+EOF
+
+RUN chmod +x /home/testuser/test-server.sh
+
+# Create production startup script
+RUN cat > /home/testuser/start-production.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "Starting Tootsville production server..."
+
+# Start PostgreSQL
+sudo systemctl start postgresql
+
+# Start Tootsville service
+sudo systemctl start tootsville
+
+# Start nginx
+sudo systemctl start nginx
+
+# Monitor services
+echo "Services started. Monitoring..."
+while true; do
+    sudo systemctl is-active tootsville >/dev/null || echo "Tootsville service stopped"
+    sudo systemctl is-active nginx >/dev/null || echo "Nginx service stopped"
+    sleep 30
+done
+EOF
+
+RUN chmod +x /home/testuser/start-production.sh
+
+# Expose ports for testing
+EXPOSE 80 443 5000 5004 5432
+
+# Start systemd
+CMD ["/usr/sbin/init"]

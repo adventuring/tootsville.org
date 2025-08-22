@@ -25,11 +25,30 @@ export const UIText = {
     EDIT_TOOT_TITLE: 'Edit Toot Characters',
     EDIT_TOOT_DESCRIPTION: 'Set up Child options here. Set a 6-to-12-letter code for child logins (like a password). <A TARGET="_blank"  HREF="https://wiki.tootsville.org/wiki/Child_Sign-in_Code">More info…</A>',
     CHILD_ACCOUNT: 'Child Account',
-    ALLOWED_FOR_HOURS: 'Allowed for',
-    HOURS: 'hours, with',
+    ALLOWED_FOR_HOURS: 'Allowed for {hours, plural, =1 {1 hour} other {# hours}}, with',
     REQUESTED_TO_PLAY: 'Requested to play.',
     RESTARTING_LOGIN: 'Restarting login…',
-    START_LOGIN: 'Start login (build crypto keys)'
+    START_LOGIN: 'Start login (build crypto keys)',
+    OR_LOGIN_WITH: 'Or sign in with',
+    GOOGLE_LOGIN: 'Sign in with Google',
+    GITHUB_LOGIN: 'Sign in with GitHub',
+    MICROSOFT_LOGIN: 'Sign in with Microsoft',
+    YAHOO_LOGIN: 'Sign in with Yahoo!',
+    APPLE_LOGIN: 'Sign in with Apple',
+    BLUESKY_LOGIN: 'Sign in with Bluesky',
+    TERMS_NOTICE: 'By signing in, you agree to our Terms of Service and Privacy Policy.',
+    SUPPORT_INFO: 'Need help? Contact support at help@tootsville.org'
+  },
+
+  // Signup and Registration
+  SIGNUP: {
+    TERMS_NOTICE: 'By creating an account, you agree to our Terms of Service and Privacy Policy.',
+    CREATE_ACCOUNT: 'Create Account',
+    ALREADY_HAVE_ACCOUNT: 'Already have an account? Sign in',
+    PASSWORD_REQUIREMENTS: 'Password must be at least 8 characters long',
+    EMAIL_REQUIRED: 'Email is required for account recovery',
+    CONFIRM_PASSWORD: 'Confirm Password',
+    PASSWORDS_MUST_MATCH: 'Passwords must match'
   },
 
   // Loading and Status
@@ -149,3 +168,6 @@ export const getGameText = (key) => getUIText('GAME', key);
 export const getErrorText = (key) => getUIText('ERROR', key);
 
 export default UIText;
+
+
+

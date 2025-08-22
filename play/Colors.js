@@ -4,8 +4,7 @@
  *
  * play/Colors.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
- * Interworldly Adventuring, LLC of Portland, OR, USA.
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2024 CIWTA
  *
  * This program is Free Software:  you can redistribute it and/or modify
  * it  under the  terms  of the  GNU Affero  General  Public License  as

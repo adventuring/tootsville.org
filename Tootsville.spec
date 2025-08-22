@@ -21,7 +21,7 @@
 
 Summary: Tootsville
 Name: Tootsville
-Version: 0.3.6
+Version: 0.7.0
 Release: 1
 License: AGPL
 BuildArchitectures: x86_64
@@ -29,24 +29,31 @@ URL: https://www.tootsville.org/development
 Source0: https://goethe.tootsville.org/Software/Dist/${name}-%{version}.tar.bz2
 Group: Games/Servers
 BuildRoot: %{_tmppath}/%{name}-root
-Prereq: info
-Prereq: nroff
+# Runtime dependencies
 Requires: readline
-Requires: sbcl = 1.4.6
-Requires: tetex
-BuildRequires: closure-compile
-BuildRequires: curl
-BuildRequires: emacs-nox
-BuildRequires: gnupg
-BuildRequires: nodejs-less
-BuildRequires: nodejs-source-map
+Requires: sbcl >= 2.3.0
+Requires: systemd
+Requires: openssl
+Requires: sqlite3
+Requires: mariadb-client
+Requires: httpd
+Requires: nodejs >= 18.0.0
+Requires: npm >= 9.0.0
+
+# Build dependencies
 BuildRequires: readline-devel
-BuildRequires: rlwrap
-BuildRequires: sharutils
-BuildRequires: texinfo >= 4.0
-BuildRequires: texinfo-tex
-BuildRequires: time
-BuildRequires: uglify-js
+BuildRequires: openssl-devel
+BuildRequires: sqlite3-devel
+BuildRequires: mariadb-devel
+BuildRequires: nodejs-devel
+BuildRequires: npm
+BuildRequires: curl
+BuildRequires: git
+BuildRequires: make
+BuildRequires: gcc
+BuildRequires: gcc-c++
+BuildRequires: texinfo
+BuildRequires: systemd-rpm-macros
 
 %description
 Tootsville game servers installation package. See
@@ -83,40 +90,110 @@ Server core that runs users, gossip, and world endpoints (middle tier)
 %setup -c -q
 
 %build
+# Build the Lisp backend
+cd lib/tootsville.net
+make clean
+make Tootsville
 
-make -C servers
+# Build the React frontend
+cd ../../react-migration
+npm install --legacy-peer-deps
+npm run build
+
+# Build the play client
+cd ../play
+npm install --legacy-peer-deps
+make
 
 %install
-
 rm -rf '%{buildroot}'
 
+# Create directory structure
 mkdir -p '%{buildroot}'/usr/local/bin
-install -c -m 0755 Tootsville '%{buildroot}'/usr/local/bin
+mkdir -p '%{buildroot}'/usr/local/lib/tootsville
+mkdir -p '%{buildroot}'/var/log/tootsville
+mkdir -p '%{buildroot}'/var/lib/tootsville
+mkdir -p '%{buildroot}'/etc/tootsville
+mkdir -p '%{buildroot}'/usr/lib/systemd/system
+mkdir -p '%{buildroot}'/usr/share/tootsville/www
+mkdir -p '%{buildroot}'/usr/share/tootsville/play
 
-mkdir -p '%{buildroot}'/var/log/Tootsville
+# Install Lisp binary
+install -c -m 0755 lib/tootsville.net/Tootsville '%{buildroot}'/usr/local/bin/
 
-mkdir -p '%{buildroot}'/usr/lib/systemd/system/
-install -c -m 0644 Tootsville.service \
-  '%{buildroot}'/usr/lib/systemd/system/
+# Install frontend files
+cp -r react-migration/build/* '%{buildroot}'/usr/share/tootsville/www/
+cp -r play/dist/* '%{buildroot}'/usr/share/tootsville/play/
 
-/sbin/install-info '--info-dir=%{_infodir}' --delete \
-  '%{_infodir}/Tootsville.info'
+# Install configuration files
+install -c -m 0644 lib/tootsville.net/config.lisp '%{buildroot}'/etc/tootsville/
+install -c -m 0644 httpd.conf '%{buildroot}'/etc/tootsville/
 
-%post servers
-useradd --system pil # FIXME
-systemctl enable Tootsville
-systemctl start Tootsville
+# Install systemd service
+install -c -m 0644 tootsville.service '%{buildroot}'/usr/lib/systemd/system/
 
-%files servers
+%post
+# Create system user
+getent group tootsville >/dev/null || groupadd -r tootsville
+getent passwd tootsville >/dev/null || useradd -r -g tootsville -d /var/lib/tootsville -s /sbin/nologin tootsville
+
+# Set up directories
+mkdir -p /var/lib/tootsville
+chown tootsville:tootsville /var/lib/tootsville
+chown tootsville:tootsville /var/log/tootsville
+
+# Enable and start services
+systemctl daemon-reload
+systemctl enable tootsville
+systemctl enable httpd
+
+%preun
+# Stop services before removal
+systemctl stop tootsville || true
+systemctl stop nginx || true
+
+%postun
+# Clean up user if package is being removed
+if [ $1 -eq 0 ]; then
+    userdel tootsville 2>/dev/null || true
+    groupdel tootsville 2>/dev/null || true
+fi
+
+%files
 %defattr(-,root,root)
-/usr/local/bin/Tootsville
-/usr/lib/systemd/system/Tootsville.service
+%license LICENSE
+%doc README.org docs/
 
-%doc %{_infodir}/Tootsville.info*
+# Binaries
+/usr/local/bin/Tootsville
+
+# Configuration
+%config /etc/tootsville/
+%config /etc/nginx/conf.d/tootsville.conf
+
+# Web content
+/usr/share/tootsville/www/
+/usr/share/tootsville/play/
+
+# Systemd service
+/usr/lib/systemd/system/tootsville.service
+
+# Logs and data directories
+%dir /var/log/tootsville
+%dir /var/lib/tootsville
 
 # 
 
 %changelog
 
-* Wed Oct 10 2018 Bruce-Robert Pocock <brpocock@tootsville.org>
+* Wed Jan 22 2025 Bruce-Robert Pocock <brpocock@tootsville.org> - 0.7.0-1
+- Updated to version 0.7.0
+- Added comprehensive RPM packaging for Fedora 42
+- Updated dependencies for modern SBCL and Node.js
+- Added systemd service integration
+- Added nginx configuration
+- Added proper user/group management
+- Added comprehensive build and install procedures
+
+* Wed Oct 10 2018 Bruce-Robert Pocock <brpocock@tootsville.org> - 0.3.6-1
 - Initial, non-functional sketch

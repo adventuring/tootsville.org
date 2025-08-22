@@ -2,7 +2,7 @@
  * GameStore - Central state management for Tootsville game
  * Preserves existing data structures while providing reactive state management
  * 
- * Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2021, 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
+ * Copyright © 2025 Interworldly Adventuring, LLC. This program is Free Software; Refer to COPYING.AGPL for details.
  */
 
 import { create } from 'zustand';

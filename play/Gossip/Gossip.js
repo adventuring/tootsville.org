@@ -21,13 +21,7 @@
  * License     along    with     this     program.     If    not,     see
  * <https://www.gnu.org/licenses/>.
  *
- * You can reach CIWTA at https://ciwta.org/, or write to us at:
- *
- * PO Box 23095
- *
- * Oakland Park, FL 33307-3095
- *
- * USA
+ * You can reach Interworldly Adventuring, LLC at https://interworldly.com/
  *
  */
 
@@ -162,15 +156,14 @@ Tootsville.Gossip.closeInfinityMode = function (peer, event)
  * Ensure that we have at least 5 gossip network connections.
  */
 Tootsville.Gossip.ensureConnected = function (success)
-{ return new Promise ( () => { return false; } );;
-  /* ↑ Disabled for now. */
-  return new Promise ( () =>
+{ return new Promise ( () =>
                        { let length = Tootsville.Gossip.peers.length;
                          if (length > 4)
                          { Tootsville.warn ("Gossipnet already connected at " + length + " points");
                            success (); } else
                          { Tootsville.warn ("Gossipnet has " + length + " connections; adding one …");
-                           Tootsville.Gossip.connect (success); } } ); };
+                           Tootsville.Gossip.connect (success); } } );
+};
 
 
 /**

@@ -3,7 +3,7 @@
  * @module GameWorld
  * @author Interworldly Adventuring, LLC
  * @copyright Copyright © 2025 Interworldly Adventuring, LLC.
- * This program is Free Software; Refer to COPYING.AGPL for details.
+ * @license AGPL
  */
 
 import React, { useRef, useEffect, useMemo } from 'react';

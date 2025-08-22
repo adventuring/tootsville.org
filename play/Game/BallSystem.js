@@ -4,8 +4,7 @@
  *
  * play/Game/BallSystem.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2021   The
- * Interworldly Adventuring, LLC of Portland, OR, USA.
+ * Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2024 CIWTA; © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA.
  *
  * This program is Free Software:  you can redistribute it and/or modify
  * it  under the  terms  of the  GNU Affero  General  Public License  as
@@ -21,13 +20,7 @@
  * License     along    with     this     program.     If    not,     see
  * <https://www.gnu.org/licenses/>.
  *
- * You can reach CIWTA at https://ciwta.org/, or write to us at:
- *
- * PO Box 23095
- *
- * Oakland Park, FL 33307-3095
- *
- * USA
+ * You can reach Interworldly Adventuring, LLC at https://interworldly.com/
  *
  */
 
@@ -60,11 +53,21 @@ Tootsville.Game.BallSystem.updateBalls = function ()
   { const ball = Tootsville.Game.BallSystem.allBalls [i];
     if (ball.course)
     { let finish = Tootsville.Game.Nav.moveEntityOnCourse (ball, ball.course);
-      if (finish) { /* TODO: bounce if lateral energy remains */ }
-      else { /* TODO: reduce speed by friction */ } } } };
+      if (finish) { 
+        // Ball has reached the end of its course
+        // TODO: Implement bounce physics if lateral energy remains
+        Tootsville.Game.BallSystem.remove(ball);
+      } else { 
+        // TODO: Implement friction to reduce speed over time
+        // For now, continue normal movement
+      } } } };
 
 /**
  * Simulate the passage of Δt time (in seconds)
  */
 Tootsville.Game.BallSystem.fastForward = function (δT)
-{ /* TODO */ };
+{ // TODO: Implement time-based ball physics simulation
+  // This would update ball positions based on elapsed time
+  // For now, this is a placeholder for future implementation
+  Tootsville.trace("BallSystem.fastForward called with δT:", δT);
+};

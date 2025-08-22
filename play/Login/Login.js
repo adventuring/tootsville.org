@@ -484,11 +484,14 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
 
   let yahoo = new window.firebase.auth.OAuthProvider('yahoo.com');
   yahoo.setCustomParameters({ prompt: 'login' });
-  document.getElementById ('login-13').innerHTML += `
-<center>
-  <button id="firebase-sign-in-with-twitter">Sign in with <i class="fab fa-twitter"></i> Twitter</button>
-  <button id="firebase-sign-in-with-yahoo">Sign in with <i class="fab fa-yahoo"></i> Yahoo!</button>
-</center>`;
+              document.getElementById ('login-13').innerHTML += `
+          <center>
+           <button id="firebase-sign-in-with-github">Sign in with <i class="fab fa-github"></i> GitHub</button>
+           <button id="firebase-sign-in-with-microsoft">Sign in with <i class="fab fa-microsoft"></i> Microsoft</button>
+           <button id="firebase-sign-in-with-yahoo">Sign in with <i class="fab fa-yahoo"></i> Yahoo!</button>
+           <button id="firebase-sign-in-with-apple">Sign in with <i class="fab fa-apple"></i> Apple</button>
+           <button id="firebase-sign-in-with-bluesky">Sign in with <i class="fas fa-cloud"></i> Bluesky</button>
+          </center>`;
   document.getElementById ('firebase-sign-in-with-yahoo').addEventListener (
       'click',
       function () {
@@ -503,18 +506,70 @@ Tootsville.Login.firebaseLogin = function (loginPanel)
                                                "Something went wrong ☹",
                                                "Go Back");
            }); });
-  let twitter = new window.firebase.auth.TwitterAuthProvider ();
-  document.getElementById ('firebase-sign-in-with-twitter').addEventListener (
-      'click',
-      function () {
-          window.firebase.auth().signInWithPopup (twitter).then
-          (result => {
-              console.info ("Got Twitter login", result);
-              Tootsville.Login.storeCredentialInfo (result);
-          },
-           error => {
-               console.error ("Error with Twittter login", error);
-               Tootsville.UI.makePrettyDialog ("Error with Twitter login",
+     let github = new window.firebase.auth.OAuthProvider('github.com');
+   github.setCustomParameters({ prompt: 'login' });
+   document.getElementById ('firebase-sign-in-with-github').addEventListener (
+       'click',
+       function () {
+           window.firebase.auth().signInWithPopup (github).then
+           (result => {
+               console.info ("Got GitHub login", result);
+               Tootsville.Login.storeCredentialInfo (result);
+           },
+            error => {
+               console.error ("Error with GitHub login", error);
+               Tootsville.UI.makePrettyDialog ("Error with GitHub login",
+                                               "Something went wrong ☹",
+                                               "Go Back");
+           }); });
+   
+   let microsoft = new window.firebase.auth.OAuthProvider('microsoft.com');
+   microsoft.setCustomParameters({ prompt: 'login' });
+   document.getElementById ('firebase-sign-in-with-microsoft').addEventListener (
+       'click',
+       function () {
+           window.firebase.auth().signInWithPopup (microsoft).then
+           (result => {
+               console.info ("Got Microsoft login", result);
+               Tootsville.Login.storeCredentialInfo (result);
+           },
+            error => {
+               console.error ("Error with Microsoft login", error);
+               Tootsville.UI.makePrettyDialog ("Error with Microsoft login",
+                                               "Something went wrong ☹",
+                                               "Go Back");
+           }); });
+   
+   let apple = new window.firebase.auth.OAuthProvider('apple.com');
+   apple.setCustomParameters({ prompt: 'login' });
+   document.getElementById ('firebase-sign-in-with-apple').addEventListener (
+       'click',
+       function () {
+           window.firebase.auth().signInWithPopup (apple).then
+           (result => {
+               console.info ("Got Apple login", result);
+                 Tootsville.Login.storeCredentialInfo (result);
+             },
+              error => {
+                 console.error ("Error with Apple login", error);
+                 Tootsville.UI.makePrettyDialog ("Error with Apple login",
+                                                 "Something went wrong ☹",
+                                                 "Go Back");
+             }); });
+   
+   let bluesky = new window.firebase.auth.OAuthProvider('bluesky.social');
+   bluesky.setCustomParameters({ prompt: 'login' });
+   document.getElementById ('firebase-sign-in-with-bluesky').addEventListener (
+       'click',
+       function () {
+           window.firebase.auth().signInWithPopup (bluesky).then
+           (result => {
+               console.info ("Got Bluesky login", result);
+               Tootsville.Login.storeCredentialInfo (result);
+           },
+            error => {
+               console.error ("Error with Bluesky login", error);
+               Tootsville.UI.makePrettyDialog ("Error with Bluesky login",
                                                "Something went wrong ☹",
                                                "Go Back");
            }); });

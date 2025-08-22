@@ -44,7 +44,7 @@ jest.mock('three', () => ({
   WebGLRenderer: jest.fn().mockImplementation(() => ({
     setSize: jest.fn(),
     render: jest.fn(),
-    domElement: document.createElement('canvas'),
+    domElement: { addEventListener: jest.fn(), removeEventListener: jest.fn() },
     dispose: jest.fn()
   })),
   AmbientLight: jest.fn().mockImplementation(() => ({
@@ -53,7 +53,13 @@ jest.mock('three', () => ({
   DirectionalLight: jest.fn().mockImplementation(() => ({
     position: { set: jest.fn() },
     castShadow: jest.fn()
-  }))
+  })),
+  Vector3: jest.fn().mockImplementation((x, y, z) => ({ x, y, z })),
+  Vector2: jest.fn().mockImplementation((x, y) => ({ x, y })),
+  Quaternion: jest.fn().mockImplementation((x, y, z, w) => ({ x, y, z, w })),
+  Matrix4: jest.fn().mockImplementation(() => ({ elements: new Array(16).fill(0) })),
+  Euler: jest.fn().mockImplementation((x, y, z) => ({ x, y, z })),
+  Color: jest.fn().mockImplementation((color) => ({ color }))
 }));
 
 describe('GameWorld Component', () => {
@@ -193,16 +199,16 @@ describe('GameWorld Component', () => {
     test('handles keyboard movement input', () => {
       render(<GameWorld />);
       
-      fireEvent.keyDown(document, { key: 'w' });
+      fireEvent.keyDown(document, { key: 'ArrowUp' });
       expect(mockGameStore.moveAvatar).toHaveBeenCalledWith('forward');
       
-      fireEvent.keyDown(document, { key: 's' });
+      fireEvent.keyDown(document, { key: 'ArrowDown' });
       expect(mockGameStore.moveAvatar).toHaveBeenCalledWith('backward');
       
-      fireEvent.keyDown(document, { key: 'a' });
+      fireEvent.keyDown(document, { key: 'ArrowLeft' });
       expect(mockGameStore.moveAvatar).toHaveBeenCalledWith('left');
       
-      fireEvent.keyDown(document, { key: 'd' });
+      fireEvent.keyDown(document, { key: 'ArrowRight' });
       expect(mockGameStore.moveAvatar).toHaveBeenCalledWith('right');
     });
 
@@ -230,7 +236,7 @@ describe('GameWorld Component', () => {
       mockGameStore.isConnected = false;
       render(<GameWorld />);
       
-      fireEvent.keyDown(document, { key: 'w' });
+      fireEvent.keyDown(document, { key: 'ArrowUp' });
       expect(mockGameStore.moveAvatar).not.toHaveBeenCalled();
     });
 
@@ -396,6 +402,263 @@ describe('GameWorld Component', () => {
       render(<GameWorld config={null} />);
       expect(screen.getByTestId('game-world')).toBeInTheDocument();
     });
+
+    test('handles undefined props gracefully', () => {
+      render(<GameWorld config={undefined} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles invalid config object', () => {
+      render(<GameWorld config={{ invalid: 'config', with: null, values: undefined }} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles negative dimensions', () => {
+      render(<GameWorld width={-100} height={-200} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles zero dimensions', () => {
+      render(<GameWorld width={0} height={0} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles extremely large dimensions', () => {
+      render(<GameWorld width={999999} height={999999} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles NaN values', () => {
+      render(<GameWorld width={NaN} height={NaN} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles Infinity values', () => {
+      render(<GameWorld width={Infinity} height={Infinity} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles null store values', () => {
+      mockGameStore.avatars = null;
+      mockGameStore.items = null;
+      mockGameStore.terrain = null;
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles undefined store values', () => {
+      mockGameStore.avatars = undefined;
+      mockGameStore.items = undefined;
+      mockGameStore.terrain = undefined;
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles malformed avatar data', () => {
+      mockGameStore.avatars = [
+        null,
+        undefined,
+        { id: 'invalid-id' },
+        { name: 'no-id-avatar' },
+        { id: 123, name: null },
+        { id: 456, name: undefined },
+        { id: 789, name: '' },
+        { id: 999, name: 123 }, // non-string name
+        { id: 888, name: {} }, // object name
+        { id: 777, name: [] }  // array name
+      ];
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles malformed item data', () => {
+      mockGameStore.items = [
+        null,
+        undefined,
+        { id: 'invalid-id' },
+        { name: 'no-id-item' },
+        { id: 123, name: null },
+        { id: 456, name: undefined },
+        { id: 789, name: '' },
+        { id: 999, name: 123 }, // non-string name
+        { id: 888, name: {} }, // object name
+        { id: 777, name: [] }  // array name
+      ];
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles circular references in data', () => {
+      const circularObj = { id: 1, name: 'circular' };
+      circularObj.self = circularObj;
+      mockGameStore.avatars = [circularObj];
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles deeply nested objects', () => {
+      const deepObj = { level1: { level2: { level3: { level4: { level5: { value: 'deep' } } } } } };
+      mockGameStore.terrain = deepObj;
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles function props', () => {
+      render(<GameWorld onError={() => {}} onLoad={() => {}} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles boolean props', () => {
+      render(<GameWorld debug={true} showFPS={false} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles array props', () => {
+      render(<GameWorld plugins={[]} features={['feature1', 'feature2']} />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles empty string props', () => {
+      render(<GameWorld className="" id="" />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles whitespace-only string props', () => {
+      render(<GameWorld className="   " id="  " />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles special characters in props', () => {
+      render(<GameWorld className="test-class-!@#$%^&*()" id="test-id-!@#$%^&*()" />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles unicode characters in props', () => {
+      render(<GameWorld className="test-class-🚀🎮" id="test-id-🚀🎮" />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles store method failures gracefully', () => {
+      mockGameStore.connect.mockImplementation(() => {
+        throw new Error('Connection failed');
+      });
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles communication service failures', () => {
+      mockCommunicationService.connect.mockImplementation(() => {
+        throw new Error('Communication failed');
+      });
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles missing DOM elements', () => {
+      // Mock document.getElementById to return null
+      const originalGetElementById = document.getElementById;
+      document.getElementById = jest.fn().mockReturnValue(null);
+      
+      render(<GameWorld />);
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+      
+      // Restore original function
+      document.getElementById = originalGetElementById;
+    });
+
+    test('handles window resize events', () => {
+      render(<GameWorld />);
+      
+      act(() => {
+        window.dispatchEvent(new Event('resize'));
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles visibility change events', () => {
+      render(<GameWorld />);
+      
+      act(() => {
+        Object.defineProperty(document, 'hidden', {
+          writable: true,
+          value: true
+        });
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles network status changes', () => {
+      render(<GameWorld />);
+      
+      act(() => {
+        Object.defineProperty(navigator, 'onLine', {
+          writable: true,
+          value: false
+        });
+        window.dispatchEvent(new Event('offline'));
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles memory pressure events', () => {
+      render(<GameWorld />);
+      
+      act(() => {
+        window.dispatchEvent(new Event('memorywarning'));
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles multiple rapid renders', () => {
+      const { rerender } = render(<GameWorld />);
+      
+      for (let i = 0; i < 100; i++) {
+        rerender(<GameWorld key={i} />);
+      }
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles concurrent state updates', () => {
+      render(<GameWorld />);
+      
+      act(() => {
+        // Simulate concurrent updates
+        mockGameStore.isConnected = true;
+        mockGameStore.isLoading = true;
+        mockGameStore.error = 'test error';
+        useGameStore.mockReturnValue(mockGameStore);
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles store state mutations', () => {
+      render(<GameWorld />);
+      
+      act(() => {
+        // Directly mutate store state
+        mockGameStore.avatars.push({ id: 999, name: 'mutated' });
+        useGameStore.mockReturnValue(mockGameStore);
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
+
+    test('handles component prop changes during render', () => {
+      const { rerender } = render(<GameWorld />);
+      
+      act(() => {
+        rerender(<GameWorld config={{ changed: true }} />);
+      });
+      
+      expect(screen.getByTestId('game-world')).toBeInTheDocument();
+    });
   });
 
   describe('Integration with Child Components', () => {
@@ -452,3 +715,4 @@ describe('GameWorld Component', () => {
     });
   });
 });
+

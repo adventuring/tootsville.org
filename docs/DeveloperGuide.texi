@@ -1,0 +1,832 @@
+\input texinfo
+@c -*-texinfo-*-
+@c %**start of header
+@setfilename Tootsville.info
+@settitle Tootsville Developer's Guide
+@documentencoding UTF-8
+@documentlanguage en
+@c %**end of header
+
+@copying
+Copyright @copyright{} 2008-2017 Bruce-Robert Pocock; @copyright{} 2018-2024 CIWTA; @copyright{} 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA.
+
+This program is Free Software; you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see @url{https://www.gnu.org/licenses/}.
+
+You can reach Interworldly Adventuring, LLC at @url{https://interworldly.com/}.
+@end copying
+
+@titlepage
+@title Tootsville Developer's Guide
+@subtitle React + Three.js Client Implementation
+@author Interworldly Adventuring, LLC
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@node Top, Introduction, (dir), (dir)
+@top Tootsville Developer's Guide
+
+This document provides comprehensive documentation for developers working on the Tootsville React client implementation.
+
+@menu
+* Introduction::                Overview of the Tootsville project
+* Architecture::                System architecture and design
+* Installation::                Setting up the development environment
+* Components::                  React component documentation
+* Services::                    Service layer documentation
+* Stores::                      State management with Zustand
+* Testing::                     Unit and integration testing
+* Build System::                Build and deployment process
+* API Reference::               Complete API documentation
+* Contributing::                Guidelines for contributors
+* Index::                       Index of concepts and functions
+@end menu
+
+@node Introduction, Architecture, Top, Top
+@chapter Introduction
+
+@menu
+* Project Overview::            What is Tootsville?
+* Technology Stack::            React, Three.js, and related technologies
+* Design Principles::           Core design principles and patterns
+@end menu
+
+@node Project Overview, Technology Stack, Introduction, Introduction
+@section Project Overview
+
+Tootsville is a 3D virtual world game built with modern web technologies. The client is implemented using React and Three.js, providing a rich, interactive experience across multiple platforms.
+
+@subsection Key Features
+
+@itemize
+@item Real-time 3D graphics with Three.js
+@item Cross-platform support (desktop, mobile, smart TV)
+@item WebSocket-based communication with Lisp server
+@item Modern React architecture with hooks
+@item Comprehensive unit testing
+@item Accessibility-first design
+@end itemize
+
+@node Technology Stack, Design Principles, Project Overview, Introduction
+@section Technology Stack
+
+@subsection Frontend Technologies
+
+@table @asis
+@item React 18.2.0
+Modern UI library with hooks and functional components
+
+@item Three.js 0.157.0
+3D graphics library for WebGL rendering
+
+@item React Three Fiber 8.15.0
+React renderer for Three.js
+
+@item React Three Drei 9.88.0
+Useful helpers for React Three Fiber
+
+@item Zustand 4.4.0
+Lightweight state management
+@end table
+
+@subsection Development Tools
+
+@table @asis
+@item React Scripts 5.0.1
+Build tool and development server
+
+@item Jest
+Unit testing framework
+
+@item ESLint
+Code linting and formatting
+
+@item Webpack
+Module bundling
+@end table
+
+@node Design Principles, , Technology Stack, Introduction
+@section Design Principles
+
+@subsection Object-Oriented Design
+
+All components follow object-oriented principles with clear separation of concerns:
+
+@itemize
+@item Single Responsibility Principle
+@item Open/Closed Principle
+@item Dependency Inversion
+@item Interface Segregation
+@end itemize
+
+@subsection Component Architecture
+
+Components are designed to be:
+
+@itemize
+@item Reusable and composable
+@item Testable in isolation
+@item Accessible by default
+@item Performance optimized
+@end itemize
+
+@node Architecture, Installation, Introduction, Top
+@chapter Architecture
+
+@menu
+* System Overview::             High-level system architecture
+* Component Hierarchy::         React component structure
+* State Management::            Zustand store architecture
+* Communication Layer::         WebSocket communication
+* 3D Rendering::               Three.js integration
+@end menu
+
+@node System Overview, Component Hierarchy, Architecture, Architecture
+@section System Overview
+
+The Tootsville client follows a layered architecture:
+
+@example
+┌─────────────────────────────────────┐
+│              UI Layer               │
+│  (React Components + Three.js)      │
+├─────────────────────────────────────┤
+│           State Layer               │
+│         (Zustand Stores)            │
+├─────────────────────────────────────┤
+│         Service Layer               │
+│    (Communication, Platform)        │
+├─────────────────────────────────────┤
+│         External APIs               │
+│    (WebSocket, WebGL, etc.)         │
+└─────────────────────────────────────┘
+@end example
+
+@node Component Hierarchy, State Management, System Overview, Architecture
+@section Component Hierarchy
+
+@example
+App
+├── ErrorBoundary
+├── GameProvider
+├── GameWorld
+│   ├── WorldScene
+│   ├── Ground
+│   ├── WorldObjects
+│   ├── Character
+│   ├── WorldItem
+│   └── WeatherEffects
+├── GameHUD
+├── LoginScreen
+└── LoadingScreen
+@end example
+
+@node State Management, Communication Layer, Component Hierarchy, Architecture
+@section State Management
+
+State is managed using Zustand stores:
+
+@itemize
+@item @code{GameStore} - Global game state
+@item @code{UserStore} - User authentication and profile
+@item @code{WorldStore} - 3D world state
+@item @code{UISStore} - User interface state
+@end itemize
+
+@node Communication Layer, 3D Rendering, State Management, Architecture
+@section Communication Layer
+
+The communication layer preserves backwards compatibility with the existing Lisp server:
+
+@itemize
+@item WebSocket-based communication
+@item Protocol compatibility layer
+@item Automatic reconnection
+@item Message queuing
+@item Error handling
+@end itemize
+
+@node 3D Rendering, , Communication Layer, Architecture
+@section 3D Rendering
+
+Three.js integration provides:
+
+@itemize
+@item Real-time 3D graphics
+@item Lighting and shadows
+@item Particle effects
+@item Animation system
+@item Performance optimization
+@end itemize
+
+@node Installation, Components, Architecture, Top
+@chapter Installation
+
+@menu
+* Prerequisites::               Required software and tools
+* Setup Process::               Step-by-step installation
+* Configuration::               Environment configuration
+* Verification::                Testing the installation
+@end menu
+
+@node Prerequisites, Setup Process, Installation, Installation
+@section Prerequisites
+
+@itemize
+@item Node.js 16.0 or higher
+@item npm 8.0 or higher
+@item Git
+@item Modern web browser
+@item WebGL support
+@end itemize
+
+@node Setup Process, Configuration, Prerequisites, Installation
+@section Setup Process
+
+@enumerate
+@item Clone the repository:
+@example
+git clone https://github.com/interworldly/tootsville.org.git
+cd tootsville.org
+@end example
+
+@item Install dependencies:
+@example
+cd play/react
+npm install
+@end example
+
+@item Start development server:
+@example
+npm start
+@end example
+@end enumerate
+
+@node Configuration, Verification, Setup Process, Installation
+@section Configuration
+
+Create a @file{.env} file in the @file{play/react} directory:
+
+@example
+REACT_APP_SERVER_URL=ws://localhost:5000
+REACT_APP_API_URL=http://localhost:5000
+REACT_APP_ENVIRONMENT=development
+@end example
+
+@node Verification, , Configuration, Installation
+@section Verification
+
+Run the test suite to verify installation:
+
+@example
+npm test
+@end example
+
+@node Components, Services, Installation, Top
+@chapter Components
+
+@menu
+* GameWorld::                   Main 3D world component
+* GameHUD::                     Heads-up display component
+* LoginScreen::                 Authentication component
+* ErrorBoundary::               Error handling component
+@end menu
+
+@node GameWorld, GameHUD, Components, Components
+@section GameWorld
+
+@deftypefn {Component} {JSX.Element} GameWorld (@var{props})
+
+Main 3D world component that manages the Three.js scene and game rendering.
+
+@var{props} may contain:
+@table @asis
+@item @code{onWorldReady} (Function)
+Callback when the world is initialized
+@end table
+
+@strong{Example:}
+@example
+<GameWorld onWorldReady={(commService) => {
+  console.log('World ready:', commService);
+}} />
+@end example
+
+@strong{Implementation Details:}
+@itemize
+@item Initializes WebSocket communication
+@item Sets up Three.js scene
+@item Manages loading states
+@item Handles error conditions
+@end itemize
+@end deftypefn
+
+@node GameHUD, LoginScreen, GameWorld, Components
+@section GameHUD
+
+@deftypefn {Component} {JSX.Element} GameHUD (@var{props})
+
+Heads-up display component for game interface elements.
+
+@var{props} may contain:
+@table @asis
+@item @code{onLogout} (Function)
+Logout callback function
+@item @code{communicationService} (Object)
+Communication service instance
+@end table
+
+@strong{Features:}
+@itemize
+@item Player status display
+@item Chat interface
+@item Inventory access
+@item Settings menu
+@item Connection status
+@end itemize
+@end deftypefn
+
+@node LoginScreen, ErrorBoundary, GameHUD, Components
+@section LoginScreen
+
+@deftypefn {Component} {JSX.Element} LoginScreen (@var{props})
+
+User authentication component with login and registration functionality.
+
+@var{props} may contain:
+@table @asis
+@item @code{onLogin} (Function)
+Login callback function
+@end table
+
+@strong{Features:}
+@itemize
+@item Username/password login
+@item Email registration
+@item Form validation
+@item Error handling
+@item Loading states
+@end itemize
+@end deftypefn
+
+@node ErrorBoundary, , LoginScreen, Components
+@section ErrorBoundary
+
+@deftypefn {Component} {JSX.Element} ErrorBoundary (@var{props})
+
+React error boundary component for catching and handling JavaScript errors.
+
+@strong{Features:}
+@itemize
+@item Catches component errors
+@item Displays fallback UI
+@item Logs error information
+@item Provides recovery options
+@end itemize
+@end deftypefn
+
+@node Services, Stores, Components, Top
+@chapter Services
+
+@menu
+* CommunicationService::        WebSocket communication
+* MobilePlatformService::       Platform detection and optimization
+@end menu
+
+@node CommunicationService, MobilePlatformService, Services, Services
+@section CommunicationService
+
+@deftypefn {Class} {CommunicationService} CommunicationService ()
+
+WebSocket communication service for connecting to the Tootsville server.
+
+@strong{Methods:}
+
+@deftypefn {Method} {Promise<boolean>} connect (@var{cluster})
+
+Connect to the Tootsville server.
+
+@var{cluster} is the server cluster name (e.g., 'test.tootsville.org')
+
+@strong{Returns:} Promise that resolves to connection success status
+@end deftypefn
+
+@deftypefn {Method} {void} disconnect ()
+
+Disconnect from the server.
+@end deftypefn
+
+@deftypefn {Method} {boolean} isConnected ()
+
+Check if currently connected to the server.
+
+@strong{Returns:} True if connected, false otherwise
+@end deftypefn
+
+@deftypefn {Method} {void} send (@var{message})
+
+Send a message to the server.
+
+@var{message} is the message object to send
+@end deftypefn
+
+@deftypefn {Method} {Function} onMessage (@var{handler})
+
+Register a message handler.
+
+@var{handler} is the function to handle incoming messages
+
+@strong{Returns:} Function to remove the handler
+@end deftypefn
+
+@strong{Example:}
+@example
+const commService = new CommunicationService();
+await commService.connect('test.tootsville.org');
+
+commService.onMessage((message) => {
+  console.log('Received:', message);
+});
+
+commService.send({
+  type: 'move',
+  data: { x: 100, y: 50, z: 200 }
+});
+@end example
+@end deftypefn
+
+@node MobilePlatformService, , CommunicationService, Services
+@section MobilePlatformService
+
+@deftypefn {Class} {MobilePlatformService} MobilePlatformService ()
+
+Mobile platform detection and optimization service.
+
+@strong{Methods:}
+
+@deftypefn {Method} {Object} detectPlatform ()
+
+Detect the current platform.
+
+@strong{Returns:} Platform information object
+@end deftypefn
+
+@deftypefn {Method} {Object} detectCapabilities ()
+
+Detect device capabilities.
+
+@strong{Returns:} Capabilities object
+@end deftypefn
+
+@deftypefn {Method} {Object} getOptimizations ()
+
+Get platform-specific optimizations.
+
+@strong{Returns:} Optimization settings object
+@end deftypefn
+
+@strong{Example:}
+@example
+const platformService = new MobilePlatformService();
+const platform = platformService.detectPlatform();
+const optimizations = platformService.getOptimizations();
+
+console.log('Platform:', platform.type);
+console.log('Optimizations:', optimizations);
+@end example
+@end deftypefn
+
+@node Stores, Testing, Services, Top
+@chapter Stores
+
+@menu
+* GameStore::                   Global game state management
+@end menu
+
+@node GameStore, , Stores, Stores
+@section GameStore
+
+@deftypefn {Store} {Object} useGameStore ()
+
+Zustand store for global game state management.
+
+@strong{State Properties:}
+
+@table @asis
+@item @code{user} (Object)
+Current user information
+@item @code{character} (Object)
+Player character data
+@item @code{world} (Object)
+3D world state
+@item @code{characters} (Array)
+Other players in the world
+@item @code{items} (Array)
+World items
+@item @code{weather} (Object)
+Weather conditions
+@item @code{connection} (Object)
+Connection status
+@item @code{ui} (Object)
+User interface state
+@end table
+
+@strong{Actions:}
+
+@deftypefn {Action} {void} setUser (@var{user})
+
+Set the current user.
+
+@var{user} is the user object
+@end deftypefn
+
+@deftypefn {Action} {void} setCharacter (@var{character})
+
+Set the player character.
+
+@var{character} is the character object
+@end deftypefn
+
+@deftypefn {Action} {void} updateWorld (@var{world})
+
+Update the world state.
+
+@var{world} is the world object
+@end deftypefn
+
+@strong{Example:}
+@example
+import { useGameStore } from './stores/GameStore';
+
+function MyComponent() {
+  const { user, character, setUser } = useGameStore();
+  
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+  
+  return (
+    <div>
+      <p>Welcome, @{user.name}!</p>
+      <p>Character: @{character.name}</p>
+    </div>
+  );
+}
+@end example
+@end deftypefn
+
+@node Testing, Build System, Stores, Top
+@chapter Testing
+
+@menu
+* Unit Testing::                Component and service testing
+* Integration Testing::          End-to-end testing
+* Test Coverage::               Coverage requirements
+@end menu
+
+@node Unit Testing, Integration Testing, Testing, Testing
+@section Unit Testing
+
+Unit tests are written using Jest and React Testing Library.
+
+@strong{Test Structure:}
+@example
+describe('ComponentName', () => {
+  it('should render correctly', () => {
+    // Test implementation
+  });
+  
+  it('should handle user interactions', () => {
+    // Test implementation
+  });
+});
+@end example
+
+@strong{Running Tests:}
+@example
+npm test
+npm run test:coverage
+@end example
+
+@node Integration Testing, Test Coverage, Unit Testing, Testing
+@section Integration Testing
+
+Integration tests verify component interactions and service integration.
+
+@strong{Test Areas:}
+@itemize
+@item Component communication
+@item Service integration
+@item State management
+@item API interactions
+@end itemize
+
+@node Test Coverage, , Integration Testing, Testing
+@section Test Coverage
+
+Minimum coverage requirements:
+
+@table @asis
+@item Statements: 80%
+@item Branches: 75%
+@item Functions: 80%
+@item Lines: 80%
+@end table
+
+@node Build System, API Reference, Testing, Top
+@chapter Build System
+
+@menu
+* Development Build::           Development server and hot reload
+* Production Build::            Optimized production build
+* Mobile Build::               Mobile platform builds
+@end menu
+
+@node Development Build, Production Build, Build System, Build System
+@section Development Build
+
+@strong{Start Development Server:}
+@example
+npm start
+@end example
+
+@strong{Features:}
+@itemize
+@item Hot module replacement
+@item Source maps
+@item Error overlay
+@item Fast refresh
+@end itemize
+
+@node Production Build, Mobile Build, Development Build, Build System
+@section Production Build
+
+@strong{Build for Production:}
+@example
+npm run build
+@end example
+
+@strong{Optimizations:}
+@itemize
+@item Code minification
+@item Tree shaking
+@item Asset optimization
+@item Bundle splitting
+@end itemize
+
+@node Mobile Build, , Production Build, Build System
+@section Mobile Build
+
+@strong{Mobile Platform Builds:}
+@example
+npm run build:android
+npm run build:ios
+npm run build:firetv
+@end example
+
+@node API Reference, Contributing, Build System, Top
+@chapter API Reference
+
+@menu
+* React Components::            Component API documentation
+* Services::                    Service API documentation
+* Utilities::                   Utility functions
+@end menu
+
+@node React Components, Services, API Reference, API Reference
+@section React Components
+
+@subsection GameWorld Component
+
+@deftypefn {Component} {JSX.Element} GameWorld (@var{props})
+
+@strong{Props:}
+@table @asis
+@item @code{onWorldReady} (Function)
+Callback when world is ready
+@end table
+
+@strong{Returns:} JSX element
+@end deftypefn
+
+@subsection GameHUD Component
+
+@deftypefn {Component} {JSX.Element} GameHUD (@var{props})
+
+@strong{Props:}
+@table @asis
+@item @code{onLogout} (Function)
+Logout callback
+@item @code{communicationService} (Object)
+Communication service
+@end table
+
+@strong{Returns:} JSX element
+@end deftypefn
+
+@node Services, Utilities, React Components, API Reference
+@section Services
+
+@subsection CommunicationService
+
+@deftypefn {Class} {CommunicationService} CommunicationService ()
+
+@strong{Methods:}
+@table @asis
+@item @code{connect(cluster)} (Promise<boolean>)
+Connect to server
+@item @code{disconnect()} (void)
+Disconnect from server
+@item @code{send(message)} (void)
+Send message
+@item @code{onMessage(handler)} (Function)
+Register message handler
+@end table
+@end deftypefn
+
+@node Utilities, , Services, API Reference
+@section Utilities
+
+@deftypefn {Function} {string} formatMessage (@var{message})
+
+Format message for server compatibility.
+
+@var{message} is the message to format
+
+@strong{Returns:} Formatted message string
+@end deftypefn
+
+@node Contributing, Index, API Reference, Top
+@chapter Contributing
+
+@menu
+* Code Style::                  Coding standards and conventions
+* Git Workflow::                Version control workflow
+* Pull Requests::               Submitting contributions
+@end menu
+
+@node Code Style, Git Workflow, Contributing, Contributing
+@section Code Style
+
+@strong{JavaScript/React:}
+@itemize
+@item Use functional components with hooks
+@item Follow ESLint configuration
+@item Use meaningful variable names
+@item Add JSDoc comments for functions
+@item Write unit tests for new features
+@end itemize
+
+@strong{File Naming:}
+@itemize
+@item Components: PascalCase (e.g., @file{GameWorld.js})
+@item Services: PascalCase (e.g., @file{CommunicationService.js})
+@item Utilities: camelCase (e.g., @file{formatMessage.js})
+@item Tests: Same name with @file{.test.js} suffix
+@end itemize
+
+@node Git Workflow, Pull Requests, Code Style, Contributing
+@section Git Workflow
+
+@enumerate
+@item Create feature branch from main
+@item Make changes with descriptive commits
+@item Write/update tests
+@item Update documentation
+@item Submit pull request
+@end enumerate
+
+@node Pull Requests, , Git Workflow, Contributing
+@section Pull Requests
+
+@strong{Requirements:}
+@itemize
+@item Descriptive title and description
+@item All tests passing
+@item Code review approval
+@item Documentation updates
+@end itemize
+
+@node Index, , Contributing, Top
+@chapter Index
+
+@printindex cp
+
+@bye
+
+
+

@@ -1,0 +1,32 @@
+[Unit]
+Description=Tootsville Game Server
+Documentation=https://www.tootsville.org/development
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=tootsville
+Group=tootsville
+WorkingDirectory=/var/lib/tootsville
+ExecStart=/usr/local/bin/Tootsville server
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tootsville
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/tootsville /var/log/tootsville
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

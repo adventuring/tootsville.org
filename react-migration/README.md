@@ -283,7 +283,7 @@ All functions include JSDoc comments for TeXinfo extraction:
 
 ## License
 
-Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2024 CIWTA, © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
+Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2024 CIWTA; © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
 
 ## Support
 

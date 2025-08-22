@@ -1,7 +1,6 @@
 # This is the Makefile for Tootsville
 #
-# Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2021 The Corporation
-# for Inter-World Tourism and Adventuring (ciwta.org).
+# Copyright © 2008-2017 Bruce-Robert Pocock; © 2018-2024 CIWTA; © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA.
 #
 # This program is  Free Software: you can redistribute  it and/or modify
 # it  under the  terms  of  the GNU  Affero  General  Public License  as
@@ -17,26 +16,67 @@
 # License     along    with     this     program.     If    not,     see
 # <https://www.gnu.org/licenses/>.
 #
-# You can reach CIWTA at https://ciwta.org/, or write to us at:
+# You can reach Interworldly Adventuring, LLC at https://interworldly.com/, or write to us at:
 #
-# PO Box 23095
-#
-# Oakland Park, FL 33307-3095
-#
-# USA
+# Interworldly Adventuring, LLC
+# Portland, OR, USA
 
-all: .deps~ htaccess play worker TODO.org TODO.scorecard
+all: .ready-20250822 htaccess play worker TODO.org TODO.scorecard docs mobile organize-artifacts
 
 test: all
 
+# Show available targets
+help:
+	@echo "🎮 Tootsville Development Commands"
+	@echo ""
+	@echo "🚀 Quick Start:"
+	@echo "  make run          - Start all development servers (backend + frontend)"
+	@echo "  make devel-serve  - Start backend server only"
+	@echo "  make devel-play   - Start play server only"
+	@echo "  make devel-www    - Start www server only"
+	@echo ""
+	@echo "🔧 Development:"
+	@echo "  make devel-test   - Start development servers in separate terminals"
+	@echo "  make devel-play-watch - Start play server with file watching"
+	@echo "  make devel-www-watch  - Start www server with file watching"
+	@echo ""
+	@echo "🏗️ Build:"
+	@echo "  make all          - Build everything"
+	@echo "  make clean        - Clean build artifacts"
+	@echo "  make test         - Run tests"
+	@echo ""
+	@echo "📦 Packaging:"
+	@echo "  make rpm          - Build RPM package"
+	@echo "  make docker-test  - Test RPM in Docker container"
+	@echo ""
+	@echo "🚀 Production:"
+	@echo "  make deploy       - Deploy to production"
+
 deploy: all deploy-www deploy-play git-tag-deployment deploy-docs
+
+# Build RPM package
+rpm: all
+	@echo "📦 Building RPM package..."
+	rpmbuild -ba Tootsville.spec
+
+# Test RPM installation in Docker container
+test: rpm
+	@echo "🧪 Testing Tootsville RPM installation in Docker..."
+	docker build -f Dockerfile.fedora42-test -t tootsville-test .
+	docker run --rm -it --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw -v $(PWD)/RPMS:/tmp tootsville-test /home/pil/test-install.sh
+
+# Live test with server running
+live-test: rpm
+	@echo "🧪 Live testing Tootsville server in Docker..."
+	docker build -f Dockerfile.fedora42-test -t tootsville-live-test .
+	docker run --rm -it --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw -v $(PWD)/RPMS:/tmp -p 5000:5000 -p 5004:5004 -p 80:80 -p 443:443 tootsville-live-test /home/pil/test-server.sh
 
 ####################
 
-.deps~:	build/build-deps bin/do-install-deps
+.ready-20250822:	build/build-deps bin/do-install-deps
 	bin/do-install-deps
 	>> ~/.sbclrc
-	>.deps~
+	>.ready-20250822
 
 ####################
 
@@ -90,6 +130,8 @@ clean:
 #################### doc
 
 doc:	js-doc
+
+docs:	doc
 
 doc/doc.css:	www/doc.less
 
@@ -208,10 +250,7 @@ TODO.org:	$(shell find */ -name \\*.lisp -o -name \\*.css -o -name \\*.js -o -na
 	git grep -Hn ☠☠☠ mesh play www build README.org \
 	 | perl -e '$$lastfile = ""; while (<>) { m/^(.*):([0-9]*):(.*)/; if ($$1 ne $$lastfile) { print "*** $$1\n\n"; $$lastfile = $$1 } print "$$2:$$3\n\n" }' >> TODO.org
 
-TODO.scorecard:	$(shell find \( -name \*.lisp -o -name \*.asd \
-	-o -name \*.js -o -name \*.less -o -name \*.html -o -name \*.htmlf \
-	-o -name \*.shtml \) -and -not -name .\*) \
-	README.org
+TODO.scorecard:	README.org
 	echo -n 'TOOTS_FIXME=' > TODO.scorecard
 	git grep FIXME mesh play www build README.org \
 	 | wc -l >> TODO.scorecard
@@ -227,12 +266,12 @@ TODO.scorecard:	$(shell find \( -name \*.lisp -o -name \*.asd \
 
 #################### bin/jscl
 
-jscl:	jscl/jscl.js
+jscl:	lib/jscl/jscl.js
 
-jscl/jscl.js: $(shell find jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
-	cd jscl; ./make.sh
-	rm jscl/jscl-node.js
-	rm jscl/jscl-web.js
+lib/jscl/jscl.js: $(shell find lib/jscl \( -name \**.lisp -or -name \**.js -or -name \**.asd \)  -and -not -name .\*)
+	cd lib/jscl; ./make.sh
+	rm lib/jscl/jscl-node.js
+	rm lib/jscl/jscl-web.js
 
 #################### www
 
@@ -242,8 +281,44 @@ dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 #################### devel-test
 
 devel-test:
-	gnome-terminal --title='Play server' --profile=Runner --tab -- $(MAKE) devel-play-watch &
-	gnome-terminal --title='WWW server' --profile=Runner --tab -- $(MAKE) devel-www-watch &
+	ptyxis --title='Play server' --tab -- $(MAKE) devel-play-watch &
+	ptyxis --title='WWW server' --tab -- $(MAKE) devel-www-watch &
+
+# Start local development server configuration
+run: build-all start-servers
+	@echo "🚀 Tootsville development servers started!"
+	@echo "📱 Play server: http://localhost:5002/play/"
+	@echo "🌐 WWW server: http://localhost:5001/"
+	@echo "🔧 Backend API: http://localhost:5000/"
+	@echo "🔌 WebSocket: ws://localhost:5004/"
+	@echo ""
+	@echo "Press Ctrl+C to stop all servers"
+
+# Build everything needed for development
+build-all:
+	@echo "🔨 Building Tootsville backend..."
+	cd lib/tootsville.net && $(MAKE) clean && $(MAKE) Tootsville
+	@echo "🔨 Building React frontend..."
+	cd react-migration && npm install --legacy-peer-deps && npm run build
+	@echo "🔨 Building play client..."
+	cd play && npm install --legacy-peer-deps && $(MAKE)
+	@echo "✅ All builds complete!"
+
+# Start all servers
+start-servers: start-backend start-frontend
+	@echo "✅ All servers started!"
+
+# Start backend server
+start-backend:
+	@echo "🔧 Starting Tootsville backend server..."
+	cd lib/tootsville.net && $(MAKE) devel-serve &
+
+# Start frontend servers
+start-frontend:
+	@echo "🌐 Starting frontend servers..."
+	$(MAKE) devel-play &
+	$(MAKE) devel-www &
+	sleep 3
 
 devel-play-watch:	devel-play
 	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done
@@ -376,7 +451,7 @@ dist/play.$(clusterorg):	worker htaccess mesh \
 mesh:	dist/play.$(clusterorg)/play/mesh.$(VERSION).min.js \
 	dist/play.$(clusterorg)/play/jscl.$(VERSION).min.js
 
-dist/play.$(clusterorg)/play/jscl.$(VERSION).min.js: jscl/jscl.js
+dist/play.$(clusterorg)/play/jscl.$(VERSION).min.js: lib/jscl/jscl.js
 	$(JSC) $$(< build/closure-compiler.opts)           \
 		--js $<  \
 		--js_output_file $@
@@ -387,7 +462,7 @@ dist/play.$(clusterorg)/play/mesh.$(VERSION).min.js: dist/mesh.js
 		--js_output_file $@
 
 dist/mesh.js: $(find mesh -name \*.lisp)
-	sbcl --load 'jscl/jscl.lisp' \
+	sbcl --load 'lib/jscl/jscl.lisp' \
 		--eval '(jscl::bootstrap)' \
 		--load 'mesh/make-mesh.lisp' \
 		--quit
@@ -530,6 +605,84 @@ dist/doc.texi: $(shell cat build/js.order) $(shell ls play/UI/panels/*.js) \
 	cp -f build/header.texi dist/doc.texi
 	perl build/extract-docs $$(grep -v lib/ build/js.order) $$(ls play/UI/panels/*.js) >> dist/doc.texi; \
 	cat build/footer.texi >> dist/doc.texi
+
+#################### mobile
+
+mobile: mobile-android mobile-ios mobile-ipad mobile-firetv mobile-windows11 mobile-symbian mobile-webos mobile-webtv
+
+mobile-android:
+	cd play/react && npm run build:android
+
+mobile-ios:
+	cd play/react && npm run build:ios
+
+mobile-ipad:
+	cd play/react && npm run build:ipad
+
+mobile-firetv:
+	cd play/react && npm run build:firetv
+
+mobile-windows11:
+	cd play/react && npm run build:windows11
+
+mobile-symbian:
+	cd play/react && npm run build:symbian
+
+mobile-webos:
+	cd play/react && npm run build:lgwebos
+
+mobile-webtv:
+	cd play/react && npm run build:webtv
+
+mobile-test: mobile
+	cd play/react && npm run test:mobile
+
+mobile-deploy: mobile
+	cd play/react && npm run deploy:mobile
+
+#################### organize-artifacts
+
+organize-artifacts: organize-docs organize-apps organize-mobile organize-server
+	@echo "✅ All build artifacts organized in dist/"
+
+organize-docs: dist/docs
+	@echo "📚 Documentation organized in dist/docs"
+
+dist/docs: docs
+	mkdir -p dist/docs
+	cp -r play/react/docs/* dist/docs/ 2>/dev/null || true
+	cp -r lib/tootsville.net/doc/* dist/docs/ 2>/dev/null || true
+	cp TODO.org dist/docs/ 2>/dev/null || true
+	cp TODO.scorecard dist/docs/ 2>/dev/null || true
+
+organize-apps: dist/apps
+	@echo "📱 Applications organized in dist/apps"
+
+dist/apps: dist/play.$(clusterorg) dist/www.$(clusterorg)
+	mkdir -p dist/apps
+	cp -r dist/play.$(clusterorg) dist/apps/ 2>/dev/null || true
+	cp -r dist/www.$(clusterorg) dist/apps/ 2>/dev/null || true
+
+organize-mobile: dist/mobile
+	@echo "📱 Mobile builds organized in dist/mobile"
+
+dist/mobile: mobile
+	mkdir -p dist/mobile
+	cp -r play/react/build/* dist/mobile/ 2>/dev/null || true
+
+organize-server: dist/server
+	@echo "🖥️ Server artifacts organized in dist/server"
+
+dist/server: lib/tootsville.net
+	mkdir -p dist/server
+	cp -r lib/tootsville.net/* dist/server/ 2>/dev/null || true
+
+#################### clean-artifacts
+
+clean-artifacts:
+	rm -rf dist/docs dist/apps dist/mobile dist/server
+	rm -rf play/react/build
+	@echo "🧹 Build artifacts cleaned"
 
 #################### deploy-docs
 
