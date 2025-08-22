@@ -1,6 +1,6 @@
 {
   "name": "tootsville-react-client",
-  "version": "0.6.15",
+  "version": "0.7.0",
   "description": "Tootsville React client - 3D virtual world game",
   "main": "index.js",
   "scripts": {

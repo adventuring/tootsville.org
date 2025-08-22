@@ -12,6 +12,7 @@ import { useGLTF, useAnimations } from '@react-three/drei';
 import { Vector3, Quaternion, Matrix4 } from 'three';
 import useGameStore from '../stores/GameStore';
 import Avatar from './Avatar';
+import { AnimatedAvatar, useAnimationManager } from './AnimationManager';
 
 /**
  * Manages all avatars in the game world including player and NPC characters
@@ -55,11 +56,12 @@ const AvatarManager = () => {
         />
       ))}
       
-      {/* Render current player avatar */}
+      {/* Render current player avatar with enhanced animation */}
       {character && (
-        <Avatar
+        <AnimatedAvatar
           key={character.id}
           avatar={character}
+          character={character}
           isPlayer={true}
           position={[activity.lat, activity.alt, activity.long]}
         />
@@ -70,6 +72,95 @@ const AvatarManager = () => {
 
 /**
  * Individual avatar component with animation and interaction support
+ * 
+ * @function Avatar
+ * @description Renders a single character avatar with animations and physics
+ * @param {Object} props - Component properties
+ * @param {Object} props.avatar - Avatar data object
+ * @param {boolean} props.isPlayer - Whether this is the current player
+ * @param {Array} props.position - Position vector [x, y, z]
+ * @returns {JSX.Element} The avatar mesh and animations
+ * 
+ * @example
+ * <Avatar 
+ *   avatar={avatarData}
+ *   isPlayer={true}
+ *   position={[0, 0, 0]}
+ * />
+ */
+const Avatar = ({ avatar, isPlayer = false, position = [0, 0, 0] }) => {
+  const meshRef = useRef();
+  const { scene, animations } = useGLTF(avatar.modelUrl);
+  const { actions } = useAnimations(animations, meshRef);
+
+  /**
+   * Animation state management
+   * @function updateAnimation
+   * @private
+   * @param {string} animationName - Name of animation to play
+   */
+  const updateAnimation = (animationName) => {
+    if (actions[animationName]) {
+      Object.values(actions).forEach(action => action.stop());
+      actions[animationName].play();
+    }
+  };
+
+  /**
+   * Handle avatar movement and animation
+   * @function handleMovement
+   * @private
+   */
+  const handleMovement = () => {
+    if (!meshRef.current) return;
+
+    // Update position
+    meshRef.current.position.set(...position);
+
+    // Update animation based on movement state
+    if (avatar.isMoving) {
+      updateAnimation('walk');
+    } else if (avatar.isRunning) {
+      updateAnimation('run');
+    } else {
+      updateAnimation('idle');
+    }
+
+    // Handle special animations
+    if (avatar.isJumping) {
+      updateAnimation('jump');
+    } else if (avatar.isSitting) {
+      updateAnimation('sit');
+    }
+  };
+
+  useFrame(() => {
+    handleMovement();
+  });
+
+  return (
+    <group ref={meshRef}>
+      <primitive object={scene} />
+      
+      {/* Interaction zone for non-player avatars */}
+      {!isPlayer && (
+        <mesh
+          position={[0, 1, 0]}
+          visible={false}
+          onClick={() => {
+            useGameStore.getState().selectAvatar(avatar.id);
+          }}
+        >
+          <cylinderGeometry args={[1, 1, 2]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+      )}
+    </group>
+  );
+};
+
+/**
+ * Avatar interaction system for player-to-player communication
  * 
  * @function AvatarInteraction
  * @description Handles avatar selection, chat, and social interactions

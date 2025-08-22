@@ -59,6 +59,16 @@ const useGameStore = create(
     avatars: {},
     inventory: [],
     
+    // Animation state tracking
+    animation: {
+      currentState: 'idle',
+      isMoving: false,
+      velocity: 0,
+      isTransitioning: false,
+      lastPosition: { x: 0, y: 0, z: 0 },
+      movementThreshold: 0.01
+    },
+    
     // Chat and communication
     chat: {
       messages: [],
@@ -74,6 +84,24 @@ const useGameStore = create(
     
     // Actions
     actions: {
+      // Animation state updates
+      updateAnimationState: (newState) => set(state => ({
+        animation: { ...state.animation, ...newState }
+      })),
+      
+      setCharacterMoving: (isMoving) => set(state => ({
+        animation: { ...state.animation, isMoving }
+      })),
+      
+      updateCharacterPosition: (position) => set(state => ({
+        animation: { 
+          ...state.animation, 
+          lastPosition: position,
+          isMoving: state.animation.lastPosition && 
+            Math.abs(position.x - state.animation.lastPosition.x) > state.animation.movementThreshold ||
+            Math.abs(position.z - state.animation.lastPosition.z) > state.animation.movementThreshold
+        }
+      })),
       // Authentication
       setCharacter: (character) => set({ character }),
       setPlayer: (player) => set({ player }),

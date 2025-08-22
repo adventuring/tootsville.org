@@ -1,6 +1,6 @@
 {
   "name": "tootsville-react-client",
-  "version": "1.0.0",
+  "version": "0.7.0",
   "description": "Tootsville V React + Three.js client with preserved communications protocol",
   "main": "src/index.js",
   "scripts": {
