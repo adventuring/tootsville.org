@@ -91,3 +91,10 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   unobserve: vi.fn(),
   disconnect: vi.fn(),
 }))
+
+// Remove touch event properties to ensure proper touch detection
+if (typeof window !== 'undefined') {
+  delete (window as any).ontouchstart
+  delete (window as any).ontouchmove
+  delete (window as any).ontouchend
+}

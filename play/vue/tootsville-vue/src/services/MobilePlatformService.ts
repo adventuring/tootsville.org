@@ -163,7 +163,7 @@ export class MobilePlatformService {
   private initialize(): void {
     this.detectPlatform()
     this.detectCapabilities()
-    this.getOptimizations()
+    this.setOptimizations()
     this.setupEventListeners()
   }
 
@@ -208,17 +208,7 @@ export class MobilePlatformService {
         return
       }
 
-      // Samsung TV detection
-      if (userAgent.includes('smart-tv') || userAgent.includes('tizen')) {
-        this._platform.value = {
-          type: 'samsungtv',
-          isMobile: false,
-          isTablet: false,
-          isTV: true,
-          isNative: true
-        }
-        return
-      }
+
 
       // LG WebOS detection
       if (userAgent.includes('webos')) {
@@ -306,8 +296,21 @@ export class MobilePlatformService {
       return
     }
 
-    // Linux detection
+    // Linux detection (but check for TV platforms first)
     if (userAgent.includes('linux')) {
+      // Check if it's a TV platform that uses Linux
+      if (userAgent.includes('smart-tv') || userAgent.includes('tizen')) {
+        this._platform.value = {
+          type: 'samsungtv',
+          isMobile: false,
+          isTablet: false,
+          isTV: true,
+          isNative: true
+        }
+        return
+      }
+      
+      // Regular Linux
       this._platform.value = {
         type: 'linux',
         isMobile: false,
@@ -380,9 +383,9 @@ export class MobilePlatformService {
   }
 
   /**
-   * Get optimization settings based on platform
+   * Set optimization settings based on platform
    */
-  private getOptimizations(): void {
+  private setOptimizations(): void {
     const platform = this._platform.value
     const capabilities = this._capabilities.value
     const optimizations = this._optimizations.value
@@ -424,8 +427,21 @@ export class MobilePlatformService {
       optimizations.controls.gestureSupport = false
     }
 
-    // Low-end device optimizations
-    if (capabilities.maxTouchPoints === 0 && !capabilities.webGL) {
+    // Desktop optimizations (default)
+    if (!platform.isMobile && !platform.isTablet && !platform.isTV) {
+      optimizations.graphics.quality = 'high'
+      optimizations.graphics.shadows = true
+      optimizations.graphics.particles = true
+      optimizations.graphics.antialiasing = true
+      optimizations.performance.targetFPS = 60
+      optimizations.performance.maxDrawCalls = 1000
+      optimizations.performance.textureQuality = 'high'
+      optimizations.controls.virtualJoystick = false
+      optimizations.controls.gestureSupport = false
+    }
+
+    // Low-end device optimizations (overrides desktop for truly low-end devices)
+    if (capabilities.maxTouchPoints === 0 && !capabilities.webGL && platform.isMobile) {
       optimizations.graphics.quality = 'low'
       optimizations.graphics.shadows = false
       optimizations.graphics.particles = false
@@ -480,7 +496,7 @@ export class MobilePlatformService {
     this.detectPlatform()
     
     // Update optimizations
-    this.getOptimizations()
+    this.setOptimizations()
   }
 
   /**
@@ -508,8 +524,8 @@ export class MobilePlatformService {
   private detectWebGL(): boolean {
     try {
       const canvas = document.createElement('canvas')
-      return !!(window.WebGLRenderingContext && 
-               (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+      const context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+      return !!(window.WebGLRenderingContext && context)
     } catch (e) {
       return false
     }
