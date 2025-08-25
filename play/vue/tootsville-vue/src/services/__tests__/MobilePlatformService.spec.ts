@@ -14,7 +14,9 @@ const mockNavigator = {
   connection: {
     effectiveType: '4g',
     downlink: 10,
-    rtt: 50
+    rtt: 50,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn()
   }
 }
 
@@ -30,6 +32,10 @@ const mockWindow = {
   webkitAudioContext: {},
   PushManager: {},
   indexedDB: {},
+  ontouchstart: null,
+  createElement: vi.fn(() => ({
+    getContext: vi.fn(() => null)
+  })),
   localStorage: {
     setItem: vi.fn(),
     removeItem: vi.fn()

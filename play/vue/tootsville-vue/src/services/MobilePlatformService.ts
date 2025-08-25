@@ -462,20 +462,20 @@ export class MobilePlatformService {
     // Screen orientation changes
     if (this._capabilities.value.orientation) {
       window.addEventListener('orientationchange', () => {
-        this.updateOptimizations()
+        this.updateOptimizationsInternal()
       })
     }
 
     // Resize events
     window.addEventListener('resize', () => {
-      this.updateOptimizations()
+      this.updateOptimizationsInternal()
     })
   }
 
   /**
    * Update optimizations based on current conditions
    */
-  private updateOptimizations(): void {
+  private updateOptimizationsInternal(): void {
     // Re-detect platform for orientation changes
     this.detectPlatform()
     
