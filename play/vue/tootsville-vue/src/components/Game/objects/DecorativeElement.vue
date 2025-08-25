@@ -63,3 +63,4 @@ const elementColor = computed(() => {
   return colors[props.type as keyof typeof colors] || colors.default
 })
 </script>
+

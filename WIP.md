@@ -1344,3 +1344,12 @@ This document tracks all changes requested by the user and requirements discover
   - **Method Conflicts**: Resolved duplicate updateOptimizations method by renaming private method.
   - **Test Results**: AnimationManager tests passing (15/15), MobilePlatformService tests partially passing (12/19).
   - **Remaining Issues**: Platform detection logic needs adjustment for test environment expectations.
+
+**1.9 Makefile Integration & Test Coverage**
+- **Makefile Updates**: Integrated Vue tests into main project Makefile alongside FiveAM tests.
+  - **File**: `Makefile`
+  - **New Targets**: `test-lisp` (FiveAM), `test-vue` (Vitest), `test` (both)
+  - **Coverage**: Added `@vitest/coverage-v8` dependency for test coverage reporting.
+  - **Test Setup**: Created `src/test-setup.ts` for proper jsdom canvas API mocking.
+  - **Results**: Canvas API errors completely resolved, 28/35 tests passing.
+  - **Remaining**: 7 failing tests in MobilePlatformService due to platform detection logic mismatches.

@@ -204,3 +204,4 @@ onMounted(() => {
   generateWorldObjects()
 })
 </script>
+

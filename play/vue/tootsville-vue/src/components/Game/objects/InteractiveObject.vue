@@ -87,3 +87,4 @@ const onClick = () => {
   emit('click', { type: props.type, position: props.position })
 }
 </script>
+

@@ -23,7 +23,17 @@
 
 all: .ready-20250822 htaccess play worker TODO.org TODO.scorecard docs mobile organize-artifacts
 
-test: all
+test: all test-lisp test-vue
+
+# Run Common Lisp tests with FiveAM
+test-lisp:
+	@echo "🧪 Running Common Lisp tests with FiveAM..."
+	cd lib/tootsville.net && sbcl --load test/run-tests.lisp
+
+# Run Vue.js tests with Vitest
+test-vue:
+	@echo "🧪 Running Vue.js tests with Vitest..."
+	cd play/vue/tootsville-vue && pnpm test:unit --coverage --run
 
 # Show available targets
 help:
@@ -43,7 +53,9 @@ help:
 	@echo "🏗️ Build:"
 	@echo "  make all          - Build everything"
 	@echo "  make clean        - Clean build artifacts"
-	@echo "  make test         - Run tests"
+	@echo "  make test         - Run all tests (Lisp + Vue)"
+	@echo "  make test-lisp    - Run Common Lisp tests with FiveAM"
+	@echo "  make test-vue     - Run Vue.js tests with Vitest"
 	@echo ""
 	@echo "📦 Packaging:"
 	@echo "  make rpm          - Build RPM package"

@@ -51,3 +51,4 @@ const treeColor = computed(() => {
   return colors[props.type as keyof typeof colors] || colors.oak
 })
 </script>
+
