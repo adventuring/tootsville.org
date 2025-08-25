@@ -2,7 +2,7 @@
  * @fileoverview Main game HUD (Heads-Up Display) for Tootsville V
  * @module GameHUD
  * @author Interworldly Adventuring, LLC
- * Copyright © 2025 Interworldly Adventuring, LLC. This program is Free Software; Refer to COPYING.AGPL for details.
+ * Copyright © 2025 Interworldly Adventuring, LLC.
  * This program is Free Software; Refer to COPYING.AGPL for details.
  */
 

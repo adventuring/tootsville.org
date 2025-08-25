@@ -11,7 +11,6 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { Vector3, Quaternion, Matrix4 } from 'three';
 import useGameStore from '../stores/GameStore';
-import Avatar from './Avatar';
 import { AnimatedAvatar, useAnimationManager } from './AnimationManager';
 
 /**

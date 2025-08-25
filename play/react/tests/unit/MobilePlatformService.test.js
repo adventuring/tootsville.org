@@ -222,14 +222,9 @@ const mockDocument = {
   removeEventListener: jest.fn()
 };
 
-// Mock window
-const mockWindow = {
+// Update mockWindow with additional properties
+Object.assign(mockWindow, {
   navigator: mockNavigator,
-  screen: mockWindow.screen,
-  innerWidth: mockWindow.innerWidth,
-  innerHeight: mockWindow.innerHeight,
-  devicePixelRatio: mockWindow.devicePixelRatio,
-  orientation: mockWindow.orientation,
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
   requestAnimationFrame: jest.fn((cb) => setTimeout(cb, 16)),
@@ -239,7 +234,7 @@ const mockWindow = {
     addListener: jest.fn(),
     removeListener: jest.fn()
   }))
-};
+});
 
 // Mock global objects
 global.navigator = mockNavigator;

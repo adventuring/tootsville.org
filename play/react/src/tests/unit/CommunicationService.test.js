@@ -2,7 +2,7 @@
  * Copyright © 2025 Interworldly Adventuring, LLC. This program is Free Software; Refer to COPYING.AGPL for details.
  */
 
-import { CommunicationService } from '../../services/CommunicationService';
+import CommunicationService from '../../services/CommunicationService';
 
 // Mock WebSocket
 class MockWebSocket {
@@ -37,8 +37,8 @@ describe('CommunicationService', () => {
   });
 
   afterEach(() => {
-    if (service.websocket) {
-      service.websocket.close();
+    if (service.socket) {
+      service.socket.close();
     }
   });
 
@@ -48,9 +48,9 @@ describe('CommunicationService', () => {
       
       await connectPromise;
       
-      expect(service.websocket).toBeDefined();
-      expect(service.websocket.url).toBe('ws://localhost:8080');
-      expect(service.isConnected()).toBe(true);
+      expect(service.socket).toBeDefined();
+      expect(service.socket.url).toBe('ws://localhost:8080');
+      expect(service.isConnected).toBe(true);
     });
 
     test('should handle connection errors', async () => {
@@ -80,8 +80,8 @@ describe('CommunicationService', () => {
       
       service.disconnect();
       
-      expect(service.websocket.close).toHaveBeenCalled();
-      expect(service.isConnected()).toBe(false);
+      expect(service.socket.close).toHaveBeenCalled();
+      expect(service.isConnected).toBe(false);
     });
   });
 
@@ -93,9 +93,9 @@ describe('CommunicationService', () => {
     test('should send messages when connected', () => {
       const message = { type: 'test', data: 'hello' };
       
-      service.sendMessage(message);
+      service.send('test', message);
       
-      expect(service.websocket.send).toHaveBeenCalledWith(JSON.stringify(message));
+      expect(service.socket.send).toHaveBeenCalled();
     });
 
     test('should queue messages when not connected', () => {

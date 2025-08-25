@@ -159,7 +159,7 @@ const useGameStore = create(
         game: { 
           ...state.game, 
           now,
-          tick: now - state.game.now
+          tick: state.game.now > 0 ? now - state.game.now : 0
         }
       })),
       

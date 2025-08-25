@@ -32,14 +32,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>0/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
@@ -159,7 +159,8 @@
 <a name='L94'></a><a href='#L94'>94</a>
 <a name='L95'></a><a href='#L95'>95</a>
 <a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -193,15 +194,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,6 +201,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -240,6 +235,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -261,8 +263,8 @@
  * Copyright © 2025 Interworldly Adventuring, LLC.
  * This program is Free Software; Refer to COPYING.AGPL for details.
  * 
- * Displays player statistics including health, energy, experience,
- * and other relevant game metrics in the HUD.
+ * Displays player statistics including currency (Peanuts, Fairy Dust)
+ * and appearance customization options.
  * 
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
@@ -286,64 +288,62 @@ const PlayerStats = <span class="cstat-no" title="statement not covered" ><span 
   }
   
   const {
-    health = <span class="branch-0 cbranch-no" title="branch not covered" >100,</span>
-    maxHealth = <span class="branch-0 cbranch-no" title="branch not covered" >100,</span>
-    energy = <span class="branch-0 cbranch-no" title="branch not covered" >100,</span>
-    maxEnergy = <span class="branch-0 cbranch-no" title="branch not covered" >100,</span>
-    experience = <span class="branch-0 cbranch-no" title="branch not covered" >0,</span>
-    level = <span class="branch-0 cbranch-no" title="branch not covered" >1,</span>
-    coins = <span class="branch-0 cbranch-no" title="branch not covered" >0</span>
+    peanuts = <span class="branch-0 cbranch-no" title="branch not covered" >0,</span>
+    fairyDust = <span class="branch-0 cbranch-no" title="branch not covered" >0,</span>
+    appearance = <span class="branch-0 cbranch-no" title="branch not covered" >{}</span>
   } = <span class="cstat-no" title="statement not covered" >player;</span>
   
-  const healthPercentage = <span class="cstat-no" title="statement not covered" >(health / maxHealth) * 100;</span>
-  const energyPercentage = <span class="cstat-no" title="statement not covered" >(energy / maxEnergy) * 100;</span>
+  const {
+    skinColor = <span class="branch-0 cbranch-no" title="branch not covered" >'default',</span>
+    pattern = <span class="branch-0 cbranch-no" title="branch not covered" >'none',</span>
+    patternColor = <span class="branch-0 cbranch-no" title="branch not covered" >'default',</span>
+    clothing = <span class="branch-0 cbranch-no" title="branch not covered" >{}</span>
+  } = <span class="cstat-no" title="statement not covered" >appearance;</span>
   
 <span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;div className="player-stats"&gt;
       &lt;div className="stats-header"&gt;
         &lt;h3&gt;Player Stats&lt;/h3&gt;
-        &lt;span className="level"&gt;Level {level}&lt;/span&gt;
       &lt;/div&gt;
       
       &lt;div className="stats-content"&gt;
-        {/* Health Bar */}
-        &lt;div className="stat-bar"&gt;
-          &lt;div className="stat-label"&gt;
-            &lt;span&gt;Health&lt;/span&gt;
-            &lt;span className="stat-value"&gt;{health}/{maxHealth}&lt;/span&gt;
-          &lt;/div&gt;
-          &lt;div className="progress-bar"&gt;
-            &lt;div 
-              className="progress-fill health-fill"
-              style={{ width: `${healthPercentage}%` }}
-            /&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        
-        {/* Energy Bar */}
-        &lt;div className="stat-bar"&gt;
-          &lt;div className="stat-label"&gt;
-            &lt;span&gt;Energy&lt;/span&gt;
-            &lt;span className="stat-value"&gt;{energy}/{maxEnergy}&lt;/span&gt;
-          &lt;/div&gt;
-          &lt;div className="progress-bar"&gt;
-            &lt;div 
-              className="progress-fill energy-fill"
-              style={{ width: `${energyPercentage}%` }}
-            /&gt;
-          &lt;/div&gt;
-        &lt;/div&gt;
-        
-        {/* Experience */}
+        {/* Currency */}
         &lt;div className="stat-item"&gt;
-          &lt;span className="stat-label"&gt;Experience&lt;/span&gt;
-          &lt;span className="stat-value"&gt;{experience} XP&lt;/span&gt;
+          &lt;span className="stat-label"&gt;Peanuts&lt;/span&gt;
+          &lt;span className="stat-value"&gt;{peanuts} 🥜&lt;/span&gt;
         &lt;/div&gt;
         
-        {/* Coins */}
         &lt;div className="stat-item"&gt;
-          &lt;span className="stat-label"&gt;Coins&lt;/span&gt;
-          &lt;span className="stat-value"&gt;{coins} 🪙&lt;/span&gt;
+          &lt;span className="stat-label"&gt;Fairy Dust&lt;/span&gt;
+          &lt;span className="stat-value"&gt;{fairyDust} ✨&lt;/span&gt;
+        &lt;/div&gt;
+        
+        {/* Appearance */}
+        &lt;div className="appearance-section"&gt;
+          &lt;h4&gt;Appearance&lt;/h4&gt;
+          
+          &lt;div className="stat-item"&gt;
+            &lt;span className="stat-label"&gt;Skin Color&lt;/span&gt;
+            &lt;span className="stat-value"&gt;{skinColor}&lt;/span&gt;
+          &lt;/div&gt;
+          
+          {pattern !== 'none' &amp;&amp; (
+            &lt;div className="stat-item"&gt;
+              &lt;span className="stat-label"&gt;Pattern&lt;/span&gt;
+              &lt;span className="stat-value"&gt;{pattern} ({patternColor})&lt;/span&gt;
+            &lt;/div&gt;
+          )}
+          
+          {/* Clothing slots */}
+          &lt;div className="clothing-section"&gt;
+            &lt;h5&gt;Clothing&lt;/h5&gt;
+            {Object.entries(clothing).map(<span class="fstat-no" title="function not covered" >([</span>slot, item]) =&gt; (
+<span class="cstat-no" title="statement not covered" >              &lt;div key={slot} className="stat-item"&gt;</span>
+                &lt;span className="stat-label"&gt;{slot}&lt;/span&gt;
+                &lt;span className="stat-value"&gt;{item?.name || 'None'}&lt;/span&gt;
+              &lt;/div&gt;
+            ))}
+          &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
@@ -351,6 +351,9 @@ const PlayerStats = <span class="cstat-no" title="statement not covered" ><span 
 };
 &nbsp;
 export default PlayerStats;
+&nbsp;
+&nbsp;
+&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -358,7 +361,7 @@ export default PlayerStats;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-20T21:53:41.053Z
+                at 2025-08-25T14:29:03.210Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
