@@ -183,9 +183,53 @@ class P2PHandler {
 /**
  * Multi-protocol communication service with unified Gatekeeper interface
  * 
- * Vue 3 reactive version implementing "strict in what they produce (send), 
+ * @description Vue 3 reactive version implementing "strict in what they produce (send), 
  * very relaxed about what they accept (input)" principle for all communications
- * packets across REST, WebSocket, and P2P protocols.
+ * packets across REST, WebSocket, and P2P protocols. Provides unified interface for
+ * multi-protocol networking with automatic fallback and load balancing.
+ * 
+ * @inputs
+ * - Connection URLs for different protocols
+ * - Message objects with type and data
+ * - Connection options (timeout, retries, fallback)
+ * - Protocol preferences and configuration
+ * 
+ * @outputs
+ * - Connection status and state information
+ * - Protocol statistics and performance metrics
+ * - Message queue and processing results
+ * - Event emissions for connection and message events
+ * 
+ * @sideEffects
+ * - Establishes and manages network connections
+ * - Emits connection, message, and error events
+ * - Maintains message queues and protocol statistics
+ * - Handles automatic reconnection and protocol fallback
+ * 
+ * @units
+ * - URLs: string endpoints
+ * - Timeouts: milliseconds
+ * - Retry counts: integers
+ * - Message counts: integers
+ * - Queue sizes: integers
+ * - Protocol names: string identifiers
+ * 
+ * @example
+ * ```typescript
+ * const service = new CommunicationService()
+ * 
+ * // Connect to multiple protocols
+ * await service.connect('wss://server.com', { protocol: 'websocket' })
+ * await service.connect('https://api.server.com', { protocol: 'rest' })
+ * 
+ * // Send messages
+ * service.send('chat', { message: 'Hello!' })
+ * 
+ * // Listen for events
+ * service.on('message', (message) => {
+ *   console.log('Received:', message)
+ * })
+ * ```
  */
 export class CommunicationService extends EventEmitter {
   // Reactive state
@@ -283,7 +327,30 @@ export class CommunicationService extends EventEmitter {
   }
 
   /**
-   * Connect to the Tootsville server using multiple protocols
+   * Connects to the Tootsville server using multiple protocols
+   * 
+   * @description Establishes connections to the server using WebSocket, REST, and P2P protocols
+   * simultaneously. Automatically selects the best available protocol and processes any queued messages.
+   * 
+   * @inputs
+   * - cluster: string - The server cluster to connect to (default: 'test')
+   * - options: ConnectionOptions - Connection configuration options
+   * 
+   * @outputs
+   * - Boolean indicating connection success
+   * 
+   * @sideEffects
+   * - Establishes network connections
+   * - Emits connection events
+   * - Processes message queue
+   * - Updates connection state
+   * 
+   * @units
+   * - cluster: string identifier
+   * - options: ConnectionOptions object
+   * - return: boolean
+   * 
+   * @returns {Promise<boolean>} True if any protocol connection succeeds
    */
   async connect(cluster: string = 'test', options: ConnectionOptions = {}): Promise<boolean> {
     try {
@@ -346,7 +413,31 @@ export class CommunicationService extends EventEmitter {
   }
 
   /**
-   * Send a message through the active protocol
+   * Sends a message through the active protocol with automatic fallback
+   * 
+   * @description Sends a message using the currently active protocol. If the primary protocol fails,
+   * automatically tries fallback protocols. If no protocols are available, queues the message for
+   * later sending.
+   * 
+   * @inputs
+   * - type: string - The message type identifier
+   * - data: any - The message data payload
+   * 
+   * @outputs
+   * - Boolean indicating send success
+   * 
+   * @sideEffects
+   * - Updates protocol statistics
+   * - May switch active protocol on fallback
+   * - May queue message if no protocols available
+   * - Emits message events
+   * 
+   * @units
+   * - type: string identifier
+   * - data: any payload
+   * - return: boolean
+   * 
+   * @returns {Promise<boolean>} True if message was sent successfully
    */
   async send(type: string, data: any): Promise<boolean> {
     const packet = this.packetHandler.createPacket(type, data)
@@ -455,7 +546,27 @@ export class CommunicationService extends EventEmitter {
   }
 
   /**
-   * Disconnect from all protocols
+   * Disconnects from all active protocols
+   * 
+   * @description Disconnects from all active network protocols (WebSocket, REST, P2P) and clears
+   * the message queue. Resets the active protocol to null.
+   * 
+   * @inputs
+   * - None
+   * 
+   * @outputs
+   * - None
+   * 
+   * @sideEffects
+   * - Disconnects all protocol handlers
+   * - Clears message queue
+   * - Resets active protocol
+   * - Emits disconnect events
+   * 
+   * @units
+   * - None
+   * 
+   * @returns {void}
    */
   disconnect(): void {
     this.protocolHandlers.websocket.disconnect()
@@ -467,7 +578,24 @@ export class CommunicationService extends EventEmitter {
   }
 
   /**
-   * Get connection status
+   * Returns current connection status information
+   * 
+   * @description Returns a reactive object containing the current connection status for all protocols,
+   * the active protocol, and the current message queue length.
+   * 
+   * @inputs
+   * - None
+   * 
+   * @outputs
+   * - Connection status object with protocol states and queue information
+   * 
+   * @sideEffects
+   * - None
+   * 
+   * @units
+   * - return: ConnectionStatus object
+   * 
+   * @returns {any} Current connection status information
    */
   getConnectionStatus(): any {
     return this.connectionStatus.value

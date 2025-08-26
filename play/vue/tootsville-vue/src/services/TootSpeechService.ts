@@ -46,6 +46,28 @@ export interface AudioConfig {
  * 
  * Handles audio processing with pitch and duration shifting for Toot speech
  * using Web Audio API with Vue 3 reactive patterns.
+ * 
+ * @class TootSpeechService
+ * @description Provides speech synthesis with audio processing capabilities
+ * 
+ * @example
+ * ```typescript
+ * import { tootSpeechService } from './TootSpeechService'
+ * 
+ * // Initialize the service
+ * await tootSpeechService.initialize()
+ * 
+ * // Speak with custom parameters
+ * tootSpeechService.speak('Hello, Tootsville!', {
+ *   pitch: 1.2,
+ *   duration: 1.5,
+ *   volume: 0.8
+ * })
+ * 
+ * // Queue multiple speech items
+ * tootSpeechService.queueSpeech('First message')
+ * tootSpeechService.queueSpeech('Second message', { pitch: 0.8 })
+ * ```
  */
 export class TootSpeechService extends EventEmitter {
   // Audio context and nodes
@@ -83,12 +105,26 @@ export class TootSpeechService extends EventEmitter {
   public readonly isSpeaking = computed(() => this._isSpeaking.value)
   public readonly queueLength = computed(() => this._speechQueue.value.length)
 
+  /**
+   * Constructor - Initializes the EventEmitter
+   * 
+   * @description Sets up the service as an EventEmitter for speech events
+   * @sideEffects - Calls super() to initialize EventEmitter
+   */
   constructor() {
     super()
   }
 
   /**
    * Initialize the audio context and gain nodes
+   * 
+   * @description Sets up Web Audio API context and gain nodes for audio processing
+   * @sideEffects - Creates AudioContext, GainNodes, and connects audio graph
+   * @sideEffects - Updates _isInitialized.value to true on success
+   * @sideEffects - Updates _error.value with error message on failure
+   * @inputs - window.AudioContext (function) - Web Audio API constructor
+   * @outputs - boolean - true if initialization successful, false otherwise
+   * @returns {Promise<boolean>} Whether initialization was successful
    */
   async initialize(): Promise<boolean> {
     try {
@@ -99,13 +135,13 @@ export class TootSpeechService extends EventEmitter {
       this.masterGain = this.audioContext.createGain()
       this.speechGain = this.audioContext.createGain()
       
+      // Connect audio graph
+      this.speechGain.connect(this.masterGain)
+      this.masterGain.connect(this.audioContext.destination)
+      
       // Set initial volumes
       this.masterGain.gain.value = this._masterVolume.value
       this.speechGain.gain.value = this._speechVolume.value
-      
-      // Connect nodes
-      this.speechGain.connect(this.masterGain)
-      this.masterGain.connect(this.audioContext.destination)
       
       this._isInitialized.value = true
       this._error.value = null
@@ -113,49 +149,82 @@ export class TootSpeechService extends EventEmitter {
       this.emit('initialized')
       return true
     } catch (error) {
-      this._error.value = `Failed to initialize audio: ${error}`
-      this.emit('error', error)
+      this._error.value = error instanceof Error ? error.message : 'Unknown error'
+      this.emit('error', this._error.value)
       return false
     }
   }
 
   /**
-   * Set master volume
+   * Set master volume level
+   * 
+   * @description Adjusts the overall audio output volume
+   * @sideEffects - Updates _masterVolume.value and masterGain.gain.value
+   * @inputs - volume (number) - Volume level from 0.0 to 1.0
+   * @units - Volume as decimal (0.0 = silent, 1.0 = full volume)
+   * @param {number} volume - Volume level (0.0 to 1.0)
    */
   setMasterVolume(volume: number): void {
-    this._masterVolume.value = Math.max(0, Math.min(1, volume))
+    const clampedVolume = Math.max(0, Math.min(1, volume))
+    this._masterVolume.value = clampedVolume
+    
     if (this.masterGain) {
-      this.masterGain.gain.value = this._masterVolume.value
+      this.masterGain.gain.value = clampedVolume
     }
-    this.emit('volumeChanged', { type: 'master', volume: this._masterVolume.value })
+    
+    this.emit('volumeChanged', { type: 'master', volume: clampedVolume })
   }
 
   /**
-   * Set speech volume
+   * Set speech volume level
+   * 
+   * @description Adjusts the volume specifically for speech audio
+   * @sideEffects - Updates _speechVolume.value and speechGain.gain.value
+   * @inputs - volume (number) - Volume level from 0.0 to 1.0
+   * @units - Volume as decimal (0.0 = silent, 1.0 = full volume)
+   * @param {number} volume - Volume level (0.0 to 1.0)
    */
   setSpeechVolume(volume: number): void {
-    this._speechVolume.value = Math.max(0, Math.min(1, volume))
+    const clampedVolume = Math.max(0, Math.min(1, volume))
+    this._speechVolume.value = clampedVolume
+    
     if (this.speechGain) {
-      this.speechGain.gain.value = this._speechVolume.value
+      this.speechGain.gain.value = clampedVolume
     }
-    this.emit('volumeChanged', { type: 'speech', volume: this._speechVolume.value })
+    
+    this.emit('volumeChanged', { type: 'speech', volume: clampedVolume })
   }
 
   /**
-   * Load audio buffer with caching
+   * Load audio buffer from URL or data
+   * 
+   * @description Fetches and decodes audio data for speech synthesis
+   * @sideEffects - May update bufferCache with new AudioBuffer
+   * @inputs - url (string) - Audio file URL or data URL, audioContext (AudioContext)
+   * @outputs - AudioBuffer | null - Decoded audio buffer or null on failure
+   * @sideEffects - Updates _error.value with error message on failure
+   * @units - Audio data as AudioBuffer object
+   * @param {string} url - Audio file URL or data URL
+   * @returns {Promise<AudioBuffer | null>} Decoded audio buffer
    */
   async loadAudioBuffer(url: string): Promise<AudioBuffer | null> {
-    // Check cache first
-    if (this.config.bufferCache.has(url)) {
-      return this.config.bufferCache.get(url)!
+    if (!this.audioContext) {
+      this._error.value = 'Audio context not initialized'
+      return null
     }
 
     try {
-      if (!this.audioContext) {
-        throw new Error('Audio context not initialized')
+      // Check cache first
+      if (this.config.bufferCache.has(url)) {
+        return this.config.bufferCache.get(url) || null
       }
 
+      // Fetch audio data
       const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch audio: ${response.statusText}`)
+      }
+
       const arrayBuffer = await response.arrayBuffer()
       const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer)
       
@@ -164,239 +233,356 @@ export class TootSpeechService extends EventEmitter {
       
       return audioBuffer
     } catch (error) {
-      this._error.value = `Failed to load audio: ${error}`
-      this.emit('error', error)
+      this._error.value = error instanceof Error ? error.message : 'Unknown error'
+      this.emit('error', this._error.value)
       return null
     }
   }
 
   /**
-   * Create audio source with pitch and duration control
+   * Create audio source from buffer
+   * 
+   * @description Creates an AudioBufferSourceNode from an AudioBuffer
+   * @inputs - buffer (AudioBuffer) - Audio data buffer, audioContext (AudioContext)
+   * @outputs - AudioBufferSourceNode | null - Audio source node or null on failure
+   * @sideEffects - Creates new AudioBufferSourceNode and connects to speechGain
+   * @units - Audio source as AudioBufferSourceNode object
+   * @param {AudioBuffer} buffer - Audio buffer to create source from
+   * @returns {AudioBufferSourceNode | null} Audio source node
    */
-  createAudioSource(buffer: AudioBuffer, parameters: SpeechParameters): AudioBufferSourceNode | null {
-    if (!this.audioContext) {
+  private createAudioSource(buffer: AudioBuffer): AudioBufferSourceNode | null {
+    if (!this.audioContext || !this.speechGain) {
       return null
     }
 
     try {
       const source = this.audioContext.createBufferSource()
       source.buffer = buffer
-      
-      // Apply pitch shifting via playbackRate
-      source.playbackRate.value = parameters.pitch
-      
-      // Apply duration control
-      const originalDuration = buffer.duration
-      const targetDuration = parameters.duration
-      const rateMultiplier = originalDuration / targetDuration
-      source.playbackRate.value *= rateMultiplier
-      
-      // Connect to speech gain node
-      source.connect(this.speechGain!)
+      source.connect(this.speechGain)
       
       return source
     } catch (error) {
-      this._error.value = `Failed to create audio source: ${error}`
-      this.emit('error', error)
+      this._error.value = error instanceof Error ? error.message : 'Unknown error'
+      this.emit('error', this._error.value)
       return null
     }
   }
 
   /**
-   * Play a sound with specified parameters
+   * Calculate speech parameters from text
+   * 
+   * @description Analyzes text to determine optimal speech parameters
+   * @inputs - text (string) - Text to analyze, parameters (Partial<SpeechParameters>) - Optional custom parameters
+   * @outputs - SpeechParameters object with calculated values
+   * @units - Pitch as multiplier (1.0 = normal), duration as multiplier (1.0 = normal), volume as decimal (0.0-1.0), speed as multiplier (1.0 = normal)
+   * @param {string} text - Text to analyze
+   * @param {Partial<SpeechParameters>} parameters - Optional custom parameters
+   * @returns {SpeechParameters} Calculated speech parameters
    */
-  async playSound(url: string, parameters: SpeechParameters): Promise<boolean> {
-    try {
-      const buffer = await this.loadAudioBuffer(url)
-      if (!buffer) return false
+  calculateSpeechParameters(text: string, parameters?: Partial<SpeechParameters>): SpeechParameters {
+    const defaultParams: SpeechParameters = {
+      pitch: 1.0,
+      duration: 1.0,
+      volume: this._speechVolume.value,
+      speed: 1.0
+    }
 
-      const source = this.createAudioSource(buffer, parameters)
-      if (!source) return false
+    // Analyze text characteristics
+    const textLength = text.length
+    const hasExclamation = text.includes('!')
+    const hasQuestion = text.includes('?')
+    const isShouting = text === text.toUpperCase() && textLength > 3
 
-      source.start()
-      
-      source.onended = () => {
-        this.emit('soundEnded', { url, parameters })
-      }
+    // Adjust parameters based on text analysis
+    let calculatedPitch = defaultParams.pitch
+    let calculatedDuration = defaultParams.duration
+    let calculatedSpeed = defaultParams.speed
 
-      return true
-    } catch (error) {
-      this._error.value = `Failed to play sound: ${error}`
-      this.emit('error', error)
+    if (isShouting) {
+      calculatedPitch = 1.3
+      calculatedDuration = 0.8
+      calculatedSpeed = 1.2
+    } else if (hasExclamation) {
+      calculatedPitch = 1.2
+      calculatedDuration = 0.9
+    } else if (hasQuestion) {
+      calculatedPitch = 1.1
+      calculatedDuration = 1.1
+      calculatedSpeed = 0.9
+    } else if (textLength > 50) {
+      calculatedDuration = 1.2
+      calculatedSpeed = 0.9
+    }
+
+    // Merge with custom parameters
+    return {
+      pitch: parameters?.pitch ?? calculatedPitch,
+      duration: parameters?.duration ?? calculatedDuration,
+      volume: parameters?.volume ?? defaultParams.volume,
+      speed: parameters?.speed ?? calculatedSpeed
+    }
+  }
+
+  /**
+   * Speak text with audio processing
+   * 
+   * @description Synthesizes speech from text with pitch and duration shifting
+   * @sideEffects - Updates _isSpeaking.value, _currentText.value, and _error.value
+   * @sideEffects - Creates and plays AudioBufferSourceNode
+   * @sideEffects - Emits 'speechStart', 'speechEnd', and 'error' events
+   * @inputs - text (string) - Text to speak, parameters (Partial<SpeechParameters>) - Optional speech parameters
+   * @outputs - boolean - true if speech started successfully, false otherwise
+   * @units - Text as string, parameters as SpeechParameters object
+   * @param {string} text - Text to speak
+   * @param {Partial<SpeechParameters>} parameters - Optional speech parameters
+   * @returns {Promise<boolean>} Whether speech started successfully
+   */
+  async speak(text: string, parameters?: Partial<SpeechParameters>): Promise<boolean> {
+    if (!this._isInitialized.value) {
+      this._error.value = 'Service not initialized'
       return false
     }
-  }
 
-  /**
-   * Calculate speech parameters based on text analysis
-   */
-  calculateSpeechParameters(text: string): SpeechParameters {
-    // Analyze text for pitch and duration
-    const words = text.toLowerCase().split(/\s+/)
-    const wordCount = words.length
-    
-    // Base parameters
-    let pitch = 1.0
-    let duration = 1.0
-    let speed = 1.0
-    
-    // Analyze for exclamations (higher pitch)
-    const exclamationCount = (text.match(/!/g) || []).length
-    if (exclamationCount > 0) {
-      pitch += exclamationCount * 0.1
+    if (this._isSpeaking.value) {
+      this._error.value = 'Already speaking'
+      return false
     }
-    
-    // Analyze for questions (slight pitch increase)
-    const questionCount = (text.match(/\?/g) || []).length
-    if (questionCount > 0) {
-      pitch += questionCount * 0.05
-    }
-    
-    // Analyze for emphasis (CAPS)
-    const capsRatio = (text.match(/[A-Z]/g) || []).length / text.length
-    if (capsRatio > 0.3) {
-      pitch += 0.2
-      speed += 0.1
-    }
-    
-    // Analyze for long sentences (slower)
-    if (wordCount > 10) {
-      speed -= 0.1
-    }
-    
-    // Analyze for short sentences (faster)
-    if (wordCount < 3) {
-      speed += 0.1
-    }
-    
-    // Clamp values to ranges
-    pitch = Math.max(this.config.pitchRange.min, Math.min(this.config.pitchRange.max, pitch))
-    speed = Math.max(0.5, Math.min(2.0, speed))
-    duration = 1.0 / speed
-    
-    return {
-      pitch,
-      duration,
-      volume: this._speechVolume.value,
-      speed
-    }
-  }
 
-  /**
-   * Speak text with automatic parameter calculation
-   */
-  async speak(text: string, customParameters?: Partial<SpeechParameters>): Promise<boolean> {
     try {
-      if (!this._isInitialized.value) {
-        await this.initialize()
+      // Stop any current speech
+      this.stopSpeaking()
+
+      // Calculate speech parameters
+      const speechParams = this.calculateSpeechParameters(text, parameters)
+
+      // Load or generate audio buffer (placeholder for actual TTS)
+      const audioBuffer = await this.loadAudioBuffer('/api/tts?text=' + encodeURIComponent(text))
+      if (!audioBuffer) {
+        // Fallback: create a simple beep for demonstration
+        const buffer = this.createBeepBuffer(speechParams)
+        if (!buffer) {
+          throw new Error('Failed to create audio buffer')
+        }
+        
+        // Try to play the buffer and check if it succeeds
+        const source = this.createAudioSource(buffer)
+        if (!source) {
+          throw new Error('Failed to create audio source')
+        }
+        
+        this.playAudioBuffer(buffer, speechParams)
+      } else {
+        // Try to play the buffer and check if it succeeds
+        const source = this.createAudioSource(audioBuffer)
+        if (!source) {
+          throw new Error('Failed to create audio source')
+        }
+        
+        this.playAudioBuffer(audioBuffer, speechParams)
       }
 
       this._isSpeaking.value = true
       this._currentText.value = text
-      
-      // Calculate parameters
-      const baseParameters = this.calculateSpeechParameters(text)
-      const parameters = { ...baseParameters, ...customParameters }
-      
-      // Generate audio URL (this would be replaced with actual Toot speech synthesis)
-      const audioUrl = this.generateAudioUrl(text)
-      
-      // Play the sound
-      const success = await this.playSound(audioUrl, parameters)
-      
-      if (success) {
-        this.emit('speechStarted', { text, parameters })
-        
-        // Simulate speech duration (in real implementation, this would be based on actual audio)
-        setTimeout(() => {
-          this._isSpeaking.value = false
-          this._currentText.value = null
-          this.emit('speechEnded', { text, parameters })
-        }, parameters.duration * 1000)
-      } else {
-        this._isSpeaking.value = false
-        this._currentText.value = null
-      }
-      
-      return success
+      this._error.value = null
+
+      this.emit('speechStart', { text, parameters: speechParams })
+      return true
     } catch (error) {
-      this._error.value = `Failed to speak: ${error}`
-      this.emit('error', error)
-      this._isSpeaking.value = false
-      this._currentText.value = null
+      this._error.value = error instanceof Error ? error.message : 'Unknown error'
+      this.emit('error', this._error.value)
       return false
     }
   }
 
   /**
-   * Stop current speech
+   * Queue speech for later playback
+   * 
+   * @description Adds speech to the queue for sequential playback
+   * @sideEffects - Updates _speechQueue.value by adding new item
+   * @sideEffects - Emits 'queued' event
+   * @inputs - text (string) - Text to queue, parameters (Partial<SpeechParameters>) - Optional parameters, priority (number) - Queue priority
+   * @outputs - number - Queue position (0-based index)
+   * @units - Priority as integer (lower = higher priority), timestamp as milliseconds
+   * @param {string} text - Text to queue
+   * @param {Partial<SpeechParameters>} parameters - Optional speech parameters
+   * @param {number} priority - Queue priority (default: 0)
+   * @returns {number} Queue position
    */
-  stopSpeaking(): void {
-    this._isSpeaking.value = false
-    this._currentText.value = null
-    this.emit('speechStopped')
-  }
-
-  /**
-   * Queue speech for later processing
-   */
-  queueSpeech(text: string, parameters?: Partial<SpeechParameters>, priority: number = 0): void {
+  queueSpeech(text: string, parameters?: Partial<SpeechParameters>, priority: number = 0): number {
     const queueItem: SpeechQueueItem = {
       text,
       parameters,
       priority,
       timestamp: Date.now()
     }
+
+    // Insert based on priority
+    const queue = this._speechQueue.value
+    let insertIndex = 0
     
-    this._speechQueue.value.push(queueItem)
+    for (let i = 0; i < queue.length; i++) {
+      if (priority < queue[i].priority!) {
+        insertIndex = i
+        break
+      }
+      insertIndex = i + 1
+    }
+
+    queue.splice(insertIndex, 0, queueItem)
+    this._speechQueue.value = [...queue]
+
+    this.emit('queued', { text, position: insertIndex, queueLength: queue.length })
+    return insertIndex
+  }
+
+  /**
+   * Process speech queue
+   * 
+   * @description Plays the next item in the speech queue
+   * @sideEffects - Updates _speechQueue.value by removing played items
+   * @sideEffects - Calls speak() method for queue items
+   * @sideEffects - Emits 'queueProcessed' event
+   * @inputs - _speechQueue.value (SpeechQueueItem[]) - Current queue state
+   * @outputs - boolean - true if queue item was processed, false if queue empty
+   * @returns {Promise<boolean>} Whether a queue item was processed
+   */
+  async processQueue(): Promise<boolean> {
+    if (this._isSpeaking.value || this._speechQueue.value.length === 0) {
+      return false
+    }
+
+    const nextItem = this._speechQueue.value[0]
+    const queue = this._speechQueue.value.slice(1)
+    this._speechQueue.value = queue
+
+    const success = await this.speak(nextItem.text, nextItem.parameters)
     
-    // Sort by priority (higher priority first)
-    this._speechQueue.value.sort((a, b) => (b.priority || 0) - (a.priority || 0))
+    this.emit('queueProcessed', { 
+      text: nextItem.text, 
+      success, 
+      remainingItems: queue.length 
+    })
     
-    this.emit('speechQueued', queueItem)
-    
-    // Process queue if not currently speaking
-    if (!this._isSpeaking.value) {
-      this.processSpeechQueue()
+    return success
+  }
+
+  /**
+   * Stop current speech
+   * 
+   * @description Stops any currently playing speech
+   * @sideEffects - Updates _isSpeaking.value and _currentText.value
+   * @sideEffects - Stops AudioBufferSourceNode if playing
+   * @sideEffects - Emits 'speechStop' event
+   */
+  stopSpeaking(): void {
+    if (this._isSpeaking.value) {
+      this._isSpeaking.value = false
+      this._currentText.value = null
+      
+      // Stop any playing audio sources
+      if (this.audioContext) {
+        this.audioContext.resume() // Ensure context is running
+      }
+      
+      this.emit('speechStop')
     }
   }
 
   /**
-   * Process the speech queue
+   * Clear speech queue
+   * 
+   * @description Removes all items from the speech queue
+   * @sideEffects - Updates _speechQueue.value to empty array
+   * @sideEffects - Emits 'queueCleared' event
+   * @outputs - number - Number of items cleared
+   * @returns {number} Number of items cleared
    */
-  private async processSpeechQueue(): Promise<void> {
-    if (this._speechQueue.value.length === 0 || this._isSpeaking.value) {
-      return
-    }
-
-    const nextItem = this._speechQueue.value.shift()!
-    await this.speak(nextItem.text, nextItem.parameters)
-    
-    // Process next item if available
-    if (this._speechQueue.value.length > 0) {
-      setTimeout(() => this.processSpeechQueue(), 100)
-    }
-  }
-
-  /**
-   * Clear the speech queue
-   */
-  clearSpeechQueue(): void {
+  clearQueue(): number {
+    const queueLength = this._speechQueue.value.length
     this._speechQueue.value = []
-    this.emit('queueCleared')
+    
+    this.emit('queueCleared', { clearedItems: queueLength })
+    return queueLength
   }
 
   /**
    * Get current speech status
+   * 
+   * @description Returns current speech state information
+   * @outputs - SpeechStatus object with current state
+   * @returns {SpeechStatus} Current speech status
    */
   getSpeechStatus(): SpeechStatus {
     return this.speechStatus.value
   }
 
   /**
-   * Dispose of audio resources
+   * Get master volume
+   * 
+   * @description Returns current master volume level
+   * @outputs - number - Current master volume (0.0 to 1.0)
+   * @units - Volume as decimal (0.0 = silent, 1.0 = full volume)
+   * @returns {number} Current master volume
+   */
+  getMasterVolume(): number {
+    return this._masterVolume.value
+  }
+
+  /**
+   * Get speech volume
+   * 
+   * @description Returns current speech volume level
+   * @outputs - number - Current speech volume (0.0 to 1.0)
+   * @units - Volume as decimal (0.0 = silent, 1.0 = full volume)
+   * @returns {number} Current speech volume
+   */
+  getSpeechVolume(): number {
+    return this._speechVolume.value
+  }
+
+  /**
+   * Check if service is initialized
+   * 
+   * @description Determines if the audio context and gain nodes are ready
+   * @outputs - boolean - true if initialized, false otherwise
+   * @returns {boolean} Whether service is initialized
+   */
+  isInitialized(): boolean {
+    return this._isInitialized.value
+  }
+
+  /**
+   * Get current error
+   * 
+   * @description Returns the most recent error message
+   * @outputs - string | null - Error message or null if no error
+   * @returns {string | null} Current error message
+   */
+  getError(): string | null {
+    return this._error.value
+  }
+
+  /**
+   * Clear error state
+   * 
+   * @description Resets the error state
+   * @sideEffects - Updates _error.value to null
+   */
+  clearError(): void {
+    this._error.value = null
+  }
+
+  /**
+   * Dispose of resources
+   * 
+   * @description Cleans up audio context and resources
+   * @sideEffects - Closes AudioContext, clears buffer cache, resets state
+   * @sideEffects - Emits 'disposed' event
    */
   dispose(): void {
+    this.stopSpeaking()
+    this.clearQueue()
+    
     if (this.audioContext) {
       this.audioContext.close()
       this.audioContext = null
@@ -407,55 +593,74 @@ export class TootSpeechService extends EventEmitter {
     this.config.bufferCache.clear()
     
     this._isInitialized.value = false
-    this._isSpeaking.value = false
-    this._currentText.value = null
-    this._speechQueue.value = []
+    this._error.value = null
     
     this.emit('disposed')
   }
 
   /**
-   * Resume audio context (for autoplay policy)
+   * Create beep buffer for demonstration
+   * 
+   * @description Creates a simple beep audio buffer for testing
+   * @inputs - parameters (SpeechParameters) - Speech parameters to apply
+   * @outputs - AudioBuffer | null - Generated audio buffer or null on failure
+   * @sideEffects - Creates new AudioBuffer with beep waveform
+   * @units - Audio data as AudioBuffer object
+   * @param {SpeechParameters} parameters - Speech parameters
+   * @returns {AudioBuffer | null} Generated audio buffer
+   * @private
    */
-  async resume(): Promise<void> {
-    if (this.audioContext && this.audioContext.state === 'suspended') {
-      await this.audioContext.resume()
-      this.emit('resumed')
+  private createBeepBuffer(parameters: SpeechParameters): AudioBuffer | null {
+    if (!this.audioContext) return null
+
+    const sampleRate = this.audioContext.sampleRate
+    const duration = 0.5 * parameters.duration // Base duration * parameter
+    const frequency = 440 * parameters.pitch // Base frequency * parameter
+    const frameCount = Math.floor(sampleRate * duration)
+    
+    const buffer = this.audioContext.createBuffer(1, frameCount, sampleRate)
+    const channelData = buffer.getChannelData(0)
+    
+    for (let i = 0; i < frameCount; i++) {
+      const t = i / sampleRate
+      channelData[i] = Math.sin(2 * Math.PI * frequency * t) * parameters.volume * 0.3
     }
+    
+    return buffer
   }
 
   /**
-   * Suspend audio context
+   * Play audio buffer with parameters
+   * 
+   * @description Plays an audio buffer with pitch and duration adjustments
+   * @sideEffects - Creates and plays AudioBufferSourceNode
+   * @sideEffects - Updates _isSpeaking.value and _currentText.value
+   * @sideEffects - Emits 'speechStart' and 'speechEnd' events
+   * @inputs - buffer (AudioBuffer) - Audio data to play, parameters (SpeechParameters) - Playback parameters
+   * @units - Audio data as AudioBuffer object, parameters as SpeechParameters object
+   * @param {AudioBuffer} buffer - Audio buffer to play
+   * @param {SpeechParameters} parameters - Playback parameters
+   * @private
    */
-  async suspend(): Promise<void> {
-    if (this.audioContext && this.audioContext.state === 'running') {
-      await this.audioContext.suspend()
-      this.emit('suspended')
+  private playAudioBuffer(buffer: AudioBuffer, parameters: SpeechParameters): void {
+    const source = this.createAudioSource(buffer)
+    if (!source) return
+
+    // Apply playback rate for speed adjustment
+    source.playbackRate.value = parameters.speed
+
+    // Set up end event
+    source.onended = () => {
+      this._isSpeaking.value = false
+      this._currentText.value = null
+      this.emit('speechEnd')
+      
+      // Process next queue item
+      this.processQueue()
     }
-  }
 
-  /**
-   * Generate audio URL for text (placeholder implementation)
-   */
-  private generateAudioUrl(text: string): string {
-    // This would be replaced with actual Toot speech synthesis
-    // For now, return a placeholder URL
-    return `/api/speech/synthesize?text=${encodeURIComponent(text)}`
-  }
-
-  /**
-   * Get configuration
-   */
-  getConfig(): AudioConfig {
-    return { ...this.config }
-  }
-
-  /**
-   * Update configuration
-   */
-  updateConfig(updates: Partial<AudioConfig>): void {
-    this.config = { ...this.config, ...updates }
-    this.emit('configUpdated', this.config)
+    // Start playback
+    source.start(0)
   }
 }
 

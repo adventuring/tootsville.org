@@ -82,6 +82,22 @@ export interface NetworkInfo {
  * 
  * Provides platform detection, capability assessment, and optimization
  * settings for mobile devices, tablets, and smart TV platforms.
+ * 
+ * @class MobilePlatformService
+ * @description Detects device platform, capabilities, and provides optimization settings
+ * 
+ * @example
+ * ```typescript
+ * import { mobilePlatformService } from './MobilePlatformService'
+ * 
+ * // Get platform information
+ * const platform = mobilePlatformService.getPlatform()
+ * console.log(`Platform: ${platform.type}, Mobile: ${platform.isMobile}`)
+ * 
+ * // Get optimization settings
+ * const optimizations = mobilePlatformService.getOptimizations()
+ * console.log(`Graphics quality: ${optimizations.graphics.quality}`)
+ * ```
  */
 export class MobilePlatformService {
   // Reactive state
@@ -153,12 +169,24 @@ export class MobilePlatformService {
   public readonly optimizations = computed(() => this._optimizations.value)
   public readonly networkInfo = computed(() => this._networkInfo.value)
 
+  /**
+   * Constructor - Initializes the service
+   * 
+   * @description Automatically detects platform, capabilities, and sets optimization settings
+   * @sideEffects - Modifies reactive state (_platform, _capabilities, _optimizations, _networkInfo)
+   * @sideEffects - Sets up event listeners for network, orientation, and resize events
+   * @sideEffects - Calls detectPlatform(), detectCapabilities(), setOptimizations(), setupEventListeners()
+   */
   constructor() {
     this.initialize()
   }
 
   /**
    * Initialize the service
+   * 
+   * @description Sets up platform detection, capabilities assessment, and event listeners
+   * @sideEffects - Calls detectPlatform(), detectCapabilities(), setOptimizations(), setupEventListeners()
+   * @private
    */
   private initialize(): void {
     this.detectPlatform()
@@ -169,6 +197,13 @@ export class MobilePlatformService {
 
   /**
    * Detect the current platform
+   * 
+   * @description Analyzes user agent, platform, screen dimensions, and touch capabilities
+   * @sideEffects - Updates _platform.value with detected platform information
+   * @inputs - navigator.userAgent (string), navigator.platform (string), navigator.maxTouchPoints (number), window.innerWidth (pixels), window.innerHeight (pixels)
+   * @outputs - PlatformInfo object with type, isMobile, isTablet, isTV, isNative flags
+   * @units - Screen dimensions in pixels (px), touch points as count (integer)
+   * @private
    */
   private detectPlatform(): void {
     const userAgent = navigator.userAgent.toLowerCase()
@@ -207,8 +242,6 @@ export class MobilePlatformService {
         }
         return
       }
-
-
 
       // LG WebOS detection
       if (userAgent.includes('webos')) {
@@ -333,6 +366,13 @@ export class MobilePlatformService {
 
   /**
    * Detect device capabilities
+   * 
+   * @description Tests for various device capabilities including touch, media, storage, and network
+   * @sideEffects - Updates _capabilities.value with detected capabilities
+   * @inputs - window.ontouchstart (boolean), navigator.maxTouchPoints (number), window.DeviceOrientationEvent (function), navigator.geolocation (object), navigator.mediaDevices (object), navigator.vibrate (function), window.WebGLRenderingContext (function), window.AudioContext (function), navigator.serviceWorker (object), window.PushManager (function), window.localStorage (object), window.sessionStorage (object), window.indexedDB (object), navigator.onLine (boolean), navigator.connection (object)
+   * @outputs - DeviceCapabilities object with boolean flags and numeric values
+   * @units - Touch points as count (integer), network speed in Mbps (number), network latency in milliseconds (number)
+   * @private
    */
   private detectCapabilities(): void {
     const capabilities = this._capabilities.value
@@ -384,6 +424,13 @@ export class MobilePlatformService {
 
   /**
    * Set optimization settings based on platform
+   * 
+   * @description Configures graphics, audio, performance, and control settings based on detected platform and capabilities
+   * @sideEffects - Updates _optimizations.value with platform-specific settings
+   * @inputs - _platform.value (PlatformInfo), _capabilities.value (DeviceCapabilities)
+   * @outputs - OptimizationSettings object with quality levels, boolean flags, and numeric values
+   * @units - FPS as frames per second (integer), draw calls as count (integer), touch sensitivity as multiplier (float)
+   * @private
    */
   private setOptimizations(): void {
     const platform = this._platform.value
@@ -454,6 +501,11 @@ export class MobilePlatformService {
 
   /**
    * Setup event listeners
+   * 
+   * @description Sets up listeners for network, orientation, and resize events
+   * @sideEffects - Adds event listeners to window and navigator.connection
+   * @inputs - window (object), navigator.connection (object), _capabilities.value.orientation (boolean)
+   * @private
    */
   private setupEventListeners(): void {
     // Network status changes
@@ -490,6 +542,10 @@ export class MobilePlatformService {
 
   /**
    * Update optimizations based on current conditions
+   * 
+   * @description Re-detects platform and updates optimization settings
+   * @sideEffects - Calls detectPlatform() and setOptimizations()
+   * @private
    */
   private updateOptimizationsInternal(): void {
     // Re-detect platform for orientation changes
@@ -501,6 +557,11 @@ export class MobilePlatformService {
 
   /**
    * Extract iOS version from user agent
+   * 
+   * @description Parses iOS version from user agent string
+   * @inputs - userAgent (string) - iOS user agent string
+   * @outputs - string | undefined - iOS version (e.g., "14.0") or undefined
+   * @private
    */
   private extractIOSVersion(userAgent: string): string | undefined {
     const match = userAgent.match(/os (\d+)_(\d+)_?(\d+)?/)
@@ -512,6 +573,11 @@ export class MobilePlatformService {
 
   /**
    * Extract Android version from user agent
+   * 
+   * @description Parses Android version from user agent string
+   * @inputs - userAgent (string) - Android user agent string
+   * @outputs - string | undefined - Android version (e.g., "10") or undefined
+   * @private
    */
   private extractAndroidVersion(userAgent: string): string | undefined {
     const match = userAgent.match(/android (\d+\.\d+)/)
@@ -520,6 +586,12 @@ export class MobilePlatformService {
 
   /**
    * Detect WebGL support
+   * 
+   * @description Tests for WebGL support by creating a canvas and getting WebGL context
+   * @inputs - window.WebGLRenderingContext (function), document.createElement (function)
+   * @outputs - boolean - true if WebGL is supported, false otherwise
+   * @sideEffects - Creates temporary canvas element
+   * @private
    */
   private detectWebGL(): boolean {
     try {
@@ -533,6 +605,12 @@ export class MobilePlatformService {
 
   /**
    * Test localStorage support
+   * 
+   * @description Tests if localStorage is available and functional
+   * @inputs - window.localStorage (object)
+   * @outputs - boolean - true if localStorage works, false otherwise
+   * @sideEffects - May modify localStorage (sets and removes test item)
+   * @private
    */
   private testLocalStorage(): boolean {
     try {
@@ -547,6 +625,12 @@ export class MobilePlatformService {
 
   /**
    * Test sessionStorage support
+   * 
+   * @description Tests if sessionStorage is available and functional
+   * @inputs - window.sessionStorage (object)
+   * @outputs - boolean - true if sessionStorage works, false otherwise
+   * @sideEffects - May modify sessionStorage (sets and removes test item)
+   * @private
    */
   private testSessionStorage(): boolean {
     try {
@@ -561,6 +645,11 @@ export class MobilePlatformService {
 
   /**
    * Test IndexedDB support
+   * 
+   * @description Tests if IndexedDB is available
+   * @inputs - window.indexedDB (object)
+   * @outputs - boolean - true if IndexedDB is available, false otherwise
+   * @private
    */
   private testIndexedDB(): boolean {
     return 'indexedDB' in window
@@ -568,6 +657,10 @@ export class MobilePlatformService {
 
   /**
    * Get platform information
+   * 
+   * @description Returns current platform detection results
+   * @outputs - PlatformInfo object with type, isMobile, isTablet, isTV, isNative flags
+   * @returns {PlatformInfo} Current platform information
    */
   getPlatform(): PlatformInfo {
     return this.platform.value
@@ -575,6 +668,10 @@ export class MobilePlatformService {
 
   /**
    * Get device capabilities
+   * 
+   * @description Returns current device capability assessment
+   * @outputs - DeviceCapabilities object with boolean flags and numeric values
+   * @returns {DeviceCapabilities} Current device capabilities
    */
   getCapabilities(): DeviceCapabilities {
     return this.capabilities.value
@@ -582,6 +679,10 @@ export class MobilePlatformService {
 
   /**
    * Get optimization settings
+   * 
+   * @description Returns current optimization settings based on platform and capabilities
+   * @outputs - OptimizationSettings object with quality levels, boolean flags, and numeric values
+   * @returns {OptimizationSettings} Current optimization settings
    */
   getOptimizations(): OptimizationSettings {
     return this.optimizations.value
@@ -589,6 +690,11 @@ export class MobilePlatformService {
 
   /**
    * Update optimization settings
+   * 
+   * @description Manually updates optimization settings
+   * @inputs - settings (Partial<OptimizationSettings>) - Partial settings to merge
+   * @sideEffects - Updates _optimizations.value by merging with provided settings
+   * @param {Partial<OptimizationSettings>} settings - Settings to update
    */
   updateOptimizations(settings: Partial<OptimizationSettings>): void {
     this._optimizations.value = { ...this._optimizations.value, ...settings }
@@ -596,6 +702,12 @@ export class MobilePlatformService {
 
   /**
    * Check if device supports a specific feature
+   * 
+   * @description Tests if a specific capability is available
+   * @inputs - feature (keyof DeviceCapabilities) - Feature name to test
+   * @outputs - boolean - true if feature is supported, false otherwise
+   * @param {keyof DeviceCapabilities} feature - Feature to check
+   * @returns {boolean} Whether the feature is supported
    */
   supportsFeature(feature: keyof DeviceCapabilities): boolean {
     return this._capabilities.value[feature] as boolean
@@ -603,6 +715,10 @@ export class MobilePlatformService {
 
   /**
    * Get network information
+   * 
+   * @description Returns current network status and performance metrics
+   * @outputs - NetworkInfo object with connection type, speed, and latency
+   * @returns {NetworkInfo} Current network information
    */
   getNetworkInfo(): NetworkInfo {
     return this.networkInfo.value
@@ -610,6 +726,11 @@ export class MobilePlatformService {
 
   /**
    * Check if device is low-end
+   * 
+   * @description Determines if device has limited capabilities
+   * @inputs - _capabilities.value.maxTouchPoints (number), _capabilities.value.webGL (boolean)
+   * @outputs - boolean - true if device is low-end, false otherwise
+   * @returns {boolean} Whether the device is considered low-end
    */
   isLowEndDevice(): boolean {
     const capabilities = this._capabilities.value
@@ -618,6 +739,11 @@ export class MobilePlatformService {
 
   /**
    * Get recommended settings for current device
+   * 
+   * @description Returns optimal settings based on platform and capabilities
+   * @inputs - _platform.value (PlatformInfo), _capabilities.value (DeviceCapabilities)
+   * @outputs - OptimizationSettings object with recommended configuration
+   * @returns {OptimizationSettings} Recommended settings for current device
    */
   getRecommendedSettings(): OptimizationSettings {
     const platform = this._platform.value

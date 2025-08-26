@@ -172,8 +172,7 @@ const {
   stopSpeaking,
   queueSpeech: queueSpeechService,
   clearSpeechQueue,
-  setVolume,
-  clearError: clearServiceError
+  setVolume
 } = useTootSpeechWithVolume(props.initialVolume)
 
 // Local state
@@ -259,7 +258,11 @@ const clearHistory = () => {
 }
 
 const clearError = () => {
-  clearServiceError()
+  // Clear the error by setting it to null
+  // Note: The error ref is from the composable, so we need to access it directly
+  if (error.value) {
+    error.value = null
+  }
 }
 
 const formatTime = (timestamp: number) => {

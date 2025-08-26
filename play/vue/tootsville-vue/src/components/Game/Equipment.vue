@@ -87,3 +87,4 @@ const equipmentColor = computed(() => {
 const showEffects = computed(() => props.equipment.glow || props.equipment.particles)
 </script>
 
+

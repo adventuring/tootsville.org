@@ -76,8 +76,46 @@ const PACKET_SCHEMAS: Record<string, PacketSchema> = {
 /**
  * Packet validation and processing service
  * 
- * Implements "strict in what they produce (send), very relaxed about what they accept (input)"
- * principle for all communications packets.
+ * @description Implements "strict in what they produce (send), very relaxed about what they accept (input)"
+ * principle for all communications packets. Provides packet validation, processing, and custom handler
+ * registration for game communication protocols.
+ * 
+ * @inputs
+ * - Packet type strings (e.g., 'logOK', 'avatars', 'publicMessage')
+ * - Packet data objects with required and optional fields
+ * - Custom handler functions for specific packet types
+ * 
+ * @outputs
+ * - Validated Packet objects with timestamps and IDs
+ * - Validation results with errors and warnings
+ * - Event emissions for packet processing
+ * 
+ * @sideEffects
+ * - Emits 'packetReceived', 'packetSent', 'packetError' events
+ * - Maintains error and warning statistics
+ * - Registers and manages custom packet handlers
+ * 
+ * @units
+ * - Packet types: string identifiers
+ * - Timestamps: milliseconds since epoch
+ * - Error counts: integer values
+ * - Warning counts: integer values
+ * 
+ * @example
+ * ```typescript
+ * const handler = new PacketHandler()
+ * 
+ * // Create a packet
+ * const packet = handler.createPacket('logOK', { status: true })
+ * 
+ * // Register custom handler
+ * handler.registerHandler('customType', (packet) => {
+ *   console.log('Processing custom packet:', packet)
+ * })
+ * 
+ * // Process packet
+ * const result = handler.processPacket(packet)
+ * ```
  */
 export class PacketHandler extends EventEmitter {
   private schemas: Record<string, PacketSchema>
@@ -92,7 +130,29 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Create a packet with validation
+   * Creates a packet with strict validation for outgoing communications
+   * 
+   * @description Creates a new packet with the specified type and data, applying strict validation
+   * for outgoing packets. Throws an error if validation fails, ensuring only valid packets are sent.
+   * 
+   * @inputs
+   * - type: string - The packet type identifier
+   * - data: any - The packet data object
+   * 
+   * @outputs
+   * - Packet object with timestamp and ID
+   * 
+   * @sideEffects
+   * - Emits 'packetSent' event
+   * - Throws error on validation failure
+   * 
+   * @units
+   * - type: string identifier
+   * - timestamp: milliseconds since epoch
+   * - id: unique string identifier
+   * 
+   * @returns {Packet} Validated packet object
+   * @throws {Error} When packet validation fails
    */
   createPacket(type: string, data: any): Packet {
     const packet: Packet = {
@@ -116,7 +176,28 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Process incoming packet (relaxed validation)
+   * Processes incoming packets with relaxed validation
+   * 
+   * @description Processes incoming packet data with relaxed validation, allowing for more flexible
+   * packet formats. Handles both string and object inputs, applies defaults, and calls custom handlers.
+   * 
+   * @inputs
+   * - data: any - Packet data as string or object
+   * 
+   * @outputs
+   * - Packet object or null if validation fails
+   * 
+   * @sideEffects
+   * - Emits 'packetReceived' or 'packetError' events
+   * - Increments error/warning counters
+   * - Calls registered custom handlers
+   * 
+   * @units
+   * - data: string or object
+   * - errorCount: integer
+   * - warningCount: integer
+   * 
+   * @returns {Packet | null} Processed packet or null if invalid
    */
   processPacket(data: any): Packet | null {
     try {
@@ -149,6 +230,12 @@ export class PacketHandler extends EventEmitter {
       // Apply defaults for missing fields
       this.applyDefaults(packet)
 
+      // Call custom handler if registered
+      const handler = this.packetHandlers.get(packet.type)
+      if (handler) {
+        handler(packet)
+      }
+
       this.emit('packetReceived', packet)
       return packet
     } catch (error) {
@@ -162,7 +249,26 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Validate outgoing packet (strict)
+   * Validates outgoing packets with strict requirements
+   * 
+   * @description Performs strict validation on outgoing packets, ensuring all required fields are present
+   * and no unknown fields are included. Used for packets being sent to ensure data integrity.
+   * 
+   * @inputs
+   * - packet: Packet - The packet to validate
+   * 
+   * @outputs
+   * - ValidationResult with validation status, errors, and warnings
+   * 
+   * @sideEffects
+   * - None
+   * 
+   * @units
+   * - packet: Packet object
+   * - errors: array of strings
+   * - warnings: array of strings
+   * 
+   * @returns {ValidationResult} Validation result with errors and warnings
    */
   validateOutgoingPacket(packet: Packet): ValidationResult {
     const errors: string[] = []
@@ -199,7 +305,26 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Validate incoming packet (relaxed)
+   * Validates incoming packets with relaxed requirements
+   * 
+   * @description Performs relaxed validation on incoming packets, allowing for missing optional fields
+   * and unknown fields. Used for packets being received to ensure maximum compatibility.
+   * 
+   * @inputs
+   * - packet: Packet - The packet to validate
+   * 
+   * @outputs
+   * - ValidationResult with validation status, errors, and warnings
+   * 
+   * @sideEffects
+   * - None
+   * 
+   * @units
+   * - packet: Packet object
+   * - errors: array of strings
+   * - warnings: array of strings
+   * 
+   * @returns {ValidationResult} Validation result with errors and warnings
    */
   validateIncomingPacket(packet: Packet): ValidationResult {
     const errors: string[] = []
@@ -276,7 +401,26 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Register a handler for a specific packet type
+   * Registers a custom handler for a specific packet type
+   * 
+   * @description Registers a custom function to handle packets of a specific type. The handler will
+   * be called whenever a packet of that type is processed.
+   * 
+   * @inputs
+   * - type: string - The packet type to handle
+   * - handler: function - The handler function to call
+   * 
+   * @outputs
+   * - None
+   * 
+   * @sideEffects
+   * - Registers handler in internal Map
+   * 
+   * @units
+   * - type: string identifier
+   * - handler: function reference
+   * 
+   * @returns {void}
    */
   registerHandler(type: string, handler: (packet: Packet) => void): void {
     this.packetHandlers.set(type, handler)
@@ -297,7 +441,24 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Add a new packet schema
+   * Adds a new packet schema for validation
+   * 
+   * @description Adds a new packet schema to the internal schema registry, enabling validation for
+   * custom packet types.
+   * 
+   * @inputs
+   * - schema: PacketSchema - The schema definition to add
+   * 
+   * @outputs
+   * - None
+   * 
+   * @sideEffects
+   * - Adds schema to internal schemas object
+   * 
+   * @units
+   * - schema: PacketSchema object
+   * 
+   * @returns {void}
    */
   addSchema(schema: PacketSchema): void {
     this.schemas[schema.type] = schema
@@ -318,7 +479,25 @@ export class PacketHandler extends EventEmitter {
   }
 
   /**
-   * Get error and warning counts
+   * Returns current error and warning statistics
+   * 
+   * @description Returns the current count of validation errors and warnings that have occurred
+   * during packet processing.
+   * 
+   * @inputs
+   * - None
+   * 
+   * @outputs
+   * - Object with error and warning counts
+   * 
+   * @sideEffects
+   * - None
+   * 
+   * @units
+   * - errors: integer count
+   * - warnings: integer count
+   * 
+   * @returns {{ errors: number; warnings: number }} Current error and warning counts
    */
   getErrorStats(): { errors: number; warnings: number } {
     return {

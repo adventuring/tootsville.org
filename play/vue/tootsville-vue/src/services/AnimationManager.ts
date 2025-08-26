@@ -101,7 +101,7 @@ export const CHARACTER_CAPABILITIES: Record<string, CharacterCapabilities> = {
     canSit: false,
     defaultAnimations: ['idle', 'swim']
   },
-  // Birds/Katootels - can fly, jump, walk
+  // Birds/Katootels - can fly, walk, jump, but can't swim
   BIRD: {
     canJump: true,
     canSwim: false,
@@ -110,432 +110,467 @@ export const CHARACTER_CAPABILITIES: Record<string, CharacterCapabilities> = {
     canRun: true,
     canSit: true,
     defaultAnimations: ['idle', 'walk', 'run', 'sit', 'jump', 'fly']
-  },
-  // Default for unknown character types
-  DEFAULT: {
-    canJump: true,
-    canSwim: false,
-    canFly: false,
-    canWalk: true,
-    canRun: true,
-    canSit: true,
-    defaultAnimations: ['idle', 'walk', 'run', 'sit', 'jump']
   }
-}
-
-/**
- * Animation transition settings
- */
-export const TRANSITION_SETTINGS: AnimationSettings = {
-  fadeDuration: 0.3,
-  crossfadeDuration: 0.2,
-  minMovementThreshold: 0.01,
-  movementCheckInterval: 100 // milliseconds
 }
 
 /**
  * Animation Manager Service
  * 
- * Manages player character animation states with proper transitions between
- * walking, idle, and other states. Supports character-specific movement
- * capabilities (elephants can't jump, manatees can swim, etc.).
+ * Manages character animation states, movement detection, and character-specific
+ * capabilities for the Tootsville game world.
+ * 
+ * @class AnimationManager
+ * @description Manages character animation states and movement detection
+ * 
+ * @example
+ * ```typescript
+ * import { animationManager } from './AnimationManager'
+ * 
+ * // Update character data
+ * animationManager.updateCharacterData({
+ *   id: 'player1',
+ *   name: 'Tootie',
+ *   characterType: 'TOOT',
+ *   position: new Vector3(0, 0, 0)
+ * })
+ * 
+ * // Set animation state
+ * animationManager.setAnimation('walk')
+ * 
+ * // Check if character can perform action
+ * if (animationManager.canPerformAction('jump')) {
+ *   animationManager.setAnimation('jump')
+ * }
+ * ```
  */
 export class AnimationManager {
   // Reactive state
-  private _animationState = reactive<AnimationState>({
+  private _characterData = ref<CharacterData | null>(null)
+  private _animationState = ref<AnimationState>({
     current: ANIMATION_STATES.IDLE,
     previous: ANIMATION_STATES.IDLE,
     isTransitioning: false,
     transitionStartTime: 0,
-    transitionDuration: TRANSITION_SETTINGS.fadeDuration
+    transitionDuration: 300
   })
 
-  private _movementState = reactive<MovementState>({
+  private _movementState = ref<MovementState>({
     isMoving: false,
     velocity: new Vector3(),
     lastPosition: new Vector3(),
-    movementThreshold: TRANSITION_SETTINGS.minMovementThreshold,
+    movementThreshold: 0.1,
     lastMovementCheck: 0
   })
 
-  private _characterData = ref<CharacterData | null>(null)
-  private _capabilities = ref<CharacterCapabilities>(CHARACTER_CAPABILITIES.DEFAULT)
-  private _settings = ref<AnimationSettings>({ ...TRANSITION_SETTINGS })
+  private _settings = ref<AnimationSettings>({
+    fadeDuration: 300,
+    crossfadeDuration: 150,
+    minMovementThreshold: 0.1,
+    movementCheckInterval: 100
+  })
 
   // Computed properties
-  public readonly currentAnimation = computed(() => this._animationState.current)
-  public readonly isTransitioning = computed(() => this._animationState.isTransitioning)
-  public readonly isMoving = computed(() => this._movementState.isMoving)
-  public readonly capabilities = computed(() => this._capabilities.value)
-
-  constructor() {
-    this.setupMovementDetection()
-  }
+  public readonly characterData = computed(() => this._characterData.value)
+  public readonly animationState = computed(() => this._animationState.value)
+  public readonly movementState = computed(() => this._movementState.value)
+  public readonly settings = computed(() => this._settings.value)
 
   /**
    * Get character capabilities based on character type
+   * 
+   * @description Returns movement and animation capabilities for the current character type
+   * @inputs - _characterData.value?.characterType (string) - Character type identifier
+   * @outputs - CharacterCapabilities object with boolean flags for movement abilities
+   * @returns {CharacterCapabilities | null} Character capabilities or null if no character data
    */
-  private getCharacterCapabilities(character: CharacterData | null): CharacterCapabilities {
-    if (!character) return CHARACTER_CAPABILITIES.DEFAULT
-    
-    // Determine character type based on avatar or character properties
-    const avatarName = character.avatar || character.name || ''
-    const avatarClass = character.avatarClass || {}
-    const characterType = character.characterType || character.species || ''
-    
-    // Check for Toot (elephant) characteristics
-    if (this.isTootCharacter(avatarName, avatarClass, characterType)) {
-      return CHARACTER_CAPABILITIES.TOOT
+  public readonly characterCapabilities = computed(() => {
+    if (!this._characterData.value?.characterType) {
+      return null
     }
-    
-    // Check for Manatee characteristics
-    if (this.isManateeCharacter(avatarName, avatarClass, characterType)) {
-      return CHARACTER_CAPABILITIES.MANATEE
-    }
-    
-    // Check for Bird/Katootel characteristics
-    if (this.isBirdCharacter(avatarName, avatarClass, characterType)) {
-      return CHARACTER_CAPABILITIES.BIRD
-    }
-    
-    // Default capabilities
-    return CHARACTER_CAPABILITIES.DEFAULT
-  }
+    return CHARACTER_CAPABILITIES[this._characterData.value.characterType] || null
+  })
 
   /**
-   * Check if character is a Toot (elephant)
+   * Check if character can perform a specific action
+   * 
+   * @description Tests if the current character can perform a given animation/action
+   * @inputs - action (string) - Action name to test, characterCapabilities (CharacterCapabilities)
+   * @outputs - boolean - true if character can perform action, false otherwise
+   * @param {string} action - Action to check (e.g., 'jump', 'swim', 'fly')
+   * @returns {boolean} Whether the character can perform the action
    */
-  private isTootCharacter(avatarName: string, avatarClass: any, characterType: string): boolean {
-    const tootKeywords = ['toot', 'elephant', 'ultra', 'zap', 'flora', 'sparkle', 'moo', 'superstar', 'lil mc', 'cupid', 'dottie']
-    const name = avatarName.toLowerCase()
-    const title = (avatarClass.title || '').toLowerCase()
-    const filename = (avatarClass.filename || '').toLowerCase()
-    const type = characterType.toLowerCase()
-    
-    return tootKeywords.some(keyword => 
-      name.includes(keyword) || 
-      title.includes(keyword) || 
-      filename.includes(keyword) || 
-      type.includes(keyword)
-    )
-  }
+  public readonly canPerformAction = computed(() => {
+    return (action: string): boolean => {
+      const capabilities = this.characterCapabilities.value
+      if (!capabilities) return false
 
-  /**
-   * Check if character is a Manatee
-   */
-  private isManateeCharacter(avatarName: string, avatarClass: any, characterType: string): boolean {
-    const manateeKeywords = ['manatee', 'sea cow', 'aquatic']
-    const name = avatarName.toLowerCase()
-    const title = (avatarClass.title || '').toLowerCase()
-    const filename = (avatarClass.filename || '').toLowerCase()
-    const type = characterType.toLowerCase()
-    
-    return manateeKeywords.some(keyword => 
-      name.includes(keyword) || 
-      title.includes(keyword) || 
-      filename.includes(keyword) || 
-      type.includes(keyword)
-    )
-  }
-
-  /**
-   * Check if character is a Bird/Katootel
-   */
-  private isBirdCharacter(avatarName: string, avatarClass: any, characterType: string): boolean {
-    const birdKeywords = ['bird', 'katootel', 'wing', 'feather', 'fly']
-    const name = avatarName.toLowerCase()
-    const title = (avatarClass.title || '').toLowerCase()
-    const filename = (avatarClass.filename || '').toLowerCase()
-    const type = characterType.toLowerCase()
-    
-    return birdKeywords.some(keyword => 
-      name.includes(keyword) || 
-      title.includes(keyword) || 
-      filename.includes(keyword) || 
-      type.includes(keyword)
-    )
-  }
-
-  /**
-   * Setup movement detection
-   */
-  private setupMovementDetection(): void {
-    // Movement detection will be handled by the game loop
-    // This method can be extended for additional movement detection logic
-  }
-
-  /**
-   * Update character data and recalculate capabilities
-   */
-  updateCharacter(character: CharacterData): void {
-    this._characterData.value = character
-    this._capabilities.value = this.getCharacterCapabilities(character)
-    
-    // Update last position for movement detection
-    this._movementState.lastPosition.copy(character.position)
-  }
-
-  /**
-   * Update character position and detect movement
-   */
-  updatePosition(position: Vector3, deltaTime: number): void {
-    if (!this._characterData.value) return
-
-    const now = Date.now()
-    const timeSinceLastCheck = now - this._movementState.lastMovementCheck
-
-    // Check movement at regular intervals
-    if (timeSinceLastCheck >= this._settings.value.movementCheckInterval) {
-      this._movementState.lastMovementCheck = now
-      
-      // Calculate velocity
-      this._movementState.velocity.subVectors(position, this._movementState.lastPosition)
-      this._movementState.velocity.divideScalar(deltaTime)
-      
-      // Check if moving
-      const speed = this._movementState.velocity.length()
-      const wasMoving = this._movementState.isMoving
-      this._movementState.isMoving = speed > this._movementState.movementThreshold
-      
-      // Update animation state based on movement
-      if (this._movementState.isMoving !== wasMoving) {
-        this.updateAnimationState()
-      }
-      
-      // Update last position
-      this._movementState.lastPosition.copy(position)
-    }
-  }
-
-  /**
-   * Update animation state based on current conditions
-   */
-  private updateAnimationState(): void {
-    const capabilities = this._capabilities.value
-    let targetAnimation = ANIMATION_STATES.IDLE
-
-    // Priority order: sitting > jumping > item usage > movement
-    if (this._animationState.current === ANIMATION_STATES.SITTING) {
-      targetAnimation = ANIMATION_STATES.SITTING
-    } else if (this._animationState.current === ANIMATION_STATES.JUMPING) {
-      targetAnimation = ANIMATION_STATES.JUMPING
-    } else if (this._animationState.current === ANIMATION_STATES.USING_ITEM) {
-      targetAnimation = ANIMATION_STATES.USING_ITEM
-    } else if (this._movementState.isMoving) {
-      // Determine movement animation based on capabilities
-      if (capabilities.canSwim && this.isInWater()) {
-        targetAnimation = ANIMATION_STATES.SWIMMING
-      } else if (capabilities.canFly && this.isFlying()) {
-        targetAnimation = ANIMATION_STATES.FLYING
-      } else if (capabilities.canRun && this.isRunning()) {
-        targetAnimation = ANIMATION_STATES.RUNNING
-      } else if (capabilities.canWalk) {
-        targetAnimation = ANIMATION_STATES.WALKING
+      switch (action.toLowerCase()) {
+        case 'jump':
+          return capabilities.canJump
+        case 'swim':
+          return capabilities.canSwim
+        case 'fly':
+          return capabilities.canFly
+        case 'walk':
+          return capabilities.canWalk
+        case 'run':
+          return capabilities.canRun
+        case 'sit':
+          return capabilities.canSit
+        default:
+          return true // Allow other actions by default
       }
     }
+  })
 
-    this.setAnimation(targetAnimation)
+  /**
+   * Update character data
+   * 
+   * @description Updates the character information and resets movement state
+   * @inputs - data (CharacterData) - New character data
+   * @sideEffects - Updates _characterData.value, resets _movementState.value.lastPosition
+   * @param {CharacterData} data - Character data to update
+   */
+  updateCharacterData(data: CharacterData): void {
+    this._characterData.value = data
+    // Reset movement tracking when character data changes
+    this._movementState.value.lastPosition = data.position.clone()
   }
 
   /**
-   * Set animation state with transition
+   * Set animation state
+   * 
+   * @description Changes the current animation state with transition handling
+   * @inputs - animation (string) - Animation state name, force (boolean) - Force immediate transition
+   * @sideEffects - Updates _animationState.value with new state and transition timing
+   * @param {string} animation - Animation state to set
+   * @param {boolean} force - Force immediate transition (default: false)
    */
-  setAnimation(animation: AnimationStateType, immediate: boolean = false): void {
-    if (!this.isValidAnimation(animation)) {
-      console.warn(`Invalid animation state: ${animation}`)
-      return
-    }
-
-    if (this._animationState.current === animation) {
-      return // Already in this animation state
-    }
+  setAnimation(animation: string, force: boolean = false): void {
+    const currentState = this._animationState.value
+    const capabilities = this.characterCapabilities.value
 
     // Check if character can perform this animation
-    if (!this.canPerformAnimation(animation)) {
+    if (!this.canPerformAction.value(animation)) {
       console.warn(`Character cannot perform animation: ${animation}`)
       return
     }
 
-    if (immediate) {
-      // Immediate transition
-      this._animationState.previous = this._animationState.current
-      this._animationState.current = animation
-      this._animationState.isTransitioning = false
+    // Don't change if already in this state (unless forced)
+    if (currentState.current === animation && !force) {
+      return
+    }
+
+    // Update animation state
+    this._animationState.value = {
+      current: animation,
+      previous: currentState.current,
+      isTransitioning: true,
+      transitionStartTime: Date.now(),
+      transitionDuration: force ? 0 : this._settings.value.fadeDuration
+    }
+
+    // Clear transition flag after duration
+    if (this._animationState.value.transitionDuration > 0) {
+      setTimeout(() => {
+        this._animationState.value.isTransitioning = false
+      }, this._animationState.value.transitionDuration)
     } else {
-      // Smooth transition
-      this._animationState.previous = this._animationState.current
-      this._animationState.current = animation
-      this._animationState.isTransitioning = true
-      this._animationState.transitionStartTime = Date.now()
-      this._animationState.transitionDuration = this._settings.value.fadeDuration
+      this._animationState.value.isTransitioning = false
     }
-  }
-
-  /**
-   * Check if animation is valid for current character
-   */
-  private isValidAnimation(animation: AnimationStateType): boolean {
-    return Object.values(ANIMATION_STATES).includes(animation)
-  }
-
-  /**
-   * Check if character can perform the given animation
-   */
-  private canPerformAnimation(animation: AnimationStateType): boolean {
-    const capabilities = this._capabilities.value
-
-    switch (animation) {
-      case ANIMATION_STATES.JUMPING:
-        return capabilities.canJump
-      case ANIMATION_STATES.SWIMMING:
-        return capabilities.canSwim
-      case ANIMATION_STATES.FLYING:
-        return capabilities.canFly
-      case ANIMATION_STATES.WALKING:
-        return capabilities.canWalk
-      case ANIMATION_STATES.RUNNING:
-        return capabilities.canRun
-      case ANIMATION_STATES.SITTING:
-        return capabilities.canSit
-      default:
-        return true // Other animations are generally available
-    }
-  }
-
-  /**
-   * Check if character is in water (for swimming detection)
-   */
-  private isInWater(): boolean {
-    if (!this._characterData.value) return false
-    
-    // Check if character is in an ocean world or underwater
-    const position = this._characterData.value.position
-    return position.y < 0 // Simple water detection based on Y position
-  }
-
-  /**
-   * Check if character is flying
-   */
-  private isFlying(): boolean {
-    if (!this._characterData.value) return false
-    
-    // Check if character is above ground level
-    const position = this._characterData.value.position
-    return position.y > 5 // Simple flying detection
-  }
-
-  /**
-   * Check if character is running
-   */
-  private isRunning(): boolean {
-    const speed = this._movementState.velocity.length()
-    return speed > 2.0 // Threshold for running speed
-  }
-
-  /**
-   * Force sit animation
-   */
-  sit(): void {
-    if (this._capabilities.value.canSit) {
-      this.setAnimation(ANIMATION_STATES.SITTING)
-    }
-  }
-
-  /**
-   * Force stand animation
-   */
-  stand(): void {
-    this.updateAnimationState()
-  }
-
-  /**
-   * Force jump animation
-   */
-  jump(): void {
-    if (this._capabilities.value.canJump) {
-      this.setAnimation(ANIMATION_STATES.JUMPING)
-    }
-  }
-
-  /**
-   * Use item animation
-   */
-  useItem(): void {
-    this.setAnimation(ANIMATION_STATES.USING_ITEM)
-  }
-
-  /**
-   * Talk animation
-   */
-  talk(): void {
-    this.setAnimation(ANIMATION_STATES.TALKING)
-  }
-
-  /**
-   * Emote animation
-   */
-  emote(): void {
-    this.setAnimation(ANIMATION_STATES.EMOTING)
   }
 
   /**
    * Get current animation state
+   * 
+   * @description Returns the current animation state information
+   * @outputs - AnimationState object with current state and transition information
+   * @returns {AnimationState} Current animation state
    */
-  getCurrentAnimation(): AnimationStateType {
-    return this._animationState.current
+  getCurrentAnimation(): AnimationState {
+    return this._animationState.value
   }
 
   /**
-   * Get animation state object
+   * Check if character is moving
+   * 
+   * @description Determines if the character is currently in motion
+   * @inputs - _movementState.value.isMoving (boolean)
+   * @outputs - boolean - true if character is moving, false otherwise
+   * @returns {boolean} Whether the character is moving
    */
-  getAnimationState(): AnimationState {
-    return { ...this._animationState }
+  isMoving(): boolean {
+    return this._movementState.value.isMoving
+  }
+
+  /**
+   * Update movement state based on position change
+   * 
+   * @description Detects movement by comparing current position with last known position
+   * @inputs - position (Vector3) - Current character position, timestamp (number) - Current time
+   * @sideEffects - Updates _movementState.value with movement detection results
+   * @param {Vector3} position - Current character position
+   * @param {number} timestamp - Current timestamp in milliseconds
+   */
+  updateMovementState(position: Vector3, timestamp: number): void {
+    const movementState = this._movementState.value
+    const settings = this._settings.value
+
+    // Check if enough time has passed since last movement check
+    if (timestamp - movementState.lastMovementCheck < settings.movementCheckInterval) {
+      return
+    }
+
+    // Calculate distance moved
+    const distance = position.distanceTo(movementState.lastPosition)
+    const isMoving = distance > settings.minMovementThreshold
+
+    // Update movement state
+    this._movementState.value = {
+      isMoving,
+      velocity: position.clone().sub(movementState.lastPosition),
+      lastPosition: position.clone(),
+      movementThreshold: settings.minMovementThreshold,
+      lastMovementCheck: timestamp
+    }
+
+    // Auto-update animation based on movement
+    if (isMoving && this._animationState.value.current === ANIMATION_STATES.IDLE) {
+      this.setAnimation(ANIMATION_STATES.WALKING)
+    } else if (!isMoving && this._animationState.value.current === ANIMATION_STATES.WALKING) {
+      this.setAnimation(ANIMATION_STATES.IDLE)
+    }
   }
 
   /**
    * Get movement state
+   * 
+   * @description Returns current movement state information
+   * @outputs - MovementState object with movement flags and velocity
+   * @returns {MovementState} Current movement state
    */
   getMovementState(): MovementState {
-    return { ...this._movementState }
-  }
-
-  /**
-   * Get character capabilities
-   */
-  getCapabilities(): CharacterCapabilities {
-    return { ...this._capabilities.value }
+    return this._movementState.value
   }
 
   /**
    * Update animation settings
+   * 
+   * @description Modifies animation timing and movement detection parameters
+   * @inputs - settings (Partial<AnimationSettings>) - Settings to update
+   * @sideEffects - Updates _settings.value by merging with provided settings
+   * @param {Partial<AnimationSettings>} settings - Settings to update
    */
   updateSettings(settings: Partial<AnimationSettings>): void {
     this._settings.value = { ...this._settings.value, ...settings }
   }
 
   /**
-   * Get debug information
+   * Get animation settings
+   * 
+   * @description Returns current animation configuration
+   * @outputs - AnimationSettings object with timing and threshold values
+   * @returns {AnimationSettings} Current animation settings
    */
-  getDebugInfo(): any {
-    return {
-      currentAnimation: this._animationState.current,
-      isTransitioning: this._animationState.isTransitioning,
-      isMoving: this._movementState.isMoving,
-      capabilities: this._capabilities.value,
-      velocity: this._movementState.velocity.toArray(),
-      position: this._characterData.value?.position.toArray()
-    }
+  getSettings(): AnimationSettings {
+    return this._settings.value
   }
 
   /**
    * Reset animation state
+   * 
+   * @description Resets animation and movement state to default values
+   * @sideEffects - Resets _animationState.value and _movementState.value to initial values
    */
   reset(): void {
-    this._animationState.current = ANIMATION_STATES.IDLE
-    this._animationState.previous = ANIMATION_STATES.IDLE
-    this._animationState.isTransitioning = false
-    this._movementState.isMoving = false
-    this._movementState.velocity.set(0, 0, 0)
+    this._animationState.value = {
+      current: ANIMATION_STATES.IDLE,
+      previous: ANIMATION_STATES.IDLE,
+      isTransitioning: false,
+      transitionStartTime: 0,
+      transitionDuration: 300
+    }
+
+    this._movementState.value = {
+      isMoving: false,
+      velocity: new Vector3(),
+      lastPosition: this._characterData.value?.position.clone() || new Vector3(),
+      movementThreshold: this._settings.value.minMovementThreshold,
+      lastMovementCheck: 0
+    }
+  }
+
+  /**
+   * Get character type
+   * 
+   * @description Returns the current character type identifier
+   * @inputs - _characterData.value?.characterType (string)
+   * @outputs - string | undefined - Character type or undefined
+   * @returns {string | undefined} Current character type
+   */
+  getCharacterType(): string | undefined {
+    return this._characterData.value?.characterType
+  }
+
+  /**
+   * Get character name
+   * 
+   * @description Returns the current character name
+   * @inputs - _characterData.value?.name (string)
+   * @outputs - string | undefined - Character name or undefined
+   * @returns {string | undefined} Current character name
+   */
+  getCharacterName(): string | undefined {
+    return this._characterData.value?.name
+  }
+
+  /**
+   * Check if animation is transitioning
+   * 
+   * @description Determines if an animation transition is currently in progress
+   * @inputs - _animationState.value.isTransitioning (boolean)
+   * @outputs - boolean - true if transitioning, false otherwise
+   * @returns {boolean} Whether animation is transitioning
+   */
+  isTransitioning(): boolean {
+    return this._animationState.value.isTransitioning
+  }
+
+  /**
+   * Get transition progress
+   * 
+   * @description Calculates the progress of the current animation transition
+   * @inputs - _animationState.value.transitionStartTime (number), _animationState.value.transitionDuration (number)
+   * @outputs - number - Transition progress from 0.0 to 1.0
+   * @returns {number} Transition progress (0.0 to 1.0)
+   */
+  getTransitionProgress(): number {
+    const state = this._animationState.value
+    if (!state.isTransitioning || state.transitionDuration === 0) {
+      return 1.0
+    }
+
+    const elapsed = Date.now() - state.transitionStartTime
+    return Math.min(elapsed / state.transitionDuration, 1.0)
+  }
+
+  /**
+   * Get available animations for current character
+   * 
+   * @description Returns list of animations available to the current character type
+   * @inputs - characterCapabilities (CharacterCapabilities)
+   * @outputs - string[] - Array of available animation names
+   * @returns {string[]} Available animations for current character
+   */
+  getAvailableAnimations(): string[] {
+    const capabilities = this.characterCapabilities.value
+    return capabilities?.defaultAnimations || [ANIMATION_STATES.IDLE]
+  }
+
+  /**
+   * Validate animation for current character
+   * 
+   * @description Checks if an animation is valid for the current character type
+   * @inputs - animation (string) - Animation to validate, characterCapabilities (CharacterCapabilities)
+   * @outputs - boolean - true if animation is valid, false otherwise
+   * @param {string} animation - Animation to validate
+   * @returns {boolean} Whether the animation is valid for current character
+   */
+  isValidAnimation(animation: string): boolean {
+    const capabilities = this.characterCapabilities.value
+    if (!capabilities) return false
+
+    // Check if animation is in default animations list
+    if (capabilities.defaultAnimations.includes(animation)) {
+      return true
+    }
+
+    // Check if character can perform the action
+    return this.canPerformAction.value(animation)
+  }
+
+  /**
+   * Get character position
+   * 
+   * @description Returns the current character position
+   * @inputs - _characterData.value?.position (Vector3)
+   * @outputs - Vector3 | undefined - Character position or undefined
+   * @returns {Vector3 | undefined} Current character position
+   */
+  getCharacterPosition(): Vector3 | undefined {
+    return this._characterData.value?.position
+  }
+
+  /**
+   * Get character rotation
+   * 
+   * @description Returns the current character rotation
+   * @inputs - _characterData.value?.rotation (Vector3)
+   * @outputs - Vector3 | undefined - Character rotation or undefined
+   * @returns {Vector3 | undefined} Current character rotation
+   */
+  getCharacterRotation(): Vector3 | undefined {
+    return this._characterData.value?.rotation
+  }
+
+  /**
+   * Get character scale
+   * 
+   * @description Returns the current character scale
+   * @inputs - _characterData.value?.scale (Vector3)
+   * @outputs - Vector3 | undefined - Character scale or undefined
+   * @returns {Vector3 | undefined} Current character scale
+   */
+  getCharacterScale(): Vector3 | undefined {
+    return this._characterData.value?.scale
+  }
+
+  /**
+   * Get character ID
+   * 
+   * @description Returns the current character ID
+   * @inputs - _characterData.value?.id (string)
+   * @outputs - string | undefined - Character ID or undefined
+   * @returns {string | undefined} Current character ID
+   */
+  getCharacterId(): string | undefined {
+    return this._characterData.value?.id
+  }
+
+  /**
+   * Get character avatar
+   * 
+   * @description Returns the current character avatar
+   * @inputs - _characterData.value?.avatar (string)
+   * @outputs - string | undefined - Character avatar or undefined
+   * @returns {string | undefined} Current character avatar
+   */
+  getCharacterAvatar(): string | undefined {
+    return this._characterData.value?.avatar
+  }
+
+  /**
+   * Get character species
+   * 
+   * @description Returns the current character species
+   * @inputs - _characterData.value?.species (string)
+   * @outputs - string | undefined - Character species or undefined
+   * @returns {string | undefined} Current character species
+   */
+  getCharacterSpecies(): string | undefined {
+    return this._characterData.value?.species
+  }
+
+  /**
+   * Get character avatar class
+   * 
+   * @description Returns the current character avatar class information
+   * @inputs - _characterData.value?.avatarClass (object)
+   * @outputs - object | undefined - Avatar class info or undefined
+   * @returns {object | undefined} Current character avatar class
+   */
+  getCharacterAvatarClass(): { title?: string; filename?: string } | undefined {
+    return this._characterData.value?.avatarClass
   }
 }
 

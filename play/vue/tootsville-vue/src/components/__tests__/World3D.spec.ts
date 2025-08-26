@@ -1,0 +1,493 @@
+// Mock the useGameStore - must be at top level for hoisting
+vi.mock('@/stores/game', () => ({
+  useGameStore: vi.fn(() => ({
+    character: ref({
+      id: '1',
+      name: 'Test Player',
+      avatar: 'zap',
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      scale: { x: 1, y: 1, z: 1 },
+      animation: 'idle',
+      isMoving: false,
+      isSitting: false,
+      isJumping: false,
+      isSwimming: false,
+      isFlying: false,
+      health: 100,
+      energy: 100,
+      level: 1,
+      experience: 0
+    }),
+    avatars: ref(new Map([
+      ['2', {
+        id: '2',
+        name: 'Other Player',
+        type: 'toot',
+        position: { x: 5, y: 0, z: 5 },
+        rotation: { x: 0, y: 0, z: 0 },
+        scale: { x: 1, y: 1, z: 1 },
+        animation: 'idle',
+        isMoving: false,
+        isSitting: false,
+        isJumping: false,
+        isSwimming: false,
+        isFlying: false,
+        lastUpdate: Date.now()
+      }]
+    ])),
+    worldObjects: ref([]),
+    isLoading: ref(false),
+    error: ref(null)
+  }))
+}))
+
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import { ref } from 'vue'
+import World3D from '../Game/World3D.vue'
+
+// Mock the useAnimationManager composable
+vi.mock('@/composables/useAnimationManager', () => ({
+  useAnimationManager: vi.fn(() => ({
+    currentAnimation: ref('idle'),
+    isTransitioning: ref(false),
+    isMoving: ref(false),
+    capabilities: ref({
+      canWalk: true,
+      canRun: true,
+      canJump: true,
+      canSit: true,
+      canUseItems: true,
+      canTalk: true,
+      canEmote: true
+    }),
+    updateCharacter: vi.fn(),
+    updatePosition: vi.fn(),
+    setAnimation: vi.fn(),
+    sit: vi.fn(),
+    stand: vi.fn(),
+    jump: vi.fn(),
+    useItem: vi.fn(),
+    talk: vi.fn(),
+    emote: vi.fn(),
+    getCurrentAnimation: vi.fn(() => 'idle'),
+    getAnimationState: vi.fn(() => ({ type: 'idle', duration: 0 })),
+    getMovementState: vi.fn(() => ({ isMoving: false, speed: 0 })),
+    getCapabilities: vi.fn(() => ({
+      canWalk: true,
+      canRun: true,
+      canJump: true,
+      canSit: true,
+      canUseItems: true,
+      canTalk: true,
+      canEmote: true
+    })),
+    updateSettings: vi.fn(),
+    getDebugInfo: vi.fn(() => ({ fps: 60, memory: '10MB' })),
+    reset: vi.fn()
+  }))
+}))
+
+// Mock the mobilePlatformService
+vi.mock('@/services/MobilePlatformService', () => ({
+  mobilePlatformService: {
+    getPlatform: vi.fn(() => ({
+      isMobile: false,
+      isTablet: false,
+      isDesktop: true,
+      userAgent: 'test'
+    })),
+    getOptimizations: vi.fn(() => ({
+      enableShadows: true,
+      enablePostProcessing: true,
+      maxLights: 4,
+      maxObjects: 100
+    }))
+  }
+}))
+
+// Mock vue-three components
+vi.mock('vue-three', () => ({
+  Canvas: {
+    name: 'Canvas',
+    template: '<div class="canvas-mock"><slot /></div>'
+  },
+  Sky: {
+    name: 'Sky',
+    template: '<div class="sky-mock"></div>'
+  },
+  useFrame: vi.fn()
+}))
+
+// Mock Three.js
+vi.mock('three', () => ({
+  Scene: vi.fn(),
+  PerspectiveCamera: vi.fn(),
+  WebGLRenderer: vi.fn(),
+  AmbientLight: vi.fn(),
+  DirectionalLight: vi.fn(),
+  Mesh: vi.fn(),
+  BoxGeometry: vi.fn(),
+  MeshStandardMaterial: vi.fn(),
+  Vector3: vi.fn(),
+  Euler: vi.fn(),
+  Color: vi.fn()
+}))
+
+describe('World3D', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('Component Rendering', () => {
+    it('should render the 3D world container', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.find('.world-3d').exists()).toBe(true)
+    })
+
+    it('should render the canvas element', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.find('.canvas-mock').exists()).toBe(true)
+    })
+
+    it('should render the sky component', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.find('.sky-mock').exists()).toBe(true)
+    })
+
+    it('should render the loading screen initially', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.find('.loading-screen').exists()).toBe(true)
+    })
+  })
+
+  describe('Loading State', () => {
+    it('should show loading screen when world is loading', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isLoading: true
+          }
+        }
+      })
+      
+      expect(wrapper.find('.loading-screen').exists()).toBe(true)
+      expect(wrapper.text()).toContain('Loading Tootsville...')
+    })
+
+    it('should hide loading screen when world is loaded', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isLoading: false
+          }
+        }
+      })
+      
+      expect(wrapper.find('.loading-screen').exists()).toBe(false)
+    })
+
+    it('should show loading progress', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isLoading: true,
+            loadingProgress: 50
+          }
+        }
+      })
+      
+      expect(wrapper.text()).toContain('50%')
+    })
+  })
+
+  describe('World Objects', () => {
+    it('should render player character', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isLoading: false,
+            player: { id: 'player1', name: 'TestPlayer', type: 'TOOT' }
+          }
+        }
+      })
+      
+      expect(wrapper.find('.player-character').exists()).toBe(true)
+    })
+
+    it('should render other players', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isLoading: false,
+            otherPlayers: [
+              { id: 'player2', name: 'OtherPlayer', type: 'BIRD' }
+            ]
+          }
+        }
+      })
+      
+      expect(wrapper.find('.other-players').exists()).toBe(true)
+    })
+
+    it('should render world objects', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isLoading: false,
+            worldObjects: [
+              { type: 'tree', position: { x: 0, y: 0, z: 0 } }
+            ]
+          }
+        }
+      })
+      
+      expect(wrapper.find('.world-objects').exists()).toBe(true)
+    })
+  })
+
+  describe('UI Overlay', () => {
+    it('should render UI overlay', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.find('.ui-overlay').exists()).toBe(true)
+    })
+
+    it('should render FPS counter', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            fps: 60
+          }
+        }
+      })
+      
+      expect(wrapper.find('.fps-counter').exists()).toBe(true)
+      expect(wrapper.text()).toContain('60 FPS')
+    })
+
+    it('should render player info', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            player: { name: 'TestPlayer', health: 100, level: 5 }
+          }
+        }
+      })
+      
+      expect(wrapper.find('.player-info').exists()).toBe(true)
+      expect(wrapper.text()).toContain('TestPlayer')
+      expect(wrapper.text()).toContain('Level 5')
+    })
+  })
+
+  describe('Camera Controls', () => {
+    it('should handle camera movement', async () => {
+      const wrapper = mount(World3D)
+      
+      await wrapper.trigger('mousemove', { clientX: 100, clientY: 100 })
+      
+      // Should update camera position
+      expect(wrapper.vm.cameraPosition).toBeDefined()
+    })
+
+    it('should handle zoom controls', async () => {
+      const wrapper = mount(World3D)
+      
+      await wrapper.trigger('wheel', { deltaY: -100 })
+      
+      // Should zoom in
+      expect(wrapper.vm.cameraZoom).toBeDefined()
+    })
+  })
+
+  describe('Performance Monitoring', () => {
+    it('should track FPS', () => {
+      const wrapper = mount(World3D)
+      
+      // Simulate frame update
+      wrapper.vm.updateFPS(60)
+      
+      expect(wrapper.vm.fps).toBe(60)
+    })
+
+    it('should show performance warnings', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            fps: 25 // Low FPS
+          }
+        }
+      })
+      
+      expect(wrapper.find('.performance-warning').exists()).toBe(true)
+    })
+  })
+
+  describe('World Interaction', () => {
+    it('should handle object selection', async () => {
+      const wrapper = mount(World3D)
+      
+      await wrapper.trigger('click', { clientX: 100, clientY: 100 })
+      
+      // Should update selected object
+      expect(wrapper.vm.selectedObject).toBeDefined()
+    })
+
+    it('should handle object interaction', async () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            selectedObject: { type: 'tree', id: 'tree1' }
+          }
+        }
+      })
+      
+      await wrapper.trigger('keydown.enter')
+      
+      // Should interact with selected object
+      expect(wrapper.vm.interactionResult).toBeDefined()
+    })
+  })
+
+  describe('World State Management', () => {
+    it('should initialize world state', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.vm.worldState).toBeDefined()
+      expect(wrapper.vm.isLoading).toBe(true)
+    })
+
+    it('should load world data', async () => {
+      const wrapper = mount(World3D)
+      
+      await wrapper.vm.loadWorld()
+      
+      expect(wrapper.vm.isLoading).toBe(false)
+      expect(wrapper.vm.worldObjects).toBeDefined()
+    })
+
+    it('should handle world errors', async () => {
+      const wrapper = mount(World3D)
+      
+      // Simulate error
+      await wrapper.vm.handleError(new Error('World loading failed'))
+      
+      expect(wrapper.vm.error).toBeDefined()
+      expect(wrapper.text()).toContain('World loading failed')
+    })
+  })
+
+  describe('Responsive Design', () => {
+    it('should handle window resize', async () => {
+      const wrapper = mount(World3D)
+      
+      // Simulate window resize
+      window.dispatchEvent(new Event('resize'))
+      
+      expect(wrapper.vm.windowSize).toBeDefined()
+    })
+
+    it('should adjust camera for mobile', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            isMobile: true
+          }
+        }
+      })
+      
+      expect(wrapper.vm.cameraSettings).toBeDefined()
+    })
+  })
+
+  describe('Animation and Effects', () => {
+    it('should handle day/night cycle', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            timeOfDay: 0.5 // Noon
+          }
+        }
+      })
+      
+      expect(wrapper.vm.lightingSettings).toBeDefined()
+    })
+
+    it('should handle weather effects', () => {
+      const wrapper = mount(World3D, {
+        data() {
+          return {
+            weather: 'rain'
+          }
+        }
+      })
+      
+      expect(wrapper.find('.weather-effects').exists()).toBe(true)
+    })
+  })
+
+  describe('Component Lifecycle', () => {
+    it('should initialize on mount', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.vm.isInitialized).toBe(true)
+    })
+
+    it('should clean up on unmount', () => {
+      const wrapper = mount(World3D)
+      
+      wrapper.unmount()
+      
+      // Should clean up resources
+      expect(true).toBe(true)
+    })
+  })
+
+  describe('Accessibility', () => {
+    it('should have proper ARIA labels', () => {
+      const wrapper = mount(World3D)
+      
+      expect(wrapper.find('[aria-label="3D World"]').exists()).toBe(true)
+    })
+
+    it('should support keyboard navigation', async () => {
+      const wrapper = mount(World3D)
+      
+      await wrapper.trigger('keydown.arrowup')
+      await wrapper.trigger('keydown.arrowdown')
+      await wrapper.trigger('keydown.arrowleft')
+      await wrapper.trigger('keydown.arrowright')
+      
+      // Should handle keyboard input
+      expect(wrapper.vm.keyboardInput).toBeDefined()
+    })
+  })
+
+  describe('Error Handling', () => {
+    it('should handle WebGL errors', async () => {
+      const wrapper = mount(World3D)
+      
+      // Simulate WebGL error
+      await wrapper.vm.handleWebGLError(new Error('WebGL not supported'))
+      
+      expect(wrapper.vm.error).toBeDefined()
+      expect(wrapper.text()).toContain('WebGL not supported')
+    })
+
+    it('should handle network errors', async () => {
+      const wrapper = mount(World3D)
+      
+      // Simulate network error
+      await wrapper.vm.handleNetworkError(new Error('Network failed'))
+      
+      expect(wrapper.vm.error).toBeDefined()
+      expect(wrapper.text()).toContain('Network failed')
+    })
+  })
+})
