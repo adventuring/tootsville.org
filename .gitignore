@@ -45,5 +45,19 @@ TODO.scorecard
 node_modules
 package-lock.json
 
+# Security and sensitive files
+*.pgp
+*.gpg
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.csr
+security-key.*
+secrets/
+.env
+.env.*
+
 # macOS junk
 .DS_Store
