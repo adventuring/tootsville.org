@@ -59,7 +59,7 @@ const createMockContext = (contextId: string) => {
 // Override the getContext method on the global HTMLCanvasElement
 if (typeof window !== 'undefined' && window.HTMLCanvasElement) {
   window.HTMLCanvasElement.prototype.getContext = function (contextId: string) {
-    return createMockContext(contextId)
+    return createMockContext(contextId) as any
   }
 }
 

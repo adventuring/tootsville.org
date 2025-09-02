@@ -49,8 +49,7 @@
 import { computed } from 'vue'
 import { Vector3 } from 'three'
 
-// Props
-interface Props {
+const properties = defineProps<{
   equipment: {
     id: string
     type: string
@@ -60,31 +59,30 @@ interface Props {
     particles?: boolean
   }
   position: Vector3
-}
-
-const props = defineProps<Props>()
+}>()
 
 // Computed
-const equipmentModel = computed(() => props.equipment && props.equipment.type)
+const equipmentModel = computed(() => properties.equipment && properties.equipment.type)
 
 const equipmentColor = computed(() => {
-  if (props.equipment.color) {
-    return props.equipment.color
+  // Use the item's own color attribute if provided
+  if (properties.equipment.color !== undefined) {
+    return properties.equipment.color
   }
   
-  // Default colors based on equipment type
-  const colors = {
-    weapon: 0xFF0000,    // Red
-    shield: 0x0000FF,    // Blue
-    tool: 0xFFFF00,      // Yellow
-    accessory: 0xFF00FF, // Magenta
-    default: 0x808080    // Gray
+  // Fall back to type-based colors only when no color is specified
+  const typeColors = {
+    air_shooter: 0x00FF00,    // Green
+    egg_shooter: 0xFF8000,    // Orange
+    tool: 0xFFFF00,           // Yellow
+    accessory: 0xFF00FF,      // Magenta
+    default: 0x808080         // Gray
   }
   
-  return colors[props.equipment.type as keyof typeof colors] || colors.default
+  return typeColors[properties.equipment.type as keyof typeof typeColors] || typeColors.default
 })
 
-const showEffects = computed(() => props.equipment.glow || props.equipment.particles)
+const showEffects = computed(() => properties.equipment.glow || properties.equipment.particles)
 </script>
 
 

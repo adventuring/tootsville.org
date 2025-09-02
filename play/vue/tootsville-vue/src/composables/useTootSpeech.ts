@@ -1,195 +1,161 @@
 /**
- * useTootSpeech.ts - Vue composable for Toot Speech Service
- * 
- * Vue 3 / TypeScript version replacing React hook
+ * useTootSpeech - Vue composable for TootSpeechService integration
  * 
  * Copyright © 2025 Interworldly Adventuring, LLC.
  * This program is Free Software; Refer to COPYING.AGPL for details.
  */
 
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { tootSpeechService, type SpeechParameters, type SpeechStatus } from '@/services/TootSpeechService'
+import { computed, ref, onUnmounted } from 'vue'
+import { TootSpeechService } from '@/services/TootSpeechService'
+import type { SpeechParams, SpeechQueueItem } from '@/services/TootSpeechService'
 
 /**
- * Vue composable for Toot Speech Service
+ * Vue composable for TootSpeechService integration
  * 
- * Provides reactive access to speech synthesis functionality
+ * Provides reactive integration of TootSpeechService with Vue components.
+ * Manages speech synthesis and audio playback for character voices.
+ * 
+ * @returns {Object} Toot speech composable with reactive state and methods
+ * 
+ * @example
+ * const { isSpeaking, queueLength, speak, stop, pause } = useTootSpeech()
  */
 export function useTootSpeech() {
+  const tootSpeechService = new TootSpeechService()
+  
   // Reactive state
-  const isSpeaking = ref(false)
-  const speechStatus = ref<SpeechStatus>({
-    isSpeaking: false,
-    currentText: null,
-    queueLength: 0,
-    isInitialized: false,
-    error: null
-  })
-  const isInitialized = ref(false)
-  const error = ref<string | null>(null)
-
-  // Computed properties
-  const canSpeak = computed(() => isInitialized.value && !error.value)
-  const queueLength = computed(() => speechStatus.value.queueLength)
-
-  // Event handlers
-  const handleSpeechStarted = (data: { text: string; parameters: SpeechParameters }) => {
-    isSpeaking.value = true
-    speechStatus.value.isSpeaking = true
-    speechStatus.value.currentText = data.text
-  }
-
-  const handleSpeechEnded = (data: { text: string; parameters: SpeechParameters }) => {
-    isSpeaking.value = false
-    speechStatus.value.isSpeaking = false
-    speechStatus.value.currentText = null
-  }
-
-  const handleSpeechQueued = (queueItem: any) => {
-    speechStatus.value.queueLength = tootSpeechService.queueLength.value
-  }
-
-  const handleQueueCleared = () => {
-    speechStatus.value.queueLength = 0
-  }
-
-  const handleInitialized = () => {
-    isInitialized.value = true
-    error.value = null
-  }
-
-  const handleError = (err: any) => {
-    error.value = err.message || 'Speech service error'
-  }
-
-  const handleVolumeChanged = (data: { type: string; volume: number }) => {
-    // Update local state if needed
-  }
+  const isSpeaking = computed(() => tootSpeechService.isSpeaking())
+  const queueLength = computed(() => tootSpeechService.getQueueLength())
+  const currentSpeech = computed(() => tootSpeechService.getCurrentSpeech())
+  const isPaused = ref(false)
 
   // Methods
-  const speak = async (text: string, parameters?: Partial<SpeechParameters>): Promise<boolean> => {
+  const speak = async (text: string, params?: Partial<SpeechParams>) => {
     try {
-      return await tootSpeechService.speak(text, parameters)
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to speak'
-      return false
+      await tootSpeechService.speak(text, params)
+    } catch (error) {
+      console.error('Speech error:', error)
     }
   }
 
-  const stopSpeaking = (): void => {
-    tootSpeechService.stopSpeaking()
-  }
-
-  const queueSpeech = (text: string, parameters?: Partial<SpeechParameters>, priority?: number): void => {
-    tootSpeechService.queueSpeech(text, parameters, priority)
-  }
-
-  const clearSpeechQueue = (): void => {
-    tootSpeechService.clearSpeechQueue()
-  }
-
-  const setVolume = (volume: number): void => {
-    tootSpeechService.setSpeechVolume(volume)
-  }
-
-  const setMasterVolume = (volume: number): void => {
-    tootSpeechService.setMasterVolume(volume)
-  }
-
-  const resume = async (): Promise<void> => {
-    await tootSpeechService.resume()
-  }
-
-  const suspend = async (): Promise<void> => {
-    await tootSpeechService.suspend()
-  }
-
-  const initialize = async (): Promise<boolean> => {
+  const queueSpeech = async (text: string, params?: Partial<SpeechParams>) => {
     try {
-      const success = await tootSpeechService.initialize()
-      if (success) {
-        isInitialized.value = true
-        error.value = null
-      }
-      return success
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to initialize'
-      return false
+      await tootSpeechService.queueSpeech(text, params)
+    } catch (error) {
+      console.error('Queue speech error:', error)
     }
   }
 
-  const dispose = (): void => {
-    tootSpeechService.dispose()
-    isInitialized.value = false
-    isSpeaking.value = false
-    speechStatus.value = {
-      isSpeaking: false,
-      currentText: null,
-      queueLength: 0,
-      isInitialized: false,
-      error: null
+  const stop = () => {
+    tootSpeechService.stop()
+  }
+
+  const pause = () => {
+    tootSpeechService.pause()
+    isPaused.value = true
+  }
+
+  const resume = async () => {
+    try {
+      await tootSpeechService.resume()
+      isPaused.value = false
+    } catch (error) {
+      console.error('Resume error:', error)
     }
   }
 
-  // Setup event listeners
-  const setupEventListeners = () => {
-    tootSpeechService.on('speechStarted', handleSpeechStarted)
-    tootSpeechService.on('speechEnded', handleSpeechEnded)
-    tootSpeechService.on('speechQueued', handleSpeechQueued)
-    tootSpeechService.on('queueCleared', handleQueueCleared)
-    tootSpeechService.on('initialized', handleInitialized)
-    tootSpeechService.on('error', handleError)
-    tootSpeechService.on('volumeChanged', handleVolumeChanged)
+  const clearQueue = () => {
+    tootSpeechService.clearQueue()
   }
 
-  const cleanupEventListeners = () => {
-    tootSpeechService.off('speechStarted', handleSpeechStarted)
-    tootSpeechService.off('speechEnded', handleSpeechEnded)
-    tootSpeechService.off('speechQueued', handleSpeechQueued)
-    tootSpeechService.off('queueCleared', handleQueueCleared)
-    tootSpeechService.off('initialized', handleInitialized)
-    tootSpeechService.off('error', handleError)
-    tootSpeechService.off('volumeChanged', handleVolumeChanged)
+  const setVoice = (voice: string) => {
+    tootSpeechService.setVoice(voice)
   }
 
-  // Lifecycle
-  onMounted(() => {
-    setupEventListeners()
-    // Auto-initialize if not already initialized
-    if (!tootSpeechService.speechStatus.value.isInitialized) {
-      initialize()
-    } else {
-      isInitialized.value = true
-      speechStatus.value = tootSpeechService.speechStatus.value
+  const setRate = (rate: number) => {
+    tootSpeechService.setRate(rate)
+  }
+
+  const setPitch = (pitch: number) => {
+    tootSpeechService.setPitch(pitch)
+  }
+
+  const setVolume = (volume: number) => {
+    tootSpeechService.setVolume(volume)
+  }
+
+  const getAvailableVoices = () => {
+    return tootSpeechService.getAvailableVoices()
+  }
+
+  const getSpeechHistory = () => {
+    return tootSpeechService.getSpeechHistory()
+  }
+
+  const getQueue = (): SpeechQueueItem[] => {
+    return tootSpeechService.getQueue()
+  }
+
+  const removeFromQueue = (index: number) => {
+    tootSpeechService.removeFromQueue(index)
+  }
+
+  const moveInQueue = (fromIndex: number, toIndex: number) => {
+    tootSpeechService.moveInQueue(fromIndex, toIndex)
+  }
+
+  const getSpeechStats = () => {
+    return tootSpeechService.getSpeechStats()
+  }
+
+  const resetStats = () => {
+    tootSpeechService.resetStats()
+  }
+
+  const getDebugInfo = () => {
+    return {
+      isSpeaking: tootSpeechService.isSpeaking(),
+      queueLength: tootSpeechService.getQueueLength(),
+      currentSpeech: tootSpeechService.getCurrentSpeech(),
+      availableVoices: tootSpeechService.getAvailableVoices(),
+      speechHistory: tootSpeechService.getSpeechHistory(),
+      queue: tootSpeechService.getQueue(),
+      stats: tootSpeechService.getSpeechStats()
     }
-  })
+  }
 
+  // Cleanup
   onUnmounted(() => {
-    cleanupEventListeners()
+    tootSpeechService.stop()
+    tootSpeechService.clearQueue()
   })
 
   return {
-    // State
+    // Reactive state
     isSpeaking,
-    speechStatus,
-    isInitialized,
-    error,
-
-    // Computed
-    canSpeak,
     queueLength,
+    currentSpeech,
+    isPaused,
 
     // Methods
     speak,
-    stopSpeaking,
     queueSpeech,
-    clearSpeechQueue,
-    setVolume,
-    setMasterVolume,
+    stop,
+    pause,
     resume,
-    suspend,
-    initialize,
-    dispose
+    clearQueue,
+    setVoice,
+    setRate,
+    setPitch,
+    setVolume,
+    getAvailableVoices,
+    getSpeechHistory,
+    getQueue,
+    removeFromQueue,
+    moveInQueue,
+    getSpeechStats,
+    resetStats,
+    getDebugInfo
   }
 }
 

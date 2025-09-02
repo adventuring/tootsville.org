@@ -30,13 +30,13 @@
       <h4>Character Capabilities</h4>
       <div class="capabilities-grid">
         <div 
-          v-for="(capability, key) in capabilities" 
-          :key="key"
+          v-for="(capability, key) in Object.entries(capabilities)" 
+          :key="key[0]"
           class="capability-item"
         >
-          <label>{{ formatCapabilityName(key) }}:</label>
-          <span :class="['capability', capability ? 'enabled' : 'disabled']">
-            {{ capability ? 'Yes' : 'No' }}
+          <label>{{ formatCapabilityName(key[0] as string) }}:</label>
+          <span :class="['capability', key[1] ? 'enabled' : 'disabled']">
+            {{ key[1] ? 'Yes' : 'No' }}
           </span>
         </div>
       </div>

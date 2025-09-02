@@ -158,9 +158,7 @@ vi.mock('three', () => ({
   Color: vi.fn()
 }))
 
-// TODO: Fix World3D tests - complex Three.js mocking issues
-// Temporarily disabled due to persistent mocking problems
-describe.skip('World3D', () => {
+describe('World3D', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })

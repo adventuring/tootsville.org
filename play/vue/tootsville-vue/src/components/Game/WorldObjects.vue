@@ -44,10 +44,10 @@
       :type="water.type"
     />
 
-    <!-- Decorative Elements -->
-    <DecorativeElement
-      v-for="element in decorativeElements"
-      :key="`decorative-${element.id}`"
+    <!-- Scenery Objects -->
+    <Scenery
+      v-for="element in sceneryElements"
+      :key="`scenery-${element.id}`"
       :position="element.position"
       :rotation="element.rotation"
       :scale="element.scale"
@@ -63,7 +63,7 @@ import Tree from './objects/Tree.vue'
 import Building from './objects/Building.vue'
 import InteractiveObject from './objects/InteractiveObject.vue'
 import WaterBody from './objects/WaterBody.vue'
-import DecorativeElement from './objects/DecorativeElement.vue'
+import Scenery from './objects/Scenery.vue'
 
 // Types
 interface WorldObject {
@@ -86,7 +86,7 @@ const trees = ref<WorldObject[]>([])
 const buildings = ref<WorldObject[]>([])
 const interactiveObjects = ref<WorldObject[]>([])
 const waterBodies = ref<WorldObject[]>([])
-const decorativeElements = ref<WorldObject[]>([])
+  const sceneryElements = ref<WorldObject[]>([])
 
 // Methods
 const generateWorldObjects = () => {
@@ -177,9 +177,9 @@ const generateWorldObjects = () => {
     }
   ]
 
-  // Generate decorative elements
-  decorativeElements.value = Array.from({ length: 30 }, (_, i) => ({
-    id: `decorative-${i}`,
+      // Generate scenery elements
+    sceneryElements.value = Array.from({ length: 30 }, (_, i) => ({
+      id: `scenery-${i}`,
     position: new Vector3(
       (Math.random() - 0.5) * 90,
       0,

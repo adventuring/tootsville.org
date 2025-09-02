@@ -30,8 +30,7 @@ export interface CharacterState {
   isJumping: boolean
   isSwimming: boolean
   isFlying: boolean
-  health: number
-  energy: number
+
   level: number
   experience: number
 }
@@ -107,8 +106,6 @@ export const useGameStore = defineStore('game', () => {
     isJumping: false,
     isSwimming: false,
     isFlying: false,
-    health: 100,
-    energy: 100,
     level: 1,
     experience: 0
   })

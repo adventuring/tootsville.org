@@ -1,9 +1,16 @@
+<!--
+  Scenery.vue - World Scenery Objects
+  
+  Copyright © 2025 Interworldly Adventuring, LLC.
+  This program is Free Software; Refer to COPYING.AGPL for details.
+-->
+
 <template>
   <group :position="position" :rotation="rotation" :scale="scale">
     <mesh
       cast-shadow
       receive-shadow
-      :user-data="{ type: 'decorative', id: type }"
+      :user-data="{ type: 'scenery', id: type }"
     >
       <!-- Rock -->
       <dodecahedronGeometry v-if="type === 'rock'" :args="[0.3, 0]" />
@@ -16,7 +23,7 @@
       <!-- Default -->
       <boxGeometry v-else :args="[0.2, 0.2, 0.2]" />
       
-      <meshStandardMaterial :color="elementColor" :roughness="0.8" />
+      <meshStandardMaterial :color="sceneryColor" :roughness="0.8" />
     </mesh>
 
     <!-- Special Features -->
@@ -40,18 +47,15 @@
 import { computed } from 'vue'
 import { Vector3, Euler } from 'three'
 
-// Props
-interface Props {
+const properties = defineProps<{
   position: Vector3
   rotation: Euler
   scale: Vector3
   type: string
-}
-
-const props = defineProps<Props>()
+}>()
 
 // Computed
-const elementColor = computed(() => {
+const sceneryColor = computed(() => {
   const colors = {
     rock: 0x696969,      // Dim gray
     flower: 0xFF69B4,    // Hot pink
@@ -60,8 +64,6 @@ const elementColor = computed(() => {
     default: 0x808080    // Gray
   }
   
-  return colors[props.type as keyof typeof colors] || colors.default
+  return colors[properties.type as keyof typeof colors] || colors.default
 })
 </script>
-
-

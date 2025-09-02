@@ -99,8 +99,8 @@
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { Canvas, Html } from 'vue-three'
 import { Vector3, Euler } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { Sky } from 'three/examples/jsm/objects/Sky'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { Sky } from 'three/examples/jsm/objects/Sky.js'
 import { useFrame } from 'vue-three'
 import { useGameStore } from '@/stores/game'
 import { useAnimationManager } from '@/composables/useAnimationManager'
@@ -142,8 +142,33 @@ const fps = ref(60)
 const lastTime = ref(0)
 
 // Computed
-const playerData = computed(() => gameStore.character)
-const otherPlayers = computed(() => Array.from(gameStore.avatars.values()))
+const playerData = computed(() => ({
+  ...gameStore.character,
+  position: new Vector3(
+    gameStore.character.position.x,
+    gameStore.character.position.y,
+    gameStore.character.position.z
+  ),
+  rotation: new Euler(
+    gameStore.character.rotation.x,
+    gameStore.character.rotation.y,
+    gameStore.character.rotation.z
+  ),
+  scale: new Vector3(
+    gameStore.character.scale.x,
+    gameStore.character.scale.y,
+    gameStore.character.scale.z
+  )
+}))
+
+const otherPlayers = computed(() => Array.from(gameStore.avatars.values()).map(player => ({
+  ...player,
+  avatar: player.type || 'toot',
+  position: new Vector3(player.position.x, player.position.y, player.position.z),
+  rotation: new Euler(player.rotation.x, player.rotation.y, player.rotation.z),
+  scale: new Vector3(player.scale.x, player.scale.y, player.scale.z)
+})))
+
 const animationState = computed(() => ({
   current: currentAnimation.value,
   isMoving: isMoving.value,
@@ -247,13 +272,17 @@ const onCanvasClick = (event: any) => {
 const movePlayerTo = (position: Vector3) => {
   if (playerData.value) {
     // Update player position
-    gameStore.updateCharacterPosition(position)
+    gameStore.updateCharacterPosition({
+      x: position.x,
+      y: position.y,
+      z: position.z
+    })
     emit('playerMoved', position)
   }
 }
 
 // Frame loop
-useFrame(({ clock, camera }) => {
+useFrame(({ clock, camera }: any) => {
   // Update camera position
   cameraPosition.copy(camera.position)
   

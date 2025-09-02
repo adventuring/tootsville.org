@@ -533,7 +533,7 @@ export class CommunicationService extends EventEmitter {
   /**
    * Handle protocol errors
    */
-  private handleProtocolError(protocol: string, error: any): void {
+  public handleProtocolError(protocol: string, error: any): void {
     this._protocolStats[protocol as keyof ProtocolStats].errors++
     this.emit('protocolError', { protocol, error })
   }

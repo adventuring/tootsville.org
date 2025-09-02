@@ -1,89 +1,102 @@
 /**
- * useAnimationManager.ts - Vue composable for animation management
- * 
- * Provides reactive integration of AnimationManager with Vue components
+ * useAnimationManager - Vue composable for AnimationManager integration
  * 
  * Copyright © 2025 Interworldly Adventuring, LLC.
  * This program is Free Software; Refer to COPYING.AGPL for details.
  */
 
-import { computed, onUnmounted } from 'vue'
-import { animationManager, type CharacterData, type AnimationStateType } from '@/services/AnimationManager'
+import { computed, ref, onUnmounted } from 'vue'
+import { AnimationManager } from '@/services/AnimationManager'
+import type { CharacterData, AnimationState, CharacterCapabilities } from '@/services/AnimationManager'
 
 /**
- * Vue composable for animation management
+ * Vue composable for AnimationManager integration
+ * 
+ * Provides reactive integration of AnimationManager with Vue components.
+ * Manages character animation state and provides animation controls.
+ * 
+ * @returns {Object} Animation manager composable with reactive state and methods
+ * 
+ * @example
+ * const { currentAnimation, isMoving, capabilities, updateCharacter, sit, stand } = useAnimationManager()
  */
 export function useAnimationManager() {
-  // Reactive computed properties
-  const currentAnimation = computed(() => animationManager.currentAnimation.value)
-  const isTransitioning = computed(() => animationManager.isTransitioning.value)
-  const isMoving = computed(() => animationManager.isMoving.value)
-  const capabilities = computed(() => animationManager.capabilities.value)
+  const animationManager = new AnimationManager()
+  
+  // Reactive state
+  const currentAnimation = computed(() => animationManager.getCurrentAnimation().current)
+  const isTransitioning = computed(() => animationManager.isTransitioning())
+  const isMoving = computed(() => animationManager.isMoving())
+  const capabilities = computed(() => animationManager.getCharacterCapabilities())
 
   // Methods
   const updateCharacter = (character: CharacterData) => {
-    animationManager.updateCharacter(character)
+    animationManager.updateCharacterData(character)
   }
 
-  const updatePosition = (position: any, deltaTime: number) => {
-    animationManager.updatePosition(position, deltaTime)
+  const updatePosition = (position: { x: number; y: number; z: number }, deltaTime: number) => {
+    // Handle position updates
+    animationManager.updateCharacterData({
+      position,
+      deltaTime
+    } as CharacterData)
   }
 
-  const setAnimation = (animation: AnimationStateType, immediate = false) => {
-    animationManager.setAnimation(animation, immediate)
+  const setAnimation = (animation: string) => {
+    animationManager.setAnimation(animation)
   }
 
   const sit = () => {
-    animationManager.sit()
+    animationManager.setAnimation('sit')
   }
 
   const stand = () => {
-    animationManager.stand()
+    animationManager.setAnimation('idle')
   }
 
   const jump = () => {
-    animationManager.jump()
+    animationManager.setAnimation('jump')
   }
 
   const useItem = () => {
-    animationManager.useItem()
+    animationManager.setAnimation('use_item')
   }
 
   const talk = () => {
-    animationManager.talk()
+    animationManager.setAnimation('talk')
   }
 
   const emote = () => {
-    animationManager.emote()
-  }
-
-  const getCurrentAnimation = () => {
-    return animationManager.getCurrentAnimation()
-  }
-
-  const getAnimationState = () => {
-    return animationManager.getAnimationState()
-  }
-
-  const getMovementState = () => {
-    return animationManager.getMovementState()
-  }
-
-  const getCapabilities = () => {
-    return animationManager.getCapabilities()
-  }
-
-  const updateSettings = (settings: any) => {
-    animationManager.updateSettings(settings)
-  }
-
-  const getDebugInfo = () => {
-    return animationManager.getDebugInfo()
+    animationManager.setAnimation('emote')
   }
 
   const reset = () => {
     animationManager.reset()
   }
+
+  // Getters
+  const getAnimationState = (): AnimationState => {
+    return animationManager.animationState
+  }
+
+  const getCapabilities = (): CharacterCapabilities | null => {
+    return animationManager.getCharacterCapabilities()
+  }
+
+  const getDebugInfo = () => {
+    return {
+      currentAnimation: animationManager.getCurrentAnimation(),
+      isTransitioning: animationManager.isTransitioning(),
+      isMoving: animationManager.isMoving(),
+      capabilities: animationManager.getCharacterCapabilities(),
+      characterData: animationManager.getCharacterData()
+    }
+  }
+
+  // Cleanup
+  onUnmounted(() => {
+    // Cleanup if needed
+  })
 
   return {
     // Reactive state
@@ -102,13 +115,12 @@ export function useAnimationManager() {
     useItem,
     talk,
     emote,
-    getCurrentAnimation,
+    reset,
+
+    // Getters
     getAnimationState,
-    getMovementState,
     getCapabilities,
-    updateSettings,
-    getDebugInfo,
-    reset
+    getDebugInfo
   }
 }
 
