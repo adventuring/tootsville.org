@@ -7,21 +7,56 @@
 
     <link href="//plus.google.com/+TootsvilleOrg" rel="publisher" />
     <link rel="apple-touch-icon" sizes="180x180" href="//jumbo.tootsville.org/Assets/Icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Tootsville">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/android-chrome-192x192.png"
           sizes="192x192">
     <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-24x24.png" sizes="24x24">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-64x64.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-128x128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-144x144.png" sizes="144x144">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="//jumbo.tootsville.org/Assets/Icons/favicon-256x256.png" sizes="256x256">
     <link rel="manifest" href="/manifest.json">
     <meta name="msapplication-TileColor" content="#0082c8">
     <meta name="msapplication-TileImage" content="//jumbo.tootsville.org/Assets/Icons/mstile-144x144.png">
     <meta name="theme-color" content="#9669ad">
+    <meta name="application-name" content="Tootsville">
+    <meta name="msapplication-config" content="//jumbo.tootsville.org/Assets/Icons/ms-browserconfig.xml">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tootsville is a 3D multiplayer game that runs right in your web browser, so there's nothing to download.">
 
     <meta name="google-site-verification"
           content="Q9nr-E4hxRzl72bOyVD8p2Ax_7287DTfR92clJKzqLU" />
     <meta name="msvalidate.01"
           content="58AB22CF287C381CB569FAC0DC9327F9" />
+    
+    <!-- OAuth2 for Google Sign-In -->
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="80917352-1.apps.googleusercontent.com">
   </head>
   <body>
+    <!-- Loading watchdog for performance monitoring -->
+    <script>
+     window.loadWatchdog2 = setTimeout( () => {
+             if (parseInt(window.location.port) > 5000)
+             { alert("Slow Loading watchdog fired"); }
+             else
+             { document.location =
+                     'https://wiki.tootsville.org/wiki/Troubleshooting_slow_loading'; }
+     },
+                                        60000);
+    </script>
+    
+    <!-- FontAwesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -32,6 +67,15 @@
       ga('send', 'pageview');
 
     </script>
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
     <h1><img src="//jumbo.tootsville.org/Assets/Icons/tootsville-logo.svg" id="tootsville" alt="Tootsville"></h1>
     <img src="//jumbo.tootsville.org/Assets/Avatars/Quicksilver/Assets/toot-engineer.svg" id="builder-toot">
     <p id="leader">
@@ -39,6 +83,13 @@
       Go over to <a href="https://www.tootsville.org/">Tootsville.org</a>
       for the real game.
     </p>
+    
+    <!-- Fallback for non-HTML5 browsers -->
+    <script>
+      if (!window.HTMLCanvasElement) {
+        document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;"><h1>Browser Not Supported</h1><p>Your browser does not support HTML5 Canvas, which is required to test Tootsville.</p><p>Please upgrade to a modern browser like <a href="https://getfirefox.com/">Mozilla Firefox</a> or <a href="https://www.google.com/chrome/">Google Chrome</a>.</p></div>';
+      }
+    </script>
 
 
     <ul>
@@ -48,11 +99,17 @@
           />
       </audio>
       <li> <a id="play-now"
-              href="//play.test.tootsville.org/play/"> Playtest Now </a> </li>
+              href="//play.test.tootsville.org/play/vue/"> Test Vue 3 </a> </li>
     </ul>
     <p id="trailer">
       This is a test. This is only a test.
     </p>
+    
+    <!-- Console welcome message -->
+    <script>
+      console.log('%cWelcome to Tootsville Test!', 'color: #9669ad; font-size: 24px; font-weight: bold;');
+      console.log('%cThis is a test environment for Tootsville.', 'color: #0082c8; font-size: 16px;');
+    </script>
     <script type="application/ld+json">
       {
           "@context": "http://schema.org",
