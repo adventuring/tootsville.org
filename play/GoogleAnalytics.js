@@ -4,7 +4,7 @@
  *
  * ./play/google-analytics.js is part of Tootsville
  *
- * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2024 CIWTA
+ * Copyright   © 2008-2017   Bruce-Robert  Pocock;   ©  2018-2024 CIWTA; © 2024-2024 Interworldly Adventuring, LLC of Portland, OR, USA
  *
  * This program is Free Software:  you can redistribute it and/or modify
  * it  under the  terms  of the  GNU Affero  General  Public License  as
@@ -20,13 +20,7 @@
  * License     along    with     this    program.     If    not,     see
  * <https://www.gnu.org/licenses/>.
  *
- * You can reach CIWTA at https://ciwta.org/, or write to us at:
  *
- * PO Box 23095
- *
- * Oakland Park, FL 33307-3095
- *
- * USA
  *
  */
 

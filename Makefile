@@ -16,10 +16,7 @@
 # License     along    with     this     program.     If    not,     see
 # <https://www.gnu.org/licenses/>.
 #
-# You can reach Interworldly Adventuring, LLC at https://interworldly.com/, or write to us at:
-#
-# Interworldly Adventuring, LLC
-# Portland, OR, USA
+# You can reach Interworldly Adventuring, LLC at https://interworldly.com/
 
 all: .ready-20250822 htaccess play worker TODO.org TODO.scorecard docs mobile organize-artifacts
 

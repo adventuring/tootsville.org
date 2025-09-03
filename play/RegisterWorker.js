@@ -20,16 +20,9 @@
  * You should  have received  a copy  of the  GNU Affero  General Public
  * License     along    with     this    program.     If    not,     see
  * <https://www.gnu.org/licenses/>.
- *
- * You can reach CIWTA at https://ciwta.org/, or write to us at:
- *
- * PO Box 23095
- *
- * Oakland Park, FL 33307-3095
- *
- * USA
- *
- */if ('serviceWorker' in navigator) {
+ */
+
+if ('serviceWorker' in navigator) {
      window.addEventListener('load', function() {
          navigator.serviceWorker.register('/worker.js').then(registration => {
              Tootsville.inform('ServiceWorker registration successful with scope: ', registration.scope);
