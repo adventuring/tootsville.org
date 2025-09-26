@@ -9,6 +9,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.ShrinkToHalfSize = {
   
@@ -58,28 +74,46 @@ Tootsville.Game.Equipment.ShrinkToHalfSize = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink To Half Size",
-        "The shrinking device is recharging! Please wait a moment."
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'shrink_to_half_size',
+        'shrink',
+        targetPlayer || player,
+        { id: 'system', name: 'Shrink To Half Size' },
+        `The shrinking device is recharging! Please wait a moment.`
       );
+    };
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink To Half Size",
-        "The shrinking device is depleted!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'shrink_to_half_size',
+        'shrink',
+        targetPlayer || player,
+        { id: 'system', name: 'Shrink To Half Size' },
+        `The shrinking device is depleted!`
       );
+    };
       return false;
     }
     
     // Check if already shrunk
     if (this.isShrunk) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink To Half Size",
-        "You are already under the effects of the shrinking device!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'shrink_to_half_size',
+        'shrink',
+        targetPlayer || player,
+        { id: 'system', name: 'Shrink To Half Size' },
+        `You are already under the effects of the shrinking device!`
       );
+    };
       return false;
     }
     
@@ -87,10 +121,16 @@ Tootsville.Game.Equipment.ShrinkToHalfSize = {
     const targetPlayer = target || this.player;
     
     if (!targetPlayer || !targetPlayer.avatar) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink To Half Size",
-        "No valid target found for the shrinking device."
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'shrink_to_half_size',
+        'shrink',
+        targetPlayer || player,
+        { id: 'system', name: 'Shrink To Half Size' },
+        `No valid target found for the shrinking device.`
       );
+    };
       return false;
     }
     
@@ -107,10 +147,16 @@ Tootsville.Game.Equipment.ShrinkToHalfSize = {
       // Send effect to other players
       this.broadcastEffect(targetPlayer);
       
-      Tootsville.Gossip.Parrot.say(
-        "Shrink To Half Size",
-        `You used the Shrink To Half Size device! ${targetPlayer === this.player ? 'You' : targetPlayer.name} became exactly half size!`
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'shrink_to_half_size',
+          'shrink',
+          targetPlayer,
+          { id: 'system', name: 'Shrink To Half Size' },
+          `${targetPlayer.name} became exactly half size!`
+        );
+      }
     }
     
     return success;
@@ -148,10 +194,16 @@ Tootsville.Game.Equipment.ShrinkToHalfSize = {
       // Schedule return to normal size
       setTimeout(() => {
         this.removeShrinkEffect(targetPlayer);
-        Tootsville.Gossip.Parrot.say(
-          "Shrink To Half Size",
-          "You have returned to your normal size."
-        );
+        // Send proper equipment effect notification
+        if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+          Tootsville.Game.EventNotifications.equipmentEffect(
+            'shrink_to_half_size',
+            'grow',
+            targetPlayer,
+            { id: 'system', name: 'Shrink To Half Size' },
+            `${targetPlayer.name} has returned to normal size.`
+          );
+        }
       }, this.metadata.duration);
       
       return true;

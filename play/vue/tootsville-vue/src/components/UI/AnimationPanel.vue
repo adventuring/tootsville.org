@@ -29,14 +29,14 @@
     <div class="capabilities-section">
       <h4>Character Capabilities</h4>
       <div class="capabilities-grid">
-        <div 
-          v-for="(capability, key) in Object.entries(capabilities)" 
-          :key="key[0]"
+        <div
+          v-for="(capability, key) in capabilities ? Object.entries(capabilities) : []"
+          :key="key"
           class="capability-item"
         >
-          <label>{{ formatCapabilityName(key[0] as string) }}:</label>
-          <span :class="['capability', key[1] ? 'enabled' : 'disabled']">
-            {{ key[1] ? 'Yes' : 'No' }}
+          <label>{{ formatCapabilityName(String(key)) }}:</label>
+          <span :class="['capability', capability ? 'enabled' : 'disabled']">
+            {{ capability ? 'Yes' : 'No' }}
           </span>
         </div>
       </div>
@@ -48,7 +48,7 @@
       <div class="control-buttons">
         <button 
           @click="sit" 
-          :disabled="!capabilities.canSit"
+          :disabled="!capabilities?.canSit"
           class="control-btn"
         >
           Sit
@@ -61,7 +61,7 @@
         </button>
         <button 
           @click="jump" 
-          :disabled="!capabilities.canJump"
+          :disabled="!capabilities?.canJump"
           class="control-btn"
         >
           Jump
@@ -97,7 +97,7 @@
             v-model="characterData.name" 
             type="text" 
             placeholder="Enter character name"
-            @input="updateCharacter"
+            @input="updateCharacterLocal"
           />
         </div>
         <div class="form-group">
@@ -106,12 +106,12 @@
             v-model="characterData.avatar" 
             type="text" 
             placeholder="Enter avatar name"
-            @input="updateCharacter"
+            @input="updateCharacterLocal"
           />
         </div>
         <div class="form-group">
           <label>Character Type:</label>
-          <select v-model="characterData.characterType" @change="updateCharacter">
+          <select v-model="characterData.characterType" @change="updateCharacterLocal">
             <option value="">Select type</option>
             <option value="toot">Toot (Elephant)</option>
             <option value="manatee">Manatee</option>
@@ -176,7 +176,7 @@ const {
   isTransitioning,
   isMoving,
   capabilities,
-  updateCharacter: updateCharacterData,
+  updateCharacterData,
   setAnimation,
   sit,
   stand,
@@ -214,7 +214,7 @@ const debugInfo = computed(() => {
 })
 
 // Methods
-const updateCharacter = () => {
+const updateCharacterLocal = () => {
   updateCharacterData(characterData)
 }
 
@@ -223,6 +223,9 @@ const updateSettings = () => {
 }
 
 const formatCapabilityName = (key: string): string => {
+  if (!key || typeof key !== 'string') {
+    return 'Unknown'
+  }
   return key
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase())

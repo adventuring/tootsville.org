@@ -9,6 +9,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.GrowPotion = {
   
@@ -53,19 +69,27 @@ Tootsville.Game.Equipment.GrowPotion = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Grow Potion",
-        "The potion is still brewing! Please wait a moment."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'grow_potion',
+          'cooldown',
+          'The potion is still brewing! Please wait a moment.'
+        );
+      }
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Grow Potion",
-        "The potion bottle is empty!"
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'grow_potion',
+          'empty',
+          'The potion bottle is empty!'
+        );
+      }
       return false;
     }
     
@@ -73,10 +97,14 @@ Tootsville.Game.Equipment.GrowPotion = {
     const targetPlayer = target || this.player;
     
     if (!targetPlayer || !targetPlayer.avatar) {
-      Tootsville.Gossip.Parrot.say(
-        "Grow Potion",
-        "No valid target found for the potion."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'grow_potion',
+          'error',
+          'No valid target found for the potion.'
+        );
+      }
       return false;
     }
     
@@ -93,10 +121,16 @@ Tootsville.Game.Equipment.GrowPotion = {
       // Send effect to other players
       this.broadcastEffect(targetPlayer);
       
-      Tootsville.Gossip.Parrot.say(
-        "Grow Potion",
-        `You used a Grow Potion! ${targetPlayer === this.player ? 'You' : targetPlayer.name} grew larger!`
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'grow_potion',
+          'grow',
+          targetPlayer,
+          { id: 'system', name: 'Grow Potion' },
+          `${targetPlayer.name} grew larger!`
+        );
+      }
     }
     
     return success;
@@ -164,10 +198,16 @@ Tootsville.Game.Equipment.GrowPotion = {
         // Broadcast effect removal
         this.broadcastEffectRemoval(player);
         
-        Tootsville.Gossip.Parrot.say(
-          "Grow Potion",
-          `${player === this.player ? 'You' : player.name} returned to normal size.`
-        );
+        // Send proper equipment effect notification
+        if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+          Tootsville.Game.EventNotifications.equipmentEffect(
+            'grow_potion',
+            'grow',
+            player,
+            { id: 'system', name: 'Grow Potion' },
+            `${player.name} returned to normal size.`
+          );
+        }
       }
     } catch (error) {
       console.error("GrowPotion: Error removing growth effect:", error);

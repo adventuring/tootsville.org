@@ -9,6 +9,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.LightField = {
   
@@ -57,19 +73,31 @@ Tootsville.Game.Equipment.LightField = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Light Field",
-        "The light field is recharging! Please wait a moment."
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'light_field',
+          'effect',
+          targetPlayer || player,
+          { id: 'system', name: 'Light Field' },
+          `The light field is recharging! Please wait a moment.`
+        );
+      };
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Light Field",
-        "The light field generator is depleted!"
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'light_field',
+          'effect',
+          targetPlayer || player,
+          { id: 'system', name: 'Light Field' },
+          `The light field generator is depleted!`
+        );
+      };
       return false;
     }
     
@@ -77,10 +105,14 @@ Tootsville.Game.Equipment.LightField = {
     const targetPlayer = target || this.player;
     
     if (!targetPlayer || !targetPlayer.avatar) {
-      Tootsville.Gossip.Parrot.say(
-        "Light Field",
-        "No valid target found for the light field."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'light_field',
+          'error',
+          `No valid target found for the light field.`
+        );
+      };
       return false;
     }
     
@@ -125,10 +157,16 @@ Tootsville.Game.Equipment.LightField = {
       // Schedule field removal
       setTimeout(() => {
         this.removeLightField();
-        Tootsville.Gossip.Parrot.say(
-          "Light Field",
-          "The light field has faded away."
+        // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'light_field',
+          'effect',
+          targetPlayer || player,
+          { id: 'system', name: 'Light Field' },
+          `The light field has faded away.`
         );
+      };
       }, this.metadata.duration);
       
       return true;

@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 -->
 <template>
-  <group :position="position">
+  <group :position="positionVector">
     <!-- Equipment Model -->
     <mesh
       v-if="equipmentModel"
@@ -76,11 +76,18 @@ const properties = defineProps<{
     glow?: boolean
     particles?: boolean
   }
-  position: Vector3
+  position: Vector3 | [number, number, number]
 }>()
 
 // Computed
 const equipmentModel = computed(() => properties.equipment && properties.equipment.type)
+
+const positionVector = computed(() => {
+  if (Array.isArray(properties.position)) {
+    return new Vector3(...properties.position)
+  }
+  return properties.position
+})
 
 const equipmentColor = computed(() => {
   // Use the item's own color attribute if provided

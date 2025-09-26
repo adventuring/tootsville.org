@@ -624,15 +624,37 @@ export class CommunicationService extends EventEmitter {
 
   // URL generation methods
   private getWebSocketUrl(cluster: string): string {
+    // Use localhost for development
+    if (this.isDevelopmentMode()) {
+      return `ws://localhost:5004/ws`
+    }
     return `wss://${cluster}.tootsville.org/ws`
   }
 
   private getRESTUrl(cluster: string): string {
+    // Use localhost for development
+    if (this.isDevelopmentMode()) {
+      return `http://localhost:5000`
+    }
     return `https://${cluster}.tootsville.org`
   }
 
   private getP2PUrl(cluster: string): string {
+    // Use localhost for development
+    if (this.isDevelopmentMode()) {
+      return `p2p://localhost:5000`
+    }
     return `p2p://${cluster}.tootsville.org`
+  }
+
+  // Development mode detection
+  private isDevelopmentMode(): boolean {
+    // Check for Vite dev mode or localhost in URL
+    return typeof window !== 'undefined' &&
+           (window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.port === '5173' || // Vite dev server port
+            import.meta.env.DEV)
   }
 
   // Packet handler methods

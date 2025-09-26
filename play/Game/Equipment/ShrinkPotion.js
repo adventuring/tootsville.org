@@ -9,6 +9,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.ShrinkPotion = {
   
@@ -58,28 +74,42 @@ Tootsville.Game.Equipment.ShrinkPotion = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink Potion",
-        "The potion is still brewing! Please wait a moment."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'shrink_potion',
+          'cooldown',
+          `The potion is still brewing! Please wait a moment.`
+        );
+      };
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink Potion",
-        "The potion bottle is empty!"
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'shrink_potion',
+          'empty',
+          `The potion bottle is empty!`
+        );
+      };
       return false;
     }
     
     // Check if already shrunk
     if (this.isShrunk) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink Potion",
-        "You are already under the effects of a shrink potion!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'shrink_potion',
+        'shrink',
+        targetPlayer || player,
+        { id: 'system', name: 'Shrink Potion' },
+        `You are already under the effects of a shrink potion!`
       );
+    };
       return false;
     }
     
@@ -87,10 +117,14 @@ Tootsville.Game.Equipment.ShrinkPotion = {
     const targetPlayer = target || this.player;
     
     if (!targetPlayer || !targetPlayer.avatar) {
-      Tootsville.Gossip.Parrot.say(
-        "Shrink Potion",
-        "No valid target found for the potion."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'shrink_potion',
+          'error',
+          `No valid target found for the potion.`
+        );
+      };
       return false;
     }
     
@@ -148,10 +182,16 @@ Tootsville.Game.Equipment.ShrinkPotion = {
       // Schedule return to normal size
       setTimeout(() => {
         this.removeShrinkEffect(targetPlayer);
-        Tootsville.Gossip.Parrot.say(
-          "Shrink Potion",
-          "You have returned to your normal size."
+        // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'shrink_potion',
+          'shrink',
+          targetPlayer || player,
+          { id: 'system', name: 'Shrink Potion' },
+          `You have returned to your normal size.`
         );
+      };
       }, this.metadata.duration);
       
       return true;

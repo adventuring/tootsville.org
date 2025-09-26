@@ -10,6 +10,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.GrowSlightlyLarger = {
   
@@ -58,28 +74,42 @@ Tootsville.Game.Equipment.GrowSlightlyLarger = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Grow Slightly Larger",
-        "You need to wait before growing again!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'grow_slightly_larger',
+        'grow',
+        targetPlayer || player,
+        { id: 'system', name: 'Grow Slightly Larger' },
+        `You need to wait before growing again!`
       );
+    };
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Grow Slightly Larger",
-        "You're out of growth potions!"
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'grow_slightly_larger',
+          'empty',
+          "You're out of growth potions!"
+        );
+      }
       return false;
     }
     
     // Check if effect is already active
     if (this.activeEffect) {
-      Tootsville.Gossip.Parrot.say(
-        "Grow Slightly Larger",
-        "You're already larger! Wait for the effect to wear off."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'grow_slightly_larger',
+          'active',
+          "You're already larger! Wait for the effect to wear off."
+        );
+      }
       return false;
     }
     
@@ -96,10 +126,16 @@ Tootsville.Game.Equipment.GrowSlightlyLarger = {
       // Send effect to other players
       this.broadcastEffect();
       
-      Tootsville.Gossip.Parrot.say(
-        "Grow Slightly Larger",
-        "You feel yourself growing slightly larger!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'grow_slightly_larger',
+        'grow',
+        targetPlayer || player,
+        { id: 'system', name: 'Grow Slightly Larger' },
+        `You feel yourself growing slightly larger!`
       );
+    };
     }
     
     return success;
@@ -174,10 +210,16 @@ Tootsville.Game.Equipment.GrowSlightlyLarger = {
       // Broadcast effect removal
       this.broadcastEffectRemoval();
       
-      Tootsville.Gossip.Parrot.say(
-        "Grow Slightly Larger",
-        "You return to your normal size."
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'grow_slightly_larger',
+          'grow',
+          this.player,
+          { id: 'system', name: 'Grow Slightly Larger' },
+          `${this.player.name} returned to normal size.`
+        );
+      }
       
     } catch (error) {
       console.error("GrowSlightlyLarger: Error removing growth effect:", error);

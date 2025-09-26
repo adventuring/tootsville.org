@@ -9,6 +9,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.ZapWishBolt = {
   
@@ -57,19 +73,31 @@ Tootsville.Game.Equipment.ZapWishBolt = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Zap Wish Bolt",
-        "The wish bolt device is recharging! Please wait a moment."
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'zap_wish_bolt',
+          'stun',
+          targetPlayer || player,
+          { id: 'system', name: 'Zap Wish Bolt' },
+          `The wish bolt device is recharging! Please wait a moment.`
+        );
+      };
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Zap Wish Bolt",
-        "The wish bolt device is depleted!"
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'zap_wish_bolt',
+          'stun',
+          targetPlayer || player,
+          { id: 'system', name: 'Zap Wish Bolt' },
+          `The wish bolt device is depleted!`
+        );
+      };
       return false;
     }
     
@@ -86,10 +114,14 @@ Tootsville.Game.Equipment.ZapWishBolt = {
     }
     
     if (!targetPosition) {
-      Tootsville.Gossip.Parrot.say(
-        "Zap Wish Bolt",
-        "No valid target found for the wish bolt."
-      );
+      // Send proper equipment status notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentStatus(
+          'zap_wish_bolt',
+          'error',
+          `No valid target found for the wish bolt.`
+        );
+      };
       return false;
     }
     
@@ -106,10 +138,16 @@ Tootsville.Game.Equipment.ZapWishBolt = {
       // Send effect to other players
       this.broadcastEffect(targetPosition);
       
-      Tootsville.Gossip.Parrot.say(
-        "Zap Wish Bolt",
-        "You fired a Zap Wish Bolt!"
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'zap_wish_bolt',
+          'stun',
+          targetPlayer || player,
+          { id: 'system', name: 'Zap Wish Bolt' },
+          `You fired a Zap Wish Bolt!`
+        );
+      };
     }
     
     return success;

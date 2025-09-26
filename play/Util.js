@@ -66,6 +66,9 @@ Tootsville.Util.rest = function (method, uri, body=undefined, headers=undefined)
   let origURI = uri;
   if ('http' === hostName || 'https' === hostName)
   { /* do not alter */ }
+  else if (uri.startsWith('/'))
+  { /* URI starts with /, so it's a path on the game server */
+    uri = Tootsville.host.game + uri; }
   else
   { hostName = Tootsville.Util.assertValidHostName (hostName);
     uri = hostName + '/' + uri; }

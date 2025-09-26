@@ -1,0 +1,140 @@
+services:
+  # MariaDB Database
+  mariadb:
+    image: mariadb:10.11
+    container_name: tootsville-mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: tootsville_root_password
+      MYSQL_DATABASE: tootsville
+      MYSQL_USER: tootsville
+      MYSQL_PASSWORD: tootsville_password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d
+      - ./docker/mariadb/conf.d:/etc/mysql/conf.d
+    ports:
+      - "5005:3306"  # MariaDB on port 5005
+    networks:
+      - tootsville-network
+    security_opt:
+      - label:type:container_t
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Tootsville Game Server
+  tootsville-server:
+    build:
+      context: .
+      dockerfile: docker/tootsville-server/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+    container_name: tootsville-server
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      - TOOTSVILLE_DB_HOST=mariadb
+      - TOOTSVILLE_DB_PORT=3306
+      - TOOTSVILLE_DB_NAME=tootsville
+      - TOOTSVILLE_DB_USER=tootsville
+      - TOOTSVILLE_DB_PASSWORD=tootsville_password
+      - TOOTSVILLE_WEBSOCKET_PORT=5004
+      - TOOTSVILLE_HTTP_PORT=5000
+    ports:
+      - "5001:5001"  # WWW Development Server
+      - "5002:5002"  # Play Development Server
+      - "5003:5003"  # Additional Development Port
+      - "5004:5004"  # Tootsville WebSocket
+      - "5008:4005"  # Swank REPL on port 5008
+    volumes:
+      - ./lib/tootsville.net/src:/app/src:ro
+      - ./dist/play:/app/play:ro
+      - ./dist/www:/app/www:ro
+    networks:
+      - tootsville-network
+    security_opt:
+      - label:type:container_t
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:5000/version/about"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s
+
+  # Apache Load Balancer
+  apache-proxy:
+    build:
+      context: .
+      dockerfile: docker/apache-proxy/Dockerfile
+    container_name: tootsville-apache-proxy
+    restart: unless-stopped
+    depends_on:
+      - tootsville-server
+      - apache-static
+    ports:
+      - "5000:5000" # HTTPS on port 5000 (main port)
+      - "80:80"     # HTTP on port 80 (redirects to HTTPS on 5000)
+    volumes:
+      - ./docker/apache-proxy/conf:/etc/apache2/sites-enabled
+      - ./docker/apache-proxy/ssl:/etc/ssl/certs
+      - ./dist/www:/var/www/tootsville/www:ro
+      - ./dist/play:/var/www/tootsville/play:ro
+    networks:
+      - tootsville-network
+    security_opt:
+      - label:type:container_t
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Apache Static Server
+  apache-static:
+    build:
+      context: .
+      dockerfile: docker/apache-static/Dockerfile
+    container_name: tootsville-apache-static
+    restart: unless-stopped
+    volumes:
+      - ./dist/www:/var/www/html:ro
+    networks:
+      - tootsville-network
+    security_opt:
+      - label:type:container_t
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Memcached for caching
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: tootsville-memcached
+    restart: unless-stopped
+    command: memcached -m 64 -p 11211
+    ports:
+      - "5006:11211"  # Memcached on port 5006
+    networks:
+      - tootsville-network
+    security_opt:
+      - label:type:container_t
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/brpocock/Projects/tootsville.org/mariadb_data
+
+networks:
+  tootsville-network:
+    driver: bridge

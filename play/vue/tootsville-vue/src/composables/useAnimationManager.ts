@@ -5,8 +5,8 @@
  * This program is Free Software; Refer to COPYING.AGPL for details.
  */
 
-import { computed, ref, onUnmounted } from 'vue'
-import { AnimationManager } from '@/services/AnimationManager'
+import { computed, ref, onUnmounted, onMounted } from 'vue'
+import { animationManager } from '@/services/AnimationManager'
 import type { CharacterData, AnimationState, CharacterCapabilities } from '@/services/AnimationManager'
 
 /**
@@ -21,75 +21,111 @@ import type { CharacterData, AnimationState, CharacterCapabilities } from '@/ser
  * const { currentAnimation, isMoving, capabilities, updateCharacter, sit, stand } = useAnimationManager()
  */
 export function useAnimationManager() {
-  const animationManager = new AnimationManager()
-  
-  // Reactive state
-  const currentAnimation = computed(() => animationManager.getCurrentAnimation().current)
-  const isTransitioning = computed(() => animationManager.isTransitioning())
-  const isMoving = computed(() => animationManager.isMoving())
-  const capabilities = computed(() => animationManager.getCharacterCapabilities())
+  // Use singleton service
+  const service = animationManager
+
+  // Reactive state - access computed properties directly
+  const currentAnimation = computed(() => service.animationState.value.current)
+  const isTransitioning = computed(() => service.animationState.value.isTransitioning)
+  const isMoving = computed(() => service.movementState.value.isMoving)
+  const capabilities = computed(() => service.characterCapabilities.value)
 
   // Methods
-  const updateCharacter = (character: CharacterData) => {
-    animationManager.updateCharacterData(character)
+  const updateCharacterData = (character: CharacterData) => {
+    service.updateCharacterData(character)
   }
 
-  const updatePosition = (position: { x: number; y: number; z: number }, deltaTime: number) => {
-    // Handle position updates
-    animationManager.updateCharacterData({
-      position,
-      deltaTime
-    } as CharacterData)
+  const updateMovementState = (position: { x: number; y: number; z: number }, timestamp: number) => {
+    // Convert position object to Vector3
+    const vector3Pos = { x: position.x, y: position.y, z: position.z } as any
+    service.updateMovementState(vector3Pos, timestamp)
   }
 
-  const setAnimation = (animation: string) => {
-    animationManager.setAnimation(animation)
+  const setAnimation = (animation: string, force: boolean = false) => {
+    service.setAnimation(animation, force)
+  }
+
+  const canPerformAction = (action: string) => {
+    return service.canPerformAction.value(action)
   }
 
   const sit = () => {
-    animationManager.setAnimation('sit')
+    service.setAnimation('sit')
   }
 
   const stand = () => {
-    animationManager.setAnimation('idle')
+    service.setAnimation('idle')
   }
 
   const jump = () => {
-    animationManager.setAnimation('jump')
+    if (service.canPerformAction.value('jump')) {
+      service.setAnimation('jump')
+    }
   }
 
   const useItem = () => {
-    animationManager.setAnimation('use_item')
+    service.setAnimation('use_item')
   }
 
   const talk = () => {
-    animationManager.setAnimation('talk')
+    service.setAnimation('talk')
   }
 
   const emote = () => {
-    animationManager.setAnimation('emote')
+    service.setAnimation('emote')
   }
 
   const reset = () => {
-    animationManager.reset()
+    service.reset()
+  }
+
+  const updateSettings = (settings: Partial<{ fadeDuration: number; crossfadeDuration: number; minMovementThreshold: number; movementCheckInterval: number }>) => {
+    service.updateSettings(settings)
   }
 
   // Getters
   const getAnimationState = (): AnimationState => {
-    return animationManager.animationState
+    return service.getCurrentAnimation()
   }
 
-  const getCapabilities = (): CharacterCapabilities | null => {
-    return animationManager.getCharacterCapabilities()
+  const getCharacterData = () => {
+    return service.characterData.value
+  }
+
+  const getMovementState = () => {
+    return service.getMovementState()
+  }
+
+  const getSettings = () => {
+    return service.getSettings()
+  }
+
+  const getCharacterType = () => {
+    return service.getCharacterType()
+  }
+
+  const getCharacterName = () => {
+    return service.getCharacterName()
+  }
+
+  const getAvailableAnimations = () => {
+    return service.getAvailableAnimations()
+  }
+
+  const isValidAnimation = (animation: string) => {
+    return service.isValidAnimation(animation)
   }
 
   const getDebugInfo = () => {
     return {
-      currentAnimation: animationManager.getCurrentAnimation(),
-      isTransitioning: animationManager.isTransitioning(),
-      isMoving: animationManager.isMoving(),
-      capabilities: animationManager.getCharacterCapabilities(),
-      characterData: animationManager.getCharacterData()
+      animationState: service.animationState.value,
+      movementState: service.movementState.value,
+      characterData: service.characterData.value,
+      capabilities: service.characterCapabilities.value,
+      settings: service.settings.value,
+      isTransitioning: service.isTransitioning(),
+      transitionProgress: service.getTransitionProgress(),
+      availableAnimations: service.getAvailableAnimations()
     }
   }
 
@@ -106,9 +142,10 @@ export function useAnimationManager() {
     capabilities,
 
     // Methods
-    updateCharacter,
-    updatePosition,
+    updateCharacterData,
+    updateMovementState,
     setAnimation,
+    canPerformAction,
     sit,
     stand,
     jump,
@@ -116,10 +153,17 @@ export function useAnimationManager() {
     talk,
     emote,
     reset,
+    updateSettings,
 
     // Getters
     getAnimationState,
-    getCapabilities,
+    getCharacterData,
+    getMovementState,
+    getSettings,
+    getCharacterType,
+    getCharacterName,
+    getAvailableAnimations,
+    isValidAnimation,
     getDebugInfo
   }
 }
@@ -128,33 +172,35 @@ export function useAnimationManager() {
  * Vue composable with automatic cleanup
  */
 export function useAnimationManagerWithCleanup() {
-  const animationManager = useAnimationManager()
+  const animManager = useAnimationManager()
 
   onUnmounted(() => {
-    animationManager.reset()
+    animManager.reset()
   })
 
-  return animationManager
+  return animManager
 }
 
 /**
  * Vue composable with character data integration
  */
 export function useAnimationManagerWithCharacter(character: CharacterData) {
-  const animationManager = useAnimationManager()
+  const animManager = useAnimationManager()
 
   // Update character on mount
-  animationManager.updateCharacter(character)
+  onMounted(() => {
+    animManager.updateCharacterData(character)
+  })
 
   onUnmounted(() => {
-    animationManager.reset()
+    animManager.reset()
   })
 
   return {
-    ...animationManager,
+    ...animManager,
     // Additional methods for character-specific operations
-    updateCharacterData: (newCharacter: CharacterData) => {
-      animationManager.updateCharacter(newCharacter)
+    updateCharacter: (newCharacter: CharacterData) => {
+      animManager.updateCharacterData(newCharacter)
     }
   }
 }

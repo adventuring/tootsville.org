@@ -10,6 +10,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.PropsAirBlaster = {
   
@@ -56,19 +72,31 @@ Tootsville.Game.Equipment.PropsAirBlaster = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "Props Air Blaster",
-        "The air blaster needs to recharge! Please wait a moment."
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'props_air_blaster',
+        'unknown',
+        targetPlayer || player,
+        { id: 'system', name: 'Props Air Blaster' },
+        `The air blaster needs to recharge! Please wait a moment.`
       );
+    };
       return false;
     }
     
     // Check uses remaining
     if (this.usesRemaining <= 0) {
-      Tootsville.Gossip.Parrot.say(
-        "Props Air Blaster",
-        "The air blaster is out of pressure!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'props_air_blaster',
+        'unknown',
+        targetPlayer || player,
+        { id: 'system', name: 'Props Air Blaster' },
+        `The air blaster is out of pressure!`
       );
+    };
       return false;
     }
     
@@ -88,10 +116,16 @@ Tootsville.Game.Equipment.PropsAirBlaster = {
       // Send effect to other players
       this.broadcastEffect(direction);
       
-      Tootsville.Gossip.Parrot.say(
-        "Props Air Blaster",
-        "Whoosh! You fired an air blast!"
+      // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'props_air_blaster',
+        'unknown',
+        targetPlayer || player,
+        { id: 'system', name: 'Props Air Blaster' },
+        `Whoosh! You fired an air blast!`
       );
+    };
     }
     
     return success;
@@ -241,13 +275,19 @@ Tootsville.Game.Equipment.PropsAirBlaster = {
     // Move player
     player.avatar.position.set(newPos.x, newPos.y, newPos.z);
     
-    // Broadcast effect
+    // Broadcast effect through proper game messaging system
     this.broadcastPlayerEffect(player, 'knockdown');
-    
-    Tootsville.Gossip.Parrot.say(
-      "Props Air Blaster",
-      `${player.name} was knocked down by the air blast!`
-    );
+
+    // Send proper equipment effect notification
+    if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+      Tootsville.Game.EventNotifications.equipmentEffect(
+        'props_air_blaster',
+        'knockdown',
+        player,
+        { id: 'system', name: 'Props Air Blaster' }, // System as source
+        `${player.name} was knocked down by the air blast!`
+      );
+    }
   },
 
   /**

@@ -572,3 +572,72 @@ strong.green-plus {
     color: white;
     background-color: @red;
 }
+
+/* Firebase UI Button Normalization */
+.firebaseui-idp-button {
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 4px 0 !important;
+  min-height: 40px !important;
+  border-radius: 4px !important;
+  border: 1px solid #dadce0 !important;
+  background-color: #fff !important;
+  color: #3c4043 !important;
+  font-family: 'Roboto', arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  padding: 12px 24px !important;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.302) !important;
+  transition: background-color 0.2s, box-shadow 0.2s !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.firebaseui-idp-button:hover {
+  background-color: #f8f9fa !important;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.149) !important;
+}
+
+.firebaseui-idp-button:active {
+  background-color: #f1f3f4 !important;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.302) !important;
+}
+
+/* Provider-specific icon styling */
+.firebaseui-idp-google .firebaseui-idp-icon {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTkuMDA1IDMuNWE5IDkgMCAxIDEgLjIyIDMuNDg3VjEyYTYgNiAwIDAgMS0yLjY0IDQuOTQ0SDEuODI4QTkgOSAwIDAgMSAxMSAxOGE5IDkgMCAwIDEtNC4wODMtOC4xMzdBMTEuNTE3IDExLjUxNyAwIDAgMSAxOCA2Ljg2N0E5IDkgMCAwIDEtOS4wMDUgMy41eiIvPgo8cGF0aCBkPSJtMTIgMTdhNiA2IDAgMCAwIDYtNmgtMnY0SDZ2LTJoNnY0eiIvPgo8L2c+Cjwvc3ZnPgo=') !important;
+  background-size: 18px 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.firebaseui-idp-github .firebaseui-idp-icon {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwIDBhOCA4IDAgMSAxIDAgMTYgOCA4IDAgMCAxIDAtMTZ6bTMuMjEzIDMuNzc4YTEuMzc1IDEuMzc1IDAgMCAwLTEuMjEzLjYzNHY2LjQzNmExLjM3NSAxLjM3NSAwIDAgMCAxLjIxMy42MzVsNC4wMDQtMi4yOGExLjM3NSAxLjM3NSAwIDAgMCAwLS44NzVsLTQuMDA0LTIuMjhhMS4zNzUgMS4zNzUgMCAwIDAtMS4yMTMtLjYzNXptLS4yMTMgMy4yMmMuNzM1IDAgMS4zNzUuNjM1IDEuMzc1IDEuMzc1czAtMS4zNzUtLjYzNS0xLjM3NS0xLjM3NS0uNjM1LTEuMzc1LS42MzVjLS43MzUgMC0xLjM3NS42MzUtMS4zNzUgMS4zNzVzLjYzNSAxLjM3NSAxLjM3NSAxLjM3NXoiLz4KPC9zdmc+Cg==') !important;
+  background-size: 20px 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.firebaseui-idp-microsoft .firebaseui-idp-icon {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjI1MDFkIi8+CjxyZWN0IHg9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMwMGE0ZWYiLz4KPHJlY3QgeT0iMTAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzdiYjNlYiIvPgo8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzM0YjJmMSIvPgo8L3N2Zz4K') !important;
+  background-size: 20px 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Provider text styling */
+.firebaseui-idp-text {
+  flex: 1 !important;
+  text-align: center !important;
+  font-family: 'Roboto', arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #3c4043 !important;
+}
+
+/* Hide unnecessary Firebase UI elements */
+.firebaseui-info-bar {
+  display: none !important;
+}

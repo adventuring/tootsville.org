@@ -10,6 +10,22 @@
  * @author Interworldly Adventuring, LLC
  * @version 1.0.0
  */
+// Import Game Event Notifications system
+if (typeof require !== 'undefined') {
+  try {
+    require('../GameEventNotifications.js');
+  } catch (e) {
+    // Fallback for browser environment
+    if (!Tootsville.Game) Tootsville.Game = {};
+    if (!Tootsville.Game.EventNotifications) {
+      // Load script dynamically
+      const script = document.createElement('script');
+      script.src = 'Game/GameEventNotifications.js';
+      document.head.appendChild(script);
+    }
+  }
+}
+
 
 Tootsville.Game.Equipment.KaTootelEggShooter = {
   
@@ -58,10 +74,16 @@ Tootsville.Game.Equipment.KaTootelEggShooter = {
     
     // Check cooldown
     if (now - this.lastUsed < this.metadata.cooldown) {
-      Tootsville.Gossip.Parrot.say(
-        "KaTootel Egg Shooter",
-        "The egg shooter needs to reload! Please wait a moment."
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'ka_tootel_egg_shooter',
+          'effect',
+          targetPlayer || player,
+          { id: 'system', name: 'KaTootel Egg Shooter' },
+          `The egg shooter needs to reload! Please wait a moment.`
+        );
+      };
       return false;
     }
     
@@ -90,10 +112,16 @@ Tootsville.Game.Equipment.KaTootelEggShooter = {
       // Send effect to other players
       this.broadcastEffect(targetPos);
       
-      Tootsville.Gossip.Parrot.say(
-        "KaTootel Egg Shooter",
-        "Splat! You shot a KaTootel egg!"
-      );
+      // Send proper equipment effect notification
+      if (Tootsville.Game && Tootsville.Game.EventNotifications) {
+        Tootsville.Game.EventNotifications.equipmentEffect(
+          'ka_tootel_egg_shooter',
+          'effect',
+          targetPlayer || player,
+          { id: 'system', name: 'KaTootel Egg Shooter' },
+          `Splat! You shot a KaTootel egg!`
+        );
+      };
     }
     
     return success;

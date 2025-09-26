@@ -215,7 +215,7 @@ their character. </p> <a
 href=\"https://wiki.Tootsville.org/wiki/Child_login\">Find out how
 your child can sign in</a>`,
                                   [{ tag: "yes", text: "Sign In" },
-                                   { tag: "no", text: "Cancel" }]).
+                                   { tag: "no", text: "Stay" }]).
     then (answer => { if ('yes' === answer)
                       { this.doRealLogin (name); }
                       else
@@ -656,23 +656,58 @@ Tootsville.Login.storeCredentialInfo = function (result)
 };
 
 /**
- * Quit the game
+ * Quit the game - Enhanced version with proper cleanup
  */
 Tootsville.Login.quit = function (event=null)
 { if (event) event.preventDefault ();
+
+  // Show quitting message
+  console.log("Quitting Tootsville...");
+
+  // Stop all game systems
   Tootsville.Game.Nav.quiesce ();
+  Tootsville.Tank.shutDown ();
+
+  // Disconnect from network services
   Tootsville.Util.infinity ('logout');
   Tootsville.Gossip.closeStreams ();
-  Tootsville.Tank.shutDown ();
+
+  // Clear all game state
   Tootsville.player = null;
   Tootsville.character = null;
   Tootsville.childCode = null;
+
+  // Clear authentication data
   Tootsville.Login.accessToken = null;
   Tootsville.Login.idToken = null;
   Tootsville.Login.idProvider = null;
-  window.firebase.auth().signOut().then(Tootsville.Login.start);
-  /* the above does not work properly, so */
-  location.reload ();
+  Tootsville.Login.player = {};
+
+  // Clear local storage
+  try {
+    localStorage.clear();
+    sessionStorage.clear();
+  } catch (e) {
+    console.warn("Could not clear storage:", e);
+  }
+
+  // Sign out from Firebase
+  if (window.firebase && window.firebase.auth) {
+    window.firebase.auth().signOut().then(function() {
+      console.log("Firebase sign out successful");
+      // Redirect to start screen after sign out
+      setTimeout(function() {
+        Tootsville.Login.start();
+      }, 500);
+    }).catch(function(error) {
+      console.warn("Firebase sign out error:", error);
+      // Still proceed with restart even if Firebase sign out fails
+      Tootsville.Login.start();
+    });
+  } else {
+    // Fallback if Firebase not available
+    Tootsville.Login.start();
+  }
 };
 
 /**
@@ -680,7 +715,7 @@ Tootsville.Login.quit = function (event=null)
  */
 Tootsville.Login.changeSensitivePlayer = function (button)
 { let status = button.checked;
-  Tootsville.Util.rest ('PUT', 'users/me', { key: 'sensitiveP', newValue: status ? 'true' : 'false' }).then
+  Tootsville.Util.rest ('PUT', '/users/me', { key: 'sensitiveP', newValue: status ? 'true' : 'false' }).then
   ( personInfo => { Tootsville.player = personInfo;
                     this.populateTootsList (); } ); };
 

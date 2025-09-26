@@ -5,9 +5,9 @@
  * This program is Free Software; Refer to COPYING.AGPL for details.
  */
 
-import { computed, ref, onUnmounted } from 'vue'
-import { TootSpeechService } from '@/services/TootSpeechService'
-import type { SpeechParams, SpeechQueueItem } from '@/services/TootSpeechService'
+import { computed, ref, onUnmounted, onMounted } from 'vue'
+import { tootSpeechService } from '@/services/TootSpeechService'
+import type { SpeechParameters, SpeechQueueItem } from '@/services/TootSpeechService'
 
 /**
  * Vue composable for TootSpeechService integration
@@ -21,141 +21,118 @@ import type { SpeechParams, SpeechQueueItem } from '@/services/TootSpeechService
  * const { isSpeaking, queueLength, speak, stop, pause } = useTootSpeech()
  */
 export function useTootSpeech() {
-  const tootSpeechService = new TootSpeechService()
-  
-  // Reactive state
-  const isSpeaking = computed(() => tootSpeechService.isSpeaking())
-  const queueLength = computed(() => tootSpeechService.getQueueLength())
-  const currentSpeech = computed(() => tootSpeechService.getCurrentSpeech())
+  // Use singleton service
+  const service = tootSpeechService
+
+  // Reactive state - access computed properties directly
+  const speechStatus = computed(() => service.speechStatus)
+  const isSpeaking = computed(() => service.isSpeaking)
+  const queueLength = computed(() => service.queueLength)
   const isPaused = ref(false)
 
   // Methods
-  const speak = async (text: string, params?: Partial<SpeechParams>) => {
+  const speak = async (text: string, params?: Partial<SpeechParameters>) => {
     try {
-      await tootSpeechService.speak(text, params)
+      return await service.speak(text, params)
     } catch (error) {
       console.error('Speech error:', error)
+      return false
     }
   }
 
-  const queueSpeech = async (text: string, params?: Partial<SpeechParams>) => {
+  const queueSpeech = (text: string, params?: Partial<SpeechParameters>, priority: number = 0) => {
     try {
-      await tootSpeechService.queueSpeech(text, params)
+      return service.queueSpeech(text, params, priority)
     } catch (error) {
       console.error('Queue speech error:', error)
+      return -1
     }
   }
 
-  const stop = () => {
-    tootSpeechService.stop()
-  }
-
-  const pause = () => {
-    tootSpeechService.pause()
-    isPaused.value = true
-  }
-
-  const resume = async () => {
-    try {
-      await tootSpeechService.resume()
-      isPaused.value = false
-    } catch (error) {
-      console.error('Resume error:', error)
-    }
+  const stopSpeaking = () => {
+    service.stopSpeaking()
   }
 
   const clearQueue = () => {
-    tootSpeechService.clearQueue()
-  }
-
-  const setVoice = (voice: string) => {
-    tootSpeechService.setVoice(voice)
-  }
-
-  const setRate = (rate: number) => {
-    tootSpeechService.setRate(rate)
-  }
-
-  const setPitch = (pitch: number) => {
-    tootSpeechService.setPitch(pitch)
+    return service.clearQueue()
   }
 
   const setVolume = (volume: number) => {
-    tootSpeechService.setVolume(volume)
+    service.setSpeechVolume(volume)
   }
 
-  const getAvailableVoices = () => {
-    return tootSpeechService.getAvailableVoices()
+  const setMasterVolume = (volume: number) => {
+    service.setMasterVolume(volume)
   }
 
-  const getSpeechHistory = () => {
-    return tootSpeechService.getSpeechHistory()
+  const getSpeechStatus = () => {
+    return service.getSpeechStatus()
   }
 
-  const getQueue = (): SpeechQueueItem[] => {
-    return tootSpeechService.getQueue()
+  const getMasterVolume = () => {
+    return service.getMasterVolume()
   }
 
-  const removeFromQueue = (index: number) => {
-    tootSpeechService.removeFromQueue(index)
+  const getSpeechVolume = () => {
+    return service.getSpeechVolume()
   }
 
-  const moveInQueue = (fromIndex: number, toIndex: number) => {
-    tootSpeechService.moveInQueue(fromIndex, toIndex)
+  const isInitialized = () => {
+    return service.isInitialized()
   }
 
-  const getSpeechStats = () => {
-    return tootSpeechService.getSpeechStats()
+  const getError = () => {
+    return service.getError()
   }
 
-  const resetStats = () => {
-    tootSpeechService.resetStats()
+  const clearError = () => {
+    service.clearError()
   }
 
   const getDebugInfo = () => {
     return {
-      isSpeaking: tootSpeechService.isSpeaking(),
-      queueLength: tootSpeechService.getQueueLength(),
-      currentSpeech: tootSpeechService.getCurrentSpeech(),
-      availableVoices: tootSpeechService.getAvailableVoices(),
-      speechHistory: tootSpeechService.getSpeechHistory(),
-      queue: tootSpeechService.getQueue(),
-      stats: tootSpeechService.getSpeechStats()
+      speechStatus: speechStatus.value,
+      isSpeaking: isSpeaking.value,
+      queueLength: queueLength.value,
+      isInitialized: service.isInitialized(),
+      error: service.getError(),
+      masterVolume: service.getMasterVolume(),
+      speechVolume: service.getSpeechVolume()
     }
   }
 
   // Cleanup
   onUnmounted(() => {
-    tootSpeechService.stop()
-    tootSpeechService.clearQueue()
+    service.stopSpeaking()
+    service.clearQueue()
   })
 
   return {
     // Reactive state
+    speechStatus,
     isSpeaking,
     queueLength,
-    currentSpeech,
     isPaused,
 
     // Methods
     speak,
     queueSpeech,
-    stop,
-    pause,
-    resume,
+    stopSpeaking,
     clearQueue,
-    setVoice,
-    setRate,
-    setPitch,
     setVolume,
-    getAvailableVoices,
-    getSpeechHistory,
-    getQueue,
-    removeFromQueue,
-    moveInQueue,
-    getSpeechStats,
-    resetStats,
-    getDebugInfo
+    setMasterVolume,
+    getSpeechStatus,
+    getMasterVolume,
+    getSpeechVolume,
+    isInitialized,
+    getError,
+    clearError,
+    getDebugInfo,
+
+    // Computed properties for component use
+    error: computed(() => service.getError()),
+    canSpeak: computed(() => service.isInitialized() && !service.isSpeaking.value),
+    clearSpeechQueue: clearQueue
   }
 }
 
@@ -166,7 +143,7 @@ export function useTootSpeechWithCleanup() {
   const speech = useTootSpeech()
 
   onUnmounted(() => {
-    speech.dispose()
+    tootSpeechService.dispose()
   })
 
   return speech
@@ -199,3 +176,4 @@ export function useTootSpeechWithVolume(initialVolume: number = 0.5) {
     setMasterVolume
   }
 }
+
