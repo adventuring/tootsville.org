@@ -178,7 +178,19 @@ Tootsville.AvatarBuilder.postBuild = function (avatar, model, scene)
 Tootsville.AvatarBuilder.afterLoading = function (task, avatar, scene, finish)
   { console.log ("Success with " + task.name);
     const modelRoot = new BABYLON.Mesh ("avatar/" + avatar.name, scene);
-    modelRoot.position = BABYLON.Vector3.Zero (); /* TODO */
+    
+    // Set initial position from avatar data if available
+    if (avatar.position && avatar.position.wtl) {
+        // Use wtl (world tile location) positioning
+        modelRoot.position = new BABYLON.Vector3 (
+            parseFloat(avatar.position.wtl.x || 0),
+            parseFloat(avatar.position.wtl.y || 0),
+            parseFloat(avatar.position.wtl.z || 0));
+    } else {
+        // Default to origin if no position data available
+        modelRoot.position = BABYLON.Vector3.Zero ();
+    }
+    
     if (task.loadedMeshes.length > 0)
         for (let i = 0; i < task.loadedMeshes.length; ++i) {
             modelRoot.addChild (task.loadedMeshes [i]);
