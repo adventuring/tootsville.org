@@ -211,17 +211,31 @@ Tootsville.AvatarBuilder.afterLoading = function (task, avatar, scene, finish)
         modelRoot.position = BABYLON.Vector3.Zero ();
     }
     
-    if (task.loadedMeshes.length > 0)
+    if (task.loadedMeshes.length > 0) {
         for (let i = 0; i < task.loadedMeshes.length; ++i) {
-            modelRoot.addChild (task.loadedMeshes [i]);
-            task.loadedMeshes [i].renderOutline = true;
-            task.loadedMeshes [i].outlineColor = BABYLON.Color3.Black (); }
-    // if (task.loadedParticleSystems.length > 0)
-    // for (let i = 0; i < task.loadedParticleSystems.length; ++i)
-    // { modelRoot.addChild (task.loadedParticleSystems [i]); }
-    // if (task.loadedSkeletons.length > 0)
-    //     for (let i = 0; i < task.loadedSkeletons.length; ++i)
-    // { modelRoot.addChild (task.loadedSkeletons [i]); }
+            const mesh = task.loadedMeshes [i];
+            modelRoot.addChild (mesh);
+            mesh.renderOutline = true;
+            mesh.outlineColor = BABYLON.Color3.Black ();
+            
+            // Ensure mesh is properly bound to skeleton if one exists
+            if (task.loadedSkeletons.length > 0 && !mesh.skeleton) {
+                mesh.skeleton = task.loadedSkeletons[0];
+            }
+            
+            // For eye and pad meshes, ensure they're parented correctly
+            // to prevent them from "falling off" during animations
+            if (mesh.name && (mesh.name.indexOf('Eye') >= 0 || mesh.name.indexOf('Pad') >= 0)) {
+                mesh.isPickable = false;  // Eyes/pads shouldn't be individually selectable
+                console.debug(`Attached ${mesh.name} to avatar with skeleton binding`);
+            }
+        }
+    }
+    
+    // Keep skeletons attached to the model root for animation
+    if (task.loadedSkeletons.length > 0) {
+        modelRoot.skeleton = task.loadedSkeletons[0];
+    }
     console.debug ("Loaded base avatar " + avatar.avatar + " with " +
                    task.loadedMeshes.length + " meshes, " +
                    task.loadedParticleSystems.length + " particle systems,  and " +
