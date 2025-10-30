@@ -17,3 +17,7 @@ uglify-js
 inotify-tools
 nodejs-request
 jsr-305
+memcached
+libffi-devel
+readline-devel
+sqlite-devel

@@ -36,13 +36,22 @@ if (!('AvatarBuilder' in Tootsville)) { Tootsville.AvatarBuilder = { }; }
 
 
 /**
- *
+ * Get the Path2D pattern for an avatar pattern name
+ * 
+ * Some patterns (spots, patches, sparkles) have multiple variations
+ * stored as arrays. This function randomly selects one when applicable.
  */
 Tootsville.AvatarBuilder.getPathForPattern = function (pattern) {
-    /* FIXME:  spots  are  irregular,   as  are  patches  and  sparkles.
-     * They need to randomly choose from among several paths. */
-    return new Path2D (Tootsville.AvatarBuilder.patterns [ pattern.toLowerCase () ] ||
-                       Tootsville.AvatarBuilder.patterns.spots ); };
+    let patternData = Tootsville.AvatarBuilder.patterns [ pattern.toLowerCase () ] ||
+                      Tootsville.AvatarBuilder.patterns.spots;
+    
+    // If pattern is an array, randomly select one variant
+    if (Array.isArray(patternData)) {
+        const randomIndex = Math.floor(Math.random() * patternData.length);
+        patternData = patternData[randomIndex];
+    }
+    
+    return new Path2D (patternData); };
 
 /**
 * Pick a random color that does not match the avatar's skin

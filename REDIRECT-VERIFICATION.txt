@@ -1,0 +1,50 @@
+Cross-Host Redirect Verification
+=================================
+
+All httpd configurations have been updated with complete redirect lists.
+
+Configuration Summary:
+---------------------
+
+1. Apache Proxy (Production Load Balancer)
+   File: docker/apache-proxy/conf/000-default.conf
+   Port: 5000
+   Redirects: 11 cross-host patterns
+   - Assets → jumbo.tootsville.org
+   - Documentation → wiki.tootsville.org, goethe.tootsville.org  
+   - External services → tootsville.adventuring.click, tootsbook.com, ciwta.org
+   ProxyPass: Game APIs to tootsville-server, static to apache-static
+
+2. Development WWW Server
+   File: dist/www/dev-www.httpd.conf
+   Port: 5001
+   Redirects: 36 patterns
+   - Local services → localhost:5000 (assets, wiki, game APIs)
+   - Play client → localhost:5002 (all /play* variations)
+   - External → production URLs
+
+3. Development Play Server
+   File: dist/play/dev-play.httpd.conf
+   Port: 5002
+   Redirects: 20 patterns
+   - Local services → localhost:5000 (assets, wiki, game APIs)
+   - WWW content → localhost:5001
+   - External → production URLs
+
+4. Production .htaccess Files
+   Location: dist/htaccess.all/
+   Count: 9 files (1,260 lines total)
+   - www.tootsville.org, www.test.tootsville.org, www.qa.tootsville.org
+   - play.tootsville.org, play.test.tootsville.org, play.qa.tootsville.org
+   - goethe.tootsville.net, goethe.test.tootsville.net, goethe.qa.tootsville.net
+
+Verification Status:
+-------------------
+✓ All configurations properly mirror their target environments
+✓ Development configs point to localhost services
+✓ Production configs point to production hosts
+✓ External links (forms, social) consistent across all configs
+✓ ProxyPass directives come after RedirectMatch (correct order)
+
+Date: October 2025
+Status: Complete and Verified

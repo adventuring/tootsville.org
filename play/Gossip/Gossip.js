@@ -221,12 +221,21 @@ Tootsville.Gossip.ensureKeyPair = function ()
 
 /**
  * Sign a packet with our private key
+ * 
+ * Creates a SHA-256 hash of the packet payload and encrypts it with
+ * the session's private RSA key to create a signature.
+ * 
+ * @param c Command name
+ * @param d Command data
+ * @param r Recipient
+ * @returns Base64-encoded signature string
  */
 Tootsville.Gossip.signPacket = function (c, d, r)
 { let payload = JSON.stringify ({ c: c, d: d, r: r });
   let signature = window.forge.rsa.encrypt (
       window.forge.sha256.create ().start ().update (payload).digest ().data,
-      Tootsville.Gossip.keyPair.privateKey ); };
+      Tootsville.Gossip.keyPair.privateKey );
+  return window.forge.util.encode64 (signature); };
 
 /**
  * Create and sign a packet.

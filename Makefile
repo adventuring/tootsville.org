@@ -30,7 +30,7 @@ test-lisp:
 # Run Vue.js tests with Vitest
 test-vue:
 	@echo "🧪 Running Vue.js tests with Vitest..."
-	cd play/vue/tootsville-vue && pnpm test:unit --coverage --run
+	cd play/vue/tootsville-vue && ~/.local/share/pnpm/pnpm test:unit --coverage --run
 
 # Show available targets
 help:
@@ -38,14 +38,19 @@ help:
 	@echo ""
 	@echo "🚀 Quick Start:"
 	@echo "  make run          - Start all development servers (backend + frontend)"
+	@echo "  make ready        - Set up development environment (Docker + dependencies)"
+	@echo "  make docker-up    - Start Docker services only"
+	@echo "  make docker-down  - Stop Docker services"
+	@echo "  make docker-status - Check Docker services status"
+	@echo "  make docker-logs  - View Docker services logs"
+	@echo ""
+	@echo "🔧 Development:"
+	@echo "  make devel-test   - Start Docker services + development servers in separate terminals"
+	@echo "  make devel-play-watch - Start play server with file watching"
+	@echo "  make devel-www-watch  - Start www server with file watching"
 	@echo "  make devel-serve  - Start backend server only"
 	@echo "  make devel-play   - Start play server only"
 	@echo "  make devel-www    - Start www server only"
-	@echo ""
-	@echo "🔧 Development:"
-	@echo "  make devel-test   - Start development servers in separate terminals"
-	@echo "  make devel-play-watch - Start play server with file watching"
-	@echo "  make devel-www-watch  - Start www server with file watching"
 	@echo ""
 	@echo "🏗️ Build:"
 	@echo "  make all          - Build everything"
@@ -85,11 +90,37 @@ live-test: rpm
 .ready-20250822:	build/build-deps bin/do-install-deps
 	bin/do-install-deps
 	>> ~/.sbclrc
+	@/bin/bash -c ' \
+		echo "Setting up Docker/Podman services..."; \
+		if command -v docker &> /dev/null; then \
+			echo "Docker detected - ensuring Docker daemon is running..."; \
+			if ! systemctl is-active --quiet docker; then \
+				sudo systemctl start docker || echo "Failed to start Docker service"; \
+			fi; \
+			sudo systemctl enable docker 2>/dev/null || true; \
+		elif command -v podman &> /dev/null; then \
+			echo "Podman detected - ensuring Podman service is available..."; \
+			if ! systemctl is-active --quiet podman; then \
+				sudo systemctl start podman || echo "Failed to start Podman service"; \
+			fi; \
+			sudo systemctl enable podman 2>/dev/null || true; \
+		else \
+			echo "Neither Docker nor Podman found - please install one of them"; \
+		fi; \
+		echo "Installing pre-commit hooks..."; \
+		mkdir -p .git/hooks; \
+		echo "make test" > .git/hooks/pre-commit \
+		chmod +x .git/hooks/pre-commit; \
+		echo "Pre-commit hook installed."; \
+	'
 	>.ready-20250822
 
 ####################
 
-JSC=java -jar bin/closure-compiler-v20210202.jar
+JSC=java -jar bin/closure-compiler-v20250820.jar
+ESBUILD=./node_modules/.bin/esbuild
+TERSER=./node_modules/.bin/terser
+SWC=./node_modules/.bin/swc
 
 BUILD=$(shell date +%Y%m%d%H%M%S)
 VERSION=$(shell cat build/version)
@@ -131,7 +162,7 @@ ACCESS_TOKEN=7c28543f4257495694b50fe59acb2ada
 #################### clean
 
 clean:
-	find . -name \*~ -exec rm {} \;
+	find . -path ./mariadb_data -prune -o -name \*~ -exec rm {} \;
 	rm -rf dist/ ; mkdir -p dist/
 	rm -rf doc/ ; mkdir -p doc/
 	rm -f TODO.org TODO.scorecard	
@@ -290,6 +321,16 @@ dist/www/2019.css:	$(wildcard www/*.less www/**/*.less)
 #################### devel-test
 
 devel-test:
+	@echo "🐳 Starting Docker services..."
+	@if command -v docker &> /dev/null; then \
+		DOCKER_BUILDKIT=1 docker compose up -d; \
+	elif command -v podman &> /dev/null; then \
+		DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=0 PODMAN_COMPOSE_WARNING_LOGS=false podman-compose up -d; \
+	else \
+		echo "❌ Neither Docker nor Podman found - please install one of them"; \
+		exit 1; \
+	fi
+	@echo "🔧 Starting development servers..."
 	ptyxis --title='Play server' --tab -- $(MAKE) devel-play-watch &
 	ptyxis --title='WWW server' --tab -- $(MAKE) devel-www-watch &
 
@@ -304,14 +345,34 @@ run: build-all start-servers
 	@echo "Press Ctrl+C to stop all servers"
 
 # Build everything needed for development
-build-all:
-	@echo "🔨 Building Tootsville backend..."
-	cd lib/tootsville.net && $(MAKE) clean && $(MAKE) Tootsville
-	@echo "🔨 Building React frontend..."
-	cd react-migration && npm install --legacy-peer-deps && npm run build
-	@echo "🔨 Building play client..."
-	cd play && npm install --legacy-peer-deps && $(MAKE)
+# Build target for server, web client, and mobile clients
+build: build-server build-web build-play build-mobile
 	@echo "✅ All builds complete!"
+
+# Build the Lisp server
+build-server:
+	@echo "🔨 Building Tootsville backend..."
+	cd lib/tootsville.net && $(MAKE) Tootsville
+
+# Build the Vue.js web client
+build-web:
+	@echo "🔨 Building Vue.js frontend..."
+	cd play/vue/tootsville-vue && ~/.local/share/pnpm/pnpm build
+
+# Build the play web client (includes Vue.js)
+build-play:
+	@echo "🔨 Building play web client..."
+	$(MAKE) play
+	@echo "🔨 Building Vue.js integration..."
+	cd play/vue/tootsville-vue && ~/.local/share/pnpm/pnpm build
+
+# Build mobile clients (placeholder for future implementation)
+build-mobile:
+	@echo "📱 Mobile build targets - TODO: Implement using Vue.js and Capacitor/Ionic"
+	@echo "   Currently no mobile builds are configured"
+
+# Legacy build-all target (kept for compatibility)
+build-all: build
 
 # Start all servers
 start-servers: start-backend start-frontend
@@ -328,6 +389,67 @@ start-frontend:
 	$(MAKE) devel-play &
 	$(MAKE) devel-www &
 	sleep 3
+	@echo "🌐 Opening browser..."
+	-xdg-open "http://localhost:5001/" 2>/dev/null || echo "Could not open browser (xdg-open not available)"
+	-xdg-open "http://localhost:5002/play/" 2>/dev/null || echo "Could not open play browser"
+
+# Docker service management
+docker-up:
+	@echo "🐳 Starting Docker services..."
+	@if command -v docker &> /dev/null; then \
+		DOCKER_BUILDKIT=1 docker compose up -d; \
+		echo "✅ Docker services started"; \
+		echo "📊 Services:"; \
+		docker compose ps; \
+		echo ""; \
+		echo "🌐 Apache Proxy URL: http://localhost:5000/"; \
+		echo "🌐 WWW Dev Server: http://localhost:5001/"; \
+		echo "🎮 SmartFox-compatible socket: localhost:5002"; \
+		echo "🔧 Binary streaming socket: localhost:5003"; \
+		echo "🔌 WebSocket: ws://localhost:5004/"; \
+		echo "🐬 MariaDB: localhost:5005"; \
+		echo "💾 MemCacheD: localhost:5006"; \
+		echo "	 Mondo: localhost:5007"; \
+		echo "	 Swank: localhost:5008"; \
+	else \
+		echo "❌ Docker not found"; \
+		exit 1; \
+	fi
+
+docker-down:
+	@echo "🐳 Stopping Docker services..."
+	@if command -v docker &> /dev/null; then \
+		DOCKER_BUILDKIT=1 docker compose down; \
+		echo "✅ Docker services stopped"; \
+	elif command -v podman &> /dev/null; then \
+		DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=0 PODMAN_COMPOSE_WARNING_LOGS=false podman-compose down; \
+		echo "✅ Podman services stopped"; \
+	else \
+		echo "❌ Neither Docker nor Podman found"; \
+		exit 1; \
+	fi
+
+docker-status:
+	@echo "🐳 Docker services status..."
+	@if command -v docker &> /dev/null; then \
+		DOCKER_BUILDKIT=1 docker compose ps; \
+	elif command -v podman &> /dev/null; then \
+		DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=0 PODMAN_COMPOSE_WARNING_LOGS=false podman-compose ps; \
+	else \
+		echo "❌ Neither Docker nor Podman found"; \
+		exit 1; \
+	fi
+
+docker-logs:
+	@echo "📋 Docker services logs..."
+	@if command -v docker &> /dev/null; then \
+		DOCKER_BUILDKIT=1 docker compose logs -f; \
+	elif command -v podman &> /dev/null; then \
+		DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=0 PODMAN_COMPOSE_WARNING_LOGS=false podman-compose logs -f; \
+	else \
+		echo "❌ Neither Docker nor Podman found"; \
+		exit 1; \
+	fi
 
 devel-play-watch:	devel-play
 	while inotifywait -e close_write -r play ; do $(MAKE) devel-play ; done
@@ -336,13 +458,13 @@ devel-playtest:	devel-play
 	firefox --devtools --new-tab "http://localhost:5002/play/" </dev/null &>/dev/null &
 
 devel-play:	dist/play.$(clusterorg) dist/play/httpd.pid
-	-notify-send -t 60000 -i document-new "Build Complete: play" "Finished building devel-play"
+	@notify-send -t 60000 -i document-new "Build Complete: play" "Finished building devel-play" 2>/dev/null || echo "✅ Play server built successfully" >&2
 
 devel-wwwtest:	devel-www
 	firefox --devtools --new-tab "http://localhost:5001/" </dev/null &>/dev/null &
 
 devel-www:	dist/www.$(clusterorg) dist/www/httpd.pid
-	-notify-send -t 60000 -i document-new "Build Complete: www" "Finished building devel-www"
+	@notify-send -t 60000 -i document-new "Build Complete: www" "Finished building devel-www" 2>/dev/null || echo "✅ WWW server built successfully" >&2
 
 devel-www-watch:	devel-www
 	while inotifywait -e close_write -r www ; do $(MAKE) devel-www ; done
@@ -617,37 +739,40 @@ dist/doc.texi: $(shell cat build/js.order) $(shell ls play/UI/panels/*.js) \
 
 #################### mobile
 
-mobile: mobile-android mobile-ios mobile-ipad mobile-firetv mobile-windows11 mobile-symbian mobile-webos mobile-webtv
+# Mobile builds are now handled by the Vue.js client
+# TODO: Implement mobile build targets using Vue.js and Capacitor/Ionic
 
-mobile-android:
-	cd play/react && npm run build:android
+mobile:
+	@echo "📱 Mobile builds not yet implemented"
+	@echo "   Currently no mobile builds are configured"
 
-mobile-ios:
-	cd play/react && npm run build:ios
+#################### alternative-compilers
 
-mobile-ipad:
-	cd play/react && npm run build:ipad
+# Alternative JavaScript compilers for performance comparison
+worker-esbuild: worker/TootsvilleWorker.js worker/Worker.js worker/WorkerStart.js
+	@echo "🚀 Building with esbuild (ultra-fast)..."
+	mkdir -p dist/
+	cat worker/TootsvilleWorker.js worker/Worker.js worker/WorkerStart.js > dist/worker-concat-esbuild.js
+	$(ESBUILD) dist/worker-concat-esbuild.js \
+		--minify --target=es2020 --format=iife \
+		--outfile=dist/worker-esbuild.js --sourcemap
+	rm -f dist/worker-concat-esbuild.js
 
-mobile-firetv:
-	cd play/react && npm run build:firetv
+worker-terser: worker/TootsvilleWorker.js worker/Worker.js worker/WorkerStart.js
+	@echo "🔧 Building with Terser (modern minifier)..."
+	mkdir -p dist/
+	cat worker/TootsvilleWorker.js worker/Worker.js worker/WorkerStart.js > dist/worker-concat.js
+	$(TERSER) dist/worker-concat.js --compress --mangle --output dist/worker-terser.js --source-map
+	rm -f dist/worker-concat.js
 
-mobile-windows11:
-	cd play/react && npm run build:windows11
-
-mobile-symbian:
-	cd play/react && npm run build:symbian
-
-mobile-webos:
-	cd play/react && npm run build:lgwebos
-
-mobile-webtv:
-	cd play/react && npm run build:webtv
-
-mobile-test: mobile
-	cd play/react && npm run test:mobile
-
-mobile-deploy: mobile
-	cd play/react && npm run deploy:mobile
+# Performance comparison target
+compare-compilers: worker worker-esbuild worker-terser
+	@echo "📊 JavaScript Compiler Performance Comparison:"
+	@echo "Closure Compiler v20250820: $$(wc -c < dist/worker.js) bytes"
+	@echo "esbuild v0.25.11:           $$(wc -c < dist/worker-esbuild.js) bytes"
+	@echo "Terser v5.44.0:             $$(wc -c < dist/worker-terser.js) bytes"
+	@echo ""
+	@echo "🏆 Recommendation: Use esbuild for development (fastest), Closure Compiler for production (best optimization)"
 
 #################### organize-artifacts
 

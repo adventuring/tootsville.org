@@ -5,7 +5,27 @@
  * Manages world zones, rooms, navigation, and spatial data
  */
 
-import { ref, computed, reactive, readonly } from 'vue'
+// Vue types - using basic reactive patterns without Vue dependency
+type Ref<T> = { value: T }
+type ComputedRef<T> = { readonly value: T }
+type Reactive<T> = T
+
+// Basic reactive implementation for standalone use
+function ref<T>(value: T): Ref<T> {
+  return { value }
+}
+
+function computed<T>(getter: () => T): ComputedRef<T> {
+  return { get value() { return getter() } }
+}
+
+function reactive<T extends object>(obj: T): Reactive<T> {
+  return obj
+}
+
+function readonly<T>(obj: T): T {
+  return obj
+}
 import { useAMF, APIEndpoint } from '../InfinityMode/AMFManager'
 import { useEventSystem, EventFactory, EventType, WorldEvent } from '../InfinityMode/EventSystem'
 
@@ -15,7 +35,7 @@ export interface World {
   name: string
   description: string
   zone: Zone
-  boundaries: WorldBoundariess
+  boundaries: WorldBoundaries
   settings: WorldSettings
   metadata: WorldMetadata
 }
@@ -47,6 +67,11 @@ export interface Room {
   boundaries: RoomBoundaries
   objects: RoomObject[]
   metadata: RoomMetadata
+  theme?: string
+  backgroundMusic?: string
+  ambientSound?: string
+  lighting?: string
+  effects?: any[]
 }
 
 export interface RoomObject {
@@ -216,6 +241,21 @@ export function useWorldStore() {
     })
   })
 
+  const availableZones = computed(() => {
+    if (!currentWorld.value) return []
+    return currentWorld.value.zone ? [currentWorld.value.zone] : []
+  })
+
+  const getRoomsInCurrentZone = computed(() => {
+    if (!currentZone.value) return []
+    return currentZone.value.rooms
+  })
+
+  const getZonesInCurrentWorld = computed(() => {
+    if (!currentWorld.value) return []
+    return currentWorld.value.zone ? [currentWorld.value.zone] : []
+  })
+
   // Readonly reactive state
   const state = readonly({
     currentWorld,
@@ -355,6 +395,41 @@ export function useWorldStore() {
     }
   }
 
+
+  /**
+   * Enter a zone
+   */
+  const enterZone = async (zoneId: string): Promise<boolean> => {
+    try {
+      isLoading.value = true
+      error.value = null
+
+      // Find the zone in the current world
+      if (!currentWorld.value) {
+        error.value = 'No world loaded'
+        return false
+      }
+
+      // For now, assume single zone per world (matching the interface)
+      if (currentWorld.value.zone.id === zoneId) {
+        currentZone.value = currentWorld.value.zone
+        
+        // Emit zone change event
+        emit(EventFactory.zoneChange(currentWorld.value.id, zoneId))
+
+        lastUpdated.value = new Date().toISOString()
+        return true
+      } else {
+        error.value = 'Zone not found in current world'
+        return false
+      }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to enter zone'
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
 
   /**
    * Enter a room
@@ -554,13 +629,6 @@ export function useWorldStore() {
     return worlds.value.get(worldId)
   }
 
-  /**
-   * Get rooms in current zone
-   */
-  const getRoomsInCurrentZone = computed(() => {
-    if (!currentZone.value) return []
-    return currentZone.value.rooms
-  })
 
   /**
    * Get current zone

@@ -1,6 +1,7 @@
 --third_party
---language_in ECMASCRIPT_2020
---language_out ECMASCRIPT_2018
+--language_in ECMASCRIPT_2021
+--language_out ECMASCRIPT_2020
 --compilation_level SIMPLE
 --charset UTF-8
 --continue_after_errors
+--assume_function_wrapper

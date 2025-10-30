@@ -72,11 +72,6 @@ Summary: play.tootsville.org web site
 JavaScript application and HTML, CSS, &c.  that is statically
 distributed from play.tootsville.org (front end)
 
-%prep
-%setup -c -q
-
-FIXME
-
 %package servers
 Summary: users,gossip,world.tootsville.org servers
 
@@ -85,9 +80,6 @@ Summary: users,gossip,world.tootsville.org servers
 %description servers
 
 Server core that runs users, gossip, and world endpoints (middle tier)
-
-%prep
-%setup -c -q
 
 %build
 # Build the Lisp backend

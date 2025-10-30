@@ -1,0 +1,473 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{Infinity Mode Protocol Extension\\RFC 25.02201\\Game Event Notification Protocol Extension}
+\author{Tootsville Development Team}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This RFC proposes an extension to the Infinity Mode protocol to formalize the handling of game event notifications. The extension establishes standardized message formats and distribution mechanisms for in-game events, ensuring proper separation between game events and system-level notifications. This addresses the need to replace ad-hoc messaging systems with a protocol-compliant approach while maintaining backward compatibility with existing client implementations.
+\end{abstract}
+
+\section{Introduction}
+
+The current Infinity Mode protocol provides robust mechanisms for real-time communication between clients and servers in the Tootsville game environment. However, the protocol lacks specific provisions for handling game event notifications in a standardized manner. This RFC proposes an extension that:
+
+\begin{itemize}
+\item Defines standardized message formats for game events
+\item Establishes clear separation between game events and system notifications
+\item Provides mechanisms for event routing and prioritization
+\item Ensures protocol compliance for all game-related communications
+\end{itemize}
+
+\section{Historical Context}
+
+\subsection{ActionScript Implementation}
+
+The original ActionScript 3.0 implementation utilized several notification mechanisms:
+
+\begin{itemize}
+\item \texttt{Tootsville.Gossip.Parrot.say()} - Used for various game events and system messages
+\item \texttt{Event} system - Flash Player's native event dispatching
+\item Custom event classes like \texttt{WorldEvent} for specific game occurrences
+\item Direct manipulation of UI components for immediate feedback
+\end{itemize}
+
+This approach, while functional, suffered from:
+\begin{itemize}
+\item Lack of clear separation between game events and system notifications
+\item Inconsistent message formatting
+\item Tight coupling between game logic and UI presentation
+\item Difficulty in maintaining event routing and prioritization
+\end{itemize}
+
+\subsection{Java Server Implementation}
+
+The Java server (\texttt{AppiusClaudiusCaecus}) handled events through:
+
+\begin{itemize}
+\item Command processing system with reflection-based dispatch
+\item Datagram-based communication for real-time events
+\item Threaded event handling with metronome-based game loops
+\item Centralized logging and error reporting
+\end{itemize}
+
+\section{Protocol Extension Specification}
+
+\subsection{Message Format}
+
+All game event notifications SHALL use the following JSON message format:
+
+\begin{lstlisting}[language=JSON, caption=Game Event Message Format]
+{
+  "type": "game-event",
+  "event-id": "unique-event-identifier",
+  "timestamp": "ISO-8601-timestamp",
+  "priority": "normal|high|low",
+  "category": "equipment|player|system|npc|world",
+  "target": {
+    "type": "user|all|area",
+    "user-id": "optional-user-identifier",
+    "area-id": "optional-area-identifier"
+  },
+  "event": {
+    "type": "effect|status|interaction|notification",
+    "subtype": "specific-event-type",
+    "data": {
+      // Event-specific payload
+    }
+  },
+  "metadata": {
+    "source": "equipment|player|server|world",
+    "persistent": false,
+    "ttl": 30000
+  }
+}
+\end{lstlisting}
+
+\subsection{Event Categories}
+
+\subsubsection{Equipment Events}
+
+Equipment-related events include item usage, effects, and status changes:
+
+\begin{itemize}
+\item \texttt{equipment-effect} - Direct effects from equipment usage
+\item \texttt{equipment-status} - Status updates (cooldown, empty, active)
+\item \texttt{equipment-interaction} - Interactions between equipment items
+\end{itemize}
+
+\subsubsection{Player Events}
+
+Player-centric events involve character actions and state changes:
+
+\begin{itemize}
+\item \texttt{player-action} - Player-initiated actions
+\item \texttt{player-status} - Player state changes
+\item \texttt{player-interaction} - Interactions between players
+\end{itemize}
+
+\subsubsection{System Events}
+
+System-level events for game state management:
+
+\begin{itemize}
+\item \texttt{system-notification} - General system announcements
+\item \texttt{system-maintenance} - Maintenance-related notifications
+\item \texttt{system-error} - Error conditions requiring user attention
+\end{itemize}
+
+\subsubsection{NPC Events}
+
+Events involving non-player characters:
+
+\begin{itemize}
+\item \texttt{npc-interaction} - NPC-initiated interactions
+\item \texttt{npc-behavior} - NPC behavior changes
+\item \texttt{npc-spawn} - NPC creation/destruction events
+\end{itemize}
+
+\subsubsection{World Events}
+
+World-level events affecting the game environment:
+
+\begin{itemize}
+\item \texttt{world-change} - Environmental changes
+\item \texttt{world-event} - Scheduled world events
+\item \texttt{world-transition} - Area transitions and loading
+\end{itemize}
+
+\subsection{Message Routing}
+
+\subsubsection{Client-Side Routing}
+
+Clients SHALL route messages based on the following priority order:
+
+\begin{enumerate}
+\item High-priority events (immediate user attention required)
+\item Normal-priority events (standard game feedback)
+\item Low-priority events (background information)
+\end{enumerate}
+
+\subsubsection{Server-Side Distribution}
+
+Servers SHALL distribute messages using the following mechanisms:
+
+\begin{itemize}
+\item \textbf{WebSocket}: Real-time delivery for active connections
+\item \textbf{HTTP Polling}: Fallback for clients without WebSocket support
+\item \textbf{Push Notifications}: Mobile and desktop notifications
+\item \textbf{Email/SMS}: Critical system notifications (limited use)
+\end{itemize}
+
+\subsection{Event Persistence}
+
+\subsubsection{Transient Events}
+
+Most game events are transient and SHALL NOT be persisted beyond immediate delivery:
+
+\begin{itemize}
+\item Equipment effect notifications
+\item Player interaction feedback
+\item NPC behavior updates
+\end{itemize}
+
+\subsubsection{Persistent Events}
+
+Certain events MAY require persistence for later retrieval:
+
+\begin{itemize}
+\item Achievement notifications
+\item Quest progress updates
+\item System maintenance announcements
+\end{itemize}
+
+\subsection{Error Handling}
+
+\subsubsection{Message Delivery Failures}
+
+In case of delivery failures:
+
+\begin{enumerate}
+\item Attempt redelivery with exponential backoff
+\item Queue messages for later delivery if client reconnects
+\item Discard messages after TTL expiration
+\item Log delivery failures for debugging
+\end{enumerate}
+
+\subsubsection{Invalid Message Format}
+
+Clients and servers SHALL:
+
+\begin{itemize}
+\item Validate message format against schema
+\item Log validation errors
+\item Discard malformed messages
+\item Continue processing valid messages
+\end{itemize}
+
+\section{Implementation Guidelines}
+
+\subsection{Client Implementation}
+
+\subsubsection{Vue/TypeScript Implementation}
+
+The Vue/TypeScript client SHALL implement the following components:
+
+\begin{lstlisting}[language=TypeScript, caption=GameEventManager Interface]
+// GameEventManager.ts
+interface GameEventMessage {
+  type: 'game-event';
+  eventId: string;
+  timestamp: string;
+  priority: 'normal' | 'high' | 'low';
+  category: 'equipment' | 'player' | 'system' | 'npc' | 'world';
+  target: {
+    type: 'user' | 'all' | 'area';
+    userId?: string;
+    areaId?: string;
+  };
+  event: {
+    type: 'effect' | 'status' | 'interaction' | 'notification';
+    subtype: string;
+    data: any;
+  };
+  metadata: {
+    source: string;
+    persistent: boolean;
+    ttl: number;
+  };
+}
+
+class GameEventManager {
+  private eventQueue: GameEventMessage[] = [];
+  private subscribers: Map<string, Function[]> = new Map();
+
+  public send(message: GameEventMessage): void {
+    // Implementation for sending messages
+  }
+
+  public subscribe(category: string, handler: Function): void {
+    // Implementation for subscribing to events
+  }
+
+  public processQueue(): void {
+    // Implementation for processing queued messages
+  }
+}
+\end{lstlisting}
+
+\subsubsection{Message Processing}
+
+The client SHALL process messages in the following order:
+
+\begin{enumerate}
+\item Validate message format
+\item Check user permissions for message visibility
+\item Route message to appropriate handlers
+\item Update UI state if necessary
+\item Log message for debugging
+\end{enumerate}
+
+\subsection{Server Implementation}
+
+\subsubsection{Common Lisp Implementation}
+
+The server SHALL implement message routing using the following structure:
+
+\begin{lstlisting}[language=Lisp, caption=Server Event Router]
+(defclass game-event-router ()
+  ((event-queue :initform (make-instance 'queue))
+   (subscribers :initform (make-hash-table :test 'equal))
+   (message-validator :initform (make-instance 'message-validator))))
+
+(defmethod route-event ((router game-event-router) event)
+  "Route a game event to appropriate subscribers"
+  (when (validate-event (message-validator router) event)
+    (let ((category (getf event :category)))
+      (dolist (subscriber (gethash category (subscribers router)))
+        (send-to-subscriber subscriber event)))))
+
+(defmethod broadcast-event ((router game-event-router) event)
+  "Broadcast event to all connected clients in relevant area"
+  (dolist (client (find-clients-in-area event))
+    (websocket-send client (encode-event event))))
+\end{lstlisting}
+
+\section{Backward Compatibility}
+
+\subsection{Transition Period}
+
+During the transition period:
+
+\begin{itemize}
+\item Legacy \texttt{Tootsville.Gossip.Parrot.say()} calls SHALL be deprecated
+\item New game event system SHALL be implemented alongside legacy system
+\item Clients SHALL support both old and new message formats
+\item Gradual migration of existing code to new system
+\end{itemize}
+
+\subsection{Legacy Message Mapping}
+
+Legacy messages SHALL be mapped to new format as follows:
+
+\begin{lstlisting}[language=JSON, caption=Legacy Message Mapping]
+{
+  "legacy": "Tootsville.Gossip.Parrot.say('Player pushed!', 'push')",
+  "new-format": {
+    "type": "game-event",
+    "category": "equipment",
+    "event": {
+      "type": "effect",
+      "subtype": "push",
+      "data": { "message": "Player pushed!" }
+    }
+  }
+}
+\end{lstlisting}
+
+\section{Security Considerations}
+
+\subsection{Message Validation}
+
+All messages SHALL be validated to prevent:
+
+\begin{itemize}
+\item Message injection attacks
+\item Unauthorized event broadcasting
+\item Client-side message spoofing
+\item Resource exhaustion through message flooding
+\end{itemize}
+
+\subsection{Access Control}
+
+Event visibility SHALL be controlled based on:
+
+\begin{itemize}
+\item User authentication status
+\item User permissions and roles
+\item Geographic/game area restrictions
+\item Event sensitivity level
+\end{itemize}
+
+\section{Performance Considerations}
+
+\subsection{Message Throughput}
+
+The system SHALL support:
+
+\begin{itemize}
+\item 1000+ messages per second during peak usage
+\item Sub-100ms latency for high-priority events
+\item Efficient message queuing and processing
+\item Memory-efficient message storage
+\end{itemize}
+
+\subsection{Client Resource Usage}
+
+Clients SHALL:
+
+\begin{itemize}
+\item Limit concurrent message processing
+\item Implement message rate limiting
+\item Provide mechanisms for message batching
+\item Handle large message volumes gracefully
+\end{itemize}
+
+\section{Testing and Validation}
+
+\subsection{Unit Testing}
+
+Comprehensive unit tests SHALL cover:
+
+\begin{itemize}
+\item Message format validation
+\item Event routing logic
+\item Error handling scenarios
+\item Performance benchmarks
+\end{itemize}
+
+\subsection{Integration Testing}
+
+Integration tests SHALL verify:
+
+\begin{itemize}
+\item End-to-end message delivery
+\item Multi-client synchronization
+\item Server failover scenarios
+\item Network interruption handling
+\end{itemize}
+
+\subsection{Load Testing}
+
+Load tests SHALL validate:
+
+\begin{itemize}
+\item Maximum concurrent users
+\item Peak message throughput
+\item Memory usage under load
+\item Database performance
+\end{itemize}
+
+\section{Deployment Strategy}
+
+\subsection{Phased Rollout}
+
+The extension SHALL be deployed in phases:
+
+\begin{enumerate}
+\item \textbf{Phase 1}: Server-side implementation and testing
+\item \textbf{Phase 2}: Client-side implementation with legacy support
+\item \textbf{Phase 3}: Migration of existing equipment and game logic
+\item \textbf{Phase 4}: Legacy system deprecation and removal
+\end{enumerate}
+
+\subsection{Rollback Plan}
+
+In case of deployment issues:
+
+\begin{itemize}
+\item Maintain legacy system as fallback
+\item Implement feature flags for gradual rollout
+\item Monitor error rates and performance metrics
+\item Prepare rollback scripts and procedures
+\end{itemize}
+
+\section{Future Extensions}
+
+\subsection{Potential Enhancements}
+
+Future versions MAY include:
+
+\begin{itemize}
+\item Message encryption for sensitive events
+\item Advanced filtering and search capabilities
+\item Event replay and debugging features
+\item Integration with external notification services
+\end{itemize}
+
+\section{References}
+
+\begin{enumerate}
+\item Infinity Mode Protocol Specification (Base Protocol)
+\item ActionScript 3.0 Implementation Documentation
+\item Java Server Architecture Documentation
+\item Vue/TypeScript Client Implementation Guide
+\item WebSocket Protocol Specification (RFC 6455)
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tootsville OAuth Configuration Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #e1e1e1;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .important {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .important h4 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .step {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .provider-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            background: #fafafa;
+        }
+
+        .provider-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .url-list {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .url-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .copy-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-button:hover {
+            background: #218838;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-required { background: #dc3545; }
+        .status-optional { background: #ffc107; }
+        .status-complete { background: #28a745; }
+
+        .table-of-contents {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .table-of-contents ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .table-of-contents a {
+            color: #495057;
+            text-decoration: none;
+        }
+
+        .table-of-contents a:hover {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tootsville OAuth Configuration Guide</h1>
+
+        <div class="important">
+            <h4>🚨 Critical Setup Required</h4>
+            <p>This guide contains the complete OAuth configuration needed to enable user authentication in Tootsville. Without these configurations, users cannot sign in with GitHub, Microsoft, Apple, Yahoo, or Bluesky.</p>
+        </div>
+
+        <div class="table-of-contents">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#prerequisites">Prerequisites</a></li>
+                <li><a href="#firebase-setup">Firebase Console Setup</a></li>
+                <li><a href="#github-setup">GitHub OAuth Setup</a></li>
+                <li><a href="#microsoft-setup">Microsoft Azure Setup</a></li>
+                <li><a href="#apple-setup">Apple Developer Setup</a></li>
+                <li><a href="#yahoo-setup">Yahoo OAuth Setup</a></li>
+                <li><a href="#bluesky-setup">Bluesky OAuth Setup</a></li>
+                <li><a href="#redirect-uris">Redirect URIs Configuration</a></li>
+                <li><a href="#testing">Testing Configuration</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>Tootsville supports authentication through multiple OAuth providers:</p>
+            <ul>
+                <li><span class="status-indicator status-required"></span><strong>GitHub</strong> - Most popular for developers</li>
+                <li><span class="status-indicator status-required"></span><strong>Microsoft</strong> - Enterprise users</li>
+                <li><span class="status-indicator status-required"></span><strong>Apple</strong> - iOS/macOS users</li>
+                <li><span class="status-indicator status-required"></span><strong>Yahoo</strong> - Email service users</li>
+                <li><span class="status-indicator status-optional"></span><strong>Bluesky</strong> - Social media platform</li>
+            </ul>
+
+            <div class="important">
+                <p><strong>Current Status:</strong> All OAuth providers are failing with "identity provider configuration not found" errors. This is blocking user authentication.</p>
+            </div>
+        </section>
+
+        <section id="prerequisites">
+            <h2>Prerequisites</h2>
+            <p>Before starting, ensure you have:</p>
+            <ul>
+                <li>Firebase project created and configured</li>
+                <li>GitHub account with repository admin access</li>
+                <li>Microsoft Azure subscription (free tier available)</li>
+                <li>Apple Developer Program membership ($99/year)</li>
+                <li>Yahoo Developer account</li>
+                <li>Domain ownership verification for production URLs</li>
+            </ul>
+        </section>
+
+        <section id="firebase-setup">
+            <h2>Firebase Console Setup</h2>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Access Firebase Console</strong>
+                <p>Go to <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a> and select your project.</p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Enable Authentication</strong>
+                <p>Navigate to <strong>Authentication → Get started</strong></p>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Configure Sign-in Methods</strong>
+                <p>Go to <strong>Authentication → Sign-in method</strong> and enable:</p>
+                <div class="code-block">
+{
+  "github": {
+    "client_id": "YOUR_GITHUB_OAUTH_APP_CLIENT_ID",
+    "client_secret": "YOUR_GITHUB_OAUTH_APP_CLIENT_SECRET"
+  },
+  "microsoft": {
+    "client_id": "YOUR_MICROSOFT_APP_CLIENT_ID",
+    "client_secret": "YOUR_MICROSOFT_APP_CLIENT_SECRET"
+  },
+  "apple": {
+    "client_id": "YOUR_APPLE_APP_CLIENT_ID",
+    "client_secret": "YOUR_APPLE_APP_CLIENT_SECRET",
+    "team_id": "YOUR_APPLE_DEVELOPER_TEAM_ID"
+  },
+  "yahoo": {
+    "client_id": "YOUR_YAHOO_APP_CLIENT_ID",
+    "client_secret": "YOUR_YAHOO_APP_CLIENT_SECRET"
+  },
+  "bluesky": {
+    "client_id": "YOUR_BLUESKY_APP_CLIENT_ID",
+    "client_secret": "YOUR_BLUESKY_APP_CLIENT_SECRET"
+  }
+}
+                </div>
+            </div>
+        </section>
+
+        <section id="github-setup">
+            <h2>GitHub OAuth Setup</h2>
+
+            <div class="provider-card">
+                <h3>🐙 GitHub OAuth App Configuration</h3>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Access GitHub OAuth Apps</strong>
+                    <p>Go to <a href="https://github.com/settings/developers" target="_blank">GitHub Developer Settings</a></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Create New OAuth App</strong>
+                    <p>Click <strong>"New OAuth App"</strong> and fill in:</p>
+                    <div class="code-block">
+Application name: Tootsville Game
+Homepage URL: https://tootsville.org
+Application description: Tootsville multiplayer game authentication
+Authorization callback URL: https://tootsville.org/play/
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Copy Credentials</strong>
+                    <p>After creation, copy the <strong>Client ID</strong> and <strong>Client Secret</strong></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Configure in Firebase</strong>
+                    <p>Add the credentials to Firebase Console → Authentication → Sign-in method → GitHub</p>
+                </div>
+
+                <div class="important">
+                    <p><strong>GitHub Permissions:</strong> The OAuth app requires no special permissions for basic authentication.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="microsoft-setup">
+            <h2>Microsoft Azure Setup</h2>
+
+            <div class="provider-card">
+                <h3>🪟 Microsoft Azure App Registration</h3>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Access Azure Portal</strong>
+                    <p>Go to <a href="https://portal.azure.com" target="_blank">Azure Portal</a></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Navigate to App Registrations</strong>
+                    <p>Search for <strong>"App registrations"</strong> and click <strong>"New registration"</strong></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Configure App Registration</strong>
+                    <div class="code-block">
+Name: Tootsville Game
+Supported account types: Accounts in any organizational directory and personal Microsoft accounts
+Redirect URI:
+  - Type: Web
+  - URI: https://tootsville.org/play/
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Create Client Secret</strong>
+                    <p>Go to <strong>Certificates & secrets → New client secret</strong></p>
+                    <div class="code-block">
+Description: Tootsville Game Authentication
+Expires: 24 months (recommended)
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Copy Credentials</strong>
+                    <p>Copy <strong>Application (client) ID</strong> and <strong>Client Secret</strong> value</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">6</span>
+                    <strong>Configure in Firebase</strong>
+                    <p>Add credentials to Firebase Console → Authentication → Sign-in method → Microsoft</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="apple-setup">
+            <h2>Apple Developer Setup</h2>
+
+            <div class="provider-card">
+                <h3>🍎 Apple Sign In Configuration</h3>
+
+                <div class="important">
+                    <p><strong>Apple Developer Program Required:</strong> This requires an active Apple Developer Program membership ($99/year).</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Access Apple Developer Console</strong>
+                    <p>Go to <a href="https://developer.apple.com" target="_blank">Apple Developer Console</a></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Create Services ID</strong>
+                    <p>Navigate to <strong>Certificates, Identifiers & Profiles → Identifiers</strong></p>
+                    <div class="code-block">
+Click "+" → Select "Services IDs"
+Description: Tootsville Game Authentication
+Identifier: org.tootsville.game
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Enable Sign In with Apple</strong>
+                    <p>Select your new Services ID and enable <strong>"Sign In with Apple"</strong></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Create Private Key</strong>
+                    <p>Go to <strong>Keys</strong> section and create a new key:</p>
+                    <div class="code-block">
+Key Name: Tootsville Auth Key
+Enable: Sign In with Apple
+Configure: Select your Services ID (org.tootsville.game)
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Download Key</strong>
+                    <p>Download the <strong>.p8</strong> file and store it securely</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">6</span>
+                    <strong>Configure in Firebase</strong>
+                    <div class="code-block">
+Team ID: YOUR_APPLE_DEVELOPER_TEAM_ID
+Services ID: org.tootsville.game
+Private Key: Contents of downloaded .p8 file
+                    </div>
+                </div>
+
+                <div class="important">
+                    <p><strong>Security Note:</strong> Keep the private key file secure and never commit it to version control.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="yahoo-setup">
+            <h2>Yahoo OAuth Setup</h2>
+
+            <div class="provider-card">
+                <h3>📧 Yahoo OAuth App Configuration</h3>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Access Yahoo Developer Console</strong>
+                    <p>Go to <a href="https://developer.yahoo.com" target="_blank">Yahoo Developer Console</a></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Create New App</strong>
+                    <p>Click <strong>"Create an App"</strong> and select <strong>"Web Application"</strong></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Configure App</strong>
+                    <div class="code-block">
+Application Name: Tootsville Game
+Description: Tootsville multiplayer game authentication
+Application Type: Web Application
+Redirect URIs: https://tootsville.org/play/
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Copy Credentials</strong>
+                    <p>Copy <strong>Client ID</strong> and <strong>Client Secret</strong></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Configure in Firebase</strong>
+                    <p>Add credentials to Firebase Console → Authentication → Sign-in method → Yahoo</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="bluesky-setup">
+            <h2>Bluesky OAuth Setup</h2>
+
+            <div class="provider-card">
+                <h3>☁️ Bluesky OAuth Configuration</h3>
+
+                <div class="important">
+                    <p><strong>Status:</strong> Bluesky OAuth integration status is unknown. Contact Bluesky developer support for OAuth setup instructions.</p>
+                </div>
+
+                <p>If Bluesky supports OAuth, follow these general steps:</p>
+
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>Contact Bluesky</strong>
+                    <p>Reach out to Bluesky developer support for OAuth integration details</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>Create OAuth App</strong>
+                    <p>Follow Bluesky's OAuth app creation process</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>Configure Redirect URI</strong>
+                    <p>Use: <code>https://tootsville.org/play/</code></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Add to Firebase</strong>
+                    <p>Configure in Firebase Console → Authentication → Sign-in method → Bluesky</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="redirect-uris">
+            <h2>Redirect URIs Configuration</h2>
+
+            <p>For <strong>ALL</strong> OAuth providers, configure these redirect URIs:</p>
+
+            <div class="url-list">
+                <h4>Development Environment:</h4>
+                <ul>
+                    <li><code>http://localhost:5000/play/</code></li>
+                </ul>
+
+                <h4>Production Environment:</h4>
+                <ul>
+                    <li><code>https://tootsville.org/play/</code></li>
+                </ul>
+
+                <h4>Test Environment:</h4>
+                <ul>
+                    <li><code>https://test.tootsville.org/play/</code></li>
+                </ul>
+            </div>
+
+            <div class="important">
+                <p><strong>Important:</strong> All redirect URIs must be configured in each OAuth provider's settings and must exactly match the URLs used in your application.</p>
+            </div>
+        </section>
+
+        <section id="testing">
+            <h2>Testing Configuration</h2>
+
+            <h3>Test Checklist</h3>
+            <ul>
+                <li>✅ GitHub sign-in redirects to GitHub and returns successfully</li>
+                <li>✅ Microsoft sign-in redirects to Microsoft login and returns successfully</li>
+                <li>✅ Apple sign-in shows Apple Sign-In popup and returns successfully</li>
+                <li>✅ Yahoo sign-in redirects to Yahoo OAuth and returns successfully</li>
+                <li>✅ Bluesky sign-in works (if configured)</li>
+                <li>✅ No more "identity provider configuration not found" errors</li>
+                <li>✅ User authentication flows complete successfully</li>
+            </ul>
+
+            <h3>Test URLs</h3>
+            <div class="code-block">
+Development: http://localhost:5000/play/
+Production: https://tootsville.org/play/
+Test Environment: https://test.tootsville.org/play/
+            </div>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>Troubleshooting</h2>
+
+            <h3>Common Issues</h3>
+
+            <div class="provider-card">
+                <h3>🔴 "Identity provider configuration not found"</h3>
+                <p><strong>Cause:</strong> OAuth provider not configured in Firebase</p>
+                <p><strong>Solution:</strong> Enable provider in Firebase Console and add credentials</p>
+            </div>
+
+            <div class="provider-card">
+                <h3>🔴 "Invalid redirect URI"</h3>
+                <p><strong>Cause:</strong> Redirect URI mismatch</p>
+                <p><strong>Solution:</strong> Ensure exact URI match in OAuth provider settings</p>
+            </div>
+
+            <div class="provider-card">
+                <h3>🔴 "Popup blocked by browser"</h3>
+                <p><strong>Cause:</strong> Browser popup blocker</p>
+                <p><strong>Solution:</strong> Allow popups for the domain or use redirect flow</p>
+            </div>
+
+            <div class="provider-card">
+                <h3>🔴 Apple "Configuration not found"</h3>
+                <p><strong>Cause:</strong> Apple Developer Program not active or Services ID misconfigured</p>
+                <p><strong>Solution:</strong> Verify Apple Developer membership and Services ID setup</p>
+            </div>
+
+            <h3>Debug Tools</h3>
+            <ul>
+                <li>Check browser developer console for detailed error messages</li>
+                <li>Verify Firebase Console authentication settings</li>
+                <li>Test OAuth provider configurations individually</li>
+                <li>Use Firebase Authentication emulator for local testing</li>
+            </ul>
+        </section>
+
+        <section id="support">
+            <h2>Support & Resources</h2>
+
+            <h3>Official Documentation</h3>
+            <ul>
+                <li><a href="https://firebase.google.com/docs/auth" target="_blank">Firebase Authentication Docs</a></li>
+                <li><a href="https://docs.github.com/en/developers/apps/building-oauth-apps" target="_blank">GitHub OAuth Apps</a></li>
+                <li><a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/" target="_blank">Microsoft Azure AD</a></li>
+                <li><a href="https://developer.apple.com/support/sign-in-with-apple/" target="_blank">Apple Sign In</a></li>
+                <li><a href="https://developer.yahoo.com/oauth/" target="_blank">Yahoo OAuth</a></li>
+            </ul>
+
+            <h3>Tootsville Resources</h3>
+            <ul>
+                <li><a href="https://github.com/brpocock/tootsville.org" target="_blank">Tootsville Repository</a></li>
+                <li><a href="https://tootsville.org" target="_blank">Tootsville Website</a></li>
+                <li><a href="https://wiki.tootsville.org" target="_blank">Tootsville Wiki</a></li>
+            </ul>
+        </section>
+
+        <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #666;">
+            <p><strong>Tootsville OAuth Configuration Guide</strong></p>
+            <p>Last updated: January 22, 2025</p>
+            <p>For technical support, visit <a href="https://github.com/brpocock/tootsville.org/issues" target="_blank">GitHub Issues</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Add copy functionality to code blocks
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeBlocks = document.querySelectorAll('.code-block');
+            codeBlocks.forEach(function(block) {
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = 'Copy';
+                button.onclick = function() {
+                    navigator.clipboard.writeText(block.textContent.trim()).then(function() {
+                        button.textContent = 'Copied!';
+                        setTimeout(function() {
+                            button.textContent = 'Copy';
+                        }, 2000);
+                    });
+                };
+                block.parentNode.insertBefore(button, block);
+            });
+        });
+    </script>
+</body>
+</html>
+
+

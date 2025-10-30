@@ -1,11 +1,11 @@
-# Dockerfile for testing Tootsville with MariaDB in Fedora 42
+# Dockerfile for testing Tootsville with MariaDB, Apache, and Hunchentoot in Fedora 42
 # Copyright © 2024-2025 Interworldly Adventuring, LLC of Portland, OR, USA
 
 FROM fedora:42
 
 # Set metadata
 LABEL maintainer="brpocock@tootsville.org"
-LABEL description="Fedora 42 test environment for Tootsville with MariaDB database"
+LABEL description="Fedora 42 test environment for Tootsville with MariaDB, Apache (port 5080), and Hunchentoot (ports 5000/5004)"
 LABEL version="0.7.0"
 
 # Install base system and MariaDB
@@ -18,19 +18,17 @@ RUN dnf update -y && \
         mariadb-connector-c-devel \
         # Server runtime dependencies
         sbcl \
-        nginx \
+        httpd \
         nodejs \
         npm \
         openssl \
         sqlite3 \
-        readline \
         # Development tools for testing
         git \
         make \
         gcc \
         gcc-c++ \
         # Testing utilities
-        curl \
         wget \
         net-tools \
         telnet \
@@ -40,10 +38,19 @@ RUN dnf update -y && \
         strace \
         gdb \
         valgrind \
-        # Database testing tools
-        mysql-workbench \
+        # Database development tools
+        php-mysqlnd \
         && \
     dnf clean all
+
+# Install Quicklisp and Hunchentoot
+RUN wget -O /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp && \
+    echo -e '\n' | sbcl --load /tmp/quicklisp.lisp \
+         --eval '(quicklisp-quickstart:install)' \
+         --eval '(ql:add-to-init-file)' \
+         --eval '(ql:quickload "hunchentoot")' \
+         --eval '(quit)' && \
+    rm /tmp/quicklisp.lisp
 
 # Create test user
 RUN useradd -m -s /bin/bash pil && \
@@ -55,7 +62,12 @@ RUN systemctl mask systemd-remount-fs.service dev-hugepages.mount sys-fs-fuse-co
 
 # Configure MariaDB
 RUN mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql && \
-    systemctl enable mariadb
+    systemctl enable mariadb && \
+    systemctl enable httpd
+
+# Configure Apache to use testing ports (5080 for HTTP)
+RUN sed -i 's/Listen 80/Listen 5080/' /etc/httpd/conf/httpd.conf && \
+    sed -i 's/:80/:5080/' /etc/httpd/conf/httpd.conf
 
 # Create MariaDB configuration for Tootsville
 RUN cat > /etc/my.cnf.d/tootsville.cnf << 'EOF'
@@ -63,41 +75,70 @@ RUN cat > /etc/my.cnf.d/tootsville.cnf << 'EOF'
 # Tootsville-specific MariaDB configuration
 bind-address = 0.0.0.0
 port = 3306
+
+# Connection settings
 max_connections = 200
+max_connect_errors = 1000000
 max_allowed_packet = 64M
-innodb_buffer_pool_size = 256M
-innodb_log_file_size = 64M
+
+# InnoDB settings optimized for Tootsville
+innodb_buffer_pool_size = 512M
+innodb_log_file_size = 128M
+innodb_log_buffer_size = 16M
 innodb_flush_log_at_trx_commit = 2
 innodb_flush_method = O_DIRECT
-query_cache_type = 1
-query_cache_size = 32M
-query_cache_limit = 2M
-tmp_table_size = 64M
-max_heap_table_size = 64M
-table_open_cache = 400
-thread_cache_size = 8
-key_buffer_size = 32M
-sort_buffer_size = 2M
+innodb_thread_concurrency = 0
+innodb_read_io_threads = 4
+innodb_write_io_threads = 4
+innodb_file_per_table = 1
+innodb_stats_on_metadata = 0
+
+# Memory and cache settings
+tmp_table_size = 128M
+max_heap_table_size = 128M
+table_open_cache = 800
+table_definition_cache = 400
+thread_cache_size = 50
+sort_buffer_size = 4M
 read_buffer_size = 2M
 read_rnd_buffer_size = 8M
+join_buffer_size = 4M
+key_buffer_size = 64M
+
+# Query cache (deprecated but still available in MariaDB 10.11)
+query_cache_type = 1
+query_cache_size = 64M
+query_cache_limit = 4M
+
+# MyISAM settings (for system tables)
 myisam_sort_buffer_size = 8M
-thread_concurrency = 8
-innodb_thread_concurrency = 8
 
 # Character set and collation
 character-set-server = utf8mb4
 collation-server = utf8mb4_unicode_ci
 init-connect = 'SET NAMES utf8mb4'
 
-# Logging
+# Logging and monitoring
 log-error = /var/log/mysql/error.log
 slow_query_log = 1
 slow_query_log_file = /var/log/mysql/slow.log
-long_query_time = 2
+long_query_time = 1
+general_log = 0
+general_log_file = /var/log/mysql/general.log
+
+# Binary logging for replication/backup
+log_bin = /var/log/mysql/mysql-bin
+expire_logs_days = 7
+max_binlog_size = 100M
 
 # Security
 skip-name-resolve
 local-infile = 0
+sql_mode = STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO
+
+# Performance schema
+performance_schema = 1
+performance_schema_instrument = '%=ON'
 
 [mysql]
 default-character-set = utf8mb4
@@ -376,10 +417,10 @@ netstat -tlnp | grep :3306 || echo "Port 3306 (MariaDB) not listening"
 echo "=== Testing Tootsville database connectivity ==="
 mysql -u tootsville -ptootsville_password -h localhost tootsville -e "SELECT 'Tootsville can connect to MariaDB' as status;" || echo "Tootsville cannot connect to MariaDB"
 
-# Test web endpoints
+# Test web endpoints (Apache and Hunchentoot)
 echo "=== Testing web endpoints ==="
-curl -f http://localhost:5000/api/health || echo "API health check failed"
-curl -f http://localhost/ || echo "Web root failed"
+curl -f http://localhost:5000/api/health || echo "Hunchentoot API health check failed"
+curl -f http://localhost:5080/ || echo "Apache web root failed"
 
 # Test WebSocket connection
 echo "=== Testing WebSocket connection ==="
@@ -414,15 +455,18 @@ done
 # Start Tootsville service
 sudo systemctl start tootsville
 
-# Start nginx
-sudo systemctl start nginx
+# Start Apache
+sudo systemctl start httpd
+
+# Note: Hunchentoot runs as part of the Tootsville Common Lisp application
+# and is monitored via the tootsville service
 
 # Monitor services
 echo "Services started. Monitoring..."
 while true; do
     sudo systemctl is-active mariadb >/dev/null || echo "MariaDB service stopped"
     sudo systemctl is-active tootsville >/dev/null || echo "Tootsville service stopped"
-    sudo systemctl is-active nginx >/dev/null || echo "Nginx service stopped"
+    sudo systemctl is-active httpd >/dev/null || echo "Apache service stopped"
     sleep 30
 done
 EOF
@@ -457,7 +501,7 @@ EOF
 RUN chmod +x /home/pil/migrate-database.sh
 
 # Expose ports for testing
-EXPOSE 80 443 5000 5004 3306
+EXPOSE 5080 5000 5004 3306
 
 # Start systemd
 CMD ["/usr/sbin/init"]

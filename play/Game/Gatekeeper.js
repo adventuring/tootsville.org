@@ -442,7 +442,8 @@ Tootsville.Game.Gatekeeper.purchase = function (gram)
 
 /**
  * No longer handled by ∞ mode protocols; now, fetched directly from the
- * game server over REST API. FIXME not necessarily true
+ * game server over REST API when using /meta-game/inventory endpoint.
+ * This legacy handler remains for backward compatibility.
  */
 Tootsville.Game.Gatekeeper.inventory = function (gram)
 { let inv = gram.inv;
@@ -502,10 +503,13 @@ Tootsville.Game.Gatekeeper.initUserRoom = function (gram)
  * This packet is ignored unless @code{status} is @code{true}
  * @item lots
  * The list of available lots in the given neighborhood.
- * FIXME: format?
+ * Each lot object contains lot-specific data.
  * @item houses
- * The list of available houses in the given neighborhood.
- * FIXME: format?
+ * An array of house objects. Each house has: @code{name} (string),
+ * @code{description} (string), @code{preview} (URL string),
+ * @code{moniker} (UUID string), and @code{rooms} (array of room objects).
+ * Each room object has: @code{id} (UUID), @code{connect} (object mapping
+ * monikers to UUIDs), and @code{preview} (URL string).
  * @item neighborhood
  * The selected neighborhood.
  * @end table
@@ -527,8 +531,11 @@ Tootsville.Game.Gatekeeper.getAvailableHouses = function (gram)
  * If @code{false}, there are no messages and the @code{mail}
  * object is not present.
  * @item mail
- * An enumeration of message objects. Each message object
- * has FIXME format.
+ * An object (indexed by message index) containing message objects.
+ * Each message object has: @code{id} (UUID string), @code{from}
+ * (sender's name), @code{to} (recipient's name), @code{subject}
+ * (deprecated, always empty string), @code{sentTime} (timestamp),
+ * @code{readTime} (timestamp or null), and @code{body} (message text).
  * @end table
  *
  * UNIMPLEMENTED.
@@ -548,8 +555,10 @@ Tootsville.Game.Gatekeeper.getMailInBox = function (gram)
  * @item status
  * If @code{true}, a message was found.
  * @item message
- * The message object. This contains the
- * message uuid, sender, and body in FIXME format.
+ * The message object containing: @code{id} (UUID string),
+ * @code{from} (sender's name), @code{to} (recipient's name),
+ * @code{subject} (deprecated, empty string), @code{sentTime} (timestamp),
+ * @code{readTime} (timestamp or null), and @code{body} (message text).
  * @end table
  *
  * See `INFINITY-GET-MAIL-IN-BOX'
@@ -670,7 +679,9 @@ Tootsville.Game.Gatekeeper.buddyRequest = function (gram)
  *
  * An invitation has type @code{invite}.
  *
- * The body contains FIXME.
+ * The body contains: @code{locType} (string, e.g. "house"),
+ * @code{type} (string, "invite"), @code{room} (moniker/UUID),
+ * and @code{roomTitle} (user-visible name, e.g. "PlayerName's House").
  *
  * @subsection Response
  *

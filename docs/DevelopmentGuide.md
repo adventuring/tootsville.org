@@ -179,6 +179,24 @@ try {
 
 ## Code Style
 
+### Naming Conventions
+**CRITICAL RULE**: Do not unnecessarily abbreviate things, especially when the abbreviation is actually a different word with a different meaning. This creates confusion and makes code harder to understand.
+
+**Examples of what NOT to do:**
+- ❌ `props` (confusing abbreviation of "properties" that conflicts with the word "props")
+- ❌ `char` (confusing abbreviation of "character" that conflicts with the data type "char")
+- ❌ `obj` (confusing abbreviation of "object" that conflicts with "obj" meaning "objective")
+
+**Examples of what TO do:**
+- ✅ `properties` (clear, unambiguous)
+- ✅ `character` (clear, unambiguous) 
+- ✅ `object` (clear, unambiguous)
+
+**When abbreviations ARE acceptable:**
+- Standard technical abbreviations (e.g., `HTTP`, `URL`, `API`)
+- Well-established programming conventions (e.g., `i` for loop counters, `e` for events)
+- Abbreviations that don't conflict with other words
+
 ### Copyright Headers
 All new files should include:
 ```

@@ -103,19 +103,44 @@ if (! ('places' in Tootsville.SceneBuilder))
 { Tootsville.SceneBuilder.places = {}; };
 
 /**
- *
+ * Add a place definition with one or more shapes.
+ * 
+ * Shapes are encoded as colon-separated kind and coordinates.
+ * Multiple shapes can be separated by null markers (empty strings between tildes).
+ * 
+ * Format: "kind:x1,y1,z1~x2,y2,z2~~x3,y3,z3~x4,y4,z4"
+ * The double tilde (~`) creates a null separator between shapes.
  */
 Tootsville.SceneBuilder.addPlace  = function (key, info)
 { let [ kind, shapeInfo ] = info.split (':');
   let shapes = [];
-  let shape = shapeInfo.split ('~').map ( el => {
-      if ("" === el) { return null; }
-      else { let [x,y,z] = el.split (',');
-             return new BABYLON.Vector3 (parseFloat (x),
-                                         parseFloat (y),
-                                         parseFloat (z)); } } );
-  /* FIXME break into shapes on nulls */
-  shapes = [ shape ];
+  let currentShape = [];
+  
+  shapeInfo.split ('~').forEach ( el => {
+      if ("" === el) {
+          // Null marker - if we have a current shape, save it and start a new one
+          if (currentShape.length > 0) {
+              shapes.push(currentShape);
+              currentShape = [];
+          }
+      } else {
+          let [x,y,z] = el.split (',');
+          currentShape.push(new BABYLON.Vector3 (parseFloat (x),
+                                                  parseFloat (y),
+                                                  parseFloat (z)));
+      }
+  });
+  
+  // Add the last shape if it has any points
+  if (currentShape.length > 0) {
+      shapes.push(currentShape);
+  }
+  
+  // If no shapes were created, add an empty array to maintain structure
+  if (shapes.length === 0) {
+      shapes = [[]];
+  }
+  
   let place = { kind: kind, shapes: shapes };
   Tootsville.SceneBuilder.places [ key ] = place; };
 
