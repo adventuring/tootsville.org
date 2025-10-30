@@ -124,17 +124,17 @@ button {
     border: 2pt solid black;
     margin: 6pt;
     box-shadow: 5pt 5pt 5pt black;
-    transition: .25s margin, .25s box-shadow, .25s background-color;
+    transition: .25s box-shadow, .25s background-color, .25s transform;
+    /* Use transform for movement instead of margin to prevent height changes */
+    position: relative;
 }
 
 button:hover {
     background-color: #eee;
     color: #111;
     box-shadow: 2pt 2pt 5pt black;
-    margin-top: 8pt;
-    margin-left: 8pt;
-    margin-right: 2pt;
-    margin-bottom: 2pt;
+    /* Use transform to move button without affecting layout height */
+    transform: translate(2pt, 2pt);
 }
 
 input[type="text"] {
