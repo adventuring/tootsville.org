@@ -64,16 +64,35 @@ Tootsville.AvatarBuilder.rainbowColor = function (baseColor)
   else
   { return color; } };
 
+/**
+ * Get centering offsets for patterns to properly center them
+ * 
+ * Some patterns (like horseshoes) have irregular bounding boxes and need
+ * specific offsets to appear centered when drawn.
+ */
+Tootsville.AvatarBuilder.getPatternOffset = function (patternName) {
+    const offsets = {
+        'horseshoes': { x: 35, y: 70 },  // Empirically determined to center the horseshoe
+        'notes': { x: 10, y: 0 },
+        'swirls': { x: 10, y: 10 }
+    };
+    return offsets[patternName] || { x: 0, y: 0 };
+};
+
 Tootsville.AvatarBuilder.drawPatternOnCanvas = function (avatar, canvas)
 { canvas.fillStyle = Tootsville.UI.interpretTootColor (avatar.baseColor);;
   canvas.fillRect (0, 0, 1024, 1024);
   let i = 0;
+  const patternOffset = Tootsville.AvatarBuilder.getPatternOffset (avatar.pattern);
+  
   for (let x = 0; x < 1023; x += 192)
   { for (let y = 0; y < 1023; y += 192)
     { ++i;
-      canvas.setTransform (1, 0, 0, 1, x + x % 171, y + y % 53);
-      // XXX rotate only  once all the patterns have  been recentered on
-      // the origin properly: // canvas.rotate ( (x + y) / 256 );
+      canvas.setTransform (1, 0, 0, 1, 
+                          x + (x % 171) + patternOffset.x, 
+                          y + (y % 53) + patternOffset.y);
+      // Now that patterns are centered, rotation can be enabled
+      canvas.rotate ( (x + y) / 512 );
       if ('rainbow' === avatar.patternColor.toLowerCase ())
       { canvas.fillStyle = Tootsville.AvatarBuilder.rainbowColor (avatar.baseColor); }
       else
@@ -81,7 +100,8 @@ Tootsville.AvatarBuilder.drawPatternOnCanvas = function (avatar, canvas)
       let path = Tootsville.AvatarBuilder.getPathForPattern (avatar.pattern);
       if (Array.isArray (path))
       { path = path [ i % path.length ]; }
-      canvas.fill ( path ); } } };
+      canvas.fill ( path ); } }
+  canvas.resetTransform (); };
 
 /**
  * Colorize an Avatar and apply their pattern
