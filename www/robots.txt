@@ -1,0 +1,10 @@
+# robots.txt for each/every *.tootsville.org *.tootsville.net
+
+Sitemap: https://www.tootsville.org/sitemap.xml
+
+User-Agent: *
+Disallow: /play/
+Disallow: /world/
+Disallow: /users/
+Disallow: /toots/
+Disallow: /gossip/
